@@ -24,10 +24,15 @@ class _LoginPageState extends State<LoginPage> {
     final user = _userController.text;
     final pass = _passController.text;
 
+    if (!mounted) return;
+
     await Future.delayed(const Duration(seconds: 2)); // Simula carga
+
+    if (!mounted) return;
 
     if (user == 'admin' && pass == '1234') {
       setState(() => isLoading = false);
+      if (!mounted) return;
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const ProductPage()),

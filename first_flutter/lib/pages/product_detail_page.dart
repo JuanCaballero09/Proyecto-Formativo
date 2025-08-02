@@ -45,7 +45,7 @@ class ProductDetailPage extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               Text(
-                NumberFormat.currency(locale: 'es_CO', symbol: '\$', decimalDigits: 0).format(product.price),
+                '\$ ${NumberFormat('#,###', 'es_CO').format(product.price)} COP',
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       color: Colors.green[700],
                       fontWeight: FontWeight.bold,

@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/cart_bloc.dart';
 
 class CarritoPage extends StatefulWidget {
+  const CarritoPage({super.key});
+
   @override
   CarritoPageState createState() => CarritoPageState();
 }
@@ -126,7 +128,7 @@ class CarritoPageState extends State<CarritoPage> {
                             },
                           ),
                           Text(
-                            '₡${item.price * item.quantity}',
+                            '\$ ${item.price * item.quantity} COP',
                             style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
                         ],
@@ -151,7 +153,7 @@ class CarritoPageState extends State<CarritoPage> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  'Total: ₡${state.cart.totalPrice}',
+                  'Total: \$ ${state.cart.totalPrice} COP',
                   style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,

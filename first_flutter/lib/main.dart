@@ -1,8 +1,7 @@
-import 'package:first_flutter/pages/carrito_Page.dart';
+import 'package:first_flutter/pages/carrito_page.dart';
 import 'package:first_flutter/pages/menu_page.dart';
 import 'package:first_flutter/pages/welcome_page.dart';
 import 'package:first_flutter/pages/login_page.dart';
-import 'package:first_flutter/repository/mocki_product_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'bloc/product_bloc.dart';
@@ -44,12 +43,12 @@ class MyApp extends StatelessWidget {
             brightness: Brightness.light,
             primary: Colors.amber[800]!,
             secondary: Colors.deepOrangeAccent,
-            background: Colors.white,
-            surface: Colors.amber[50]!,
+            surface: Colors.white,
+            surfaceVariant: Colors.amber[50]!,
             onPrimary: Colors.white,
             onSecondary: Colors.white,
-            onBackground: Colors.black,
             onSurface: Colors.black,
+            onSurfaceVariant: Colors.black,
           ),
           useMaterial3: true,
           fontFamily: 'Roboto',
@@ -97,9 +96,9 @@ class MyApp extends StatelessWidget {
         ),
         initialRoute: '/',
         routes: {
-          '/': (context) => SplashPage(),
+          '/': (context) => SplashPage(key: UniqueKey()),
           '/menu': (context) => const MenuPage(),
-          '/carrito': (context) => CarritoPage(),
+          '/carrito': (context) => CarritoPage(key: UniqueKey()),
           '/welcome': (context) => const WelcomePage(),
           '/login': (context) => const LoginPage(),
           '/register': (context) => const RegisterPage(),
