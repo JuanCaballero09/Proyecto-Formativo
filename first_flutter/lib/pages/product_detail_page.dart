@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../models/product.dart';
 import '../bloc/cart_bloc.dart';
 import '../models/cart_model.dart';
+import 'pedido_Page.dart';
 
 class ProductDetailPage extends StatelessWidget {
   final Product product;
@@ -38,18 +39,18 @@ class ProductDetailPage extends StatelessWidget {
               Text(
                 product.name,
                 style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.amber[800],
-                    ),
+                  fontWeight: FontWeight.bold,
+                  color: Colors.amber[800],
+                ),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 16),
               Text(
                 '\$ ${NumberFormat('#,###', 'es_CO').format(product.price)} COP',
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      color: Colors.green[700],
-                      fontWeight: FontWeight.bold,
-                    ),
+                  color: Colors.green[700],
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               const SizedBox(height: 24),
               Row(
@@ -59,9 +60,9 @@ class ProductDetailPage extends StatelessWidget {
                   Text(
                     'Descripción',
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.amber[800],
-                        ),
+                      fontWeight: FontWeight.bold,
+                      color: Colors.amber[800],
+                    ),
                   ),
                 ],
               ),
@@ -81,7 +82,10 @@ class ProductDetailPage extends StatelessWidget {
                     backgroundColor: Colors.amber[800],
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 16),
-                    textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    textStyle: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
                     ),
@@ -90,19 +94,20 @@ class ProductDetailPage extends StatelessWidget {
                     context.read<CartBloc>().add(
                       AddToCart(
                         CartItem(
-                        id: product.id,
-                        name: product.name,
-                        price: product.price,
-                        quantity: 1,
-                        image: product.image,
-                        description: product.description,
+                          id: product.id,
+                          name: product.name,
+                          price: product.price,
+                          quantity: 1,
+                          image: product.image,
+                          description: product.description,
                         ),
                       ),
-                      );
-                    
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Producto agregado al pedido')),
                     );
+
+                    Navigator.push(
+                      context, 
+                      MaterialPageRoute(builder: (context) => PedidoPage()),
+                      );
                   },
                 ),
               ),
