@@ -1,4 +1,3 @@
-import 'package:first_flutter/pages/carrito_Page.dart';
 import 'package:flutter/material.dart';
 
 class PedidoPage extends StatefulWidget {
