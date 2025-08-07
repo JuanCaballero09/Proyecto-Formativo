@@ -20,7 +20,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   late PageController _pageController;
   final ScrollController _scrollController = ScrollController();
 
-  int _currentIndex = 1000;
+  int _currentIndex = 9000;
   Timer? _timer;
   bool _isPageViewReady = false;
 
@@ -80,58 +80,97 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   }
 
   void _mostrarSeccion(String seccion) {
-    setState(() {
-      mostrarNovedades = seccion == 'novedades';
-      mostrarCategorias = seccion == 'categorias';
-    });
-
-    Future.delayed(Duration(milliseconds: 100), () {
-      _scrollController.animateTo(
-        _scrollController.position.maxScrollExtent,
-        duration: Duration(milliseconds: 400),
-        curve: Curves.easeInOut,
-      );
-    });
-  }
+  setState(() {
+    mostrarNovedades = seccion == 'novedades';
+    mostrarCategorias = seccion == 'categorias';
+  });
+}
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        toolbarHeight: 40,
-        automaticallyImplyLeading: false,
-        centerTitle: true,
-        backgroundColor: const Color.fromRGBO(237, 88, 33, 1),
-        title: Center(child: Image.asset("assets/imagen5.png", width: 150)),
-        leading: SizedBox(width: 48),
-        actions: [
-          IconButton(
-            padding: EdgeInsets.zero,
-            constraints: BoxConstraints(),
-            icon: Icon(Icons.notifications, size: 20, color: Colors.white),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => NotificacionPage()),
-              );
-            },
-          ),
-          IconButton(
-            icon: Icon(Icons.location_on, size: 20, color: Colors.white),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => MapaOSMPage()),
-              );
-            },
-          ),
-        ],
+appBar: PreferredSize(
+  preferredSize: Size.fromHeight(80),
+  child: SafeArea(
+  child: Padding(
+    padding: const EdgeInsets.only(left: 6.0, right: 16.0, top: 8.0),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        // LOGO BITEVIA
+  SizedBox(
+            width: 130, // Ajusta este valor según lo necesites
+            height: 100,  // Altura deseada
+            child: FittedBox(
+           child: Image.asset(
+                'assets/logoredondo.png',
+
+                
+  ),
+),
+),
+      
+            // ÍCONOS A LA DERECHA
+            Row(
+              children: [
+                IconButton(
+                  icon: Icon(Icons.notifications_none, color: Colors.black),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => NotificacionPage()),
+                    );
+                  },
+                ),
+                IconButton(
+                  icon: Icon(Icons.location_on_outlined, color: Colors.black),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => MapaOSMPage()),
+                    );
+                  },
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
+    ),
+  ),
+
+
       body: SingleChildScrollView(
         controller: _scrollController,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // 🔍 BARRA DE BÚSQUEDA
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(30),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.3),
+                spreadRadius: 2,
+                blurRadius: 5,
+                offset: Offset(0, 3),
+              ),
+            ],
+          ),
+          child: TextField(
+            decoration: InputDecoration(
+              hintText: 'Buscar...',
+              prefixIcon: Icon(Icons.search),
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+            ),
+          ),
+        ),
+      ),
 
             // Botones
             Padding(
@@ -152,7 +191,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                 height: MediaQuery.of(context).size.height -
                     kToolbarHeight -
                     MediaQuery.of(context).padding.top -
-                    100,
+                    200,
                 child: _isPageViewReady ? PageView.builder(
                   controller: _pageController,
                   onPageChanged: (index) {
@@ -208,6 +247,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
         label,
         style: TextStyle(
           fontWeight: FontWeight.bold,
+         backgroundColor: Colors.white,
           color: Color.fromRGBO(237, 88, 33, 1), // Texto naranja
         ),
       ),
