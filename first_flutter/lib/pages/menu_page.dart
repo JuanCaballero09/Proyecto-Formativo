@@ -28,27 +28,38 @@ void initState() {
 }
 
 
-  @override
+@override
 Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        toolbarHeight: 40,
-       automaticallyImplyLeading: false,
-        centerTitle: true,
-        backgroundColor: const Color.fromRGBO(237, 88, 33, 1),
-        title: Center(
-          child:(
-            Image.asset(
-              "assets/imagen5.png",
-              width: 150,
-            )
+  return Scaffold(
+    appBar: PreferredSize(
+      preferredSize: Size.fromHeight(80),
+      child: AppBar(
+        automaticallyImplyLeading: false, // 👈 Esto quita la flecha
+        backgroundColor: Colors.white,
+        elevation: 0,
+        flexibleSpace: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.only(left: 6.0, right: 16.0, top: 8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                SizedBox(
+                  width: 130,
+                  height: 100,
+                  child: FittedBox(
+                    child: Image.asset(
+                      'assets/logoredondo.png',
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
-       
-
-
-
       ),
+    ),
+    // ... resto del código
+  
 
     body: BlocBuilder<ProductBloc, ProductState>(
       builder: (context, state) {
