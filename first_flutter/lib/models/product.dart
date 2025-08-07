@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 
 class Product extends Equatable {
-  final String id;
+  final int id;
   final String name;
   final double price;
   final String description;
@@ -17,12 +17,10 @@ class Product extends Equatable {
 
   factory Product.fromJson(Map<String, dynamic> json) {
     return Product(
-      id: json['id'],
-      name: json['name'],
-      price: (json['price'] is int)
-          ? (json['price'] as int).toDouble()
-          : (json['price'] as num).toDouble(),
-      description: json['description'] ?? '',
+      id: json['id'] ?? 0,
+      name: json['nombre'] ?? '',
+      price: json['precio'] ?? 0.0,
+      description: json['descripcion'] ?? '',
       image: json['image'] ?? '',
     );
   }

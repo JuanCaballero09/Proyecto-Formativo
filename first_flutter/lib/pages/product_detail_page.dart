@@ -94,7 +94,7 @@ class ProductDetailPage extends StatelessWidget {
                     context.read<CartBloc>().add(
                       AddToCart(
                         CartItem(
-                          id: product.id,
+                          id: product.id.toString(),
                           name: product.name,
                           price: product.price,
                           quantity: 1,

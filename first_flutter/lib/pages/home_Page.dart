@@ -302,21 +302,21 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   Widget _buildNovedadesContenido() {
     final novedades = [
       Product(
-        id: 'np1',
+        id: 997,
         name: 'Hamburguesa Doble',
         description: 'Deliciosa hamburguesa con doble carne y queso',
         price: 18000,
         image: 'assets/Hamburgesa Doble Queso.jpeg',
       ),
       Product(
-        id: 'np2',
+        id: 998,
         name: 'Pizza Pepperoni',
         description: 'Pizza artesanal con pepperoni y queso mozzarella',
         price: 22000,
         image: 'assets/Pizza pepperoni.jpg',
       ),
       Product(
-        id: 'np3',
+        id: 999,
         name: 'Taco De pollo',
         description: 'taco de pollo con guacamole y pico de gallo',
         price: 15000,

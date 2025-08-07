@@ -5,7 +5,7 @@ import 'product_repository.dart';
 
 class MockiProductRepository implements ProductRepository {
   final String endpointUrl;
-  MockiProductRepository({this.endpointUrl = 'https://mocki.io/v1/215c5711-cce0-459c-bea1-3b7fead1b4be'});
+  MockiProductRepository({this.endpointUrl = 'http://localhost:3000/api/v1/products'});
 
   @override
   Future<List<Product>> getProducts() async {
