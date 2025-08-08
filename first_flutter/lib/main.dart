@@ -1,4 +1,4 @@
-import 'package:first_flutter/pages/carrito_page.dart';
+import 'package:first_flutter/pages/carrito_Page.dart';
 import 'package:first_flutter/pages/menu_page.dart';
 import 'package:first_flutter/pages/welcome_page.dart';
 import 'package:first_flutter/pages/login_page.dart';

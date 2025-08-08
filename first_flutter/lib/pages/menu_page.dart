@@ -68,6 +68,7 @@ Widget build(BuildContext context) {
         } else if (state is ProductLoaded) {
           final categories = [
             'hamburguesa',
+            'salchipapa',
             'pizza',
             'ensalada',
             'taco',
@@ -126,9 +127,12 @@ Widget build(BuildContext context) {
                               Expanded(
                                 child: ClipRRect(
                                   borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-                                  child: Image.asset(
+                                  child: Image.network(
                                     product.image,
+                                    height: 220,
+                                    width: double.infinity,
                                     fit: BoxFit.cover,
+                                    errorBuilder: (context, error, stackTrace) => const Icon(Icons.broken_image, size: 100, color: Colors.grey)
                                   ),
                                 ),
                               ),

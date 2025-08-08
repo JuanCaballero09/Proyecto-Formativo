@@ -16,12 +16,15 @@ class Product extends Equatable {
   });
 
   factory Product.fromJson(Map<String, dynamic> json) {
+    String imageUrl = (json['imagen_url'] ?? '').replaceFirst('localhost', '192.168.1.69');
+
+    
     return Product(
       id: json['id'] ?? 0,
       name: json['nombre'] ?? '',
       price: json['precio'] ?? 0.0,
       description: json['descripcion'] ?? '',
-      image: json['image'] ?? '',
+      image: imageUrl,
     );
   }
 
