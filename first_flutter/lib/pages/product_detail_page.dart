@@ -28,11 +28,12 @@ class ProductDetailPage extends StatelessWidget {
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(24),
-                child: Image.asset(
+                child: Image.network(
                   product.image,
                   height: 220,
                   width: double.infinity,
                   fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) => const Icon(Icons.broken_image, size: 100, color: Colors.grey)
                 ),
               ),
               const SizedBox(height: 24),
