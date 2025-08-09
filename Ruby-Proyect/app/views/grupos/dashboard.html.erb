@@ -12,20 +12,20 @@
     </div>
   </section>
 
-  <h2> 🔥 Promociones del Día 🔥</h2>
+  <h2><%= t("home.section.promociones_del_dia")%></h2>
   <div class="promociones">
     <% 2.times do %>
       <div class="promo">
         <%= image_tag 'LogoLogoAPP.svg', alt: 'comida', width: 200 %>
         <div>
-          <h3>Combo Pollo - $19.900</h3>
+          <h3><%= t("home.section.combo_pollo")%> - $19.900</h3>
           <button>Pedir Ahora</button>
         </div>
       </div>
       <div class="promo">
         <%= image_tag 'LogoLogoAPP.svg', alt: 'comida', width: 200 %>
         <div>
-          <h3>2x1 Hamburguesas</h3>
+          <h3>2x1 <%= t("home.section.hamburguesas")%></h3>
           <button>Pedir Ahora</button>
         </div>
       </div>
