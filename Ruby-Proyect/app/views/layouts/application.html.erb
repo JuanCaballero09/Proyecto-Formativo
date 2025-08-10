@@ -102,8 +102,15 @@
 
         <p>v2.7.4</p>
         <p>© 2025 Bitevia Software. <%= t("home.footer.derechos_reservados")%></p>
-        <%= link_to "Español", change_locale_path(locale: 'es') %>
-        <%= link_to "English", change_locale_path(locale: 'en') %>
+        <div class = "iconos-idiomas">
+            <%= link_to change_locale_path(locale: 'es') do %>
+              <%= image_tag "icons/españa.svg", class: "flag-icon"%>
+            <% end %>
+
+            <%= link_to change_locale_path(locale: 'en') do %>
+              <% image_tag "icons/estados-unidos-de-america.svg", class: "flag-icon"%>
+            <% end %>
+        </div>
       </footer>
     </body>    
   </html>

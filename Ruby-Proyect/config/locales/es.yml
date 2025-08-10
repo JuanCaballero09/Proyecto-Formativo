@@ -50,12 +50,14 @@ es:
       descripcion: "Descripción:"
       mostrar_productos: "Mostrar productos"
       mostrar_grupos: "Mostrar Grupos"
+      mostrar_categorias: "Mostrar Categorias"
 
       # footer del home
     footer:
       derechos_reservados: "Todos los derechos reservados"
 
-    dashboard:
+    dashboard: 
+      panel: "Panel de administración"
       dash: "Dashboard"
       banner: "Banners"
       ver_banners: "Ver Banners"
@@ -65,7 +67,7 @@ es:
       crear_producto: "Crear producto"
       grupos: "Grupos"
       ver_grupos: "Ver Grupos"
-      crear_grupo: "Crear Grupos"
+      crear_grupo: "Crear Grupo"
       ingredientes: "Ingredientes"
       ver_ingredientes: "Ver Ingredientes"
       crear_ingrediente: "Crear Ingrediente"
@@ -81,4 +83,15 @@ es:
       ultimo_grupo: "Ultimo grupo"
       producto_por_grupo: "Productos por grupos"
       distribuccion: "Distribución"
-      crecimiento: "Crecimiento"  
+      crecimiento: "Crecimiento" 
+
+    carrito: # textos en vista carrito
+      tu_carrito: "Tu Carrito"
+      carrito_vacio: "Tu Carrito está vacio"
+      total_producto: "Total de Productos:"
+      total_pagar: "Total a Pagar:"
+      finalizar_compra: "Finalizar Compra"
+      eliminar_todo: "Eliminar todo"
+      precio_unidad: "Precio unidad:"
+      
+      

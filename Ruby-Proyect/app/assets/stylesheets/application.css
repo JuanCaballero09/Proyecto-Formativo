@@ -1645,3 +1645,16 @@ input:focus{outline: none;}
   border-radius: 8px;
   margin-bottom: 1rem;
 }
+
+/* Iconos cambio idioma */
+
+.iconos-idomas{
+    display: flex;
+    align-items: center;
+}
+
+.flag-icon{
+    width: 40px;
+    height: 40px;
+}
+
