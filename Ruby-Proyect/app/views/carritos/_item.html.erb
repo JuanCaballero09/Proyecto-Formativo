@@ -5,7 +5,7 @@
 
   <div class="carrito-item-info">
     <h3><%= item.product.nombre %></h3>
-    <p><strong>Precio unidad:</strong> <%= number_to_currency(item.precio, unit: "COP ", separator: ",", delimiter: ".") %></p>
+    <p><strong>Precio unidad:</strong> <%= number_to_currency(item.precio, unit: "COP ", separator: ",", delimiter: ".") %> $</p>
 
     <p><strong>Cantidad:</strong></p>
     <div class="carrito-item-info-cantidad">
@@ -14,7 +14,7 @@
       <%= button_to "+", incrementar_carrito_item_path(item), method: :put, data: { turbo_stream: true } %>
     </div>
 
-    <p><strong>Total:</strong> <%= number_to_currency(item.precio * item.cantidad, unit: "COP ", separator: ",", delimiter: ".") %></p>
+    <p><strong>Total:</strong> <%= number_to_currency(item.precio * item.cantidad, unit: "COP ", separator: ",", delimiter: ".") %> $</p>
     
     <%= button_to "Eliminar todo", carrito_item_path(item), method: :delete, data: { turbo_confirm: "¿Eliminar este producto del carrito?" } %>
 

@@ -10,9 +10,9 @@
     <p><strong>Total de productos:</strong> <span id="contador-productos"><%= @carrito.carrito_items.sum(:cantidad) %></span></p>
 
     <p><strong>Total a pagar:</strong> <span id="total-carrito">
-      <%= number_to_currency(@carrito.carrito_items.sum { |item| item.precio * item.cantidad }, unit: "COP ", separator: ",", delimiter: ".") %>
+      <%= number_to_currency(@carrito.carrito_items.sum { |item| item.precio * item.cantidad }, unit: "COP ", separator: ",", delimiter: ".") %> $
     </span></p>
 
-    <%= link_to "Finalizar Compra", "#", class: "btn-finalizar" %>
+    <%= button_to "Finalizar Compra", orders_path, method: :post%>
   <% end %>
 </section>

@@ -1,0 +1,24 @@
+<h1>Listado de Órdenes</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Cliente</th>
+      <th>Estado</th>
+      <th>Total</th>
+      <th>Fecha</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @orders.each do |order| %>
+      <tr>
+        <td><%= order.id %></td>
+        <td><%= order.user.nombre %> (<%= order.user.email %>)</td>
+        <td><%= order.status %></td>
+        <td>$<%= number_to_currency(order.total_price, unit: "", separator: ".", delimiter: ",") %></td>
+        <td><%= order.created_at.strftime("%d/%m/%Y %H:%M") %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

@@ -24,7 +24,7 @@
 
         <div>
           <h3>Precio</h3>
-          <p>$<%= @product.precio %></p>
+          <p><%= number_to_currency(@product.precio, unit: "COP ", separator: ",", delimiter: ".", precision: 0) %> $</p>
         </div>
 
         <div>

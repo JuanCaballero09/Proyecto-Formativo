@@ -2,12 +2,14 @@ Rails.application.routes.draw do
   devise_for :users, controllers: { registrations: "users/registrations" }
 
   root to: "grupos#dashboard"
+  
+  get "/buscar", to: "busqueda#index", as: "buscar"
 
-  resources :grupos, path: "categoria", only: [ :index, :show ] do
-    resources :products, path: "producto", only: [ :index, :show ], module: :grupos
+  resources :grupos, path: "categorias", only: [ :index, :show ] do
+    resources :products, path: "productos", only: [ :index, :show ], module: :grupos
   end
 
-  get "/buscar", to: "busqueda#index", as: "buscar"
+  resources :products, path: "productos", only: [:index] # rubocop:disable Layout/SpaceInsideArrayLiteralBrackets
 
   resource :carrito, only: [:show] # rubocop:disable Layout/SpaceInsideArrayLiteralBrackets
   resources :carrito_items, only: [:create, :update, :destroy] do
@@ -15,7 +17,8 @@ Rails.application.routes.draw do
       put :incrementar
     end
   end # rubocop:disable Layout/SpaceInsideArrayLiteralBrackets
-  resources :products, path: "productos", only: [:index] # rubocop:disable Layout/SpaceInsideArrayLiteralBrackets
+
+  resources :orders, param: :code, only: [:create, :show, :index]
 
   # resources :pedidos, only: [:create] # rubocop:disable Layout/SpaceInsideArrayLiteralBrackets
   namespace :dashboard do
@@ -23,6 +26,7 @@ Rails.application.routes.draw do
     resources :grupos, path: "grupos"
     resources :ingredientes
     resources :banners
+    resources :orders
     resources :products, path: "productos" do
       member do
         patch :toggle_disponibilidad

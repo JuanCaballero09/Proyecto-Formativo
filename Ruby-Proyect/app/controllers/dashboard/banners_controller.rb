@@ -1,6 +1,9 @@
 class Dashboard::BannersController < ApplicationController
   layout "dashboard"
 
+  before_action :authenticate_user!
+  before_action :check_admin
+
   def index
     @banners = Banner.order(:id)
   end
