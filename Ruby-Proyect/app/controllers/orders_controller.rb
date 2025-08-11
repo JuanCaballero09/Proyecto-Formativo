@@ -1,6 +1,8 @@
 class OrdersController < ApplicationController
+  layout "application_min"
+
   before_action :authenticate_user!  # exige login
-  before_action :set_order, only: [:show]
+  before_action :set_order, only: [ :show ]
 
   def create
     carrito = Carrito.find_by(id: session[:carrito_id])
@@ -21,7 +23,7 @@ class OrdersController < ApplicationController
         )
       end
 
-      total = @order.order_items.sum('quantity * price')
+      total = @order.order_items.sum("quantity * price")
       @order.update!(total: total)
 
       # opcional: vaciar carrito después de crear la orden
@@ -37,7 +39,7 @@ class OrdersController < ApplicationController
     # permiso: que sea el dueño o admin
     unless @order.user == current_user || current_user&.admin?
       redirect_to root_path, alert: "No autorizado a ver esta orden"
-      return
+      nil
     end
     # la vista usará @order y @order.order_items
   end

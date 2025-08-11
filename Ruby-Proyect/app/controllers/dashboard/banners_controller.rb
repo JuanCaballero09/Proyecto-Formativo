@@ -35,4 +35,8 @@ class Dashboard::BannersController < ApplicationController
   def banner_params
     params.require(:banner).permit(:imagen)
   end
+
+  def check_admin
+    redirect_to root_path, alert: "No tienes acceso a esta página." unless current_user.admin?
+  end
 end

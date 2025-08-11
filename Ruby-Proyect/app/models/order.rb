@@ -4,12 +4,12 @@ class Order < ApplicationRecord
   has_many :order_items, dependent: :destroy
 
   enum :status, {
-    pendiente: 0, 
-    pagado: 1, 
-    en_preparacion: 2, 
-    enviado: 3, 
+    pendiente: 0,
+    pagado: 1,
+    en_preparacion: 2,
+    enviado: 3,
     entregado: 4,
-    cancelada: 5
+    cancelado: 5
   }
 
   scope :by_user, ->(user) { where(user_id: user.id) }

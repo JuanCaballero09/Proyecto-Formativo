@@ -1,24 +1,79 @@
-<h1>Listado de Órdenes</h1>
+<section>
+  
+  <div style="display: flex; justify-content: space-between; align-items: center; flex-direction: row; margin-bottom: 20px;">
+    <form class="buscador" onsubmit="return false;">
+      <input
+        style="max-width: none;"
+        type="search"
+        id="buscador-ordenes"
+        placeholder="Buscar por código de orden..."
+        autocomplete="off"
+        value="<%= params[:query] %>"
+      />
+    </form>
+  </div>
 
-<table>
-  <thead>
-    <tr>
-      <th>ID</th>
-      <th>Cliente</th>
-      <th>Estado</th>
-      <th>Total</th>
-      <th>Fecha</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% @orders.each do |order| %>
-      <tr>
-        <td><%= order.id %></td>
-        <td><%= order.user.nombre %> (<%= order.user.email %>)</td>
-        <td><%= order.status %></td>
-        <td>$<%= number_to_currency(order.total_price, unit: "", separator: ".", delimiter: ",") %></td>
-        <td><%= order.created_at.strftime("%d/%m/%Y %H:%M") %></td>
-      </tr>
+  <div>
+
+    <% if @orders.any? %>
+
+      <h1 class="orders-title">Listado de Órdenes</h1>
+
+      <table class="orders-table">
+        <thead class="orders-thead">
+          <tr>
+            <th class="orders-th">ID</th>
+            <th class="orders-th">Cliente</th>
+            <th class="orders-th">Estado</th>
+            <th class="orders-th orders-th--right">Total</th>
+            <th class="orders-th">Fecha</th>
+            <th class="orders-th">Acciones</th>
+          </tr>
+        </thead>
+        <tbody class="orders-tbody">
+          <% @orders.each do |order| %>
+            <tr class="orders-tr" data-code="<%= order.code.downcase %>">
+              <td class="orders-td" data-label="ID"><%= order.id %></td>
+              <td class="orders-td" data-label="Cliente"><%= order.user.nombre %> (<%= order.user.email %>)</td>
+              <td class="orders-td orders-td--status <%= "status-#{order.status}" %>" data-label="Estado">
+                <p><%= order.status.humanize %></p>
+              </td>
+              <td class="orders-td orders-td--right" data-label="Total">$<%= number_to_currency(order.total_price, unit: "", separator: ".", delimiter: ",") %></td>
+              <td class="orders-td" data-label="Fecha"><%= order.created_at.strftime("%d/%m/%Y %H:%M") %></td>
+              <td class="orders-td orders-td--actions" data-label="Acciones">
+                <%= link_to 'Ver Detalles', dashboard_order_path(order), class: "btn-eliminar" %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% else %>
+      <div style="text-align: center; margin-top: 20px; color: gray;">
+        No hay órdenes registradas o en proceso.
+      </div>
     <% end %>
-  </tbody>
-</table>
+  </div>
+</section>
+
+
+<script>
+document.addEventListener("turbo:load", function () {
+  const input = document.getElementById("buscador-ordenes");
+  const rows = document.querySelectorAll(".orders-tbody .orders-tr");
+
+  const normalizar = (str) => str.trim().toLowerCase();
+
+  input.addEventListener("input", function () {
+    const valor = normalizar(input.value);
+
+    let visibles = 0;
+
+    rows.forEach((row) => {
+      const code = normalizar(row.dataset.code || "");
+      const visible = code.includes(valor);
+      row.style.display = visible ? "" : "none";
+      if (visible) visibles++;
+    });
+  });
+});
+</script>

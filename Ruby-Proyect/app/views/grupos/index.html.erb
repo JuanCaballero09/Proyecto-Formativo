@@ -1,20 +1,27 @@
-<section class="grupos" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
-  <% @grupos.each do |grupo| %>
-    <% productos_disponibles = grupo.products.select(&:disponible) %>
-    <% if productos_disponibles.any? %>
-      <%= link_to grupo_path(grupo), class: "grupo-carta" do %>
-        <div class="grupo-imagen">
-          <% if grupo.imagen.attached? %>
-            <%= image_tag url_for(grupo.imagen), alt: grupo.nombre %>
-          <% else %>
-            <%= image_tag 'LogoLogo.svg', alt: grupo.nombre %>
-          <% end %>
-        </div>
-        <div class="grupo-info">
-          <h3><%= grupo.nombre %></h3>
-          <p><%= grupo.descripcion.present? ? truncate(grupo.descripcion, length: 80) : "No hay descripción disponible" %></p>
-        </div>
+<% if @grupos.any? %>
+  <section class="grupos" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
+    <% @grupos.each do |grupo| %>
+      <% productos_disponibles = grupo.products.select(&:disponible) %>
+      <% if productos_disponibles.any? %>
+        <%= link_to grupo_path(grupo), class: "grupo-carta" do %>
+          <div class="grupo-imagen">
+            <% if grupo.imagen.attached? %>
+              <%= image_tag url_for(grupo.imagen), alt: grupo.nombre %>
+            <% else %>
+              <%= image_tag 'LogoLogo.svg', alt: grupo.nombre %>
+            <% end %>
+          </div>
+          <div class="grupo-info">
+            <h3><%= grupo.nombre %></h3>
+            <p><%= grupo.descripcion.present? ? truncate(grupo.descripcion, length: 80) : "No hay descripción disponible" %></p>
+          </div>
+        <% end %>
       <% end %>
     <% end %>
-  <% end %>
-</section>
+  </section>
+<% else %>
+<div class="sin-productos">
+    <%= image_tag "ProductoNoDisponible.png", alt: "Producto No Disponible" %>
+    <h2>No hay grupos disponibles por ahora.</h2>
+  </div>
+<% end %>

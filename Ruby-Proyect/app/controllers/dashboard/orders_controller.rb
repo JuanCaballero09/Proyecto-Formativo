@@ -3,12 +3,13 @@ class Dashboard::OrdersController < ApplicationController
 
   before_action :authenticate_user!
   before_action :check_admin
-  
+
   def index
     @orders = Order.includes(:user, :order_items).order(created_at: :desc)
   end
 
   def show
+    @order = Order.find_by!(code: params[:id])
   end
 
   private

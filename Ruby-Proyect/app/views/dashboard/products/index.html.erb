@@ -9,39 +9,43 @@
   <% end %>
 </div>
 <br> 
+<% if @products.any? %>
+  <div class="productss">
+    <% @products.each do |product| %>
+      <div class="product-card" data-nombre="<%= I18n.transliterate(product.nombre.downcase) %>">
+        <h3><%= product.nombre %></h3>
+        <%= image_tag(product.imagen.attached? ? product.imagen : "LogoLogoText2.svg") %>
+        <p><strong>id:</strong> <%= product.id %></p>
+        <p><strong>Ingredientes:</strong> <%= product.ingredientes.map(&:nombre).join(", ")%></p>
+        <p><strong>Descripción:</strong> <%= product.descripcion %></p>
+        <p><strong>Precio:</strong> <%= number_to_currency(product.precio, unit: "COP ", separator: ",", delimiter: ".", precision: 0) %> $</p>
 
-<div class="productss">
-  <% @products.each do |product| %>
-    <div class="product-card" data-nombre="<%= I18n.transliterate(product.nombre.downcase) %>">
-      <h3><%= product.nombre %></h3>
-      <%= image_tag(product.imagen.attached? ? product.imagen : "LogoLogoText2.svg") %>
-      <p><strong>id:</strong> <%= product.id %></p>
-      <p><strong>Ingredientes:</strong> <%= product.ingredientes.map(&:nombre).join(", ")%></p>
-      <p><strong>Descripción:</strong> <%= product.descripcion %></p>
-      <p><strong>Precio:</strong> <%= number_to_currency(product.precio, unit: "COP ", separator: ",", delimiter: ".", precision: 0) %> $</p>
+        <div id="estado-<%= product.id %>">
+          <%= button_to '',
+            toggle_disponibilidad_dashboard_product_path(product),
+            method: :patch,
+            data: { turbo_stream: true }, 
+            class: (product.disponible ? 'btn-on' : 'btn-off'),
+            form: { data: { turbo: true } } 
+          %>
+        </div>
 
-      <div id="estado-<%= product.id %>">
-        <%= button_to '',
-          toggle_disponibilidad_dashboard_product_path(product),
-          method: :patch,
-          data: { turbo_stream: true }, 
-          class: (product.disponible ? 'btn-on' : 'btn-off'),
-          form: { data: { turbo: true } } 
-        %>
+
+
+
+        <%= link_to "Editar", edit_dashboard_product_path(product), class: "btn-editar" %>
+        <%= button_to "Eliminar", dashboard_product_path(product), method: :delete, class: "btn-eliminar" %>
       </div>
-
-
-
-
-      <%= link_to "Editar", edit_dashboard_product_path(product), class: "btn-editar" %>
-      <%= button_to "Eliminar", dashboard_product_path(product), method: :delete, class: "btn-eliminar" %>
+    <% end %>
+    <div id="sin-resultados-productos" style="display: none; text-align: center; margin-top: 20px; color: gray;">
+      No se encontraron productos.
     </div>
-  <% end %>
-  <div id="sin-resultados-productos" style="display: none; text-align: center; margin-top: 20px; color: gray;">
-    No se encontraron productos.
   </div>
-</div>
-
+<% else %>
+  <div style="text-align: center; margin-top: 20px; color: gray;">
+    No hay productos registrados.
+  </div>
+<% end %>
 
 <script>
   document.addEventListener("turbo:load", function () {
