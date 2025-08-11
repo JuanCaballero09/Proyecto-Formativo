@@ -8,6 +8,7 @@ Rails.application.routes.draw do
   end
 
   get "/buscar", to: "busqueda#index", as: "buscar"
+  get 'change_locale/:locale', to: 'application#change_locale', as: :change_locale
 
   resource :carrito, only: [:show] # rubocop:disable Layout/SpaceInsideArrayLiteralBrackets
   resources :carrito_items, only: [:create, :update, :destroy] do

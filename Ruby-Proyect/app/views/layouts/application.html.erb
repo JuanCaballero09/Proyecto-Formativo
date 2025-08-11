@@ -32,19 +32,19 @@
           <button type="submit">
               <%= image_tag "icons/magnifying-glass-solid.svg", alt: "Buscar" %>
           </button>
-          <%= search_field_tag :q, params[:q], placeholder: "Buscar productos..." %>
+          <%= search_field_tag :q, params[:q], placeholder: t("home.navbar.buscar_productos") %>
         <% end %>
       </header>
 
       <nav class="navbar">
         <div class="links">
-          <%= link_to "Inicio", root_path %>
-          <%= link_to "Menú", products_path %>
-          <%= link_to "Categorias", grupos_path %>
+          <%= link_to t("home.navbar.inicio"), root_path %>
+          <%= link_to t("home.navbar.menu"), products_path %>
+          <%= link_to t("home.navbar.categorias"), grupos_path %>
 
           <% if current_user %>
             <% if current_user.admin? %>
-              <%= link_to "Panel de administración", dashboard_root_path%>
+              <%= link_to t("home.navbar.panel_de_administracion"), dashboard_root_path%>
             <% end %>
           <% end %>
         </div>
@@ -58,7 +58,7 @@
             <%= link_to image_tag("icons/user-solid.svg", alt: "Perfil"), edit_user_registration_path%>
 
             <div class="btn-user">
-              <%= button_to "Cerrar sesión", destroy_user_session_path, method: :delete, data: { turbo_confirm: "¿Estás seguro que quieres cerrar sesión?" } %>
+              <%= button_to t("home.navbar.cerrar_sesion"), destroy_user_session_path, method: :delete, data: { turbo_confirm: "¿Estás seguro que quieres cerrar sesión?" } %>
             </div>
           </div>
         <% else %>
@@ -68,7 +68,7 @@
 
             <%= link_to image_tag("icons/cart-shopping-solid.svg", alt: "Carrito"), carrito_path %>
             <div class="btn-user">
-              <%= link_to "Iniciar Sesión", new_user_session_path%>
+              <%= link_to t("home.navbar.iniciar_sesion"), new_user_session_path%>
             </div>
           </div>
         <% end %>
@@ -101,8 +101,16 @@
         </div>
 
         <p>v2.7.4</p>
-        <p>© 2025 Bitevia Software. Todos los derechos reservados.</p>
+        <p>© 2025 Bitevia Software. <%= t("home.footer.derechos_reservados")%></p>
+        <div class = "iconos-idiomas">
+            <%= link_to change_locale_path(locale: 'es') do %>
+              <%= image_tag "icons/españa.svg", class: "flag-icon"%>
+            <% end %>
 
+            <%= link_to change_locale_path(locale: 'en') do %>
+              <% image_tag "icons/estados-unidos-de-america.svg", class: "flag-icon"%>
+            <% end %>
+        </div>
       </footer>
     </body>    
   </html>

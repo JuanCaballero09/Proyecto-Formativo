@@ -2,9 +2,14 @@ class ApplicationController < ActionController::Base
   allow_browser versions: :modern
   before_action :configure_permitted_parameters, if: :devise_controller?
   before_action :store_user_location!, if: :storable_location?
-
+  before_action :set_locale
 
   layout :layout_by_resource
+
+  def change_locale 
+    session[:locale] = params[:locale]
+    redirect_back(fallback_location: root_path)
+  end
 
   private
 
@@ -23,6 +28,10 @@ class ApplicationController < ActionController::Base
       "application"
     end
   end
+
+  def set_locale 
+    I18n.locale = params[:locale] || session[:locale] || I18n.default_locale
+  end 
 
 
   protected

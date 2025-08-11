@@ -26,4 +26,72 @@ es:
     formats: 
       default: "%d/%m/%Y %H:%M"
       short: "%d %b %H:%M"
-      long: "%A %d de %B de %Y %H:%M"
+      long: "%A %d de %B de %Y %H:%M" 
+
+    # Acciones del Layout
+  home:
+    navbar:
+      inicio: "Inicio"
+      menu: "Menú"
+      categorias: "Categorias"
+      panel_de_administracion: "Panel de administración"
+      iniciar_sesion: "Iniciar sesión"
+      cerrar_sesion: "Cerrar sesión"
+      buscar_productos: "Buscar productos..." 
+
+      # Contenido en el section del home
+    section: 
+      promociones_del_dia: "🔥 Promociones del dia 🔥"
+      contactanos: "Contáctanos"
+      combo_pollo: "Combo pollo"
+      hamburguesas: "Hamburguesas"
+      agregar_carrito: "Agregar al carrito"
+      grupo: "Grupo:"
+      descripcion: "Descripción:"
+      mostrar_productos: "Mostrar productos"
+      mostrar_grupos: "Mostrar Grupos"
+      mostrar_categorias: "Mostrar Categorias"
+
+      # footer del home
+    footer:
+      derechos_reservados: "Todos los derechos reservados"
+
+    dashboard: 
+      panel: "Panel de administración"
+      dash: "Dashboard"
+      banner: "Banners"
+      ver_banners: "Ver Banners"
+      crear_banner: "Crear Banners"
+      producto: "Productos"
+      ver_productos: "Ver Productos"
+      crear_producto: "Crear producto"
+      grupos: "Grupos"
+      ver_grupos: "Ver Grupos"
+      crear_grupo: "Crear Grupo"
+      ingredientes: "Ingredientes"
+      ver_ingredientes: "Ver Ingredientes"
+      crear_ingrediente: "Crear Ingrediente"
+      volver_al_inicio: "Volver al inicio"  
+
+      # Titulos de las tarjetas de las graficas
+
+    graficas:
+      total_producto: "Total productos"
+      productos_disponibles: "Productos disponibles"
+      Total_grupos: "Total grupos"
+      ultimo_producto: "Ultimo producto"
+      ultimo_grupo: "Ultimo grupo"
+      producto_por_grupo: "Productos por grupos"
+      distribuccion: "Distribución"
+      crecimiento: "Crecimiento" 
+
+    carrito: # textos en vista carrito
+      tu_carrito: "Tu Carrito"
+      carrito_vacio: "Tu Carrito está vacio"
+      total_producto: "Total de Productos:"
+      total_pagar: "Total a Pagar:"
+      finalizar_compra: "Finalizar Compra"
+      eliminar_todo: "Eliminar todo"
+      precio_unidad: "Precio unidad:"
+      
+      

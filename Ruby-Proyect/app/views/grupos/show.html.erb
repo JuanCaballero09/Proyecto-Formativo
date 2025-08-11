@@ -7,14 +7,14 @@
 
   <div class="grupo-show-def">
     <div class="grupo-show-info">
-      <strong>Grupo:</strong> 
+      <strong><%= t("home.section.grupo")%></strong> 
       <p><%= @grupo.nombre %></p>
-      <p><strong>Descripción:</strong> <%= @grupo.descripcion %></p>
+      <p><strong><%= t("home.section.descripcion")%></strong> <%= @grupo.descripcion %></p>
     </div>
 
     <div class="grupo-show-links">
-      <%= link_to "Mostrar Productos", grupo_products_path(@grupo)%>
-      <%= link_to "Mostrar Categorias", grupos_path %>
+      <%= link_to t("home.section.mostrar_productos"), grupo_products_path(@grupo)%>
+      <%= link_to t("home.section.mostrar_grupos"), grupos_path %>
     </div>
   </div>
 
