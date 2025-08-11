@@ -7,23 +7,29 @@
 </div>
 <br>
 
-<% @ingredientes.each do |ingrediente| %>
+<% if @ingredientes.any? %>
+  <% @ingredientes.each do |ingrediente| %>
     <div class="dashboard-ingrediente" data-nombre="<%= I18n.transliterate(ingrediente.nombre.downcase) %>">
-        <div class="grupo-info-dashboard">
-            <strong><%= ingrediente.nombre %></strong>
-            <p>/</p>
-            <p>Id: <%= ingrediente.id %></p>
-        </div>
-        <div class="dashboard-acciones">
-            <%= link_to "Editar", edit_dashboard_ingrediente_path(ingrediente), class: "btn-editar" %>
-            <%= button_to "Eliminar", dashboard_ingrediente_path(ingrediente), method: :delete, data: { confirm: "¿Estás seguro de que quieres eliminar este Ingrediente?" }, class: "btn-eliminar" %>
-        </div>
+      <div class="grupo-info-dashboard">
+        <strong><%= ingrediente.nombre %></strong>
+        <p>/</p>
+        <p>Id: <%= ingrediente.id %></p>
+      </div>
+      <div class="dashboard-acciones">
+        <%= link_to "Editar", edit_dashboard_ingrediente_path(ingrediente), class: "btn-editar" %>
+        <%= button_to "Eliminar", dashboard_ingrediente_path(ingrediente), method: :delete, data: { confirm: "¿Estás seguro de que quieres eliminar este Ingrediente?" }, class: "btn-eliminar" %>
+      </div>
     </div>
-<%end%>
+  <% end %>
 
-<div id="sin-resultados-ingredientes" style="display: none; text-align: center; margin-top: 20px; color: gray;">
-  No se encontraron ingredientes.
-</div>
+  <div id="sin-resultados-ingredientes" style="display: none; text-align: center; margin-top: 20px; color: gray;">
+    No se encontraron ingredientes.
+  </div>
+<% else %>
+  <div style="text-align: center; margin-top: 20px; color: gray;">
+    No hay ingredientes registrados.
+  </div>
+<% end %>
 
 <script>
   document.addEventListener("turbo:load", function () {

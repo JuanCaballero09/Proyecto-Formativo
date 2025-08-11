@@ -1,0 +1,58 @@
+<section class="order-details">
+  <p class="return-btn" style="position: absolute; top: 20px; left: 20px; margin: 0;">
+    <%= link_to "← Regresar", request.referer || root_path %>
+  </p>
+  <h1>
+    Orden <span id="order-code"><%= @order.code %></span>
+    <button class="btn-copiar" onclick="copiarCodigo()"><%= image_tag "icons/copy-solid-full.svg"%></button>
+  </h1>
+
+
+  <p><strong>Cliente:</strong> <%= @order.user.nombre %> <%= @order.user.apellido %></p>
+  <p><strong>Estado:</strong> <%= @order.status %></p>
+
+  <h2>Productos</h2>
+  
+  <div class="order-tabla-container">
+    <table class="order-tabla-products">
+      <thead>
+        <tr>
+          <th>Imagen</th>
+          <th>Producto</th>
+          <th>Cantidad</th>
+          <th>Precio unitario</th>
+          <th>Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @order.order_items.each do |oi| %>
+          <tr>
+            <td><%= image_tag oi.product.imagen %></td>
+            <td><%= oi.product.nombre %></td>
+            <td><%= oi.quantity %></td>
+            <td><%= number_to_currency(oi.price, unit: "COP ", separator: ",", delimiter: ".") %></td>
+            <td><%= number_to_currency(oi.price * oi.quantity, unit: "COP ", separator: ",", delimiter: ".") %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+
+  <p><strong>Total a pagar:</strong> <%= number_to_currency(@order.total, unit: "COP ", separator: ",", delimiter: ".") %></p>
+
+  <!-- Botón de pago (por integrar) -->
+  
+  <%= link_to "Ir al pago", "#", class: "btn-pagar" %>
+
+</section>
+
+<script>
+  function copiarCodigo() {
+      const codigo = document.getElementById('order-code').innerText;
+      navigator.clipboard.writeText(codigo).then(() => {
+          alert("Código copiado: " + codigo);
+      }).catch(err => {
+          console.error("Error al copiar: ", err);
+      });
+  }
+</script>

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_31_013249) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_10_193547) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -86,6 +86,30 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_31_013249) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "order_items", force: :cascade do |t|
+    t.bigint "order_id", null: false
+    t.bigint "product_id", null: false
+    t.integer "quantity"
+    t.decimal "price"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["order_id"], name: "index_order_items_on_order_id"
+    t.index ["product_id"], name: "index_order_items_on_product_id"
+  end
+
+  create_table "orders", force: :cascade do |t|
+    t.string "code"
+    t.bigint "user_id", null: false
+    t.integer "status"
+    t.decimal "total"
+    t.bigint "carrito_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["carrito_id"], name: "index_orders_on_carrito_id"
+    t.index ["code"], name: "index_orders_on_code", unique: true
+    t.index ["user_id"], name: "index_orders_on_user_id"
+  end
+
   create_table "products", force: :cascade do |t|
     t.string "nombre"
     t.float "precio"
@@ -127,5 +151,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_31_013249) do
   add_foreign_key "carrito_items", "products"
   add_foreign_key "ingrediente_productos", "ingredientes"
   add_foreign_key "ingrediente_productos", "products"
+  add_foreign_key "order_items", "orders"
+  add_foreign_key "order_items", "products"
+  add_foreign_key "orders", "carritos"
+  add_foreign_key "orders", "users"
   add_foreign_key "products", "grupos"
 end

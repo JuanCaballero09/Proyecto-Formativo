@@ -13,6 +13,9 @@
       <%= number_to_currency(@carrito.carrito_items.sum { |item| item.precio * item.cantidad }, unit: "COP ", separator: ",", delimiter: ".") %>
     </span></p>
 
-    <%= link_to t("home.carrito.finalizar_compra"), "#", class: "btn-finalizar" %>
+    <div class="botones-compra">
+      <%= button_to "Generar Orden", orders_path, method: :post%>
+    </div>
+  
   <% end %>
 </section>

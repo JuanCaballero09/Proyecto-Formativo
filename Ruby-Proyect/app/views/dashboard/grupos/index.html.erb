@@ -8,31 +8,36 @@
   <% end %>
 </div>
 <br>
+<% if @grupos.any? %>
+  <% @grupos.each do |grupo| %>
+    <div class="dashboard-grupo" data-nombre="<%= I18n.transliterate(grupo.nombre.downcase) %>">
+      <div class="grupo-imagen">
+        <% if grupo.imagen.attached? %>
+          <%= image_tag url_for(grupo.imagen), alt: grupo.nombre %>
+        <% else %>
+          <%= image_tag 'LogoLogo.svg', alt: grupo.nombre %>
+        <% end %>
+      </div>
 
-<% @grupos.each do |grupo| %>
-  <div class="dashboard-grupo" data-nombre="<%= I18n.transliterate(grupo.nombre.downcase) %>">
-    <div class="grupo-imagen">
-      <% if grupo.imagen.attached? %>
-        <%= image_tag url_for(grupo.imagen), alt: grupo.nombre %>
-      <% else %>
-        <%= image_tag 'LogoLogo.svg', alt: grupo.nombre %>
-      <% end %>
+      <div class="grupo-info-dashboard">
+        <p><strong><%= grupo.nombre %></strong> / Id: <%= grupo.id %></p>
+        <p><%= grupo.descripcion%></p>
+      </div>
+      <div class="dashboard-acciones">
+        <%= link_to "Editar", edit_dashboard_grupo_path(grupo), class: "btn-editar" %>
+        <%= button_to "Eliminar", dashboard_grupo_path(grupo), method: :delete, data: { confirm: "¿Estás seguro de que quieres eliminar este Grupo?" }, class: "btn-eliminar" %>
+      </div>
     </div>
+  <% end %>
 
-    <div class="grupo-info-dashboard">
-      <p><strong><%= grupo.nombre %></strong> / Id: <%= grupo.id %></p>
-      <p><%= grupo.descripcion%></p>
-    </div>
-    <div class="dashboard-acciones">
-      <%= link_to "Editar", edit_dashboard_grupo_path(grupo), class: "btn-editar" %>
-      <%= button_to "Eliminar", dashboard_grupo_path(grupo), method: :delete, data: { confirm: "¿Estás seguro de que quieres eliminar este Grupo?" }, class: "btn-eliminar" %>
-    </div>
+  <div id="sin-resultados-grupos" style="display: none; text-align: center; margin-top: 20px; color: gray;">
+    No se encontraron grupos.
+  </div>
+<% else %>
+  <div style="text-align: center; margin-top: 20px; color: gray;">
+    No hay grupos registrados.
   </div>
 <% end %>
-
-<div id="sin-resultados-grupos" style="display: none; text-align: center; margin-top: 20px; color: gray;">
-  No se encontraron grupos.
-</div>
 
 <script>
   document.addEventListener("turbo:load", function () {

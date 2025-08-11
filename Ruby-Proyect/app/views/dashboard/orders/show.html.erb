@@ -1,0 +1,39 @@
+<section class="order-details" style="min-height: auto;">
+    <h1>Orden <%= @order.code %></h1>
+
+    <p><strong>Cliente:</strong> <%= @order.user.nombre %> <%= @order.user.apellido %></p>
+    <p class="<%= "status-#{@order.status}" %>"><strong>Estado:</strong> <span><%= @order.status.humanize %></span></p>
+
+    <h2>Productos</h2>
+    
+    <div class="order-tabla-container">
+        <table class="order-tabla-products">
+        <thead>
+            <tr>
+            <th>Imagen</th>
+            <th>Producto</th>
+            <th>Cantidad</th>
+            <th>Precio unitario</th>
+            <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% @order.order_items.each do |oi| %>
+            <tr>
+                <td><%= image_tag oi.product.imagen, alt: oi.product.nombre %></td>
+                <td><%= oi.product.nombre %></td>
+                <td><%= oi.quantity %></td>
+                <td><%= number_to_currency(oi.price, unit: "COP ", separator: ",", delimiter: ".") %></td>
+                <td><%= number_to_currency(oi.price * oi.quantity, unit: "COP ", separator: ",", delimiter: ".") %></td>
+            </tr>
+            <% end %>
+        </tbody>
+        </table>
+    </div>
+
+    <p class="order-total"><strong>Total a pagar:</strong> <%= number_to_currency(@order.total, unit: "COP ", separator: ",", delimiter: ".") %></p>
+
+  
+    <%= link_to 'Volver al listado', dashboard_orders_path, class: "btn-eliminar", style: "margin: 10px auto;" %>
+
+</section>

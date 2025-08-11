@@ -1,6 +1,9 @@
 class Dashboard::BannersController < ApplicationController
   layout "dashboard"
 
+  before_action :authenticate_user!
+  before_action :check_admin
+
   def index
     @banners = Banner.order(:id)
   end
@@ -31,5 +34,9 @@ class Dashboard::BannersController < ApplicationController
 
   def banner_params
     params.require(:banner).permit(:imagen)
+  end
+
+  def check_admin
+    redirect_to root_path, alert: "No tienes acceso a esta página." unless current_user.admin?
   end
 end
