@@ -4,6 +4,7 @@ Rails.application.routes.draw do
   root to: "grupos#dashboard"
 
   get "/buscar", to: "busqueda#index", as: "buscar"
+  get 'change_locale/:locale', to: 'application#change_locale', as: :change_locale
 
   resources :grupos, path: "categorias", only: [ :index, :show ] do
     resources :products, path: "productos", only: [ :index, :show ], module: :grupos

@@ -23,42 +23,43 @@
       </div>
 
       <h2>Panel</h2>
-      <%= link_to "Dashboard", dashboard_root_path %>
+      
+      <%= link_to t("home.dashboard.dash"), dashboard_root_path %>
       <%= link_to "Órdenes", dashboard_orders_path %>
       
       <details>
-        <summary>Banner</summary>
-          <%= link_to "Ver Banners", dashboard_banners_path%>
-          <%= link_to "Crear Banner", new_dashboard_banner_path%>
+        <summary><%= t("home.dashboard.banner")%></summary>
+          <%= link_to t("home.dashboard.ver_banners"), dashboard_banners_path%>
+          <%= link_to t("home.dashboard.crear_banner"), new_dashboard_banner_path%>
       </details>
 
 
       <details>
-        <summary>Productos</summary>
+        <summary><%= t("home.dashboard.producto")%></summary>
 
-          <%= link_to "Ver productos", dashboard_products_path %>
-          <%= link_to "Crear producto", new_dashboard_product_path %>
+          <%= link_to t("home.dashboard.ver_productos"), dashboard_products_path %>
+          <%= link_to t("home.dashboard.crear_producto"), new_dashboard_product_path %>
 
       </details>
 
       <details>
-        <summary>Grupos</summary>
+        <summary><%= t("home.dashboard.grupos")%></summary>
         
-          <%= link_to "Ver grupos", dashboard_grupos_path %>
-          <%= link_to "Crear grupo", new_dashboard_grupo_path %>
+          <%= link_to t("home.dashboard.ver_grupos"), dashboard_grupos_path %>
+          <%= link_to t("home.dashboard.crear_grupo"), new_dashboard_grupo_path %>
 
       </details>
 
       <details>
-        <summary>Ingredientes</summary>
+        <summary><%= t("home.dashboard.ingredientes")%></summary>
         
-          <%= link_to "Ver ingredientes", dashboard_ingredientes_path %>
-          <%= link_to "Crear ingrediente", new_dashboard_ingrediente_path %>
+          <%= link_to t("home.dashboard.ver_ingredientes"), dashboard_ingredientes_path %>
+          <%= link_to t("home.dashboard.crear_ingrediente"), new_dashboard_ingrediente_path %>
 
       </details>
 
       
-      <%= link_to "Volver al inicio", root_path, class: "sidebar-footer"%>
+      <%= link_to t("home.dashboard.volver_al_inicio"), root_path, class: "sidebar-footer"%>
       
     </aside>
 

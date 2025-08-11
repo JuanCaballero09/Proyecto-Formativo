@@ -1647,6 +1647,7 @@ input:focus{outline: none;}
 }
 
 
+
 /* tabla de orden */
 
 .order-details {
@@ -1907,3 +1908,17 @@ input:focus{outline: none;}
     font-weight: 600;
     margin: 5px auto;
 }
+
+/* Iconos cambio idioma */
+
+.iconos-idomas{
+    display: flex;
+    align-items: center;
+}
+
+.flag-icon{
+    width: 40px;
+    height: 40px;
+}
+
+

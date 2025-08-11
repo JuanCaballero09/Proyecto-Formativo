@@ -28,4 +28,63 @@
 #       enabled: "ON"
 
 en:
-  hello: "Hello world"
+  home: # Acciones del Layout
+    navbar:
+      inicio: "Start"
+      menu: "Menú"
+      categorias: "Categories"
+      panel_de_administracion: "Administration panel"
+      iniciar_sesion: "Login"
+      cerrar_sesion: "Sign out"
+      buscar_productos: "Search products..." 
+
+    section:  # Contenido en el section del home
+      promociones_del_dia: "🔥 Today's Deals 🔥"
+      contactanos: "Contact us"
+      combo_pollo: "Chicken combo"
+      hamburguesas: "Burgers"
+      agregar_carrito: "Add to cart"
+      grupo: "Group:"
+      descripcion: "Description:"
+      mostrar_productos: "See products"
+      mostrar_grupos: "See Groups"
+      mostrar_categorias: "See categories"
+
+    footer:  # footer del home
+      derechos_reservados: "All rights reserved"
+
+    dashboard:  # layout del Dashboard 
+      panel: "Administration panel"
+      dash: "Dashboard"
+      banner: "Banners"
+      ver_banners: "See Banners"
+      crear_banner: "Create Banner"
+      producto: "Products"
+      ver_productos: "See Productos"
+      crear_producto: "Create product"
+      grupos: "Gruops"
+      ver_grupos: "See Grupos"
+      crear_grupo: "Create Group"
+      ingredientes: "Ingredients"
+      ver_ingredientes: "See Ingredients"
+      crear_ingrediente: "Create Ingredient"
+      volver_al_inicio: "Back to top"  
+
+    graficas:        # Titulos de las tarjetas de las graficas
+      total_producto: "Total products"
+      productos_disponibles: "Available products"
+      Total_grupos: "Total groups"
+      ultimo_producto: "Latest product"
+      ultimo_grupo: "last group"
+      producto_por_grupo: "Products by groups"
+      distribuccion: "Distribution"
+      crecimiento: "Evolution" 
+
+    carrito: # textos en vista carrito
+      tu_carrito: "Your Cart"
+      carrito_vacio: "Your cart is empty"
+      total_producto: "Total products:"
+      total_pagar: "Total to Pay:"
+      finalizar_compra: "Complete Purchase"
+      eliminar_todo: "Delete all"
+      precio_unidad: "Unit Price:"

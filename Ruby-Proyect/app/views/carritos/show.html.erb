@@ -1,20 +1,21 @@
 <section id="carrito-contenido" class="carrito">
-  <h2>Tu Carrito</h2>
+  <h2><%= t("home.carrito.tu_carrito")%></h2>
   <% if @items.empty? %>
-    <p>El carrito está vacío.</p>
+    <p><%= t("home.carrito.carrito_vacio")%></p>
   <% else %>
     <%= turbo_frame_tag "carrito", class: "carrito-items" do %>
       <%= render partial: "carritos/item", collection: @carrito.carrito_items, as: :item %>
     <% end %>
 
-    <p><strong>Total de productos:</strong> <span id="contador-productos"><%= @carrito.carrito_items.sum(:cantidad) %></span></p>
+    <p><strong><%= t("home.carrito.total_producto")%></strong> <span id="contador-productos"><%= @carrito.carrito_items.sum(:cantidad) %></span></p>
 
-    <p><strong>Total a pagar:</strong> <span id="total-carrito">
-      <%= number_to_currency(@carrito.carrito_items.sum { |item| item.precio * item.cantidad }, unit: "COP ", separator: ",", delimiter: ".") %> $
+    <p><strong><%= t("home.carrito.total_pagar")%></strong> <span id="total-carrito">
+      <%= number_to_currency(@carrito.carrito_items.sum { |item| item.precio * item.cantidad }, unit: "COP ", separator: ",", delimiter: ".") %>
     </span></p>
 
     <div class="botones-compra">
       <%= button_to "Generar Orden", orders_path, method: :post%>
     </div>
+  
   <% end %>
 </section>
