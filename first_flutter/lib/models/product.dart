@@ -24,7 +24,7 @@ class Product extends Equatable {
       name: json['nombre'] ?? '',
       price: json['precio'] ?? 0.0,
       description: json['descripcion'] ?? '',
-      image: imageUrl,
+      image: json['imagen_url'] ?? '',
     );
   }
 

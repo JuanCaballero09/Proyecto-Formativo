@@ -57,6 +57,7 @@ flutter:
     - assets/bebida.jpg
     - assets/carrito vacio.png
     - assets/logoredondo.png
+    - assets/imagen8.png
     
 flutter_launcher_icons:
   android: true
