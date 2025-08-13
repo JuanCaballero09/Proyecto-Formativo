@@ -19,7 +19,7 @@ class WelcomePage extends StatelessWidget {
               // Imagen del logo
               Image.asset(
                 'assets/imagen6.png', // Asegúrate que esté en assets
-                height: 110,
+                height: 210,
               ),
 
               // Texto del título
