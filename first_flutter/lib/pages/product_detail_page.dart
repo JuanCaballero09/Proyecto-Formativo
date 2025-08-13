@@ -28,7 +28,7 @@ class ProductDetailPage extends StatelessWidget {
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(24),
-                child: Image.network(
+                child: Image.asset(
                   product.image,
                   height: 220,
                   width: double.infinity,
@@ -73,6 +73,66 @@ class ProductDetailPage extends StatelessWidget {
                 style: const TextStyle(fontSize: 16, color: Colors.black87),
                 textAlign: TextAlign.justify,
               ),
+              
+              // Sección de ingredientes
+              if (product.ingredients.isNotEmpty) ...[
+                const SizedBox(height: 24),
+                Row(
+                  children: [
+                    const Icon(Icons.restaurant, color: Colors.amber),
+                    const SizedBox(width: 8),
+                    Text(
+                      'Ingredientes',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.amber[800],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.amber[50],
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: Colors.amber[200]!,
+                      width: 1,
+                    ),
+                  ),
+                  child: Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: product.ingredients.map((ingredient) {
+                      return Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.amber[100],
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            color: Colors.amber[300]!,
+                            width: 1,
+                          ),
+                        ),
+                        child: Text(
+                          ingredient,
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.amber[800],
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ],
+              
               const SizedBox(height: 32),
               SizedBox(
                 width: double.infinity,
