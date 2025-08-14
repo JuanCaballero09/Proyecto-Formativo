@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'notificacion_Page.dart';
 import 'location_Page.dart';
-import 'product_detail_page.dart'; // Asegúrate de tener esta página
 
 class HomePage extends StatefulWidget {
   @override
@@ -12,25 +12,24 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
   final List<String> imaglist = [
-    "assets/imagen1.jpeg",
-    "assets/imagen2.jpeg",
-    "assets/imagen3.jpeg",
+    "assets/promocion1.webp",
+    "assets/promocion2.jpg",
+    "assets/promocion3.webp",
   ];
 
   late PageController _pageController;
   final ScrollController _scrollController = ScrollController();
 
-  int _currentIndex = 9000;
+  int _currentIndex = 0;
   Timer? _timer;
   bool _isPageViewReady = false;
-  bool _isSearchVisible = false; // Controlar si la barra de búsqueda es visible
-  TextEditingController _searchController =
-      TextEditingController(); // Controlador del TextField
+  bool _isSearchVisible = false;
+  final TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    _pageController = PageController(initialPage: _currentIndex);
+    _pageController = PageController(initialPage: 0);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
@@ -47,16 +46,14 @@ class _HomePageState extends State<HomePage>
     _timer = Timer.periodic(Duration(seconds: 3), (Timer timer) {
       if (mounted && _isPageViewReady) {
         _currentIndex++;
-        try {
-          _pageController.animateToPage(
-            _currentIndex,
-            duration: Duration(milliseconds: 500),
-            curve: Curves.easeInOut,
-          );
-        } catch (e) {
-          // Si hay un error, cancelamos el timer
-          _timer?.cancel();
+        if (_currentIndex >= imaglist.length) {
+          _currentIndex = 0;
         }
+        _pageController.animateToPage(
+          _currentIndex,
+          duration: Duration(milliseconds: 500),
+          curve: Curves.easeInOut,
+        );
       }
     });
   }
@@ -64,11 +61,9 @@ class _HomePageState extends State<HomePage>
   @override
   void dispose() {
     _timer?.cancel();
-    if (mounted) {
-      _pageController.dispose();
-      _scrollController.dispose();
-      _searchController.dispose();
-    }
+    _pageController.dispose();
+    _scrollController.dispose();
+    _searchController.dispose();
     super.dispose();
   }
 
@@ -83,15 +78,13 @@ class _HomePageState extends State<HomePage>
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                // LOGO BITEVIA
                 SizedBox(
-                  width: 130, // Ajusta este valor según lo necesites
-                  height: 100, // Altura deseada
+                  width: 130,
+                  height: 100,
                   child: FittedBox(
                     child: Image.asset('assets/logoredondo.png'),
                   ),
                 ),
-                // ÍCONOS A LA DERECHA
                 Row(
                   children: [
                     IconButton(
@@ -109,16 +102,13 @@ class _HomePageState extends State<HomePage>
                       icon: Icon(Icons.search, color: Colors.black),
                       onPressed: () {
                         setState(() {
-                          _isSearchVisible =
-                              !_isSearchVisible; // Toggle la visibilidad
+                          _isSearchVisible = !_isSearchVisible;
                         });
                       },
                     ),
                     IconButton(
-                      icon: Icon(
-                        Icons.location_on_outlined,
-                        color: Colors.black,
-                      ),
+                      icon:
+                          Icon(Icons.location_on_outlined, color: Colors.black),
                       onPressed: () {
                         Navigator.push(
                           context,
@@ -135,19 +125,15 @@ class _HomePageState extends State<HomePage>
           ),
         ),
       ),
-
       body: SingleChildScrollView(
         controller: _scrollController,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Barra de búsqueda (solo visible si _isSearchVisible es true)
             if (_isSearchVisible)
               Padding(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 16.0,
-                  vertical: 8.0,
-                ),
+                    horizontal: 16.0, vertical: 8.0),
                 child: Container(
                   decoration: BoxDecoration(
                     color: Colors.white,
@@ -167,140 +153,182 @@ class _HomePageState extends State<HomePage>
                       hintText: 'Buscar...',
                       prefixIcon: Icon(Icons.search),
                       border: InputBorder.none,
-                      contentPadding: EdgeInsets.symmetric(
-                        horizontal: 20,
-                        vertical: 14,
-                      ),
+                      contentPadding:
+                          EdgeInsets.symmetric(horizontal: 20, vertical: 14),
                     ),
                   ),
                 ),
               ),
 
-            // Texto de promociones (arriba del carrusel)
+            // Título Promociones
             Padding(
               padding: const EdgeInsets.symmetric(
-                horizontal: 16.0,
-                vertical: 8.0,
-              ),
+                  horizontal: 16.0, vertical: 8.0),
               child: Text(
                 "Promociones",
                 style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                ),
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black),
               ),
             ),
 
-            // Carrusel de imágenes
+            // Carrusel
             Container(
-              height:
-                  MediaQuery.of(context).size.height -
-                  kToolbarHeight -
-                  MediaQuery.of(context).padding.top -
-                  200,
-              child: _isPageViewReady
-                  ? PageView.builder(
+              padding: EdgeInsets.symmetric(horizontal: 16),
+              child: Column(
+                children: [
+                  AspectRatio(
+                    aspectRatio: 16 / 9,
+                    child: _isPageViewReady
+                        ? PageView.builder(
+                            controller: _pageController,
+                            physics: BouncingScrollPhysics(),
+                            onPageChanged: (index) {
+                              setState(() {
+                                _currentIndex = index;
+                              });
+                            },
+                            itemCount: imaglist.length,
+                            itemBuilder: (context, index) {
+                              return GestureDetector(
+                                onPanDown: (_) {
+                                  _timer?.cancel();
+                                },
+                                onPanEnd: (_) {
+                                  _startTimer();
+                                },
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(12),
+                                  child: Image.asset(
+                                    imaglist[index],
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              );
+                            },
+                          )
+                        : Center(child: CircularProgressIndicator()),
+                  ),
+                  const SizedBox(height: 8),
+                  Center(
+                    child: SmoothPageIndicator(
                       controller: _pageController,
-                      onPageChanged: (index) {
-                        if (mounted) {
-                          setState(() {
-                            _currentIndex = index;
-                          });
-                        }
-                      },
-                      itemBuilder: (context, index) {
-                        final actualIndex = index % imaglist.length;
-                        return Container(
-                          color: Colors.black12,
-                          alignment: Alignment.center,
-                          child: Image.asset(
-                            imaglist[actualIndex],
-                            fit: BoxFit.cover,
-                            width: double.infinity,
-                          ),
-                        );
-                      },
-                    )
-                  : Center(
-                      child: CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                          Theme.of(context).primaryColor,
-                        ),
+                      count: imaglist.length,
+                      effect: WormEffect(
+                        dotHeight: 8,
+                        dotWidth: 8,
+                        spacing: 8,
+                        activeDotColor: Colors.orange,
+                        dotColor: Colors.grey,
                       ),
                     ),
+                  ),
+                ],
+              ),
             ),
 
-            // Texto de Novedades (debajo del carrusel)
+            // Novedades
             Padding(
               padding: const EdgeInsets.symmetric(
-                horizontal: 16.0,
-                vertical: 8.0,
-              ),
+                  horizontal: 16.0, vertical: 8.0),
               child: Text(
                 "Novedades",
                 style: TextStyle(
-                  fontSize: 24,
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black),
+              ),
+            ),
+            SizedBox(
+              height: 220,
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                children: [
+                  _buildProductCard(
+                      'BBQ', 'assets/Hamburguesa BBQ.jpeg', '\$16.000'),
+                  _buildProductCard('Doble Queso',
+                      'assets/Hamburgesa Doble Queso.jpeg', '\$15.000'),
+                  _buildProductCard(
+                      'BBQ', 'assets/Hamburguesa BBQ.jpeg', '\$18.000'),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildProductCard(String title, String imagePath, String price) {
+    return Container(
+      width: 160,
+      margin: EdgeInsets.only(right: 12),
+      child: Card(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        elevation: 4,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Stack(
+              children: [
+                ClipRRect(
+                  borderRadius:
+                      BorderRadius.vertical(top: Radius.circular(12)),
+                  child: Image.asset(
+                    imagePath,
+                    height: 115,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                Positioned(
+                  top: 8,
+                  left: 8,
+                  child: Container(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: Colors.redAccent,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      'Nuevo',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                title,
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                  horizontal: 8.0, vertical: 4.0),
+              child: Text(
+                price,
+                style: TextStyle(
+                  fontSize: 16,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black,
+                  color: Colors.green,
                 ),
               ),
             ),
-
-           // Lista de productos estáticos con menor espacio entre ellos
-// Lista de productos estáticos con menor espacio entre ellos
-Padding(
-  padding: const EdgeInsets.symmetric(horizontal: 8.0), // Reducido el padding alrededor
-  child: Row(
-    mainAxisAlignment: MainAxisAlignment.start,  // Alineamos los productos al inicio
-    children: [
-      // Producto 1
-      Container(
-        width: 140,  // Tamaño fijo para la imagen del producto
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Image.asset(
-              'assets/product1.jpg', // Asegúrate de que esta imagen esté en la carpeta assets
-              width: 120,  // Tamaño reducido de la imagen
-              height: 120, // Tamaño reducido de la imagen
-              fit: BoxFit.cover,
-            ),
-            SizedBox(height: 6), // Reducido el espacio entre la imagen y el texto
-            Text(
-              "Producto 1",
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-            Text("\$100", style: TextStyle(fontSize: 14, color: Colors.green)),
           ],
         ),
       ),
-
-      SizedBox(width: 8),  // Reducido el espacio entre los productos
-
-      // Producto 2
-      Container(
-        width: 140,  // Tamaño fijo para la imagen del producto
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Image.asset(
-              'assets/product2.jpg', // Asegúrate de que esta imagen esté en la carpeta assets
-              width: 120,  // Tamaño reducido de la imagen
-              height: 120, // Tamaño reducido de la imagen
-              fit: BoxFit.cover,
-            ),
-            SizedBox(height: 6), // Reducido el espacio entre la imagen y el texto
-            Text(
-              "Producto 2",
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-            Text("\$150", style: TextStyle(fontSize: 14, color: Colors.green)),
-          ],
-        ),
-      ),
-    ],
-  ),
-),
-
-          
+    );
+  }
+}
