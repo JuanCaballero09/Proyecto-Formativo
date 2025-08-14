@@ -18,7 +18,7 @@ dependencies:
   flutter_map: ^4.0.0
   positioned_tap_detector_2: ^1.0.4
   latlong2: ^0.8.1
-
+  smooth_page_indicator: ^1.1.0
 
 
 
@@ -58,6 +58,10 @@ flutter:
     - assets/carrito vacio.png
     - assets/logoredondo.png
     - assets/imagen8.png
+    - assets/promocion1.webp
+    - assets/promocion2.jpg
+    - assets/promocion3.webp
+   
     
 flutter_launcher_icons:
   android: true

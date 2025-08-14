@@ -1,45 +1,36 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'notificacion_Page.dart';
 import 'location_Page.dart';
-import 'product_detail_page.dart'; // Asegúrate de tener esta página
-import '../models/product.dart'; // Asegúrate de tener este modelo
 
 class HomePage extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin {
+class _HomePageState extends State<HomePage>
+    with SingleTickerProviderStateMixin {
   final List<String> imaglist = [
-    "assets/imagen1.jpeg",
-    "assets/imagen2.jpeg",
-    "assets/imagen3.jpeg",
+    "assets/promocion1.webp",
+    "assets/promocion2.jpg",
+    "assets/promocion3.webp",
   ];
 
   late PageController _pageController;
   final ScrollController _scrollController = ScrollController();
 
-  int _currentIndex = 9000;
+  int _currentIndex = 0;
   Timer? _timer;
   bool _isPageViewReady = false;
-
-  bool mostrarNovedades = false;
-  bool mostrarCategorias = false;
-
-  final List<Map<String, String>> categorias = [
-    {"titulo": "PIZZA", "imagen": "assets/Pizza Hawiana.jpg"},
-    {"titulo": "TACOS", "imagen": "assets/Tacos de Pollo.jpg"},
-    {"titulo": "HAMBURGUESAS", "imagen": "assets/Hamburguesa sencilla.jpg"},
-    {"titulo": "ENSALADA", "imagen": "assets/Ensalada CeSar.jpg"},
-    {"titulo": "BEBIDAS", "imagen": "assets/Bebida.jpg"},
-  ];
+  bool _isSearchVisible = false;
+  final TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    _pageController = PageController(initialPage: _currentIndex);
-    
+    _pageController = PageController(initialPage: 0);
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         setState(() {
@@ -55,16 +46,14 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     _timer = Timer.periodic(Duration(seconds: 3), (Timer timer) {
       if (mounted && _isPageViewReady) {
         _currentIndex++;
-        try {
-          _pageController.animateToPage(
-            _currentIndex,
-            duration: Duration(milliseconds: 500),
-            curve: Curves.easeInOut,
-          );
-        } catch (e) {
-          // Si hay un error, cancelamos el timer
-          _timer?.cancel();
+        if (_currentIndex >= imaglist.length) {
+          _currentIndex = 0;
         }
+        _pageController.animateToPage(
+          _currentIndex,
+          duration: Duration(milliseconds: 500),
+          curve: Curves.easeInOut,
+        );
       }
     });
   }
@@ -72,442 +61,274 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   @override
   void dispose() {
     _timer?.cancel();
-    if (mounted) {
-      _pageController.dispose();
-      _scrollController.dispose();
-    }
+    _pageController.dispose();
+    _scrollController.dispose();
+    _searchController.dispose();
     super.dispose();
   }
-
-  void _mostrarSeccion(String seccion) {
-  setState(() {
-    mostrarNovedades = seccion == 'novedades';
-    mostrarCategorias = seccion == 'categorias';
-  });
-}
-
-
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-appBar: PreferredSize(
-  preferredSize: Size.fromHeight(80),
-  child: SafeArea(
-  child: Padding(
-    padding: const EdgeInsets.only(left: 6.0, right: 16.0, top: 8.0),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        // LOGO BITEVIA
-  SizedBox(
-            width: 130, // Ajusta este valor según lo necesites
-            height: 100,  // Altura deseada
-            child: FittedBox(
-           child: Image.asset(
-                'assets/logoredondo.png',
-
-                
-  ),
-),
-),
-      
-            // ÍCONOS A LA DERECHA
-            Row(
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(80),
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.only(left: 6.0, right: 16.0, top: 8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                IconButton(
-                  icon: Icon(Icons.notifications_none, color: Colors.black),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => NotificacionPage()),
-                    );
-                  },
+                SizedBox(
+                  width: 130,
+                  height: 100,
+                  child: FittedBox(
+                    child: Image.asset('assets/logoredondo.png'),
+                  ),
                 ),
-                IconButton(
-                  icon: Icon(Icons.location_on_outlined, color: Colors.black),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => MapaOSMPage()),
-                    );
-                  },
+                Row(
+                  children: [
+                    IconButton(
+                      icon: Icon(Icons.notifications_none, color: Colors.black),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => NotificacionPage(),
+                          ),
+                        );
+                      },
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.search, color: Colors.black),
+                      onPressed: () {
+                        setState(() {
+                          _isSearchVisible = !_isSearchVisible;
+                        });
+                      },
+                    ),
+                    IconButton(
+                      icon:
+                          Icon(Icons.location_on_outlined, color: Colors.black),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => MapaOSMPage(),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
                 ),
               ],
             ),
-          ],
+          ),
         ),
       ),
-    ),
-  ),
-
-
       body: SingleChildScrollView(
         controller: _scrollController,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // 🔍 BARRA DE BÚSQUEDA
-      Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(30),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.3),
-                spreadRadius: 2,
-                blurRadius: 5,
-                offset: Offset(0, 3),
-              ),
-            ],
-          ),
-          child: TextField(
-            decoration: InputDecoration(
-              hintText: 'Buscar...',
-              prefixIcon: Icon(Icons.search),
-              border: InputBorder.none,
-              contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-            ),
-          ),
-        ),
-      ),
-
-            // Botones
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  _buildQuickLink('Promociones', () => _mostrarSeccion('')),
-                  _buildQuickLink('Novedades', () => _mostrarSeccion('novedades')),
-                  _buildQuickLink('Categorías', () => _mostrarSeccion('categorias')),
-                ],
-              ),
-            ),
-
-            // Carrusel
-            if (!mostrarNovedades && !mostrarCategorias) ...[
-              Container(
-                height: MediaQuery.of(context).size.height -
-                    kToolbarHeight -
-                    MediaQuery.of(context).padding.top -
-                    200,
-                child: _isPageViewReady ? PageView.builder(
-                  controller: _pageController,
-                  onPageChanged: (index) {
-                    if (mounted) {
-                      setState(() {
-                        _currentIndex = index;
-                      });
-                    }
-                  },
-                  itemBuilder: (context, index) {
-                    final actualIndex = index % imaglist.length;
-                    return Container(
-                      color: Colors.black12,
-                      alignment: Alignment.center,
-                      child: Image.asset(
-                        imaglist[actualIndex],
-                        fit: BoxFit.cover,
-                        width: double.infinity,
+            if (_isSearchVisible)
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 16.0, vertical: 8.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(30),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.3),
+                        spreadRadius: 2,
+                        blurRadius: 5,
+                        offset: Offset(0, 3),
                       ),
-                    );
-                  },
-                ) : Center(
-                  child: CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                      Theme.of(context).primaryColor,
+                    ],
+                  ),
+                  child: TextField(
+                    controller: _searchController,
+                    decoration: InputDecoration(
+                      hintText: 'Buscar...',
+                      prefixIcon: Icon(Icons.search),
+                      border: InputBorder.none,
+                      contentPadding:
+                          EdgeInsets.symmetric(horizontal: 20, vertical: 14),
                     ),
                   ),
                 ),
               ),
-            ],
+
+            // Título Promociones
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                  horizontal: 16.0, vertical: 8.0),
+              child: Text(
+                "Promociones",
+                style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black),
+              ),
+            ),
+
+            // Carrusel
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 16),
+              child: Column(
+                children: [
+                  AspectRatio(
+                    aspectRatio: 16 / 9,
+                    child: _isPageViewReady
+                        ? PageView.builder(
+                            controller: _pageController,
+                            physics: BouncingScrollPhysics(),
+                            onPageChanged: (index) {
+                              setState(() {
+                                _currentIndex = index;
+                              });
+                            },
+                            itemCount: imaglist.length,
+                            itemBuilder: (context, index) {
+                              return GestureDetector(
+                                onPanDown: (_) {
+                                  _timer?.cancel();
+                                },
+                                onPanEnd: (_) {
+                                  _startTimer();
+                                },
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(12),
+                                  child: Image.asset(
+                                    imaglist[index],
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              );
+                            },
+                          )
+                        : Center(child: CircularProgressIndicator()),
+                  ),
+                  const SizedBox(height: 8),
+                  Center(
+                    child: SmoothPageIndicator(
+                      controller: _pageController,
+                      count: imaglist.length,
+                      effect: WormEffect(
+                        dotHeight: 8,
+                        dotWidth: 8,
+                        spacing: 8,
+                        activeDotColor: Colors.orange,
+                        dotColor: Colors.grey,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
 
             // Novedades
-            if (mostrarNovedades) ...[
-              _buildNovedadesContenido(),
-            ],
-
-            // Categorías
-            if (mostrarCategorias) ...[
-              _buildSectionTitle('CATEGORÍAS'),
-              _buildHorizontalCards(categorias),
-            ],
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                  horizontal: 16.0, vertical: 8.0),
+              child: Text(
+                "Novedades",
+                style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black),
+              ),
+            ),
+            SizedBox(
+              height: 220,
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                children: [
+                  _buildProductCard(
+                      'BBQ', 'assets/Hamburguesa BBQ.jpeg', '\$16.000'),
+                  _buildProductCard('Doble Queso',
+                      'assets/Hamburgesa Doble Queso.jpeg', '\$15.000'),
+                  _buildProductCard(
+                      'BBQ', 'assets/Hamburguesa BBQ.jpeg', '\$18.000'),
+                ],
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 
- Widget _buildQuickLink(String label, VoidCallback onTap) {
-  return GestureDetector(
-    onTap: onTap,
-    child: Chip(
-      label: Text(
-        label,
-        style: TextStyle(
-          fontWeight: FontWeight.bold,
-         backgroundColor: Colors.white,
-          color: Color.fromRGBO(237, 88, 33, 1), // Texto naranja
-        ),
-      ),
-      backgroundColor: Colors.white, // Fondo blanco
-      shape: StadiumBorder(
-        side: BorderSide(color: Color.fromRGBO(237, 88, 33, 1)), // Borde naranja
-      ),
-      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-    ),
-  );
-}
-
-  Widget _buildSectionTitle(String title) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
-      child: Text(
-        title,
-        style: TextStyle(
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
-          color: Colors.black87,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildHorizontalCards(List<Map<String, String>> items) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
-      child: GridView.builder(
-        shrinkWrap: true,
-        physics: NeverScrollableScrollPhysics(),
-        itemCount: items.length,
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          crossAxisSpacing: 12,
-          mainAxisSpacing: 12,
-          childAspectRatio: 3 / 2,
-        ),
-        itemBuilder: (context, index) {
-
-          return GestureDetector(
-            onTap: () {
-              debugPrint('Tocaste: ${items[index]['titulo']}');
-            },
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black12,
-                    blurRadius: 4,
-                    offset: Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Expanded(
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
-                      child: Image.asset(
-                        items[index]['imagen']!,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 6.0),
-                    child: Center(
-                      child: Text(
-                        items[index]['titulo']!,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _buildNovedadesContenido() {
-    final novedades = [
-      Product(
-        id: 997,
-        name: 'Hamburguesa Doble',
-        description: 'Deliciosa hamburguesa con doble carne y queso',
-        price: 18000,
-        image: 'assets/Hamburgesa Doble Queso.jpeg',
-      ),
-      Product(
-        id: 998,
-        name: 'Pizza Pepperoni',
-        description: 'Pizza artesanal con pepperoni y queso mozzarella',
-        price: 22000,
-        image: 'assets/Pizza pepperoni.jpg',
-      ),
-      Product(
-        id: 999,
-        name: 'Taco De pollo',
-        description: 'taco de pollo con guacamole y pico de gallo',
-        price: 15000,
-        image: 'assets/Tacos de Pollo.jpg',
-      ),
-    ];
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildSectionTitle('NUEVO PRODUCTO'),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: GridView.builder(
-            shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
-            itemCount: novedades.length,
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              mainAxisSpacing: 12,
-              crossAxisSpacing: 12,
-              childAspectRatio: 0.75,
-            ),
-            itemBuilder: (context, index) {
-              final product = novedades[index];
-              return GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ProductDetailPage(product: product),
-                    ),
-                  );
-                },
-                child: Card(
-                  elevation: 4,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Expanded(
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
-                          child: Image.asset(
-                            product.image,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              product.name,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 15,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              product.description,
-                              style: const TextStyle(
-                                fontSize: 12,
-                                color: Colors.black54,
-                              ),
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            const SizedBox(height: 6),
-                            Text(
-                              '\$ ${product.price} COP',
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.green,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
+  Widget _buildProductCard(String title, String imagePath, String price) {
+    return Container(
+      width: 160,
+      margin: EdgeInsets.only(right: 12),
+      child: Card(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        elevation: 4,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Stack(
+              children: [
+                ClipRRect(
+                  borderRadius:
+                      BorderRadius.vertical(top: Radius.circular(12)),
+                  child: Image.asset(
+                    imagePath,
+                    height: 115,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
                   ),
                 ),
-              );
-            },
-          ),
+                Positioned(
+                  top: 8,
+                  left: 8,
+                  child: Container(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: Colors.redAccent,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      'Nuevo',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                title,
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                  horizontal: 8.0, vertical: 4.0),
+              child: Text(
+                price,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.green,
+                ),
+              ),
+            ),
+          ],
         ),
-        const SizedBox(height: 20),
-     _buildSectionTitle('NUEVO SERVICIO'),
-Padding(
-  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-  child: GridView.count(
-    crossAxisCount: 2,
-    shrinkWrap: true,
-    physics: NeverScrollableScrollPhysics(),
-    crossAxisSpacing: 12,
-    mainAxisSpacing: 12,
-    childAspectRatio: 3 / 2,
-    children: [
-      _buildNovedadCardConTexto('assets/domicilio moto.jpg', 'Domicilio'),
-    ],
-  ),
-),
-      ],
+      ),
     );
   }
-
-Widget _buildNovedadCardConTexto(String imagePath, String titulo) {
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.stretch,
-    children: [
-      Expanded(
-        child: Container(
-          decoration: BoxDecoration(
-            color: const Color.fromARGB(255, 226, 83, 31),
-            borderRadius: BorderRadius.circular(12),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black12,
-                blurRadius: 4,
-                offset: Offset(0, 2),
-              ),
-            ],
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(12),
-            child: Image.asset(
-              imagePath,
-              fit: BoxFit.cover,
-              width: double.infinity,
-            ),
-          ),
-        ),
-      ),
-      SizedBox(height: 6),
-      Center(
-        child: Text(
-          titulo,
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 13,
-          ),
-        ),
-      ),
-    ],
-  );
-}
 }
