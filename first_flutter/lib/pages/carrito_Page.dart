@@ -79,7 +79,7 @@ class CarritoPageState extends State<CarritoPage> {
                       if (item.image != null)
                         ClipRRect(
                           borderRadius: BorderRadius.circular(8),
-                          child: Image.asset(
+                          child: Image.network(
                             item.image!,
                             width: 80,
                             height: 80,

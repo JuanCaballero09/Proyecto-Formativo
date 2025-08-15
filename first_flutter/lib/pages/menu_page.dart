@@ -14,6 +14,7 @@ class _MenuPageState extends State<MenuPage> {
     {"titulo": "HAMBURGUESA", "imagen": "assets/Hamburguesa sencilla.jpg"},
     {"titulo": "TACO", "imagen": "assets/Tacos de Pollo.jpg"},
     {"titulo": "ENSALADA", "imagen": "assets/Ensalada Cesar.jpg"},
+    {"titulo": "SALCHIPAPA", "imagen": " "},
   ];
 
   @override

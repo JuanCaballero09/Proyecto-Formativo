@@ -26,14 +26,14 @@ class WelcomePage extends StatelessWidget {
               const Text(
                 'Bienvenido A Bitevia',
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily:'Arial', ),
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily:'Arial', color: Colors.white),
               ),
   
 
               const Text(
                 '¡Disfruta De Una Experiencia Única!',
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal, fontFamily:'Arial'),
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal, fontFamily:'Arial', color: Colors.white),
               ),
               const SizedBox(height: 15),
 
