@@ -14,7 +14,7 @@ class _MenuPageState extends State<MenuPage> {
     {"titulo": "HAMBURGUESA", "imagen": "assets/Hamburguesa sencilla.jpg"},
     {"titulo": "TACO", "imagen": "assets/Tacos de Pollo.jpg"},
     {"titulo": "ENSALADA", "imagen": "assets/Ensalada Cesar.jpg"},
-    {"titulo": "SALCHIPAPA", "imagen": " "},
+    {"titulo": "SALCHIPAPA", "imagen": ""},
   ];
 
   @override
@@ -144,6 +144,14 @@ class _MenuPageState extends State<MenuPage> {
                   height: double.infinity,
                   width: double.infinity,
                   fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      color: Colors.grey[300],
+                      child: const Center(
+                        child: Icon(Icons.broken_image, size: 50, color: Colors.grey),
+                      ),
+                    );
+                  },
                 ),
               ),
               // Overlay con gradiente
