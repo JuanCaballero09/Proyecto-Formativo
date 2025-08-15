@@ -347,6 +347,9 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                       decoration: InputDecoration(
                         labelText: 'Correo electrónico',
                         hintText: 'ejemplo@correo.com',
+                        hintStyle: TextStyle(
+                          color: Colors.grey[600],
+                        ),
                         filled: true,
                         fillColor: Colors.white,
                         prefixIcon: const Icon(Icons.email_outlined, 
@@ -408,6 +411,9 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                       decoration: InputDecoration(
                         labelText: 'Contraseña',
                         hintText: 'Ingresa tu contraseña',
+                        hintStyle: TextStyle(
+                          color: Colors.grey[600],
+                        ),
                         filled: true,
                         fillColor: Colors.white,
                         prefixIcon: const Icon(Icons.lock_outline, 
