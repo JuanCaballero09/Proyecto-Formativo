@@ -1272,6 +1272,7 @@ input:focus{outline: none;}
     transition: all 0.3s, color 0.3s;
     border: 1px solid;
     width: fit-content;
+
 }
 
 .product-card a:hover, .btn-eliminar:hover{
@@ -1279,6 +1280,17 @@ input:focus{outline: none;}
     background-color: var(--base-oscuro);
     color: var(--blanco);
     border: 1px solid var(--base-oscuro);
+
+    .btn-refresh{
+        filter: brightness(0) invert(1);
+    }
+}
+
+.btn-refresh{
+    width: 20px; 
+    height: 20px; 
+    filter: invert(19%) sepia(96%) saturate(3220%) hue-rotate(14deg) brightness(80%) contrast(95%);
+    transition: filter 0.3s;
 }
 
 .btn-aggr{
@@ -1811,7 +1823,7 @@ input:focus{outline: none;}
 
 .orders-table {
     width: 90%;
-    max-width: 900px;
+    max-width: fit-content;
     margin: 0 auto 40px auto;
     border-collapse: collapse;
     font-family: inherit;
@@ -1908,6 +1920,85 @@ input:focus{outline: none;}
     font-weight: 600;
     margin: 5px auto;
 }
+
+/* Vista de ordenes empleados */
+
+.vista {
+  height: 100%;
+  width: 100%;
+  overflow-y: auto; /* Activa scroll vertical */
+  overflow-x: hidden; /* Evita scroll horizontal innecesario */
+  box-sizing: border-box;
+}
+
+.vista:fullscreen {
+  height: 100%;
+  width: 100%;
+  overflow-y: auto; /* scroll habilitado en fullscreen */
+  overflow-x: hidden;
+  background-color: black; /* para mantener el estilo que ya usas */
+  padding: 10px;
+}
+
+.orders-employee-header{
+    display: flex;
+    position: sticky;
+    top: 1px;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background-color: var(--base);
+    color: white;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+
+.orders-employee-header h1 {
+    margin: 0;
+    font-size: 24px;
+    color: white;
+}
+
+.orders-employee-header .btn-eliminar{
+    background-color: var(--blanco);
+    border: 2px solid var(--base-oscuro);
+}
+
+.orders-employee-header .btn-eliminar:hover{
+    background-color: var(--base-oscuro);
+    color: var(--blanco);
+    border: 2px solid var(--blanco);
+}
+
+.order-carts{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, max-content));
+    gap: 15px;
+}
+
+.order-cart{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: fit-content;
+    border: 2px solid var(--base-oscuro);
+    border-radius: 15px;
+    padding: 10px;
+}
+
+.order-producto-carta{
+    padding: 10px;
+    border-radius: 15px;
+    border: 2px solid var(--base-oscuro);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.order-producto-carta p{
+    margin: 0;
+}
+
 
 /* Iconos cambio idioma */
 

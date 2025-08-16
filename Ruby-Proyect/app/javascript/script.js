@@ -113,7 +113,7 @@ function movecarousel () {
   const offset = index * slide[0].clientWidth;
   track.style.transform = `translateX(-${offset}px)`;  
 }
-setInterval(movecarousel, 10000);
+setInterval(movecarousel, 3500);
 
 
 

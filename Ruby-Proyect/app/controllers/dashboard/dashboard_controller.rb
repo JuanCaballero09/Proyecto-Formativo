@@ -12,21 +12,30 @@ class Dashboard::DashboardController < ApplicationController
   private
 
   def check_admin
-    unless current_user.admin? # Verifica si el usuario tiene rol admin
-      redirect_to root_path, alert: "No tienes acceso a esta página." # Redirige si no es admin
+    if current_user.admin?
+      true
+    else
+      false
     end
   end
 
   def check_employee
-    unless current_user.empleado? # Verifica si el usuario tiene rol empleado
-      redirect_to root_path, alert: "No tienes acceso a esta página." # Redirige si no es empleado
+    if current_user.empleado?
+      # Evitamos bucle si ya está en la ruta de employee
+      unless request.path == employee_dashboard_orders_path
+        redirect_to employee_dashboard_orders_path, notice: "Bienvenido al dashboard de empleado."
+      end
+      true
+    else
+      false
     end
   end
 
   def check_access
-    return if current_user.admin? || current_user.empleado? # Permite acceso si es admin o empleado
+    return true if check_admin
+    return true if check_employee
 
-    redirect_to root_path, alert: "No tienes acceso a esta página." # Redirige si no es admin ni empleado
+    redirect_to root_path, alert: "No tienes acceso a esta página."
   end
 
   def load_charts_data

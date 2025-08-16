@@ -2,12 +2,18 @@
 
   <section class="custom-carousel">
     <div class="carousel-track" id="carouselTrack">
-      <% Banner.order(:id).each do |banner| %>
-        <% if banner.imagen.attached? %>
-          <div class="carousel-slide">
-            <%= image_tag banner.imagen, class: "carousel-image", alt: "Banner" %>
-          </div>
+      <% if Banner.any? %>
+        <% Banner.order(:id).each do |banner| %>
+          <% if banner.imagen.attached? %>
+            <div class="carousel-slide">
+              <%= image_tag banner.imagen, class: "carousel-image", alt: "Banner" %>
+            </div>
+          <% end %>
         <% end %>
+      <% else %>
+        <div class="carousel-slide">
+          <%= image_tag "LogoLogoText.svg", class: "carousel-image", alt: "Banner por defecto" %>
+        </div>
       <% end %>
     </div>
   </section>

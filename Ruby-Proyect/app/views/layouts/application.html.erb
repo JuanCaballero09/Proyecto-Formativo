@@ -43,10 +43,8 @@
           <%= link_to t("home.navbar.categorias"), grupos_path %>
 
           <% if current_user %>
-            <% if current_user.admin? %>
+            <% if current_user.admin? or current_user.empleado? %>
               <%= link_to t("home.navbar.panel_de_administracion"), dashboard_root_path%>
-            <% else if current_user.empleado? %>
-              <%= link_to t("home.navbar.panel_de_empleado"), dashboard_root_path %>
             <% end %>
           <% end %>
         </div>
