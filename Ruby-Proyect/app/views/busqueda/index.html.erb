@@ -7,7 +7,7 @@
     <h3>Grupos encontrados</h3>
     <section class="grupos" style="padding: 0;">
       <% @grupos.each do |grupo| %>
-        <%= link_to grupo_path(grupo), class: "grupo-carta", style: "max-width: 350px;" do %>
+        <%= link_to grupo_products_path(grupo), class: "grupo-carta", style: "max-width: 350px;" do %>
           <div class="grupo-imagen">
             <% if grupo.imagen.attached? %>
               <%= image_tag url_for(grupo.imagen), alt: grupo.nombre %>
