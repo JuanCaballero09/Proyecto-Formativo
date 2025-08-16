@@ -1926,17 +1926,17 @@ input:focus{outline: none;}
 .vista {
   height: 100%;
   width: 100%;
-  overflow-y: auto; /* Activa scroll vertical */
-  overflow-x: hidden; /* Evita scroll horizontal innecesario */
+  overflow-y: auto;
+  overflow-x: hidden;
   box-sizing: border-box;
 }
 
 .vista:fullscreen {
   height: 100%;
   width: 100%;
-  overflow-y: auto; /* scroll habilitado en fullscreen */
+  overflow-y: auto; 
   overflow-x: hidden;
-  background-color: black; /* para mantener el estilo que ya usas */
+  background-color: black;
   padding: 10px;
 }
 
@@ -1955,7 +1955,7 @@ input:focus{outline: none;}
 
 .orders-employee-header h1 {
     margin: 0;
-    font-size: 24px;
+    font-size: 30px;
     color: white;
 }
 
@@ -1972,7 +1972,7 @@ input:focus{outline: none;}
 
 .order-carts{
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, max-content));
+    grid-template-columns: repeat(auto-fit, minmax(380px, max-content));
     gap: 15px;
 }
 

@@ -1,41 +1,30 @@
-<button id="btn-fullscreen" class="btn-eliminar" style="padding: 20px">Pantalla completa</button>
+<button id="btn-fullscreen" class="btn-eliminar" style="padding: 20px; font-weight: bold;">Pantalla completa</button>
 
 <section id="vista" class="vista">
-    <div class="orders-employee-header">
+    <div class="orders-employee-header" id="header">
         <h1 class="orders-title">Órdenes</h1>
-        <button id="btn-exit-fullscreen" class="btn-eliminar" style="display: none;">Salir</button>
+        <button id="btn-exit-fullscreen" class="btn-eliminar" style="display: none; font-size: 25px;f ont-weight: bold;">Salir</button>
     </div>
 
     <div class="order-carts">
         <% @orders.each do |orders| %>
             <div class="order-cart">
                 <h2><%= orders.code %></h2>
-                <p><%= orders.created_at.strftime("%d/%m/%Y %H:%M") %></p>
-                <p class="<%= "status-#{orders.status}" %>"><span><%= orders.status.humanize %></span></p>
-                <p><strong>Cliente:</strong> <%= orders.user.nombre %> <%= orders.user.apellido %></p>
+                <p style="font-size: 20px; margin: 0;"><%= orders.created_at.strftime("%d/%m/%Y %H:%M") %></p>
+                <p class="<%= "status-#{orders.status}" %>" style="font-size: 20px;"><span><%= orders.status.humanize %></span></p>
+                <p style="font-size: 20px; margin: 8px;"><strong>Cliente:</strong> <%= orders.user.nombre %> <%= orders.user.apellido %></p>
 
-                <strong style="margin-bottom: 10px;">Producto:</strong>
+                <strong style="margin-bottom: 10px; font-size: 23px;">Producto:</strong>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                     <% orders.order_items.each do |oi| %>
                         <div class="order-producto-carta">
-                            <p style="margin-bottom: 0;"><%= oi.product.nombre %></p>
-                            <p style="margin: 0 auto;"><strong>Cantidad:</strong> <%= oi.quantity %></p>
+                            <p style="margin: 0 auto; font-size: 18px;"><strong>Cantidad:</strong> <%= oi.quantity %></p>
+                            <p style="margin-bottom: 0; font-size: 25px; text-align: center;"><%= oi.product.nombre %></p>
                         </div>
                     <% end %>
                 </div> 
                 <div class="orden">
                 
-
-                <%= form_with url: cambiar_estado_dashboard_order_path(orders), method: :patch, local: true do |f| %>
-                    <%= hidden_field_tag :estado, "en_preparacion" %>
-                    <%= f.submit "Poner en preparación", class: "btn btn-primary" %>
-                <% end %>
-
-
-                <!-- Botón cancelar siempre visible -->
-                <%= form_with url: cancelar_dashboard_order_path(orders), method: :patch, local: true do |f| %>
-                    <%= f.submit "Cancelar", class: "btn btn-danger", data: { confirm: "¿Seguro que quieres cancelar esta orden?" } %>
-                <% end %>
                 </div>
             </div>
         <% end %>
@@ -44,87 +33,90 @@
 
 <script>
 document.addEventListener("turbo:load", function () {
-  const vista = document.getElementById("vista");
-  const cartas = document.querySelectorAll(".order-cart");
+    const vista = document.getElementById("vista");
+    const cartas = document.querySelectorAll(".order-cart");
+    const header = document.getElementById("header");
 
-  if (vista) {
-    const btnFull = document.getElementById("btn-fullscreen");
-    const btnExit = document.getElementById("btn-exit-fullscreen");
+    if (vista) {
+        const btnFull = document.getElementById("btn-fullscreen");
+        const btnExit = document.getElementById("btn-exit-fullscreen");
 
-    // Función para entrar a pantalla completa
-    const enterFullscreen = () => {
-      if (vista.requestFullscreen) {
-        vista.requestFullscreen();
-      } else if (vista.webkitRequestFullscreen) {
-        vista.webkitRequestFullscreen();
-      } else if (vista.msRequestFullscreen) {
-        vista.msRequestFullscreen();
-      }
-    };
+        // Función para entrar a pantalla completa
+        const enterFullscreen = () => {
+            if (vista.requestFullscreen) {
+                vista.requestFullscreen();
+            } else if (vista.webkitRequestFullscreen) {
+                vista.webkitRequestFullscreen();
+            } else if (vista.msRequestFullscreen) {
+                vista.msRequestFullscreen();
+            }
+        };
 
-    // Función para salir de pantalla completa
-    const exitFullscreen = () => {
-      if (document.exitFullscreen) {
-        document.exitFullscreen();
-      } else if (document.webkitExitFullscreen) {
-        document.webkitExitFullscreen();
-      } else if (document.msExitFullscreen) {
-        document.msExitFullscreen();
-      }
-    };
+        // Función para salir de pantalla completa
+        const exitFullscreen = () => {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.webkitExitFullscreen) {
+                document.webkitExitFullscreen();
+            } else if (document.msExitFullscreen) {
+                document.msExitFullscreen();
+            }
+        };
 
-    // Función para aplicar estilos cuando entra fullscreen
-    const aplicarEstilosFullscreen = () => {
-      btnExit.style.display = "block";
-      vista.style.backgroundColor = "black";
-      cartas.forEach(c => c.style.color = "white");
-    };
+        // Función para aplicar estilos cuando entra fullscreen
+        const aplicarEstilosFullscreen = () => {
+            btnExit.style.display = "block";
+            vista.style.backgroundColor = "black";
+            header.style.backgroundColor = "#9D2E06"
+            cartas.forEach(c => c.style.color = "white");
+        };
 
-    // Función para resetear estilos al salir fullscreen
-    const resetEstilos = () => {
-      btnExit.style.display = "none";
-      vista.style.backgroundColor = "transparent";
-      cartas.forEach(c => c.style.color = "black");
-    };
+        // Función para resetear estilos al salir fullscreen
+        const resetEstilos = () => {
+            btnExit.style.display = "none";
+            vista.style.backgroundColor = "transparent";
+            header.style.backgroundColor = "#ED5821"
+            cartas.forEach(c => c.style.color = "black");
+        };
 
-    // Eventos de botones
-    if (btnFull) {
-      btnFull.addEventListener("click", () => {
-        enterFullscreen();
-      });
+        // Eventos de botones
+        if (btnFull) {
+            btnFull.addEventListener("click", () => {
+                enterFullscreen();
+            });
+        }
+
+        if (btnExit) {
+            btnExit.addEventListener("click", () => {
+                exitFullscreen();
+            });
+        }
+
+        // Detectar cambios de pantalla completa (ESC, F11, botón del navegador o botón custom)
+        document.addEventListener("fullscreenchange", () => {
+            if (document.fullscreenElement) {
+                aplicarEstilosFullscreen();
+            } else {
+                resetEstilos();
+            }
+        });
+
+        // Compatibilidad con navegadores viejos
+        document.addEventListener("webkitfullscreenchange", () => {
+            if (document.webkitFullscreenElement) {
+                aplicarEstilosFullscreen();
+            } else {
+                resetEstilos();
+            }
+        });
+
+        document.addEventListener("msfullscreenchange", () => {
+            if (document.msFullscreenElement) {
+                aplicarEstilosFullscreen();
+            } else {
+                resetEstilos();
+            }
+        });
     }
-
-    if (btnExit) {
-      btnExit.addEventListener("click", () => {
-        exitFullscreen();
-      });
-    }
-
-    // Detectar cambios de pantalla completa (ESC, F11, botón del navegador o botón custom)
-    document.addEventListener("fullscreenchange", () => {
-      if (document.fullscreenElement) {
-        aplicarEstilosFullscreen();
-      } else {
-        resetEstilos();
-      }
-    });
-
-    // Compatibilidad con navegadores viejos
-    document.addEventListener("webkitfullscreenchange", () => {
-      if (document.webkitFullscreenElement) {
-        aplicarEstilosFullscreen();
-      } else {
-        resetEstilos();
-      }
-    });
-
-    document.addEventListener("msfullscreenchange", () => {
-      if (document.msFullscreenElement) {
-        aplicarEstilosFullscreen();
-      } else {
-        resetEstilos();
-      }
-    });
-  }
 });
 </script>
