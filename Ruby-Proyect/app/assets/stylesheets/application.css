@@ -1911,9 +1911,11 @@ input:focus{outline: none;}
 
 /* Iconos cambio idioma */
 
-.iconos-idomas{
+.idiomas-iconos{
     display: flex;
-    align-items: center;
+    position: absolute;
+    right: 320px;
+    
 }
 
 .flag-icon{

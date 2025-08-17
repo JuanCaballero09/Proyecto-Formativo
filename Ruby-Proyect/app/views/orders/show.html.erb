@@ -8,20 +8,20 @@
   </h1>
 
 
-  <p><strong>Cliente:</strong> <%= @order.user.nombre %> <%= @order.user.apellido %></p>
-  <p><strong>Estado:</strong> <%= @order.status %></p>
+  <p><strong><%= t("home.order.cliente")%></strong> <%= @order.user.nombre %> <%= @order.user.apellido %></p>
+  <p><strong><%= t("home.order.estado")%></strong> <%= @order.status %></p>
 
-  <h2>Productos</h2>
+  <h2><%= t("home.order.or_producto")%></h2>
   
   <div class="order-tabla-container">
     <table class="order-tabla-products">
       <thead>
         <tr>
-          <th>Imagen</th>
-          <th>Producto</th>
-          <th>Cantidad</th>
-          <th>Precio unitario</th>
-          <th>Total</th>
+          <th><%= t("home.order.imagen")%></th>
+          <th><%= t("home.order.or_producto")%></th>
+          <th><%= t("home.order.cantidad")%></th>
+          <th><%= t("home.order.precio")%></th>
+          <th><%= t("home.order.total")%></th>
         </tr>
       </thead>
       <tbody>
@@ -38,7 +38,7 @@
     </table>
   </div>
 
-  <p><strong>Total a pagar:</strong> <%= number_to_currency(@order.total, unit: "COP ", separator: ",", delimiter: ".") %></p>
+  <p><strong><%= t("home.order.total_pagar")%></strong> <%= number_to_currency(@order.total, unit: "COP ", separator: ",", delimiter: ".") %></p>
 
   <!-- Botón de pago (por integrar) -->
   
