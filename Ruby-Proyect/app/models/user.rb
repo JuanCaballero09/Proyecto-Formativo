@@ -27,4 +27,14 @@ class User < ApplicationRecord
   def active_for_authentication?
     super && (confirmed? || admin?)
   end
+
+  # Registra ultimo acceso
+  def after_database_authentication
+    self.update_column(:ultimo_acceso, Time.current)
+  end
+
+  # Logica para usuario inactivos por mas de un mes
+  def inactive_for_a_month?
+    ultimo_acceso.present? && ultimo_acceso < 1.month.ago
+  end
 end

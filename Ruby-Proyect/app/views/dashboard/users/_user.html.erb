@@ -1,0 +1,28 @@
+<div id="<%= dom_id(user) %>" class="user-card user-row" data-nombre="<%= user.nombre %>" data-apellido="<%= user.apellido %>" data-email="<%= user.email %>" data-rol="<%= user.rol %>">
+    <div class="user-details">
+        <p><strong>Nombre:</strong> <%= user.nombre %> <%= user.apellido %></p>
+        <p><strong>Email:</strong> <%= user.email %></p>
+        <p><strong>Último acceso:</strong> <%= user.ultimo_acceso.present? ? user.ultimo_acceso.strftime("%d-%m-%Y %H:%M") : 'Nunca' %>
+        <%= content_tag(:span, ' (Inactivo)', class: 'status-inactive') if user.inactive_for_a_month? %>
+        </p>
+        <p><strong>Estado:</strong>
+            <span class="status-<%= user.activo? ? 'active' : 'inactive' %>">
+                <%= user.activo? ? 'Activo' : 'Inactivo' %>
+            </span>
+        </p>
+    </div>
+
+    <div class="user-actions">
+        <div class="user-controls-group">
+            <%= form_with(model: user, url: dashboard_user_path(user), method: :patch) do |f| %>
+                <%= f.select :rol, User.rols.keys.map { |rol| [rol.titleize, rol] }, {}, { class: "form-control" } %>
+                <%= f.submit "Actualizar Rol", class: "btn-action btn-primary" %>
+            <% end %>
+            
+            <%= form_with(model: user, url: dashboard_user_path(user), method: :patch, data: { turbo_stream: true }) do |f| %>
+                <%= f.hidden_field :activo, value: !user.activo? %>
+                <%= f.submit user.activo? ? "Desactivar" : "Activar", class: "btn-action btn-#{user.activo? ? 'danger' : 'success'}" %>
+            <% end %>
+        </div>
+    </div>
+</div>

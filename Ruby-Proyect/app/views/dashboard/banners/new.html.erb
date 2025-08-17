@@ -1,14 +1,16 @@
-<h1>Agregar imagen al Banner</h1>
+<section>
+    <h2>Agregar imagen al Banner</h2>
 
-<%= form_with model: [:dashboard, @banner], local: true, html: { class: "dashboard-form" } do |f| %>
-    
-    <div class="field">
-        <%= f.label :imagen %>
-        <%= f.file_field :imagen %>
-    </div>
+    <%= form_with model: [:dashboard, @banner], local: true, html: { class: "dashboard-form" } do |f| %>
+        
+        <div class="field">
+            <%= f.label :imagen %>
+            <%= f.file_field :imagen %>
+        </div>
 
-    <div>
-        <%= f.submit "Subir imagen" %>
-        <%= link_to 'Volver', dashboard_banners_path %>
-    </div>
-<% end %>
+        <div>
+            <%= f.submit "Subir imagen" %>
+            <%= link_to 'Volver', dashboard_banners_path %>
+        </div>
+    <% end %>
+</section>

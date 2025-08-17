@@ -114,7 +114,3 @@ function movecarousel () {
   track.style.transform = `translateX(-${offset}px)`;  
 }
 setInterval(movecarousel, 3500);
-
-
-
-

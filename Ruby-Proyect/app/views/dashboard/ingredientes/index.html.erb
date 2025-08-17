@@ -1,35 +1,38 @@
-<h1>Lista de Ingredientes</h1>
-<div style="display: flex; justify-content: space-between; align-items: center; flex-direction: row; margin-bottom: 20px;">
-    <%= link_to "Nuevo Ingrediente", new_dashboard_ingrediente_path, class: "btn-aggr" %>
-    <%= form_with url: dashboard_ingredientes_path, method: :get, local: true, html: {class: "buscador"} do %>
-        <%= search_field_tag :query, params[:query], placeholder: "Buscar ingrediente...", autocomplete: "off", id: "buscador-ingredientes" %>
-    <% end %>
-</div>
-<br>
+<section>
+  <h2>Lista de Ingredientes</h2>
 
-<% if @ingredientes.any? %>
-  <% @ingredientes.each do |ingrediente| %>
-    <div class="dashboard-ingrediente" data-nombre="<%= I18n.transliterate(ingrediente.nombre.downcase) %>">
-      <div class="grupo-info-dashboard">
-        <strong><%= ingrediente.nombre %></strong>
-        <p>/</p>
-        <p>Id: <%= ingrediente.id %></p>
+  <div style="display: flex; justify-content: space-between; align-items: center; flex-direction: row; margin-bottom: 20px;">
+      <%= link_to "Nuevo Ingrediente", new_dashboard_ingrediente_path, class: "btn-aggr" %>
+      <%= form_with url: dashboard_ingredientes_path, method: :get, local: true, html: {class: "buscador"} do %>
+          <%= search_field_tag :query, params[:query], placeholder: "Buscar ingrediente...", autocomplete: "off", id: "buscador-ingredientes" %>
+      <% end %>
+  </div>
+  <br>
+
+  <% if @ingredientes.any? %>
+    <% @ingredientes.each do |ingrediente| %>
+      <div class="dashboard-ingrediente" data-nombre="<%= I18n.transliterate(ingrediente.nombre.downcase) %>">
+        <div class="grupo-info-dashboard">
+          <strong><%= ingrediente.nombre %></strong>
+          <p>/</p>
+          <p>Id: <%= ingrediente.id %></p>
+        </div>
+        <div class="dashboard-acciones">
+          <%= link_to "Editar", edit_dashboard_ingrediente_path(ingrediente), class: "btn-editar" %>
+          <%= button_to "Eliminar", dashboard_ingrediente_path(ingrediente), method: :delete, data: { confirm: "¿Estás seguro de que quieres eliminar este Ingrediente?" }, class: "btn-eliminar" %>
+        </div>
       </div>
-      <div class="dashboard-acciones">
-        <%= link_to "Editar", edit_dashboard_ingrediente_path(ingrediente), class: "btn-editar" %>
-        <%= button_to "Eliminar", dashboard_ingrediente_path(ingrediente), method: :delete, data: { confirm: "¿Estás seguro de que quieres eliminar este Ingrediente?" }, class: "btn-eliminar" %>
-      </div>
+    <% end %>
+
+    <div id="sin-resultados-ingredientes" style="display: none; text-align: center; margin-top: 20px; color: gray;">
+      No se encontraron ingredientes.
+    </div>
+  <% else %>
+    <div style="text-align: center; margin-top: 20px; color: gray;">
+      No hay ingredientes registrados.
     </div>
   <% end %>
-
-  <div id="sin-resultados-ingredientes" style="display: none; text-align: center; margin-top: 20px; color: gray;">
-    No se encontraron ingredientes.
-  </div>
-<% else %>
-  <div style="text-align: center; margin-top: 20px; color: gray;">
-    No hay ingredientes registrados.
-  </div>
-<% end %>
+</section>
 
 <script>
   document.addEventListener("turbo:load", function () {
