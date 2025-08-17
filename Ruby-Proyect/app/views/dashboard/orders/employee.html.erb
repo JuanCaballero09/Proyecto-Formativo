@@ -1,3 +1,5 @@
+
+
 <button id="btn-fullscreen" class="btn-eliminar" style="padding: 20px; font-weight: bold;">Pantalla completa</button>
 
 <section id="vista" class="vista">
@@ -7,114 +9,43 @@
     </div>
 
     <div class="order-carts">
-        <% @orders.each do |orders| %>
-            <div class="order-cart">
-                <h2><%= orders.code %></h2>
-                <p style="font-size: 20px; margin: 0;"><%= orders.created_at.strftime("%d/%m/%Y %H:%M") %></p>
-                <p class="<%= "status-#{orders.status}" %>" style="font-size: 20px;"><span><%= orders.status.humanize %></span></p>
-                <p style="font-size: 20px; margin: 8px;"><strong>Cliente:</strong> <%= orders.user.nombre %> <%= orders.user.apellido %></p>
-
-                <strong style="margin-bottom: 10px; font-size: 23px;">Producto:</strong>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                    <% orders.order_items.each do |oi| %>
-                        <div class="order-producto-carta">
-                            <p style="margin: 0 auto; font-size: 18px;"><strong>Cantidad:</strong> <%= oi.quantity %></p>
-                            <p style="margin-bottom: 0; font-size: 25px; text-align: center;"><%= oi.product.nombre %></p>
-                        </div>
-                    <% end %>
-                </div> 
-                <div class="orden">
-                
-                </div>
-            </div>
-        <% end %>
+        <%= render partial: "dashboard/orders/order", collection: @orders, as: :order %>
     </div>
 </section>
 
 <script>
-document.addEventListener("turbo:load", function () {
+document.addEventListener("turbo:load", function() {
     const vista = document.getElementById("vista");
     const header = document.getElementById("header");
-    const cartas = document.querySelectorAll(".order-cart");
+    const btnFull = document.getElementById("btn-fullscreen");
+    const btnExit = document.getElementById("btn-exit-fullscreen");
 
     if (vista) {
-        const btnFull = document.getElementById("btn-fullscreen");
-        const btnExit = document.getElementById("btn-exit-fullscreen");
-
-        // Función para entrar a pantalla completa
-        const enterFullscreen = () => {
-            if (vista.requestFullscreen) {
-                vista.requestFullscreen();
-            } else if (vista.webkitRequestFullscreen) {
-                vista.webkitRequestFullscreen();
-            } else if (vista.msRequestFullscreen) {
-                vista.msRequestFullscreen();
-            }
-        };
-
-        // Función para salir de pantalla completa
-        const exitFullscreen = () => {
-            if (document.exitFullscreen) {
-                document.exitFullscreen();
-            } else if (document.webkitExitFullscreen) {
-                document.webkitExitFullscreen();
-            } else if (document.msExitFullscreen) {
-                document.msExitFullscreen();
-            }
-        };
-
-        // Función para aplicar estilos cuando entra fullscreen
-        const aplicarEstilosFullscreen = () => {
-            btnExit.style.display = "block";
-            vista.style.backgroundColor = "black";
-            header.style.backgroundColor = "#9D2E06"
-            cartas.forEach(c => c.style.color = "white");
-        };
-
-        // Función para resetear estilos al salir fullscreen
-        const resetEstilos = () => {
-            btnExit.style.display = "none";
-            vista.style.backgroundColor = "transparent";
-            header.style.backgroundColor = "#ED5821"
-            cartas.forEach(c => c.style.color = "black");
-        };
-
         // Eventos de botones
         if (btnFull) {
             btnFull.addEventListener("click", () => {
-                enterFullscreen();
+                if (vista.requestFullscreen) {
+                    vista.requestFullscreen();
+                }
             });
         }
 
         if (btnExit) {
             btnExit.addEventListener("click", () => {
-                exitFullscreen();
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
             });
         }
 
-        // Detectar cambios de pantalla completa (ESC, F11, botón del navegador o botón custom)
+        // Detectar cambios de pantalla completa
         document.addEventListener("fullscreenchange", () => {
             if (document.fullscreenElement) {
-                aplicarEstilosFullscreen();
+                vista.classList.add("pantalla-completa");
+                btnExit.style.display = "block";
             } else {
-                resetEstilos();
-            }
-        });
-
-        // Compatibilidad con navegadores viejos
-        document.addEventListener("webkitfullscreenchange", () => {
-            if (document.webkitFullscreenElement) {
-                aplicarEstilosFullscreen();
-            } else {
-                resetEstilos();
-            }
-        });
-
-        document.addEventListener("msfullscreenchange", () => {
-            if (document.msFullscreenElement) {
-                aplicarEstilosFullscreen();
-            } else {
-                resetEstilos();
+                vista.classList.remove("pantalla-completa");
+                btnExit.style.display = "none";
             }
         });
     }

@@ -35,7 +35,7 @@ class Dashboard::DashboardController < ApplicationController
     return true if check_admin
     return true if check_employee
 
-    redirect_to root_path, alert: "No tienes acceso a esta página."
+    redirect_to root_path, alert: "No tienes acceso a esta página." # Redirige si no es admin ni empleado
   end
 
   def load_charts_data

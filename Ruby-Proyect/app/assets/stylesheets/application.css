@@ -856,6 +856,8 @@ input:focus{outline: none;}
     
 }
 
+.dashboard-container p{margin: 0;}
+
 .sidebar {
     background-color: var(--base);
     width: 220px;
@@ -872,6 +874,7 @@ input:focus{outline: none;}
 
 .sidebar h2 {
     margin: 0 0 20px 0;
+    font-weight: bold;
 }
 
 .sidebar a {
@@ -1940,6 +1943,27 @@ input:focus{outline: none;}
   padding: 10px;
 }
 
+/* Estilos para el modo de pantalla completa */
+.vista.pantalla-completa {
+    background-color: black;
+}
+
+.vista.pantalla-completa .orders-employee-header {
+    background-color: #9D2E06;
+}
+
+.vista.pantalla-completa .orders-title,
+.vista.pantalla-completa .order-cart {
+    color: white;
+}
+
+/* Para que los párrafos y otros elementos también hereden el color */
+.vista.pantalla-completa .order-cart h2,
+.vista.pantalla-completa .order-cart p,
+.vista.pantalla-completa .order-cart strong {
+    color: white;
+}
+
 .orders-employee-header{
     display: flex;
     position: sticky;
@@ -1972,7 +1996,7 @@ input:focus{outline: none;}
 
 .order-carts{
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(380px, max-content));
+    grid-template-columns: repeat(auto-fit, minmax(385px, max-content));
     gap: 15px;
 }
 
@@ -1980,6 +2004,7 @@ input:focus{outline: none;}
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: space-between;
     width: fit-content;
     border: 2px solid var(--base-oscuro);
     border-radius: 15px;
@@ -1997,6 +2022,12 @@ input:focus{outline: none;}
 
 .order-producto-carta p{
     margin: 0;
+}
+
+.btn-orden{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 
