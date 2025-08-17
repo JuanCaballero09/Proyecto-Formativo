@@ -28,7 +28,15 @@ Rails.application.routes.draw do
     resources :grupos, path: "grupos"
     resources :ingredientes
     resources :banners
-    resources :orders
+    resources :orders do
+      collection do
+        get :employee
+      end
+      member do
+        patch :cambiar_estado
+        patch :cancelar
+      end
+    end
     resources :products, path: "productos" do
       member do
         patch :toggle_disponibilidad

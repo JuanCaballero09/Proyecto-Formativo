@@ -6,7 +6,7 @@ class ApplicationController < ActionController::Base
 
   layout :layout_by_resource
 
-  def change_locale 
+  def change_locale
     session[:locale] = params[:locale]
     redirect_back(fallback_location: root_path)
   end
@@ -29,9 +29,9 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  def set_locale 
+  def set_locale
     I18n.locale = params[:locale] || session[:locale] || I18n.default_locale
-  end 
+  end
 
 
   protected

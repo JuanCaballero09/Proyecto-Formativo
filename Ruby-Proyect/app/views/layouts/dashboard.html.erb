@@ -10,7 +10,8 @@
 
   <link rel="icon" href="<%= asset_path('LogoLogo.svg') %>" type="image/svg+xml">
   <link rel="apple-touch-icon" href="<%= asset_path('LogoLogo.svg') %>" type="image/svg+xml">
-
+  
+  <%= stylesheet_link_tag "bootstrap.min", "data-turbo-track": "reload" %>
 
 </head>
 <body>
@@ -23,40 +24,52 @@
       </div>
 
       <h2>Panel</h2>
+
+      <% if current_user.empleado? %>
+
+        <p>Bienvenido, <%= current_user.nombre %>!</p>
+
+        <%= link_to "Órdenes", employee_dashboard_orders_path %>
       
-      <%= link_to t("home.dashboard.dash"), dashboard_root_path %>
-      <%= link_to "Órdenes", dashboard_orders_path %>
+      <% elsif current_user.admin? %>
       
-      <details>
-        <summary><%= t("home.dashboard.banner")%></summary>
-          <%= link_to t("home.dashboard.ver_banners"), dashboard_banners_path%>
-          <%= link_to t("home.dashboard.crear_banner"), new_dashboard_banner_path%>
-      </details>
+        <p>Bienvenido, <%= current_user.nombre %>!</p>
 
-
-      <details>
-        <summary><%= t("home.dashboard.producto")%></summary>
-
-          <%= link_to t("home.dashboard.ver_productos"), dashboard_products_path %>
-          <%= link_to t("home.dashboard.crear_producto"), new_dashboard_product_path %>
-
-      </details>
-
-      <details>
-        <summary><%= t("home.dashboard.grupos")%></summary>
+        <%= link_to t("home.dashboard.dash"), dashboard_root_path %>
+        <%= link_to "Órdenes", dashboard_orders_path %>
         
-          <%= link_to t("home.dashboard.ver_grupos"), dashboard_grupos_path %>
-          <%= link_to t("home.dashboard.crear_grupo"), new_dashboard_grupo_path %>
+        <details>
+          <summary><%= t("home.dashboard.banner")%></summary>
+            <%= link_to t("home.dashboard.ver_banners"), dashboard_banners_path%>
+            <%= link_to t("home.dashboard.crear_banner"), new_dashboard_banner_path%>
+        </details>
 
-      </details>
 
-      <details>
-        <summary><%= t("home.dashboard.ingredientes")%></summary>
-        
-          <%= link_to t("home.dashboard.ver_ingredientes"), dashboard_ingredientes_path %>
-          <%= link_to t("home.dashboard.crear_ingrediente"), new_dashboard_ingrediente_path %>
+        <details>
+          <summary><%= t("home.dashboard.producto")%></summary>
 
-      </details>
+            <%= link_to t("home.dashboard.ver_productos"), dashboard_products_path %>
+            <%= link_to t("home.dashboard.crear_producto"), new_dashboard_product_path %>
+
+        </details>
+
+        <details>
+          <summary><%= t("home.dashboard.grupos")%></summary>
+          
+            <%= link_to t("home.dashboard.ver_grupos"), dashboard_grupos_path %>
+            <%= link_to t("home.dashboard.crear_grupo"), new_dashboard_grupo_path %>
+
+        </details>
+
+        <details>
+          <summary><%= t("home.dashboard.ingredientes")%></summary>
+          
+            <%= link_to t("home.dashboard.ver_ingredientes"), dashboard_ingredientes_path %>
+            <%= link_to t("home.dashboard.crear_ingrediente"), new_dashboard_ingrediente_path %>
+
+        </details>
+
+      <% end %>
 
       
       <%= link_to t("home.dashboard.volver_al_inicio"), root_path, class: "sidebar-footer"%>
@@ -65,6 +78,17 @@
 
 
     <main class="main-content">
+        <% if flash[:alert] %>
+          <div class="alert alert-danger"><%= flash[:alert] %></div>
+        <% end %>
+
+        <% if flash[:notice] %>
+          <div class="alert alert-info"><%= flash[:notice] %></div>
+        <% end %>
+
+        <% if flash[:error] %>
+          <div class="alert alert-danger"><%= flash[:error] %></div>
+        <% end %>
       <%= yield %>
     </main>
 

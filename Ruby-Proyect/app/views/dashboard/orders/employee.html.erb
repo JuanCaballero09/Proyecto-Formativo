@@ -1,0 +1,53 @@
+
+
+<button id="btn-fullscreen" class="btn-eliminar" style="padding: 20px; font-weight: bold;">Pantalla completa</button>
+
+<section id="vista" class="vista">
+    <div class="orders-employee-header" id="header">
+        <h1 class="orders-title">Órdenes</h1>
+        <button id="btn-exit-fullscreen" class="btn-eliminar" style="display: none; font-size: 25px;f ont-weight: bold;">Salir</button>
+    </div>
+
+    <div class="order-carts">
+        <%= render partial: "dashboard/orders/order", collection: @orders, as: :order %>
+    </div>
+</section>
+
+<script>
+document.addEventListener("turbo:load", function() {
+    const vista = document.getElementById("vista");
+    const header = document.getElementById("header");
+    const btnFull = document.getElementById("btn-fullscreen");
+    const btnExit = document.getElementById("btn-exit-fullscreen");
+
+    if (vista) {
+        // Eventos de botones
+        if (btnFull) {
+            btnFull.addEventListener("click", () => {
+                if (vista.requestFullscreen) {
+                    vista.requestFullscreen();
+                }
+            });
+        }
+
+        if (btnExit) {
+            btnExit.addEventListener("click", () => {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            });
+        }
+
+        // Detectar cambios de pantalla completa
+        document.addEventListener("fullscreenchange", () => {
+            if (document.fullscreenElement) {
+                vista.classList.add("pantalla-completa");
+                btnExit.style.display = "block";
+            } else {
+                vista.classList.remove("pantalla-completa");
+                btnExit.style.display = "none";
+            }
+        });
+    }
+});
+</script>
