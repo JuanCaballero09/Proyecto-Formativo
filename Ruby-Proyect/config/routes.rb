@@ -12,8 +12,27 @@ Rails.application.routes.draw do
 
     resources :products, path: "productos", only: [:index] # rubocop:disable Layout/SpaceInsideArrayLiteralBrackets
 
+
     resource :carrito, only: [:show] # rubocop:disable Layout/SpaceInsideArrayLiteralBrackets
     resources :carrito_items, only: [ :create, :update, :destroy ] do
+
+  # resources :pedidos, only: [:create] # rubocop:disable Layout/SpaceInsideArrayLiteralBrackets
+  namespace :dashboard do
+    root to: "dashboard#index"
+    resources :grupos, path: "grupos"
+    resources :ingredientes
+    resources :banners
+    resources :orders do
+      collection do
+        get :employee
+      end
+      member do
+        patch :cambiar_estado
+        patch :cancelar
+      end
+    end
+    resources :products, path: "productos" do
+
       member do
         put :incrementar
       end

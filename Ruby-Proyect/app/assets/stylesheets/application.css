@@ -856,6 +856,8 @@ input:focus{outline: none;}
     
 }
 
+.dashboard-container p{margin: 0;}
+
 .sidebar {
     background-color: var(--base);
     width: 220px;
@@ -872,6 +874,7 @@ input:focus{outline: none;}
 
 .sidebar h2 {
     margin: 0 0 20px 0;
+    font-weight: bold;
 }
 
 .sidebar a {
@@ -1272,6 +1275,7 @@ input:focus{outline: none;}
     transition: all 0.3s, color 0.3s;
     border: 1px solid;
     width: fit-content;
+
 }
 
 .product-card a:hover, .btn-eliminar:hover{
@@ -1279,6 +1283,17 @@ input:focus{outline: none;}
     background-color: var(--base-oscuro);
     color: var(--blanco);
     border: 1px solid var(--base-oscuro);
+
+    .btn-refresh{
+        filter: brightness(0) invert(1);
+    }
+}
+
+.btn-refresh{
+    width: 20px; 
+    height: 20px; 
+    filter: invert(19%) sepia(96%) saturate(3220%) hue-rotate(14deg) brightness(80%) contrast(95%);
+    transition: filter 0.3s;
 }
 
 .btn-aggr{
@@ -1811,7 +1826,7 @@ input:focus{outline: none;}
 
 .orders-table {
     width: 90%;
-    max-width: 900px;
+    max-width: fit-content;
     margin: 0 auto 40px auto;
     border-collapse: collapse;
     font-family: inherit;
@@ -1908,6 +1923,113 @@ input:focus{outline: none;}
     font-weight: 600;
     margin: 5px auto;
 }
+
+/* Vista de ordenes empleados */
+
+.vista {
+  height: 100%;
+  width: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+.vista:fullscreen {
+  height: 100%;
+  width: 100%;
+  overflow-y: auto; 
+  overflow-x: hidden;
+  background-color: black;
+  padding: 10px;
+}
+
+/* Estilos para el modo de pantalla completa */
+.vista.pantalla-completa {
+    background-color: black;
+}
+
+.vista.pantalla-completa .orders-employee-header {
+    background-color: #9D2E06;
+}
+
+.vista.pantalla-completa .orders-title,
+.vista.pantalla-completa .order-cart {
+    color: white;
+}
+
+/* Para que los párrafos y otros elementos también hereden el color */
+.vista.pantalla-completa .order-cart h2,
+.vista.pantalla-completa .order-cart p,
+.vista.pantalla-completa .order-cart strong {
+    color: white;
+}
+
+.orders-employee-header{
+    display: flex;
+    position: sticky;
+    top: 1px;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background-color: var(--base);
+    color: white;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+
+.orders-employee-header h1 {
+    margin: 0;
+    font-size: 30px;
+    color: white;
+}
+
+.orders-employee-header .btn-eliminar{
+    background-color: var(--blanco);
+    border: 2px solid var(--base-oscuro);
+}
+
+.orders-employee-header .btn-eliminar:hover{
+    background-color: var(--base-oscuro);
+    color: var(--blanco);
+    border: 2px solid var(--blanco);
+}
+
+.order-carts{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(385px, max-content));
+    gap: 15px;
+}
+
+.order-cart{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    width: fit-content;
+    border: 2px solid var(--base-oscuro);
+    border-radius: 15px;
+    padding: 10px;
+}
+
+.order-producto-carta{
+    padding: 10px;
+    border-radius: 15px;
+    border: 2px solid var(--base-oscuro);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.order-producto-carta p{
+    margin: 0;
+}
+
+.btn-orden{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 
 /* Iconos cambio idioma */
 

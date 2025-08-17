@@ -3,7 +3,8 @@
     <% @grupos.each do |grupo| %>
       <% productos_disponibles = grupo.products.select(&:disponible) %>
       <% if productos_disponibles.any? %>
-        <%= link_to grupo_path(grupo), class: "grupo-carta" do %>
+        <%= link_to grupo_products_path(grupo), class: "grupo-carta" do %>
+        <%#<%= link_to grupo_path(grupo), class: "grupo-carta" do %>
           <div class="grupo-imagen">
             <% if grupo.imagen.attached? %>
               <%= image_tag url_for(grupo.imagen), alt: grupo.nombre %>

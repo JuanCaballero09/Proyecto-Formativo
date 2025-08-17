@@ -11,6 +11,15 @@
         value="<%= params[:query] %>"
       />
     </form>
+
+    <div style="display: flex; gap: 10px; align-items: center;">
+      <%= link_to request.path, class: "btn-eliminar", style: "display: flex; width: fit-content;" do %>
+        <%= image_tag "icons/arrows-rotate-solid-full.svg", alt: "Refrescar", class: "btn-refresh" %>
+      <% end %>
+      <%= link_to "Órdenes Empleado", employee_dashboard_orders_path, class: "btn-eliminar" %>
+    </div>
+
+
   </div>
 
   <div>
