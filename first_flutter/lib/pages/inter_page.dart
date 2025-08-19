@@ -3,6 +3,7 @@ import 'menu_page.dart';
 import 'home_Page.dart';
 import 'carrito_Page.dart';
 import 'perfil_Page.dart';
+import 'domicilio_Page.dart';
 
 class ProductPage extends StatefulWidget {
   const ProductPage({super.key});
@@ -22,7 +23,7 @@ class _ProductPageState extends State<ProductPage> {
 
   @override
   Widget build(BuildContext context) {
-    final pages = [HomePage(), MenuPage(), CarritoPage(), PerfilPage()];
+    final pages = [HomePage(), MenuPage(), CarritoPage(), PerfilPage(), DomicilioPage()];
 
     return Scaffold(
       body: pages[_selectedIndex],
