@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+
+// Estas páginas deben existir en tu proyecto
 import 'menu_page.dart';
 import 'home_Page.dart';
 import 'carrito_Page.dart';
@@ -22,41 +24,96 @@ class _ProductPageState extends State<ProductPage> {
 
   @override
   Widget build(BuildContext context) {
-    final pages = [
-      HomePage(),
-      MenuPage(),
-      CarritoPage(),
-      PerfilPage(),
-    ];
+    final pages = [HomePage(), MenuPage(), CarritoPage(), PerfilPage()];
 
     return Scaffold(
-
       body: pages[_selectedIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: Colors.black,
-        unselectedItemColor: Colors.white,
-        backgroundColor: const Color.fromRGBO(237, 88, 33, 1),
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Inicio'),
+      bottomNavigationBar: BottomAppBar(
+        shape: const CircularNotchedRectangle(),
+        notchMargin: 8.0,
+        color: const Color.fromRGBO(237, 88, 33, 1),
+        child: SizedBox(
+          height: 60, // Aumentamos el alto para mostrar íconos + texto
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  const SizedBox(width: 20),
+                  _buildNavItem(
+                    icon: Icons.restaurant_menu,
+                    label: 'Menú',
+                    index: 1,
+                  ),
+                  const SizedBox(width: 50),
+                  _buildNavItem(
+                    icon: Icons.shopping_cart,
+                    label: 'Carrito',
+                    index: 2,
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  _buildNavItem(
+                    icon: Icons.person,
+                    label: 'Perfil',
+                    index: 3,
+                  ),
+                  const SizedBox(width: 20),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          FloatingActionButton(
+            backgroundColor: Colors.white,
+            child: Icon(
+              Icons.home,
+              color: _selectedIndex == 0 ? Colors.black : Colors.black,
+              size: 32,
+            ),
+            onPressed: () => _onItemTapped(0),
+          ),
+          const SizedBox(height: 4),
 
-          BottomNavigationBarItem(
-            icon: Icon(Icons.restaurant_menu),
-            label: 'Menú',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_cart),
-            label: 'Carrito',
-          ),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Perfil'),
         ],
       ),
     );
   }
+
+  // Método reutilizable para los íconos del BottomAppBar
+  Widget _buildNavItem({
+    required IconData icon,
+    required String label,
+    required int index,
+  }) {
+    final isSelected = _selectedIndex == index;
+
+    return InkWell(
+      onTap: () => _onItemTapped(index),
+      child: SizedBox(
+        width: 60,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, color: isSelected ? Colors.black : Colors.white),
+            const SizedBox(height: 2),
+            Text(
+              label,
+              style: TextStyle(
+                color: isSelected ? Colors.black : Colors.white,
+                fontSize: 11,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
-
-
-
-
