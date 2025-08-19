@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-
-// Estas páginas deben existir en tu proyecto
 import 'menu_page.dart';
 import 'home_Page.dart';
 import 'carrito_Page.dart';
@@ -33,7 +31,7 @@ class _ProductPageState extends State<ProductPage> {
         notchMargin: 8.0,
         color: const Color.fromRGBO(237, 88, 33, 1),
         child: SizedBox(
-          height: 60, // Aumentamos el alto para mostrar íconos + texto
+          height: 40, 
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -55,12 +53,22 @@ class _ProductPageState extends State<ProductPage> {
               ),
               Row(
                 children: [
-                  _buildNavItem(
+
+                _buildNavItem(
+                    icon: Icons.delivery_dining, 
+                    label: 'Domicilio', 
+                    index: 4
+                    ),
+
+                  const SizedBox(width: 50),
+
+                _buildNavItem(
                     icon: Icons.person,
                     label: 'Perfil',
                     index: 3,
                   ),
-                  const SizedBox(width: 20),
+
+                SizedBox(width: 20),
                 ],
               ),
             ],
