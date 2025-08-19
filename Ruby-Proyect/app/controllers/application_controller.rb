@@ -6,11 +6,6 @@ class ApplicationController < ActionController::Base
 
   layout :layout_by_resource
 
-  def change_locale
-    session[:locale] = params[:locale]
-    redirect_back(fallback_location: root_path)
-  end
-
   private
 
   def storable_location?
@@ -33,6 +28,9 @@ class ApplicationController < ActionController::Base
     I18n.locale = params[:locale] || session[:locale] || I18n.default_locale
   end
 
+  def default_url_options 
+    { locale: I18n.locale }
+  end
 
   protected
 

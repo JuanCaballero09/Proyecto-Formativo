@@ -31,7 +31,7 @@ en:
   home: # Acciones del Layout
     navbar:
       inicio: "Start"
-      menu: "Menú"
+      menu: "Menu"
       categorias: "Categories"
       panel_de_administracion: "Administration panel"
       iniciar_sesion: "Login"
@@ -88,3 +88,13 @@ en:
       finalizar_compra: "Complete Purchase"
       eliminar_todo: "Delete all"
       precio_unidad: "Unit Price:"
+
+    order:
+      irpago: "Go to payment"
+      cliente: "Customer:"
+      estado: "State:"
+      imagen: "Image"
+      or_producto: "Product"
+      cantidad: "Amount"
+      precio_unitario: "Unit price"
+      total: "Total to pay"

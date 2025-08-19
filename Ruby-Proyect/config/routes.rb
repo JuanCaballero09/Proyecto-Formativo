@@ -1,26 +1,20 @@
 Rails.application.routes.draw do
-  devise_for :users, controllers: { registrations: "users/registrations" }
+  scope "(:locale)", locale: /es|en/ do
+    devise_for :users, controllers: { registrations: "users/registrations" }
 
-  root to: "grupos#dashboard"
+    root to: "grupos#dashboard"
 
-  get "/buscar", to: "busqueda#index", as: "buscar"
-  get 'change_locale/:locale', to: 'application#change_locale', as: :change_locale
+    get "/buscar", to: "busqueda#index", as: "buscar"
 
-  resources :grupos, path: "categorias", only: [ :index, :show ] do
-    resources :products, path: "productos", only: [ :index, :show ], module: :grupos
-  end
-
-  resources :products, path: "productos", only: [:index] # rubocop:disable Layout/SpaceInsideArrayLiteralBrackets
-
-  resource :carrito, only: [:show] # rubocop:disable Layout/SpaceInsideArrayLiteralBrackets
-  resources :carrito_items, only: [ :create, :update, :destroy ] do
-    member do
-      put :incrementar
+    resources :grupos, path: "categorias", only: [ :index, :show ] do
+      resources :products, path: "productos", only: [ :index, :show ], module: :grupos
     end
-  end # rubocop:disable Layout/SpaceInsideArrayLiteralBrackets
 
-  resources :orders, only: [ :create, :show ]
+    resources :products, path: "productos", only: [:index] # rubocop:disable Layout/SpaceInsideArrayLiteralBrackets
 
+
+    resource :carrito, only: [:show] # rubocop:disable Layout/SpaceInsideArrayLiteralBrackets
+    resources :carrito_items, only: [ :create, :update, :destroy ] do
 
   # resources :pedidos, only: [:create] # rubocop:disable Layout/SpaceInsideArrayLiteralBrackets
   namespace :dashboard do
@@ -39,15 +33,33 @@ Rails.application.routes.draw do
       end
     end
     resources :products, path: "productos" do
+
       member do
-        patch :toggle_disponibilidad
+        put :incrementar
+      end
+    end # rubocop:disable Layout/SpaceInsideArrayLiteralBrackets
+
+    resources :orders, only: [ :create, :show ]
+
+
+    # resources :pedidos, only: [:create] # rubocop:disable Layout/SpaceInsideArrayLiteralBrackets
+    namespace :dashboard do
+      root to: "dashboard#index"
+      resources :grupos, path: "grupos"
+      resources :ingredientes
+      resources :banners
+      resources :orders
+      resources :products, path: "productos" do
+        member do
+          patch :toggle_disponibilidad
+        end
       end
     end
-  end
 
-  namespace :api do
-    namespace :v1 do
-      resources :products, only: [ :index ]
+    namespace :api do
+      namespace :v1 do
+        resources :products, only: [ :index ]
+      end
     end
   end
 end

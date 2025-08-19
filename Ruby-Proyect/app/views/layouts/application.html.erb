@@ -72,6 +72,18 @@
             </div>
           </div>
         <% end %>
+
+         <div class = "idiomas-iconos">
+          <% if I18n.locale == :es %>
+           <%= link_to url_for(locale: 'en') do %>
+              <% image_tag "icons/estados-unidos-de-america.svg", class: "flag-icon"%>
+            <% end %>
+          <% else %>
+           <%= link_to url_for(locale: 'es') do %>
+              <%= image_tag "icons/españa.svg", class: "flag-icon"%>
+            <% end %>
+          <% end %>   
+        </div> 
       </nav>
 
       <main class="vistas">
@@ -102,16 +114,6 @@
 
         <p>v2.8.9</p>
         <p>© 2025 Bitevia Software. <%= t("home.footer.derechos_reservados")%></p>
-      
-        <div class = "iconos-idiomas">
-            <%= link_to change_locale_path(locale: 'es') do %>
-              <%= image_tag "icons/españa.svg", class: "flag-icon"%>
-            <% end %>
-
-            <%= link_to change_locale_path(locale: 'en') do %>
-              <% image_tag "icons/estados-unidos-de-america.svg", class: "flag-icon"%>
-            <% end %>
-        </div>
       </footer>
     </body>    
   </html>

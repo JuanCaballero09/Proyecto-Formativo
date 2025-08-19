@@ -94,4 +94,13 @@ es:
       eliminar_todo: "Eliminar todo"
       precio_unidad: "Precio unidad:"
       
-      
+    order:
+      irpago: "Ir al pago"
+      cliente: "Cliente:"
+      estado: "Estado:"
+      imagen: "Imagen"
+      or_producto: "Producto"
+      cantidad: "Cantidad"
+      precio_unitario: "Precio unitario"
+      total: "Total"
+        
