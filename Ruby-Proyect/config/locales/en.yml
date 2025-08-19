@@ -30,7 +30,7 @@
 en:
   home: # Acciones del Layout
     navbar:
-      inicio: "Start"
+      inicio: "Home"
       menu: "Menu"
       categorias: "Categories"
       panel_de_administracion: "Administration panel"

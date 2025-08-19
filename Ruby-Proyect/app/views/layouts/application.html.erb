@@ -51,6 +51,16 @@
 
         <% if current_user %>
           <div class="user">
+            <% if I18n.locale == :es %>
+              <%= link_to url_for(locale: 'en'), style: "background-color: transparent; box-shadow: none;" do %>
+                  <% image_tag "icons/estados-unidos-de-america.svg", class: "flag-icon", style: "width: 45px; height: 45px"%>
+                <% end %>
+            <% else %>
+              <%= link_to url_for(locale: 'es'), style: "background-color: transparent; box-shadow: none;" do %>
+                <%= image_tag "icons/españa.svg", class: "flag-icon", style: "width: 45px; height: 45px"%>
+              <% end %>
+            <% end %>   
+          
             <% carrito = Carrito.find_by(id: session[:carrito_id]) %>
             <% total = carrito&.carrito_items&.sum(:cantidad) || 0 %>
             <span id="contador-carrito"><%= total %></span>
@@ -73,17 +83,6 @@
           </div>
         <% end %>
 
-         <div class = "idiomas-iconos">
-          <% if I18n.locale == :es %>
-           <%= link_to url_for(locale: 'en') do %>
-              <% image_tag "icons/estados-unidos-de-america.svg", class: "flag-icon"%>
-            <% end %>
-          <% else %>
-           <%= link_to url_for(locale: 'es') do %>
-              <%= image_tag "icons/españa.svg", class: "flag-icon"%>
-            <% end %>
-          <% end %>   
-        </div> 
       </nav>
 
       <main class="vistas">

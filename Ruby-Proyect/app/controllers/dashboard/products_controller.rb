@@ -50,13 +50,13 @@ class Dashboard::ProductsController < ApplicationController
     end
   end
 
-  def toggle_disponibilidad
+  def toggle_disponibilidad # <-- Cambia el nombre aquí
     @product = Product.find(params[:id])
     @product.update(disponible: !@product.disponible)
 
     respond_to do |format|
       format.turbo_stream
-      format.html { redirect_to dashboard_products_path }
+      format.html { redirect_to dashboard_products_path, notice: "Producto actualizado" }
     end
   end
 
