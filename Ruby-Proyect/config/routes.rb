@@ -27,6 +27,7 @@ Rails.application.routes.draw do
     root to: "dashboard#index"
     resources :grupos, path: "grupos"
     resources :ingredientes
+    resources :users
     resources :banners
     resources :orders do
       collection do

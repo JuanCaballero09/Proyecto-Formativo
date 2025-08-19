@@ -1,43 +1,45 @@
-<h1>Grupos</h1>
+<section>
+  <h1>Grupos</h1>
 
-<div style="display: flex; justify-content: space-between; align-items: center; flex-direction: row; margin-bottom: 20px;">
-  <%= link_to "Nuevo Grupo", new_dashboard_grupo_path, class: "btn-aggr" %>
+  <div style="display: flex; justify-content: space-between; align-items: center; flex-direction: row; margin-bottom: 20px;">
+    <%= link_to "Nuevo Grupo", new_dashboard_grupo_path, class: "btn-aggr" %>
 
-  <%= form_with url: dashboard_grupos_path, method: :get, local: true, html: {class: "buscador"} do %>
-    <%= search_field_tag :query, params[:query], placeholder: "Buscar Grupo...", autocomplete: "off", id: "buscador-grupo" %>
-  <% end %>
-</div>
-<br>
-<% if @grupos.any? %>
-  <% @grupos.each do |grupo| %>
-    <div class="dashboard-grupo" data-nombre="<%= I18n.transliterate(grupo.nombre.downcase) %>">
-      <div class="grupo-imagen">
-        <% if grupo.imagen.attached? %>
-          <%= image_tag url_for(grupo.imagen), alt: grupo.nombre %>
-        <% else %>
-          <%= image_tag 'LogoLogo.svg', alt: grupo.nombre %>
-        <% end %>
-      </div>
+    <%= form_with url: dashboard_grupos_path, method: :get, local: true, html: {class: "buscador"} do %>
+      <%= search_field_tag :query, params[:query], placeholder: "Buscar Grupo...", autocomplete: "off", id: "buscador-grupo" %>
+    <% end %>
+  </div>
+  <br>
+  <% if @grupos.any? %>
+    <% @grupos.each do |grupo| %>
+      <div class="dashboard-grupo" data-nombre="<%= I18n.transliterate(grupo.nombre.downcase) %>">
+        <div class="grupo-imagen">
+          <% if grupo.imagen.attached? %>
+            <%= image_tag url_for(grupo.imagen), alt: grupo.nombre %>
+          <% else %>
+            <%= image_tag 'LogoLogo.svg', alt: grupo.nombre %>
+          <% end %>
+        </div>
 
-      <div class="grupo-info-dashboard">
-        <p><strong><%= grupo.nombre %></strong> / Id: <%= grupo.id %></p>
-        <p><%= grupo.descripcion%></p>
+        <div class="grupo-info-dashboard">
+          <p><strong><%= grupo.nombre %></strong> / Id: <%= grupo.id %></p>
+          <p><%= grupo.descripcion%></p>
+        </div>
+        <div class="dashboard-acciones">
+          <%= link_to "Editar", edit_dashboard_grupo_path(grupo), class: "btn-editar" %>
+          <%= button_to "Eliminar", dashboard_grupo_path(grupo), method: :delete, data: { confirm: "¿Estás seguro de que quieres eliminar este Grupo?" }, class: "btn-eliminar" %>
+        </div>
       </div>
-      <div class="dashboard-acciones">
-        <%= link_to "Editar", edit_dashboard_grupo_path(grupo), class: "btn-editar" %>
-        <%= button_to "Eliminar", dashboard_grupo_path(grupo), method: :delete, data: { confirm: "¿Estás seguro de que quieres eliminar este Grupo?" }, class: "btn-eliminar" %>
-      </div>
+    <% end %>
+
+    <div id="sin-resultados-grupos" style="display: none; text-align: center; margin-top: 20px; color: gray;">
+      No se encontraron grupos.
+    </div>
+  <% else %>
+    <div style="text-align: center; margin-top: 20px; color: gray;">
+      No hay grupos registrados.
     </div>
   <% end %>
-
-  <div id="sin-resultados-grupos" style="display: none; text-align: center; margin-top: 20px; color: gray;">
-    No se encontraron grupos.
-  </div>
-<% else %>
-  <div style="text-align: center; margin-top: 20px; color: gray;">
-    No hay grupos registrados.
-  </div>
-<% end %>
+</section>
 
 <script>
   document.addEventListener("turbo:load", function () {

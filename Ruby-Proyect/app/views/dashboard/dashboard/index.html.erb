@@ -1,52 +1,54 @@
-<h1><%= t("home.dashboard.panel")%></h1>
+<section>
+  <h2><%= t("home.dashboard.panel")%></h2>
 
-<div class="dashboard-grid">
+  <div class="dashboard-grid">
 
-  <!-- Estadísticas -->
-  <div class="card stat">
-    <h3><%= t("home.graficas.total_producto")%></h3>
-    <p><%= Product.count %></p>
+    <!-- Estadísticas -->
+    <div class="card stat">
+      <h3><%= t("home.graficas.total_producto")%></h3>
+      <p><%= Product.count %></p>
+    </div>
+
+    <div class="card stat">
+      <h3><%= t("home.graficas.productos_disponibles")%></h3>
+      <p><%= Product.where(disponible: true).count %></p>
+    </div>
+
+    <div class="card stat">
+      <h3><%= t("home.graficas.total_grupos")%></h3>
+      <p><%= Grupo.count %></p>
+    </div>
+
+    <div class="card stat">
+      <h3><%= t("home.graficas.ultimo_producto")%></h3>
+      <p><%= Product.last&.nombre || "Ninguno aún" %></p>
+    </div>
+
+    <div class="card stat">
+      <h3><%= t("home.graficas.ultimo_grupo")%></h3>
+      <p><%= Grupo.last&.nombre || "Ninguno aún" %></p>
+    </div>
+
+    <!-- Gráfico de barras -->
+    <div class="card chart normal">
+      <h3><%= t("home.graficas.producto_por_grupo")%></h3>
+      <canvas id="chartBarras"></canvas>
+    </div>
+
+    <!-- Gráfico tipo pie -->
+    <div class="card chart">
+      <h3><%= t("home.graficas.distribuccion")%></h3>
+      <canvas id="chartTorta"></canvas>
+    </div>
+
+    <!-- Gráfico de líneas -->
+    <div class="card chart big">
+      <h3><%= t("home.graficas.crecimiento")%></h3>
+      <canvas id="chartLineas"></canvas>
+    </div>
+
   </div>
-
-  <div class="card stat">
-    <h3><%= t("home.graficas.productos_disponibles")%></h3>
-    <p><%= Product.where(disponible: true).count %></p>
-  </div>
-
-  <div class="card stat">
-    <h3><%= t("home.graficas.total_grupos")%></h3>
-    <p><%= Grupo.count %></p>
-  </div>
-
-  <div class="card stat">
-    <h3><%= t("home.graficas.ultimo_producto")%></h3>
-    <p><%= Product.last&.nombre || "Ninguno aún" %></p>
-  </div>
-
-  <div class="card stat">
-    <h3><%= t("home.graficas.ultimo_grupo")%></h3>
-    <p><%= Grupo.last&.nombre || "Ninguno aún" %></p>
-  </div>
-
-  <!-- Gráfico de barras -->
-  <div class="card chart normal">
-    <h3><%= t("home.graficas.producto_por_grupo")%></h3>
-    <canvas id="chartBarras"></canvas>
-  </div>
-
-  <!-- Gráfico tipo pie -->
-  <div class="card chart">
-    <h3><%= t("home.graficas.distribuccion")%></h3>
-    <canvas id="chartTorta"></canvas>
-  </div>
-
-  <!-- Gráfico de líneas -->
-  <div class="card chart big">
-    <h3><%= t("home.graficas.crecimiento")%></h3>
-    <canvas id="chartLineas"></canvas>
-  </div>
-
-</div>
+</section>
 
 <script>
   window.ProductByGroup = {

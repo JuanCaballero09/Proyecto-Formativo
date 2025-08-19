@@ -1,0 +1,30 @@
+<%= turbo_stream.replace @user, partial: "dashboard/users/user", locals: { user: @user } %>
+
+<% if flash.any? %>
+    <%= turbo_stream.append "flash-messages" do %>
+        <% flash.each do |type, message| %>
+            <div id="flash-<%= Time.now.to_i %>" class="flash-alert alert alert-<%= type == 'notice' ? 'info' : 'danger' %>" role="alert">
+              <%= message %>
+            </div>
+        <% end %>
+
+        <script>
+            // Este script se ejecuta inmediatamente después de ser insertado
+            document.querySelectorAll('.flash-alert').forEach(alert => {
+                // Muestra la alerta con la animación
+                setTimeout(() => {
+                    alert.classList.add('show');
+                }, 100);
+
+                // Configura un temporizador para ocultar la alerta y luego eliminarla
+                setTimeout(() => {
+                    alert.classList.remove('show');
+                    // Después de la transición de salida, elimina el elemento del DOM
+                    setTimeout(() => {
+                        alert.remove();
+                    }, 500); // Mismo tiempo que la transición de salida
+                }, 2500); // 3 segundos de espera antes de ocultar
+            });
+        </script>
+    <% end %>
+<% end %>

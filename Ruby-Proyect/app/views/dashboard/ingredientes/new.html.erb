@@ -1,13 +1,15 @@
-<h1><%= @ingrediente.new_record? ? "Nuevo" : "Editar" %> Ingrediente</h1>
+<section>
+  <h2><%= @ingrediente.new_record? ? "Nuevo" : "Editar" %> Ingrediente</h2>
 
-<%= form_with model: [:dashboard, @ingrediente], local: true, html: { class: "dashboard-form" } do |f| %>
-  <div>
-    <%= f.label :nombre %>
-    <%= f.text_field :nombre, required: true %>
-  </div>
+  <%= form_with model: [:dashboard, @ingrediente], local: true, html: { class: "dashboard-form" } do |f| %>
+    <div>
+      <%= f.label :nombre %>
+      <%= f.text_field :nombre, required: true %>
+    </div>
 
-  <div>
-    <%= f.submit %>
-    <%= link_to 'Volver', dashboard_ingredientes_path %>
-  </div>
-<% end %>
+    <div>
+      <%= f.submit %>
+      <%= link_to 'Volver', dashboard_ingredientes_path %>
+    </div>
+  <% end %>
+</section>

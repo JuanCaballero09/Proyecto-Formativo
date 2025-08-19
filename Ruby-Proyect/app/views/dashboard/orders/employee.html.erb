@@ -8,9 +8,15 @@
         <button id="btn-exit-fullscreen" class="btn-eliminar" style="display: none; font-size: 25px;f ont-weight: bold;">Salir</button>
     </div>
 
-    <div class="order-carts">
-        <%= render partial: "dashboard/orders/order", collection: @orders, as: :order %>
-    </div>
+    <% if @orders.any? %>
+        <div class="order-carts">
+            <%= render partial: "dashboard/orders/order", collection: @orders, as: :order %>
+        </div>
+    <% else %>
+        <div style="text-align: center; margin-top: 50px; font-size: 25px;">
+            <p style="color: gray;">No hay órdenes registradas para preparar.</p>
+        </div>
+    <% end %>
 </section>
 
 <script>

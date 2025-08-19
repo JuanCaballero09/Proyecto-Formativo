@@ -1,0 +1,45 @@
+<section>
+  <h2>Usuarios</h2>
+
+  <div style="display: flex; justify-content: space-between; align-items: center; flex-direction: row; margin-bottom: 20px;">
+    <p style="opacity: 0;">a</p>
+    <%= form_with url: dashboard_users_path, method: :get, local: true, html: {class: "buscador"} do %>
+        <%= search_field_tag :query, params[:query], placeholder: "Buscar usuario...", autocomplete: "off", id: "buscador-usuarios" %>
+    <% end %>
+  </div>
+
+  <div id="sin-resultados-usuarios" style="display: none; text-align: center; margin-top: 20px;">
+      <p>No se encontraron usuarios que coincidan con la búsqueda.</p>
+  </div>
+
+  <%= render partial: 'user', collection: @users %>
+</section>
+
+<script>
+  document.addEventListener("turbo:load", function () {
+    const input = document.getElementById("buscador-usuarios");
+    const userRows = document.querySelectorAll(".user-row");
+    const mensaje = document.getElementById("sin-resultados-usuarios");
+
+    const normalizar = (str) =>
+      str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+
+    input.addEventListener("input", function () {
+      const valor = normalizar(input.value.trim());
+      let visibles = 0;
+
+      userRows.forEach((row) => {
+        const nombre = normalizar(row.dataset.nombre);
+        const apellido = normalizar(row.dataset.apellido);
+        const email = normalizar(row.dataset.email);
+        const rol = normalizar(row.dataset.rol)
+
+        const visible = nombre.includes(valor) || apellido.includes(valor) || email.includes(valor) || rol.includes(valor);
+        row.style.display = visible ? "flex" : "none";
+        if (visible) visibles++;
+      });
+
+      mensaje.style.display = visibles === 0 ? "block" : "none";
+    });
+  });
+</script>

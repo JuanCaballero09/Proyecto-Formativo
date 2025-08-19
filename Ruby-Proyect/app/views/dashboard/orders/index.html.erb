@@ -1,6 +1,6 @@
 <section>
   
-  <div style="display: flex; justify-content: space-between; align-items: center; flex-direction: row; margin-bottom: 20px;">
+  <div style="display: flex; justify-content: space-between; align-items: center; flex-direction: row-reverse; margin-bottom: 20px;">
     <form class="buscador" onsubmit="return false;">
       <input
         style="max-width: none;"
@@ -13,10 +13,10 @@
     </form>
 
     <div style="display: flex; gap: 10px; align-items: center;">
+      <%= link_to "Órdenes Empleado", employee_dashboard_orders_path, class: "btn-eliminar" %>
       <%= link_to request.path, class: "btn-eliminar", style: "display: flex; width: fit-content;" do %>
         <%= image_tag "icons/arrows-rotate-solid-full.svg", alt: "Refrescar", class: "btn-refresh" %>
       <% end %>
-      <%= link_to "Órdenes Empleado", employee_dashboard_orders_path, class: "btn-eliminar" %>
     </div>
 
 

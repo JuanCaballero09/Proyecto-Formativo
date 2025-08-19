@@ -1,51 +1,49 @@
-<!-- app/views/dashboard/products/index.html.erb -->
-<h2>Lista de Productos</h2>
+<section>
+  <h2>Lista de Productos</h2>
 
-<div style="display: flex; justify-content: space-between; align-items: center; flex-direction: row; margin-bottom: 20px;">
-  <%= link_to "Nuevo Producto", new_dashboard_product_path, class: "btn-aggr" %>
+  <div style="display: flex; justify-content: space-between; align-items: center; flex-direction: row; margin-bottom: 20px;">
+    <%= link_to "Nuevo Producto", new_dashboard_product_path, class: "btn-aggr" %>
 
-  <%= form_with url: dashboard_products_path, method: :get, local: true, html: {class: "buscador"} do %>
-    <%= search_field_tag :query, params[:query], placeholder: "Buscar producto...", autocomplete: "off", id: "buscador-productos" %>
-  <% end %>
-</div>
-<br> 
-<% if @products.any? %>
-  <div class="productss">
-    <% @products.each do |product| %>
-      <div class="product-card" data-nombre="<%= I18n.transliterate(product.nombre.downcase) %>">
-        <h3><%= product.nombre %></h3>
-        <%= image_tag(product.imagen.attached? ? product.imagen : "LogoLogoText2.svg") %>
-        <p><strong>id:</strong> <%= product.id %></p>
-        <p><strong>Ingredientes:</strong> <%= product.ingredientes.map(&:nombre).join(", ")%></p>
-        <p><strong>Descripción:</strong> <%= product.descripcion %></p>
-        <p><strong>Precio:</strong> <%= number_to_currency(product.precio, unit: "COP ", separator: ",", delimiter: ".", precision: 0) %> $</p>
-
-        <div id="estado-<%= product.id %>">
-          <%= button_to '',
-            toggle_disponibilidad_dashboard_product_path(product),
-            method: :patch,
-            data: { turbo_stream: true }, 
-            class: (product.disponible ? 'btn-on' : 'btn-off'),
-            form: { data: { turbo: true } } 
-          %>
-        </div>
-
-
-
-
-        <%= link_to "Editar", edit_dashboard_product_path(product), class: "btn-editar" %>
-        <%= button_to "Eliminar", dashboard_product_path(product), method: :delete, class: "btn-eliminar" %>
-      </div>
+    <%= form_with url: dashboard_products_path, method: :get, local: true, html: {class: "buscador"} do %>
+      <%= search_field_tag :query, params[:query], placeholder: "Buscar producto...", autocomplete: "off", id: "buscador-productos" %>
     <% end %>
-    <div id="sin-resultados-productos" style="display: none; text-align: center; margin-top: 20px; color: gray;">
-      No se encontraron productos.
+  </div>
+  <br> 
+  <% if @products.any? %>
+    <div class="productss">
+      <% @products.each do |product| %>
+        <div class="product-card" data-nombre="<%= I18n.transliterate(product.nombre.downcase) %>">
+          <h3><%= product.nombre %></h3>
+          <%= image_tag(product.imagen.attached? ? product.imagen : "LogoLogoText2.svg") %>
+          <p><strong>id:</strong> <%= product.id %></p>
+          <p><strong>Ingredientes:</strong> <%= product.ingredientes.map(&:nombre).join(", ")%></p>
+          <p><strong>Descripción:</strong> <%= product.descripcion %></p>
+          <p><strong>Precio:</strong> <%= number_to_currency(product.precio, unit: "COP ", separator: ",", delimiter: ".", precision: 0) %> $</p>
+
+          <div id="estado-<%= product.id %>">
+            <%= button_to '',
+              toggle_disponibilidad_dashboard_product_path(product),
+              method: :patch,
+              data: { turbo_stream: true }, 
+              class: (product.disponible ? 'btn-on' : 'btn-off'),
+              form: { data: { turbo: true } } 
+            %>
+          </div>
+
+          <%= link_to "Editar", edit_dashboard_product_path(product), class: "btn-editar" %>
+          <%= button_to "Eliminar", dashboard_product_path(product), method: :delete, class: "btn-eliminar", data: { turbo_confirm: "¿Estás seguro que quieres eliminar este producto?" } %>
+        </div>
+      <% end %>
+      <div id="sin-resultados-productos" style="display: none; text-align: center; margin-top: 20px; color: gray;">
+        No se encontraron productos.
+      </div>
     </div>
-  </div>
-<% else %>
-  <div style="text-align: center; margin-top: 20px; color: gray;">
-    No hay productos registrados.
-  </div>
-<% end %>
+    <% else %>
+    <div style="text-align: center; margin-top: 20px; color: gray;">
+      No hay productos registrados.
+    </div>
+  <% end %>
+</section>
 
 <script>
   document.addEventListener("turbo:load", function () {

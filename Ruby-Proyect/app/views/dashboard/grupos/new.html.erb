@@ -1,23 +1,25 @@
-<h1>Nuevo grupo</h1>
+<section>
+  <h2>Nuevo grupo</h2>
 
-<%= form_with model: [:dashboard, @grupo], local: true, html: { class: "dashboard-form" } do |f| %>
-  <div>
-    <%= f.label :nombre %>
-    <%= f.text_field :nombre, required: true%>
-  </div>
+  <%= form_with model: [:dashboard, @grupo], local: true, html: { class: "dashboard-form" } do |f| %>
+    <div>
+      <%= f.label :nombre %>
+      <%= f.text_field :nombre, required: true%>
+    </div>
+
+      <div>
+      <%= f.label :descripcion %>
+      <%= f.text_area :descripcion, required: true%>
+    </div>
+
 
     <div>
-    <%= f.label :descripcion %>
-    <%= f.text_area :descripcion, required: true%>
-  </div>
+      <%= f.label :imagen %>
+      <%= f.file_field :imagen, accept: 'image/*' %>
+    </div>
 
-
-  <div>
-    <%= f.label :imagen %>
-    <%= f.file_field :imagen, accept: 'image/*' %>
-  </div>
-
-  <div>
-    <%= f.submit "Crear grupo" %>
-  </div>
-<% end %>
+    <div>
+      <%= f.submit "Crear grupo" %>
+    </div>
+  <% end %>
+</section>
