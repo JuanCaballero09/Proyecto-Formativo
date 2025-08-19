@@ -17,7 +17,7 @@ Rails.application.routes.draw do
     resource :carrito, only: [:show] # rubocop:disable Layout/SpaceInsideArrayLiteralBrackets
     resources :carrito_items, only: [ :create, :update, :destroy ] do
       member do
-        patch :incrementar
+        put :incrementar
       end
     end # rubocop:disable Layout/SpaceInsideArrayLiteralBrackets
   end
