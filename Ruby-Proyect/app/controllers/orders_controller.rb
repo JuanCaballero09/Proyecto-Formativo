@@ -27,7 +27,7 @@ class OrdersController < ApplicationController
       @order.update!(total: total)
 
       # opcional: vaciar carrito después de crear la orden
-      carrito.carrito_items.destroy_all
+      # carrito.carrito_items.destroy_all
     end
 
     redirect_to order_path(@order)
@@ -48,6 +48,6 @@ class OrdersController < ApplicationController
 
   def set_order
     # como usamos to_param -> code, buscamos por code en params[:id]
-    @order = Order.find_by!(code: params[:id])
+    @order = Order.find_by(code: params[:code])
   end
 end

@@ -1,0 +1,10 @@
+<h2>Pagar Orden <%= @order.code %></h2>
+
+<%= form_with model: [@order, @payment], local: true do |f| %>
+  <p>Monto: <%= number_to_currency(@order.total) %></p>
+
+  <%= f.hidden_field :token, value: "tok_test_1723386_1534CB194f22c73e3572675F075256fE" %>
+  <%= f.hidden_field :installments, value: 1 %>
+
+  <%= f.submit "Pagar con tarjeta" %>
+<% end %>

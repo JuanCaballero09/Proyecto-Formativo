@@ -2,7 +2,9 @@ source "https://rubygems.org"
 
 # Gema de Traduccion
 gem "devise-i18n"
-
+# Peticiones HTTP
+gem "httparty"
+# rack-cors para manejar CORS
 gem "rack-cors"
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
 gem "rails", "~> 8.0.2"

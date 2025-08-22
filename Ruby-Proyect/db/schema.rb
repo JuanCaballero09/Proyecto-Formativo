@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_10_193547) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_22_180319) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -110,6 +110,18 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_10_193547) do
     t.index ["user_id"], name: "index_orders_on_user_id"
   end
 
+  create_table "payments", force: :cascade do |t|
+    t.bigint "order_id", null: false
+    t.string "transaction_id"
+    t.integer "status", default: 0
+    t.decimal "amount", precision: 10, scale: 2
+    t.string "payment_method"
+    t.string "token"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["order_id"], name: "index_payments_on_order_id"
+  end
+
   create_table "products", force: :cascade do |t|
     t.string "nombre"
     t.float "precio"
@@ -155,5 +167,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_10_193547) do
   add_foreign_key "order_items", "products"
   add_foreign_key "orders", "carritos"
   add_foreign_key "orders", "users"
+  add_foreign_key "payments", "orders"
   add_foreign_key "products", "grupos"
 end
