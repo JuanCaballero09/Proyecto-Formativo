@@ -27,7 +27,7 @@ class OrdersController < ApplicationController
       @order.update!(total: total)
 
       # opcional: vaciar carrito después de crear la orden
-      # carrito.carrito_items.destroy_all
+      carrito.carrito_items.destroy_all
     end
 
     redirect_to order_path(@order)

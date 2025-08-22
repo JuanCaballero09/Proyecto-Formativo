@@ -18,9 +18,9 @@ class Orders::PaymentsController < ApplicationController
 
     service = WompiService.new
 
-    reference = "#{@order.code}-PAYMENT-#{SecureRandom.alphanumeric(4).upcase}"
+    reference = "PAYMENT-#{@order.code}"
     amount_in_cents = (@order.total * 100).to_i
-    email = "juanes09212006@gmail.com"
+    email = "juanes09212006@gmail.com" # cambiar a futuro por current_user.email
     token = "tok_test_1723386_1534CB194f22c73e3572675F075256fE" # token de prueba de Wompi, cambiar a futuro
     installments = 1 # cuotas, cambiar a futuro
 
