@@ -14,13 +14,13 @@ dependencies:
   http: ^0.13.6
   carousel_slider: ^4.2.0
   google_fonts: ^4.0.4
-  intl: ^0.19.0
+  intl: ^0.20.2
   flutter_map: ^4.0.0
   positioned_tap_detector_2: ^1.0.4
   latlong2: ^0.8.1
   smooth_page_indicator: ^1.1.0
-
-
+  flutter_localizations:
+    sdk: flutter
 
 dev_dependencies:
   flutter_test:

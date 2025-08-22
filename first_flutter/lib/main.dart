@@ -11,7 +11,8 @@ import 'repository/product_repository.dart';
 import 'repository/mocki_product_repository.dart';
 import 'pages/splash_page.dart';
 import 'package:first_flutter/pages/register_page.dart';
-
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:intl/intl.dart';
 
 void main() {
   // Para usar datos locales, descomenta la siguiente línea y comenta la de HttpProductRepository:
@@ -94,6 +95,15 @@ class MyApp extends StatelessWidget {
             labelStyle: const TextStyle(color: Colors.amber),
           ),
         ),
+        localizationsDelegates: [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: const [
+          Locale('en'),
+          Locale('es'),
+        ],
         initialRoute: '/',
         routes: {
           '/': (context) => SplashPage(key: UniqueKey()),
@@ -107,6 +117,23 @@ class MyApp extends StatelessWidget {
             child: WelcomePage(), // o HomePage()
           ),
         },
+      ),
+    );
+  }
+}
+
+class MyHomePage extends StatelessWidget {
+  const MyHomePage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    String title = Intl.message('Hello World', name: 'title');
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(title),
+      ),
+      body: Center(
+        child: Text(title),
       ),
     );
   }
