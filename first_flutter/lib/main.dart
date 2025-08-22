@@ -23,21 +23,35 @@ void main() {
   runApp(MyApp(repository: repository));
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   final ProductRepository repository;
 
   const MyApp({super.key, required this.repository});
 
   @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  Locale? _locale;
+
+  void _changeLanguage(Locale locale) {
+    setState(() {
+      _locale = locale;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (_) => ProductBloc(repository)),
+        BlocProvider(create: (_) => ProductBloc(widget.repository)),
         BlocProvider(create: (_) => CartBloc()),
       ],
       child: MaterialApp(
         title: 'Restaurante',
         debugShowCheckedModeBanner: false,
+        locale: _locale,
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(
             seedColor: Colors.amber,
@@ -123,7 +137,8 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatelessWidget {
-  const MyHomePage({super.key});
+  final void Function(Locale) onLocaleChange;
+  const MyHomePage({super.key, required this.onLocaleChange});
 
   @override
   Widget build(BuildContext context) {
@@ -131,6 +146,28 @@ class MyHomePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(title),
+        actions: [
+          PopupMenuButton<String>(
+            onSelected: (String value) {
+              if (value == 'es') {
+                onLocaleChange(const Locale('es'));
+              } else {
+                onLocaleChange(const Locale('en'));
+              }
+            },
+            itemBuilder: (BuildContext context) => [
+              const PopupMenuItem(
+                value: 'en',
+                child: Text('English'),
+              ),
+              const PopupMenuItem(
+                value: 'es',
+                child: Text('Español'),
+              ),
+            ],
+            icon: const Icon(Icons.language),
+          ),
+        ],
       ),
       body: Center(
         child: Text(title),
