@@ -74,7 +74,7 @@ class _HomePageState extends State<HomePage>
         preferredSize: Size.fromHeight(80),
         child: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.only(left: 6.0, right: 16.0, top: 8.0),
+          padding: const EdgeInsets.only(left: 20.0, right: 16.0, top: 8.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -82,7 +82,7 @@ class _HomePageState extends State<HomePage>
                   width: 130,
                   height: 100,
                   child: FittedBox(
-                    child: Image.asset('assets/logoredondo.png'),
+                    child: Image.asset('assets/loogo.jpg'),
                   ),
                 ),
                 Row(
