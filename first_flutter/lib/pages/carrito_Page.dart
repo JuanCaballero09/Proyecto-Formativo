@@ -1,3 +1,6 @@
+import 'package:first_flutter/models/product.dart';
+import 'package:first_flutter/pages/inter_page.dart';
+import 'package:first_flutter/pages/menu_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/cart_bloc.dart';
@@ -13,56 +16,85 @@ class CarritoPageState extends State<CarritoPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(80),
-        child: AppBar(
-          automaticallyImplyLeading: false, // 👈 Esto quita la flecha
-          backgroundColor: Colors.white,
-          elevation: 0,
-          flexibleSpace: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.only(left: 6.0, right: 16.0, top: 8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  SizedBox(
-                    width: 130,
-                    height: 100,
-                    child: FittedBox(
-                      child: Image.asset(
-                        'assets/logoredondo.png',
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
+              
       body: BlocBuilder<CartBloc, CartState>(
         builder: (context, state) {
           final cartItems = state.cart.items;
 
-          if (cartItems.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Text(
-                    'El carrito está vacío.',
-                    style: TextStyle(fontSize: 16),
-                  ),
-                  const SizedBox(height: 16),
-                  Image.asset(
-                    'assets/carrito vacio.png',
-                    width: 180,
-                    height: 180,
-                  ),
-                ],
+         if (cartItems.isEmpty) {
+  return Center(
+    child: Padding(
+      padding: const EdgeInsets.all(24.0),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Imagen de carrito vacío
+          Image.asset(
+            'assets/carro_vacio.jpeg',
+            width: 180,
+            height: 180,
+          ),
+          const SizedBox(height: 24),
+
+          // Texto principal
+          const Text(
+            "TU CARRITO ESTÁ VACÍO",
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 8),
+
+          // Subtexto
+          const Text(
+            "explora nuestro menú y empieza a pedir.",
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.black54,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 24),
+
+          // Botón para ir al menú
+          SizedBox(
+            width: 220,
+            height: 50,
+            child: ElevatedButton(
+            onPressed: () {
+  Navigator.pushReplacement(
+    context,
+    MaterialPageRoute(
+      builder: (context) => ProductPage(initialIndex: 1), // 👈 abrir directo el Menú
+    ),
+  );
+},
+
+              style: ElevatedButton.styleFrom(
+               backgroundColor: const Color.fromRGBO(237, 88, 33, 1),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                padding: const EdgeInsets.symmetric(vertical: 16),
               ),
-            );
-          }
+              child: const Text(
+                "agregar comida",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
 
           return ListView.builder(
             itemCount: cartItems.length,
