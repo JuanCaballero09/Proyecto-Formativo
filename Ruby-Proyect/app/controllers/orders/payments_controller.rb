@@ -1,5 +1,5 @@
 # app/controllers/orders/payments_controller.rb
-class Orders::PaymentsController < ApplicationController
+class  Orders::PaymentsController < ApplicationController
   layout "application_min"
   protect_from_forgery with: :null_session
   before_action :set_order
@@ -10,44 +10,98 @@ class Orders::PaymentsController < ApplicationController
 
 
   def create
-    puts "=== PARAMS RECIBIDOS ==="
-    p params
-
-    puts "=== ORDEN ENCONTRADA ==="
-    p @order
-
     service = WompiService.new
 
-    reference = "PAYMENT-#{@order.code}"
-    amount_in_cents = (@order.total * 100).to_i
-    email = "juanes09212006@gmail.com" # cambiar a futuro por current_user.email
-    token = "tok_test_1723386_1534CB194f22c73e3572675F075256fE" # token de prueba de Wompi, cambiar a futuro
-    installments = 1 # cuotas, cambiar a futuro
+    # Obtener datos del formulario
+    card_number = payment_params[:card_number]
+    exp_month   = payment_params[:exp_month].to_s.rjust(2, "0")
+    exp_year    = payment_params[:exp_year].to_s[-2..]
+    cvv         = payment_params[:cvv]
+    card_holder = payment_params[:card_holder]
+    email       = payment_params[:email]
+    installments = payment_params[:installments].to_i || 1
 
-    response = service.create_card_transaction(
-      reference: reference,
-      amount_in_cents: amount_in_cents,
-      customer_email: email,
-      token: token,
-      installments: installments
+    # 1. tokenizar tarjeta
+    token_response = service.tokenize_card(
+      card_number: card_number,
+      exp_month: exp_month,
+      exp_year: exp_year,
+      cvv: cvv,
+      card_holder: card_holder
     )
 
-    puts "=== RESPUESTA DE WOMPI ==="
-    p response
+    puts "=== RESPUESTA DE TOKENIZACIÓN ==="
+    p token_response
 
-    if response["data"]
+    if token_response["data"] && token_response["data"]["id"]
+      token = token_response["data"]["id"]
+
+      # 2. Crear transacción con el token
+      reference = "PAYMENT-#{@order.code}"
+      amount_in_cents = (@order.total * 100).to_i
+
+      response = service.create_card_transaction(
+        reference: reference,
+        amount_in_cents: amount_in_cents,
+        customer_email: email,
+        token: token,
+        installments: installments
+      )
+
+      puts "=== RESPUESTA DE WOMPI ==="
+      p response
+
+      if response["data"]
         transaction_id = response["data"]["id"]
 
         @order.payments.create!(
           amount: amount_in_cents / 100.0,
           payment_method: "CARD",
-          transaction_id: transaction_id
+          transaction_id: transaction_id,
+          token: token
         )
-
-        render json: { status: "success", transaction_id: transaction_id, wompi: response }
-    else
+        # render json: { status: "success", transaction_id: transaction_id, wompi: response }
+        redirect_to status_order_payments_path(@order) and return
+      else
         render json: { status: "error", details: response }, status: :unprocessable_entity
+      end
+    else
+      render json: { status: "error", details: token_response }, status: :unprocessable_entity and return
     end
+  end
+
+  def status
+    payment = @order.payments.last
+
+    respond_to do |format|
+      format.html do
+        render :status
+      end
+      format.json do
+        if payment.nil?
+          render json: { status: "pending" }
+        else
+          case payment.status
+          when "approved"
+            render json: { status: "approved" }
+          when "declined"
+            render json: { status: "declined" }
+          when "cancelled"
+            render json: { status: "cancelled" }
+          else
+            render json: { status: "pending" }
+          end
+        end
+      end
+    end
+  end
+
+  def cancel
+    payment = @order.payments.last
+    if payment && payment.status == "pending"
+      payment.update(status: "cancelled")
+    end
+    render json: { status: "cancelled" }
   end
 
   private
@@ -57,6 +111,6 @@ class Orders::PaymentsController < ApplicationController
   end
 
   def payment_params
-    params.require(:payment).permit(:amount, :payment_method, :transaction_id)
+    params.require(:payment).permit(:payment_method, :card_number, :exp_year, :exp_month, :cvv, :installments, :email, :card_holder)
   end
 end

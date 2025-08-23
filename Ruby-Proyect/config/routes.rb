@@ -20,7 +20,10 @@ Rails.application.routes.draw do
     end
 
     resources :orders, param: :code, only: [ :show, :create ] do
-      resource :payments, path: "payment", only: [ :new, :create ], module: :orders
+      resource :payments, path: "payment", only: [ :new, :create ], module: :orders do
+        get :status
+        patch :cancel
+      end
     end
 
     post "/wompi/webhook", to: "wompi#webhook"

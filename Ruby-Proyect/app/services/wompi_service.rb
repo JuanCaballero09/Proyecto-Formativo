@@ -64,4 +64,23 @@ class WompiService
     res = Net::HTTP.get_response(uri)
     JSON.parse(res.body)
   end
+
+  # 5) Tokenizar tarjeta (opcional, si no usas el widget de Wompi)
+  def tokenize_card(card_number:, exp_month:, exp_year:, cvv:, card_holder:)
+    uri = URI("#{BASE_URL}/tokens/cards")
+    body = {
+      number: card_number,
+      exp_month: exp_month,
+      exp_year: exp_year,
+      cvc: cvv,
+      card_holder: card_holder
+    }
+    req = Net::HTTP::Post.new(uri)
+    req["Content-Type"] = "application/json"
+    req["Authorization"] = "Bearer #{@public_key}"
+    req.body = body.to_json
+
+    res = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) { |http| http.request(req) }
+    JSON.parse(res.body)
+  end
 end

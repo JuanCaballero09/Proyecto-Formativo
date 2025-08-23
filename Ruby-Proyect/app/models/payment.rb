@@ -5,6 +5,6 @@ class Payment < ApplicationRecord
     pending: 0,
     approved: 1,
     declined: 2,
-    error: 3
+    cancelled: 3
   }
 end

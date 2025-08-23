@@ -1,10 +1,211 @@
 <h2>Pagar Orden <%= @order.code %></h2>
 
-<%= form_with model: [@order, @payment], local: true do |f| %>
+<%= form_with model: [@order, @payment], local: true, html: { id: "payment-form" } do |f| %>
   <p>Monto: <%= number_to_currency(@order.total) %></p>
 
-  <%= f.hidden_field :token, value: "tok_test_1723386_1534CB194f22c73e3572675F075256fE" %>
+  <div>
+    <%= f.label :card_number, "Número de tarjeta" %>
+    <%= f.text_field :card_number, maxlength: 16, required: true, class: "inputs-form-payment" %>
+    <span id="error-card" class="error-msg"></span>
+  </div>
+
+  <div>
+    <%= f.label :exp_month, "Mes de expiración" %>
+    <%= f.select :exp_month, (1..12).map { |m| [m.to_s.rjust(2, "0"), m] }, required: true, class: "inputs-form-payment" %>
+    <span id="error-month" class="error-msg"></span>
+  </div>
+
+  <div>
+    <%= f.label :exp_year, "Año de expiración" %>
+    <%= f.select :exp_year, (Date.today.year..(Date.today.year+10)).map { |y| [y, y] }, required: true, class: "inputs-form-payment" %>
+    <span id="error-year" class="error-msg"></span>
+  </div>
+
+  <div>
+    <%= f.label :cvv, "CVC" %>
+    <%= f.text_field :cvv, maxlength: 4, required: true, class: "inputs-form-payment" %>
+    <span id="error-cvv" class="error-msg"></span>
+  </div>
+
+  <div>
+    <%= f.label :card_holder, "Nombre del titular" %>
+    <%= f.text_field :card_holder, required: true, class: "inputs-form-payment" %>
+    <span id="error-holder" class="error-msg"></span>
+  </div>
+
+  <div>
+    <%= f.label :email, "Correo electrónico" %>
+    <%= f.email_field :email, required: true, class: "inputs-form-payment" %>
+    <span id="error-email" class="error-msg"></span>
+  </div>
+
   <%= f.hidden_field :installments, value: 1 %>
 
-  <%= f.submit "Pagar con tarjeta" %>
+  <%= f.submit "Pagar", id: "pay-btn", disabled: true %>
 <% end %>
+
+<style>
+.inputs-form-payment {
+  padding: 10px;
+  border-radius: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border: 2px solid #ddd;
+  font-size: 16px;
+  width: fit-content;
+  box-sizing: border-box;
+}
+
+.input-error {
+  border: 2px solid #e74c3c !important;
+  background: #ffeaea;
+  border-radius: 15px;
+}
+.input-success:focus, .input-success:active, .input-success {
+  border-radius: 15px;
+  border: 2px solid #27ae60 !important;
+  background: #eaffea;
+}
+.error-msg {
+  color: #e74c3c;
+  font-size: 0.9em;
+  display: block;
+  margin-top: 2px;
+  min-height: 18px;
+}
+</style>
+
+<script>
+document.addEventListener("turbo:load", function() {
+  const form = document.getElementById("payment-form");
+  const payBtn = document.getElementById("pay-btn");
+
+  const cardInput = form.querySelector("[name='payment[card_number]']");
+  const expMonthInput = form.querySelector("[name='payment[exp_month]']");
+  const expYearInput = form.querySelector("[name='payment[exp_year]']");
+  const cvvInput = form.querySelector("[name='payment[cvv]']");
+  const emailInput = form.querySelector("[name='payment[email]']");
+  const holderInput = form.querySelector("[name='payment[card_holder]']");
+
+  const errorCard = document.getElementById("error-card");
+  const errorMonth = document.getElementById("error-month");
+  const errorYear = document.getElementById("error-year");
+  const errorCvv = document.getElementById("error-cvv");
+  const errorEmail = document.getElementById("error-email");
+  const errorHolder = document.getElementById("error-holder");
+
+  let interacted = {
+    card: false,
+    month: false,
+    year: false,
+    cvv: false,
+    holder: false
+  };
+
+  // Algoritmo Luhn para validar tarjeta
+  function luhnCheck(card) {
+    let sum = 0;
+    let shouldDouble = false;
+    for (let i = card.length - 1; i >= 0; i--) {
+      let digit = parseInt(card.charAt(i));
+      if (shouldDouble) {
+        digit *= 2;
+        if (digit > 9) digit -= 9;
+      }
+      sum += digit;
+      shouldDouble = !shouldDouble;
+    }
+    return sum % 10 === 0;
+  }
+
+  // Detecta tipo de tarjeta
+  function cardType(card) {
+    if (/^4/.test(card)) return "Visa";
+    if (/^5[1-5]/.test(card)) return "MasterCard";
+    if (/^3[47]/.test(card)) return "Amex";
+    if (/^6(?:011|5)/.test(card)) return "Discover";
+    return "Desconocida";
+  }
+
+  function validateField(input, isValid, errorElem, errorMsg, key) {
+    input.classList.remove("input-error", "input-success");
+    if (!interacted[key]) {
+      errorElem.textContent = "";
+      return;
+    }
+    if (isValid) {
+      input.classList.add("input-success");
+      errorElem.textContent = "";
+    } else {
+      input.classList.add("input-error");
+      errorElem.textContent = errorMsg;
+    }
+  }
+
+  function validateForm() {
+    const cardValue = cardInput.value.replace(/\s+/g, "");
+    const cardValidLength = /^\d{15,16}$/.test(cardValue);
+    const cardValidLuhn = luhnCheck(cardValue);
+    const type = cardType(cardValue);
+
+    let cardValid = cardValidLength && cardValidLuhn && type !== "Desconocida";
+    let cardErrorMsg = "";
+    if (!cardValidLength) cardErrorMsg = "La tarjeta debe tener 15 o 16 dígitos";
+    else if (!cardValidLuhn) cardErrorMsg = "Número de tarjeta no válido";
+    else if (type === "Desconocida") cardErrorMsg = "Tipo de tarjeta no soportado";
+
+    validateField(cardInput, cardValid, errorCard, cardErrorMsg, "card");
+
+    // Fecha de expiración
+    const monthValid = expMonthInput.value !== "";
+    const yearValid = expYearInput.value !== "";
+    let dateValid = false;
+    let dateErrorMsg = "";
+    if (monthValid && yearValid) {
+      const expDate = new Date(expYearInput.value, expMonthInput.value - 1, 1);
+      const now = new Date();
+      expDate.setMonth(expDate.getMonth() + 1);
+      dateValid = expDate > now;
+      if (!dateValid) dateErrorMsg = "La tarjeta está vencida";
+    }
+    validateField(expMonthInput, monthValid, errorMonth, "Seleccione el mes de expiración", "month");
+    validateField(expYearInput, yearValid, errorYear, "Seleccione el año de expiración", "year");
+    if (monthValid && yearValid && !dateValid) {
+      expMonthInput.classList.add("input-error");
+      expYearInput.classList.add("input-error");
+      errorMonth.textContent = dateErrorMsg;
+      errorYear.textContent = dateErrorMsg;
+    }
+
+    // CVV según tipo de tarjeta
+    let cvvPattern = type === "Amex" ? /^\d{4}$/ : /^\d{3}$/;
+    let cvvValid = cvvPattern.test(cvvInput.value.trim());
+    let cvvErrorMsg = type === "Amex" ? "CVV debe tener 4 dígitos" : "CVV debe tener 3 dígitos";
+    validateField(cvvInput, cvvValid, errorCvv, cvvErrorMsg, "cvv");
+
+    // Titular
+    let holderValid = holderInput.value.trim().length > 2;
+    validateField(holderInput, holderValid, errorHolder, "Ingrese el nombre del titular", "holder");
+
+    // Email
+    const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailInput.value.trim());
+    validateField(emailInput, emailValid, errorEmail, "Correo electrónico no válido", "email");
+
+    if (cardValid && monthValid && yearValid && dateValid && cvvValid && emailValid && holderValid) {
+      payBtn.disabled = false;
+    } else {
+      payBtn.disabled = true;
+    }
+  }
+
+  // Marca el campo como interactuado al cambiar
+  cardInput.addEventListener("input", function() { interacted.card = true; validateForm(); });
+  expMonthInput.addEventListener("change", function() { interacted.month = true; validateForm(); });
+  expYearInput.addEventListener("change", function() { interacted.year = true; validateForm(); });
+  cvvInput.addEventListener("input", function() { interacted.cvv = true; validateForm(); });
+  emailInput.addEventListener("input", function() { interacted.email = true; validateForm(); });
+  holderInput.addEventListener("input", function() { interacted.holder = true; validateForm(); });
+
+  // Validación inicial solo para estilos, sin mostrar errores
+  validateForm();
+});
+</script>

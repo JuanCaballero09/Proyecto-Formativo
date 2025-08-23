@@ -1,6 +1,6 @@
 <section class="order-details">
   <p class="return-btn" style="position: absolute; top: 20px; left: 20px; margin: 0;">
-    <%= link_to "← Regresar", request.referer || root_path %>
+    <%= link_to "← Regresar", root_path %>
   </p>
   <h1>
     Orden <span id="order-code"><%= @order.code %></span>
@@ -42,7 +42,7 @@
 
   <!-- Botón de pago (por integrar) -->
   
-  <%= link_to "Ir al pago", "#", class: "btn-pagar" %>
+  <%= link_to "Ir al pago", new_order_payments_path(@order), class: "btn-pagar" %>
 
 </section>
 

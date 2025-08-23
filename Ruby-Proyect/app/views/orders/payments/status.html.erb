@@ -1,0 +1,87 @@
+<div id="status-container" style="text-align:center; margin-top: 60px;">
+  <div id="loader">
+    <div id="loader-animation-loader" style="width:80px; height:80px; margin:0 auto;"></div>
+
+    <p>Procesando tu pago...</p>
+  </div>
+  <div id="success" style="display:none;">
+    <div id="loader-animation-approved" style="width:80px; height:80px; margin:0 auto;"></div>
+    <h2>¡Pago realizado con éxito!</h2>
+    <%= link_to "Ir al inicio", root_path, class: "btn" %>
+  </div>
+  <div id="declined" style="display:none;">
+    <%#<img src="/assets/error.svg" alt="Pago rechazado" width="80" />%>
+    <h2>Tu pago no se ha concretado</h2>
+    <%= link_to "Reintentar pago", new_order_payments_path(@order), class: "btn" %>
+  </div>
+  <button id="cancel-btn" class="btn" style="margin-top:20px;">Cancelar</button>
+</div>
+
+<script>
+  document.addEventListener("turbo:load", function() {
+    console.log("Iniciando Lottie..."); // debug
+
+    lottie.loadAnimation({
+      container: document.getElementById("loader-animation-loader"),
+      renderer: "svg",
+      loop: true,
+      autoplay: true,
+      path: "/animations/loading.json"
+    });
+
+    lottie.loadAnimation({
+      container: document.getElementById("loader-animation-approved"),
+      renderer: "svg",
+      loop: false,
+      autoplay: true,
+      path: "/animations/approved(2).json"
+    });
+  });
+
+  let interval = setInterval(checkStatus, 6000);
+
+  function checkStatus() {
+    fetch("<%= status_order_payments_path(@order, format: :json) %>")
+      .then(res => res.json())
+      .then(data => {
+        console.log("Estado recibido:", data); // <-- agrega esto
+        if (data.status === "approved") {
+          document.getElementById("loader").style.display = "none";
+          document.getElementById("success").style.display = "block";
+          document.getElementById("cancel-btn").style.display = "none";
+          clearInterval(interval);
+        } else if (data.status === "declined") {
+          document.getElementById("loader").style.display = "none";
+          document.getElementById("declined").style.display = "block";
+          document.getElementById("cancel-btn").style.display = "none";
+          clearInterval(interval);
+        } else if (data.status === "cancelled") {
+          document.getElementById("loader").style.display = "none";
+          document.getElementById("declined").style.display = "block";
+          document.getElementById("cancel-btn").style.display = "none";
+          clearInterval(interval);
+        }
+      });
+  }
+
+  document.getElementById("cancel-btn").onclick = function() {
+    fetch("<%= cancel_order_payments_path(@order) %>", { method: "PATCH" })
+      .then(() => {
+        window.location.href = "<%= root_path %>";
+      });
+  };
+</script>
+
+<style>
+.btn {
+  padding: 10px 20px;
+  background: #2ecc71;
+  color: #fff;
+  border-radius: 5px;
+  text-decoration: none;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  margin: 10px;
+}
+</style>
