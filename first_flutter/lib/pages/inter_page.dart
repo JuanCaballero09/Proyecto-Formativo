@@ -6,14 +6,21 @@ import 'perfil_Page.dart';
 import 'domicilio_Page.dart';
 
 class ProductPage extends StatefulWidget {
-  const ProductPage({super.key});
+  final int initialIndex;
+  const ProductPage({super.key, this.initialIndex = 0});
 
   @override
   State<ProductPage> createState() => _ProductPageState();
 }
 
 class _ProductPageState extends State<ProductPage> {
-  int _selectedIndex = 0;
+  late int _selectedIndex;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedIndex = widget.initialIndex;
+  }
 
   void _onItemTapped(int index) {
     setState(() {

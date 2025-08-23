@@ -7,32 +7,27 @@ class PerfilPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(80),
-        child: AppBar(
-          automaticallyImplyLeading: false, // 👈 Esto quita la flecha
-          backgroundColor: Colors.white,
-          elevation: 0,
-          flexibleSpace: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.only(left: 6.0, right: 16.0, top: 8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  SizedBox(
-                    width: 100,
-                    height: 70,
-                    child: FittedBox(
-                      child: Image.asset(
-                        'assets/logoredondo.png',
-                      ),
-                    ),
+         preferredSize: Size.fromHeight(70),
+  child: SafeArea(
+    child: Padding(
+      padding: const EdgeInsets.only(left: 10.0, right: 12.0), // 👈 casi pegado a la izquierda
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          // LOGO
+          Image.asset(
+            'assets/loogo.jpg',
+            width: 55,  // 👈 ajusta al tamaño que quieras
+            height: 55,
+            fit: BoxFit.contain,
+          ),
+        ]            
                   ),
-                ],
+                
               ),
             ),
-          ),
-        ),
       ),
+          
             body: ListView(
         children: [
           // Encabezado del perfil
@@ -50,13 +45,13 @@ class PerfilPage extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'HOLA, Andrw!',
+                        'HOLA, tuntung sahur',
                         style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                       ),
                       SizedBox(height: 4),
                       Text(
-                        'sdgy5j5c8t@privaterelay.appleid.com',
-                        style: TextStyle(fontSize: 14, color: Colors.black54),
+                        'tralalerotralala.com',
+                        style: TextStyle(fontSize: 14, color: Color.fromARGB(255, 206, 194, 187)),
                       ),
                     ],
                   ),

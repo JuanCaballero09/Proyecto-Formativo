@@ -70,21 +70,22 @@ class _HomePageState extends State<HomePage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(80),
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.only(left: 6.0, right: 16.0, top: 8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                SizedBox(
-                  width: 130,
-                  height: 100,
-                  child: FittedBox(
-                    child: Image.asset('assets/logoredondo.png'),
-                  ),
-                ),
+    appBar: PreferredSize(
+  preferredSize: Size.fromHeight(70),
+  child: SafeArea(
+    child: Padding(
+      padding: const EdgeInsets.only(left: 10.0, right: 12.0), // 👈 casi pegado a la izquierda
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          // LOGO
+          Image.asset(
+            'assets/loogo.jpg',
+            width: 55,  // 👈 ajusta al tamaño que quieras
+            height: 55,
+            fit: BoxFit.contain,
+          ),
+                
                 Row(
                   children: [
                     IconButton(

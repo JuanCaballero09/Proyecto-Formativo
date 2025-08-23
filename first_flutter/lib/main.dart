@@ -1,4 +1,5 @@
 import 'package:first_flutter/pages/carrito_Page.dart';
+import 'package:first_flutter/pages/home_Page.dart';
 import 'package:first_flutter/pages/menu_page.dart';
 import 'package:first_flutter/pages/welcome_page.dart';
 import 'package:first_flutter/pages/login_page.dart';
@@ -11,6 +12,7 @@ import 'repository/product_repository.dart';
 import 'repository/mocki_product_repository.dart';
 import 'pages/splash_page.dart';
 import 'package:first_flutter/pages/register_page.dart';
+import 'package:first_flutter/pages/inter_page.dart';
 
 
 void main() {
@@ -94,20 +96,17 @@ class MyApp extends StatelessWidget {
             labelStyle: const TextStyle(color: Colors.amber),
           ),
         ),
-        initialRoute: '/',
-        routes: {
-          '/': (context) => SplashPage(key: UniqueKey()),
-          '/menu': (context) => const MenuPage(),
-          '/carrito': (context) => CarritoPage(key: UniqueKey()),
-          '/welcome': (context) => const WelcomePage(),
-          '/login': (context) => const LoginPage(),
-          '/register': (context) => const RegisterPage(),
-          '/home': (context) => BlocProvider.value(
-            value: BlocProvider.of<ProductBloc>(context),
-            child: WelcomePage(), // o HomePage()
-          ),
+         initialRoute: '/',
+         routes: {
+         '/': (context) => SplashPage(key: UniqueKey()),
+         '/menu': (context) => const MenuPage(),
+         '/carrito': (context) => CarritoPage(key: UniqueKey()),
+         // '/welcome': (context) => const WelcomePage(),
+         // '/login': (context) => const LoginPage(),
+         // '/register': (context) => const RegisterPage(),
+        '/home': (context) => const ProductPage(),
         },
-      ),
+),
     );
   }
 }
