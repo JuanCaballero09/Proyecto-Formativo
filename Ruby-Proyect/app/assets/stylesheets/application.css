@@ -24,30 +24,6 @@ html,body{
 a:hover{text-decoration: none;}
 input:focus{outline: none;}
 
-/* Notificaciones */
-
-.flash-container {
-    position: fixed;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 1050; 
-    width: auto;
-    max-width: 90%;
-    text-align: center;
-}
-
-.flash-alert {
-    transform: translateY(-100%);
-    opacity: 0;
-    transition: transform 0.5s ease-out, opacity 0.5s ease-out;
-}
-
-.flash-alert.show {
-    transform: translateY(0);
-    opacity: 1;
-}
-
 
 /* Inicio de Sesión */
 
@@ -2175,5 +2151,3 @@ input:focus{outline: none;}
     width: 40px;
     height: 40px;
 }
-
-

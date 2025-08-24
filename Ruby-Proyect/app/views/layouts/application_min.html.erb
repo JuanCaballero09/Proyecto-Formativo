@@ -10,6 +10,8 @@
 
     <%= yield :head %>
 
+    <style>#alert-container{position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:9999;display:flex;flex-direction:column;gap:10px;align-items:center;pointer-events:none;}.alert{min-width:280px;max-width:400px;background:white;padding:15px 20px;border-radius:12px;font-weight:bold;color:#333;box-shadow:0 6px 16px rgba(0,0,0,0.25);opacity:0;transform:translateY(-80px);animation:slideDown 0.5s forwards;pointer-events:auto;}.alert.success{border:3px solid #27ae60;background-color:#d4f5e3;color:#145a32;}.alert.error{border:3px solid #c0392b;background-color:#f9d6d5;color:#641e16;}.alert.warning{border:3px solid #e67e22;background-color:#fef3d4;color:#7e5109;}.alert.info{border:3px solid #2196f3;background-color:#e3f2fd;color:#0d47a1;}@keyframes slideDown{to{opacity:1;transform:translateY(0);}}@keyframes slideUp{to{opacity:0;transform:translateY(-80px);}}</style>
+
     <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
     <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
 
@@ -24,8 +26,51 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.10.2/lottie.min.js"></script>
 </head>
 <body>
+    <!-- Contenedor de alertas -->
+    <div id="alert-container">
+        <% flash.each do |key, message| %>
+        <% css_class = case key.to_sym
+            when :notice then "info"
+            when :alert  then "warning"
+            when :error  then "error"
+            when :success then "success"
+            else "info"
+            end %>
+        <div class="alert <%= css_class %>"><%= message %></div>
+        <% end %>
+
+        <!-- Contenedor vacío para toasts dinámicos -->
+        <div id="flash-toast"></div>
+    </div>
+
     
     <%= yield %>
     
+
+    <script>
+    document.addEventListener("turbo:submit-end", (event) => {
+      const { fetchResponse } = event.detail;
+
+      if (fetchResponse && !fetchResponse.ok) {
+        fetchResponse.text().then(text => {
+          let message = "Error desconocido";
+          try {
+            const data = JSON.parse(text);
+            message = data.message || message;
+          } catch(e) {
+            console.error("No se pudo parsear JSON:", e, text);
+          }
+
+          const flashToast = document.getElementById("flash-toast");
+          if(flashToast){
+            const alert = document.createElement("div");
+            alert.className = "alert error";
+            alert.innerText = message;
+            flashToast.appendChild(alert);
+          }
+        });
+      }
+    });
+    </script>
 </body>    
 </html>

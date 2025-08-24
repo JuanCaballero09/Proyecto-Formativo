@@ -12,18 +12,23 @@
   </turbo-stream>
 <% end %>
 
+<!-- Actualiza el contador de carrito -->
 <turbo-stream action="update" target="contador-carrito">
   <template>
     <%= @item.carrito.carrito_items.sum(:cantidad) %>
   </template>
 </turbo-stream>
 
-<turbo-stream action="update" target="flash-toast">
+<!-- ALERTA / TOAST -->
+<turbo-stream action="append" target="flash-toast">
   <template>
-    ✅ Producto agregado al carrito
+    <div class="alert success">
+      ✅ <%= @producto.nombre %> agregado al carrito
+    </div>
   </template>
 </turbo-stream>
 
+<!-- Actualiza otros contadores / total -->
 <turbo-stream action="update" target="contador-productos">
   <template>
     <%= @carrito.carrito_items.sum(:cantidad) %>
@@ -35,4 +40,3 @@
     <%= number_to_currency(@carrito.carrito_items.sum { |item| item.precio * item.cantidad }, unit: "COP ", separator: ",", delimiter: ".") %>
   </template>
 </turbo-stream>
-

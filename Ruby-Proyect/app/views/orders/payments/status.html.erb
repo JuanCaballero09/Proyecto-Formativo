@@ -1,16 +1,30 @@
 <div id="status-container" style="text-align:center; margin-top: 60px;">
-  <div id="loader">
-    <div id="loader-animation-loader" style="width:80px; height:80px; margin:0 auto;"></div>
+  <div class="state loading" id="stateBox">
+    <svg width="100" height="100" viewBox="0 0 100 100">
+      <circle cx="50" cy="50" r="45"></circle>
+    </svg>
 
-    <p>Procesando tu pago...</p>
+    <!-- Check ✅ -->
+    <svg class="icon check" viewBox="0 0 52 52">
+      <polyline points="14,27 22,35 38,18"></polyline>
+    </svg>
+
+    <!-- Cross ❌ -->
+    <svg class="icon cross" viewBox="0 0 52 52">
+      <line x1="16" y1="16" x2="36" y2="36"></line>
+      <line x1="36" y1="16" x2="16" y2="36"></line>
+    </svg>
+  </div>
+
+  <div id="loader">
+    <p id="processing-msg">Esperando aprobación del pago...</p>
+  
   </div>
   <div id="success" style="display:none;">
-    <div id="loader-animation-approved" style="width:80px; height:80px; margin:0 auto;"></div>
     <h2>¡Pago realizado con éxito!</h2>
     <%= link_to "Ir al inicio", root_path, class: "btn" %>
   </div>
   <div id="declined" style="display:none;">
-    <%#<img src="/assets/error.svg" alt="Pago rechazado" width="80" />%>
     <h2>Tu pago no se ha concretado</h2>
     <%= link_to "Reintentar pago", new_order_payments_path(@order), class: "btn" %>
   </div>
@@ -18,44 +32,29 @@
 </div>
 
 <script>
-  document.addEventListener("turbo:load", function() {
-    console.log("Iniciando Lottie..."); // debug
 
-    lottie.loadAnimation({
-      container: document.getElementById("loader-animation-loader"),
-      renderer: "svg",
-      loop: true,
-      autoplay: true,
-      path: "/animations/loading.json"
-    });
-
-    lottie.loadAnimation({
-      container: document.getElementById("loader-animation-approved"),
-      renderer: "svg",
-      loop: false,
-      autoplay: true,
-      path: "/animations/approved(2).json"
-    });
-  });
-
-  let interval = setInterval(checkStatus, 6000);
+  let interval = setInterval(checkStatus, 2000);
 
   function checkStatus() {
+    const statusBox = document.getElementById("stateBox");
     fetch("<%= status_order_payments_path(@order, format: :json) %>")
       .then(res => res.json())
       .then(data => {
         console.log("Estado recibido:", data); // <-- agrega esto
         if (data.status === "approved") {
+          statusBox.className = "state success";
           document.getElementById("loader").style.display = "none";
           document.getElementById("success").style.display = "block";
           document.getElementById("cancel-btn").style.display = "none";
           clearInterval(interval);
         } else if (data.status === "declined") {
+          statusBox.className = "state error";
           document.getElementById("loader").style.display = "none";
           document.getElementById("declined").style.display = "block";
           document.getElementById("cancel-btn").style.display = "none";
           clearInterval(interval);
         } else if (data.status === "cancelled") {
+          statusBox.className = "state error"
           document.getElementById("loader").style.display = "none";
           document.getElementById("declined").style.display = "block";
           document.getElementById("cancel-btn").style.display = "none";
@@ -84,4 +83,88 @@
   cursor: pointer;
   margin: 10px;
 }
+</style>
+
+<style>
+
+/* ---- CONTENEDOR ---- */
+.state {
+  margin: auto;
+  width: 100px;
+  height: 100px;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* ---- CÍRCULO ---- */
+.state svg circle {
+  fill: none;
+  stroke-width: 10;
+  stroke-linecap: round;
+  stroke-dasharray: 283; /* circunferencia aprox */
+  stroke-dashoffset: 280;
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+  transition: stroke-dashoffset 0.8s ease, stroke 0.5s ease, fill 0.5s ease;
+}
+
+/* Loading: círculo animado */
+.state.loading svg circle {
+  stroke: #3498db;
+  animation: spin 1s linear infinite;
+}
+
+/* Success: círculo relleno y check */
+.state.success svg circle {
+  stroke: #2ecc71;
+  stroke-dashoffset: 0;
+  fill: #2ecc71;
+  animation: none;
+}
+
+/* Error: círculo relleno y X */
+.state.error svg circle {
+  stroke: #e74c3c;
+  stroke-dashoffset: 0;
+  fill: #e74c3c;
+  animation: none;
+}
+
+/* ---- ICONOS INTERNOS (check / X) ---- */
+.icon {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  stroke-width: 5;
+  stroke: #fff;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+  opacity: 0;
+  transform: scale(0.5);
+  transition: all 0.5s ease;
+}
+
+/* Mostrar check solo en success */
+.state.success .check {
+  opacity: 1;
+  transform: scale(1);
+  transition-delay: 0.3s;
+}
+
+/* Mostrar X solo en error */
+.state.error .cross {
+  opacity: 1;
+  transform: scale(1);
+  transition-delay: 0.3s;
+}
+
+/* Animación de carga */
+@keyframes spin {
+  0% { transform: rotate(-90deg) rotate(0deg); }
+  100% { transform: rotate(-90deg) rotate(360deg); }
+}
+
 </style>

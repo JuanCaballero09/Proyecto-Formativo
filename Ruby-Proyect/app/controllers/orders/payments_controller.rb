@@ -63,10 +63,12 @@ class  Orders::PaymentsController < ApplicationController
         # render json: { status: "success", transaction_id: transaction_id, wompi: response }
         redirect_to status_order_payments_path(@order) and return
       else
-        render json: { status: "error", details: response }, status: :unprocessable_entity
+        error_message = response["error"] ? response["error"]["messages"].values.flatten.join(", ") : "Error desconocido"
+        render json: { status: "error", message: error_message }, status: :unprocessable_entity
       end
     else
-      render json: { status: "error", details: token_response }, status: :unprocessable_entity and return
+      error_message = token_response["error"] ? token_response["error"]["messages"].values.flatten.join(", ") : "Error desconocido"
+      render json: { status: "error", message: error_message }, status: :unprocessable_entity
     end
   end
 
