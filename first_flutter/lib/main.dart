@@ -62,7 +62,7 @@ class _MyAppState extends State<MyApp> {
           BlocProvider(create: (_) => CartBloc()),
         ],
         child: MaterialApp(
-          title: 'Restaurante',
+          title: 'Bitevia',
           debugShowCheckedModeBanner: false,
           locale: _locale,
           theme: ThemeData(

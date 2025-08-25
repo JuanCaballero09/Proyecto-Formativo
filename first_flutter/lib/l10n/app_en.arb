@@ -1,4 +1,9 @@
 {
   "@@locale": "en",
-  "title": "Hello World"
+  "title": "Hello World",
+  "welcomeTitle": "Welcome to Bitevia",
+  "welcomeSubtitle": "Enjoy a Unique Experience!",
+  "loginButton": "Log In",
+  "registerButton": "Sign Up",
+  "appTitle": "Restaurant"
 }

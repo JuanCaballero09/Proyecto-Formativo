@@ -1,4 +1,9 @@
 {
   "@@locale": "es",
-  "title": "Hola Mundo"
+  "title": "Hola Mundo",
+  "welcomeTitle": "Bienvenido A Bitevia",
+  "welcomeSubtitle": "¡Disfruta De Una Experiencia Única!",
+  "loginButton": "Iniciar Sesión",
+  "registerButton": "Registrarse",
+  "appTitle": "Restaurante"
 }

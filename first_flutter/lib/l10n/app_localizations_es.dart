@@ -10,4 +10,19 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get title => 'Hola Mundo';
+
+  @override
+  String get welcomeTitle => 'Bienvenido A Bitevia';
+
+  @override
+  String get welcomeSubtitle => '¡Disfruta De Una Experiencia Única!';
+
+  @override
+  String get loginButton => 'Iniciar Sesión';
+
+  @override
+  String get registerButton => 'Registrarse';
+
+  @override
+  String get appTitle => 'Restaurante';
 }
