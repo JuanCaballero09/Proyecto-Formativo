@@ -25,11 +25,22 @@ void main() {
 
 class MyApp extends StatefulWidget {
   final ProductRepository repository;
-
   const MyApp({super.key, required this.repository});
 
   @override
   State<MyApp> createState() => _MyAppState();
+}
+
+class LanguageProvider extends InheritedWidget {
+  final void Function(Locale) changeLanguage;
+  const LanguageProvider({required this.changeLanguage, required Widget child}) : super(child: child);
+
+  static LanguageProvider? of(BuildContext context) {
+    return context.dependOnInheritedWidgetOfExactType<LanguageProvider>();
+  }
+
+  @override
+  bool updateShouldNotify(LanguageProvider oldWidget) => false;
 }
 
 class _MyAppState extends State<MyApp> {
@@ -43,94 +54,97 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(create: (_) => ProductBloc(widget.repository)),
-        BlocProvider(create: (_) => CartBloc()),
-      ],
-      child: MaterialApp(
-        title: 'Restaurante',
-        debugShowCheckedModeBanner: false,
-        locale: _locale,
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(
-            seedColor: Colors.amber,
-            brightness: Brightness.light,
-            primary: Colors.amber[800]!,
-            secondary: Colors.deepOrangeAccent,
-            surface: Colors.white,
-            surfaceVariant: Colors.amber[50]!,
-            onPrimary: Colors.white,
-            onSecondary: Colors.white,
-            onSurface: Colors.black,
-            onSurfaceVariant: Colors.black,
-          ),
-          useMaterial3: true,
-          fontFamily: 'Roboto',
-          appBarTheme: const AppBarTheme(
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            centerTitle: true,
-            iconTheme: IconThemeData(color: Colors.amber),
-            titleTextStyle: TextStyle(
-              color: Colors.amber,
-              fontWeight: FontWeight.bold,
-              fontSize: 24,
+    return LanguageProvider(
+      changeLanguage: _changeLanguage,
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider(create: (_) => ProductBloc(widget.repository)),
+          BlocProvider(create: (_) => CartBloc()),
+        ],
+        child: MaterialApp(
+          title: 'Restaurante',
+          debugShowCheckedModeBanner: false,
+          locale: _locale,
+          theme: ThemeData(
+            colorScheme: ColorScheme.fromSeed(
+              seedColor: Colors.amber,
+              brightness: Brightness.light,
+              primary: Colors.amber[800]!,
+              secondary: Colors.deepOrangeAccent,
+              surface: Colors.white,
+              surfaceVariant: Colors.amber[50]!,
+              onPrimary: Colors.white,
+              onSecondary: Colors.white,
+              onSurface: Colors.black,
+              onSurfaceVariant: Colors.black,
             ),
-          ),
-          elevatedButtonTheme: ElevatedButtonThemeData(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.amber[700],
-              foregroundColor: Colors.white,
+            useMaterial3: true,
+            fontFamily: 'Roboto',
+            appBarTheme: const AppBarTheme(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              centerTitle: true,
+              iconTheme: IconThemeData(color: Colors.amber),
+              titleTextStyle: TextStyle(
+                color: Colors.amber,
+                fontWeight: FontWeight.bold,
+                fontSize: 24,
+              ),
+            ),
+            elevatedButtonTheme: ElevatedButtonThemeData(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.amber[700],
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                textStyle: const TextStyle(fontWeight: FontWeight.bold),
+                elevation: 2,
+              ),
+            ),
+            cardTheme: CardThemeData(
+              color: Colors.white,
+              elevation: 4,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
               ),
-              textStyle: const TextStyle(fontWeight: FontWeight.bold),
-              elevation: 2,
+              margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+            ),
+            inputDecorationTheme: InputDecorationTheme(
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: Colors.amber),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: Colors.amber, width: 2),
+              ),
+              labelStyle: const TextStyle(color: Colors.amber),
             ),
           ),
-          cardTheme: CardThemeData(
-            color: Colors.white,
-            elevation: 4,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
+          localizationsDelegates: [
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: const [
+            Locale('en'),
+            Locale('es'),
+          ],
+          initialRoute: '/',
+          routes: {
+            '/': (context) => SplashPage(key: UniqueKey()),
+            '/menu': (context) => const MenuPage(),
+            '/carrito': (context) => CarritoPage(key: UniqueKey()),
+            '/welcome': (context) => const WelcomePage(),
+            '/login': (context) => const LoginPage(),
+            '/register': (context) => const RegisterPage(),
+            '/home': (context) => BlocProvider.value(
+              value: BlocProvider.of<ProductBloc>(context),
+              child: WelcomePage(), // o HomePage()
             ),
-            margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-          ),
-          inputDecorationTheme: InputDecorationTheme(
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Colors.amber),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Colors.amber, width: 2),
-            ),
-            labelStyle: const TextStyle(color: Colors.amber),
-          ),
+          },
         ),
-        localizationsDelegates: [
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-        ],
-        supportedLocales: const [
-          Locale('en'),
-          Locale('es'),
-        ],
-        initialRoute: '/',
-        routes: {
-          '/': (context) => SplashPage(key: UniqueKey()),
-          '/menu': (context) => const MenuPage(),
-          '/carrito': (context) => CarritoPage(key: UniqueKey()),
-          '/welcome': (context) => const WelcomePage(),
-          '/login': (context) => const LoginPage(),
-          '/register': (context) => const RegisterPage(),
-          '/home': (context) => BlocProvider.value(
-            value: BlocProvider.of<ProductBloc>(context),
-            child: WelcomePage(), // o HomePage()
-          ),
-        },
       ),
     );
   }

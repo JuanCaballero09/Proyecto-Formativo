@@ -1,14 +1,45 @@
 import 'package:flutter/material.dart';
 import 'login_page.dart';
+import '../main.dart';
 
 
 
 class WelcomePage extends StatelessWidget {
   const WelcomePage({super.key});
 
+  void _changeLanguage(BuildContext context, String value) {
+    Locale newLocale = value == 'es' ? const Locale('es') : const Locale('en');
+    final provider = LanguageProvider.of(context);
+    if (provider != null) {
+      provider.changeLanguage(newLocale);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        actions: [
+          PopupMenuButton<String>(
+            onSelected: (String value) {
+              _changeLanguage(context, value);
+            },
+            itemBuilder: (BuildContext context) => [
+              const PopupMenuItem(
+                value: 'en',
+                child: Text('English'),
+              ),
+              const PopupMenuItem(
+                value: 'es',
+                child: Text('Español'),
+              ),
+            ],
+            icon: const Icon(Icons.language),
+          ),
+        ],
+      ),
       backgroundColor: const Color.fromRGBO(237, 88, 33, 1), // Fondo naranja
       body: Center(
         child: Padding(
