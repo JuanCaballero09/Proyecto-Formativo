@@ -12,7 +12,7 @@ import 'repository/mocki_product_repository.dart';
 import 'pages/splash_page.dart';
 import 'package:first_flutter/pages/register_page.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:intl/intl.dart';
+import 'l10n/app_localizations.dart';
 
 void main() {
   // Para usar datos locales, descomenta la siguiente línea y comenta la de HttpProductRepository:
@@ -123,14 +123,12 @@ class _MyAppState extends State<MyApp> {
             ),
           ),
           localizationsDelegates: [
+            AppLocalizations.delegate,
             GlobalMaterialLocalizations.delegate,
             GlobalWidgetsLocalizations.delegate,
             GlobalCupertinoLocalizations.delegate,
           ],
-          supportedLocales: const [
-            Locale('en'),
-            Locale('es'),
-          ],
+          supportedLocales: AppLocalizations.supportedLocales,
           initialRoute: '/',
           routes: {
             '/': (context) => SplashPage(key: UniqueKey()),
@@ -156,7 +154,7 @@ class MyHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String title = Intl.message('Hello World', name: 'title');
+  String title = AppLocalizations.of(context)!.title;
     return Scaffold(
       appBar: AppBar(
         title: Text(title),

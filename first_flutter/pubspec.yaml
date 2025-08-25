@@ -30,6 +30,7 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  generate: true
   assets:
     - assets/imagen1.jpeg
     - assets/imagen2.jpeg
