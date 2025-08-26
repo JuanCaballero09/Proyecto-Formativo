@@ -20,4 +20,10 @@ class MockiProductRepository implements ProductRepository {
       throw Exception('Failed to load products');
     }
   }
+
+  @override
+  Future<List<Product>> getProductsByCategory(String categoryName) async {
+    final allProducts = await getProducts();
+    return allProducts.where((p) => p.category.toLowerCase() == categoryName.toLowerCase()).toList();
+  }
 }

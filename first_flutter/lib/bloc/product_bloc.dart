@@ -17,5 +17,15 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
         emit(ProductError('Error al cargar los productos'));
       }
     });
+
+    on<LoadProductsByCategory>((event, emit) async {
+      emit(ProductLoading());
+      try {
+        final products = await repository.getProductsByCategory(event.categoryName);
+        emit(ProductLoaded(products));
+      } catch (e) {
+        emit(ProductError('Error al cargar los productos de la categoría'));
+      }
+    });
   }
 }
