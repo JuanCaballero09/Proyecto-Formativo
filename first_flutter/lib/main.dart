@@ -1,18 +1,19 @@
 import 'package:first_flutter/pages/carrito_Page.dart';
-import 'package:first_flutter/pages/home_Page.dart';
 import 'package:first_flutter/pages/menu_page.dart';
-import 'package:first_flutter/pages/welcome_page.dart';
-import 'package:first_flutter/pages/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'bloc/product_bloc.dart';
 import 'bloc/cart_bloc.dart';
+import 'bloc/language_bloc.dart';
+import 'bloc/language_event.dart';
+import 'bloc/language_state.dart';
 import 'repository/product_repository.dart';
 //import 'repository/http_product_repository.dart';
 import 'repository/mocki_product_repository.dart';
 import 'pages/splash_page.dart';
-import 'package:first_flutter/pages/register_page.dart';
 import 'package:first_flutter/pages/inter_page.dart';
+import 'l10n/app_localizations.dart';
 
 
 void main() {
@@ -35,10 +36,24 @@ class MyApp extends StatelessWidget {
       providers: [
         BlocProvider(create: (_) => ProductBloc(repository)),
         BlocProvider(create: (_) => CartBloc()),
+        BlocProvider(create: (_) => LanguageBloc()..add(const LoadLanguage())),
       ],
-      child: MaterialApp(
-        title: 'Restaurante',
-        debugShowCheckedModeBanner: false,
+      child: BlocBuilder<LanguageBloc, LanguageState>(
+        builder: (context, languageState) {
+          return MaterialApp(
+            title: 'Restaurante',
+            debugShowCheckedModeBanner: false,
+            locale: languageState is LanguageLoaded ? languageState.locale : const Locale('es'),
+            localizationsDelegates: const [
+              AppLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            supportedLocales: const [
+              Locale('en'), // English
+              Locale('es'), // Spanish
+            ],
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(
             seedColor: Colors.amber,
@@ -96,17 +111,19 @@ class MyApp extends StatelessWidget {
             labelStyle: const TextStyle(color: Colors.amber),
           ),
         ),
-         initialRoute: '/',
-         routes: {
-         '/': (context) => SplashPage(key: UniqueKey()),
-         '/menu': (context) => const MenuPage(),
-         '/carrito': (context) => CarritoPage(key: UniqueKey()),
-         // '/welcome': (context) => const WelcomePage(),
-         // '/login': (context) => const LoginPage(),
-         // '/register': (context) => const RegisterPage(),
-        '/home': (context) => const ProductPage(),
+            initialRoute: '/',
+            routes: {
+              '/': (context) => SplashPage(key: UniqueKey()),
+              '/menu': (context) => const MenuPage(),
+              '/carrito': (context) => CarritoPage(key: UniqueKey()),
+              // '/welcome': (context) => const WelcomePage(),
+              // '/login': (context) => const LoginPage(),
+              // '/register': (context) => const RegisterPage(),
+              '/home': (context) => const ProductPage(),
+            },
+          );
         },
-),
+      ),
     );
   }
 }

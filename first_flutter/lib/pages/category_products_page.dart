@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import '../l10n/app_localizations.dart';
 
 import '../bloc/product_bloc.dart';
 import '../bloc/product_event.dart';
 import '../bloc/product_state.dart';
-import '../models/product.dart';
 import 'product_detail_page.dart';
 
 class CategoryProductsPage extends StatefulWidget {
@@ -26,19 +26,7 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
   @override
   void initState() {
     super.initState();
-    print('CategoryProductsPage initState - Category: ${widget.categoryName}');
-    
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final state = context.read<ProductBloc>().state;
-      print('Current ProductBloc state in initState: ${state.runtimeType}');
-      
-      if (state is! ProductLoaded) {
-        print('State is not ProductLoaded, triggering FetchProducts');
-        context.read<ProductBloc>().add(FetchProducts());
-      } else {
-        print('State is ProductLoaded with ${state.products.length} products');
-      }
-    });
+    context.read<ProductBloc>().add(LoadProductsByCategory(widget.categoryName));
   }
 
   @override
@@ -67,77 +55,30 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
           
           if (state is ProductInitial) {
             print('State is ProductInitial - triggering FetchProducts');
-            return const Center(
+            return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  CircularProgressIndicator(),
-                  SizedBox(height: 16),
-                  Text('Iniciando carga de productos...'),
+                  const CircularProgressIndicator(),
+                  const SizedBox(height: 16),
+                  Text(AppLocalizations.of(context)!.loadingProducts),
                 ],
               ),
             );
           } else if (state is ProductLoading) {
             print('State is ProductLoading');
-            return const Center(
+            return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  CircularProgressIndicator(),
-                  SizedBox(height: 16),
-                  Text('Cargando productos...'),
+                  const CircularProgressIndicator(),
+                  const SizedBox(height: 16),
+                  Text(AppLocalizations.of(context)!.loadingProducts),
                 ],
               ),
             );
           } else if (state is ProductLoaded) {
-            // Debug: Imprimir información para depuración
-            print('=== CATEGORY PRODUCTS DEBUG ===');
-            print('Total products loaded: ${state.products.length}');
-            print('Category name: "${widget.categoryName}"');
-            print('Products:');
-            
-            // Imprimir TODOS los nombres de productos
-            for (int i = 0; i < state.products.length; i++) {
-              print('  ${i + 1}. "${state.products[i].name}" (ID: ${state.products[i].id})');
-            }
-            
-            // Filtrar productos por categoría usando un filtro más inteligente
-            final filteredProducts = state.products
-                .where((product) => _matchesCategory(product, widget.categoryName))
-                .toList();
-                
-            print('Filtered products count: ${filteredProducts.length}');
-            print('Filtered products:');
-            for (int i = 0; i < filteredProducts.length; i++) {
-              print('  ${i + 1}. "${filteredProducts[i].name}"');
-            }
-            print('=== END DEBUG ===');
-
-            // Si no hay productos filtrados, mostrar todos temporalmente para debug
-            final displayProducts = filteredProducts.isEmpty ? state.products : filteredProducts;
-            
             if (state.products.isEmpty) {
-              return const Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.restaurant_menu_outlined,
-                      size: 80,
-                      color: Colors.grey,
-                    ),
-                    SizedBox(height: 16),
-                    Text(
-                      'No se han cargado productos desde la API',
-                      style: TextStyle(fontSize: 16),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                ),
-              );
-            }
-
-            if (filteredProducts.isEmpty) {
               return Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -149,7 +90,7 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      'No hay productos en esta categoría',
+                      AppLocalizations.of(context)!.noProductsFound,
                       style: TextStyle(
                         fontSize: 18,
                         color: Colors.grey[600],
@@ -158,50 +99,11 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'Categoría: ${widget.categoryName}',
+                      '${AppLocalizations.of(context)!.category}: ${widget.categoryName}',
                       style: TextStyle(
                         fontSize: 14,
                         color: Colors.grey[500],
                       ),
-                    ),
-                    Text(
-                      'Total productos cargados: ${state.products.length}',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey[500],
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    ElevatedButton(
-                      onPressed: () {
-                        // Mostrar todos los productos sin filtrar para debug
-                        showDialog(
-                          context: context,
-                          builder: (context) => AlertDialog(
-                            title: const Text('Productos disponibles'),
-                            content: SizedBox(
-                              width: double.maxFinite,
-                              child: ListView.builder(
-                                shrinkWrap: true,
-                                itemCount: state.products.length,
-                                itemBuilder: (context, index) {
-                                  return ListTile(
-                                    title: Text(state.products[index].name),
-                                    subtitle: Text('ID: ${state.products[index].id}'),
-                                  );
-                                },
-                              ),
-                            ),
-                            actions: [
-                              TextButton(
-                                onPressed: () => Navigator.pop(context),
-                                child: const Text('Cerrar'),
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                      child: const Text('Ver todos los productos (Debug)'),
                     ),
                   ],
                 ),
@@ -250,15 +152,6 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
                               ],
                             ),
                           ),
-                          if (filteredProducts.isEmpty)
-                            const Text(
-                              '(Mostrando todos los productos para debug)',
-                              style: TextStyle(
-                                color: Colors.yellow,
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
                         ],
                       ),
                     ),
@@ -273,11 +166,11 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
                         crossAxisCount: 2,
                         mainAxisSpacing: 16,
                         crossAxisSpacing: 16,
-                        childAspectRatio: 0.65, // Cambié de 0.75 a 0.65 para hacer las tarjetas más altas
+                        childAspectRatio: 0.65,
                       ),
-                      itemCount: displayProducts.length,
+                      itemCount: state.products.length,
                       itemBuilder: (context, index) {
-                        final product = displayProducts[index];
+                        final product = state.products[index];
                         return Card(
                           elevation: 6,
                           shape: RoundedRectangleBorder(
@@ -353,7 +246,7 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
                                         if (product.ingredients.isNotEmpty) ...[
                                           const SizedBox(height: 6),
                                           Text(
-                                            'Ingredientes:',
+                                            '${AppLocalizations.of(context)!.ingredients}:',
                                             style: TextStyle(
                                               fontSize: 11,
                                               fontWeight: FontWeight.bold,
@@ -410,7 +303,6 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
               ],
             );
           } else if (state is ProductError) {
-            print('State is ProductError: ${state.message}');
             return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -422,7 +314,7 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    'Error al cargar productos',
+                    AppLocalizations.of(context)!.loadingProductsError,
                     style: TextStyle(
                       fontSize: 18,
                       color: Colors.grey[600],
@@ -441,28 +333,25 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
                   const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () {
-                      print('Retry button pressed - triggering FetchProducts');
-                      context.read<ProductBloc>().add(FetchProducts());
+                      context.read<ProductBloc>().add(LoadProductsByCategory(widget.categoryName));
                     },
-                    child: const Text('Reintentar'),
+                    child: Text(AppLocalizations.of(context)!.retry),
                   ),
                 ],
               ),
             );
           } else {
-            print('Unknown state: ${state.runtimeType}');
             return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text('Estado desconocido'),
+                  Text(AppLocalizations.of(context)!.unknownState),
                   const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () {
-                      print('Reload button pressed - triggering FetchProducts');
-                      context.read<ProductBloc>().add(FetchProducts());
+                      context.read<ProductBloc>().add(LoadProductsByCategory(widget.categoryName));
                     },
-                    child: const Text('Recargar'),
+                    child: Text(AppLocalizations.of(context)!.reload),
                   ),
                 ],
               ),
@@ -471,43 +360,5 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
         },
       ),
     );
-  }
-
-  // Método para filtrar productos por categoría de forma más flexible
-  bool _matchesCategory(Product product, String categoryName) {
-    final productName = product.name.toLowerCase();
-    final category = categoryName.toLowerCase();
-    
-    print('Checking product: "$productName" against category: "$category"');
-    
-    bool matches = false;
-    switch (category) {
-      case 'pizza':
-        matches = productName.contains('pizza');
-        break;
-      case 'hamburguesa':
-        matches = productName.contains('hamburguesa') || productName.contains('burger');
-        break;
-      case 'taco':
-        matches = productName.contains('taco');
-        break;
-      case 'ensalada':
-        matches = productName.contains('ensalada') || productName.contains('salad');
-        break;
-      case 'bebida':
-        matches = productName.contains('bebida') || 
-               productName.contains('jugo') || 
-               productName.contains('refresco') ||
-               productName.contains('agua') ||
-               productName.contains('cafe') ||
-               productName.contains('té');
-        break;
-      default:
-        matches = productName.contains(category);
-        break;
-    }
-    
-    print('Product "$productName" matches category "$category": $matches');
-    return matches;
   }
 }

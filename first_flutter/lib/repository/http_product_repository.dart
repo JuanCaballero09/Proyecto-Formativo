@@ -10,20 +10,20 @@ class HttpProductRepository implements ProductRepository {
   HttpProductRepository({required this.apiUrl});
 
   @override
+  Future<List<Product>> getProductsByCategory(String categoryName) async {
+    // La API de mocki.io no soporta filtrado por categoría,
+    // así que cargamos todos y filtramos en el cliente.
+    final allProducts = await getProducts();
+    return allProducts.where((p) => p.category.toLowerCase() == categoryName.toLowerCase()).toList();
+  }
+
+  @override
   Future<List<Product>> getProducts() async {
     final response = await http.get(Uri.parse(apiUrl));
 
     if (response.statusCode == 200) {
       final List<dynamic> jsonList = jsonDecode(response.body);
-      return jsonList.map((json) => Product(
-        id: json['id'],
-        name: json['name'],
-        price: (json['price'] is int)
-            ? (json['price'] as int).toDouble()
-            : (json['price'] as num).toDouble(),
-        description: json['description'] ?? '',
-        image: json['image'] ?? '',
-      )).toList();
+      return jsonList.map((json) => Product.fromJson(json)).toList();
     } else {
       throw Exception('Failed to load products');
     }

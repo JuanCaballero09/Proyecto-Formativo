@@ -1,6 +1,11 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../l10n/app_localizations.dart';
+import '../bloc/language_bloc.dart';
+import '../bloc/language_event.dart';
+import '../bloc/language_state.dart';
 import 'notificacion_Page.dart';
 import 'location_Page.dart';
 
@@ -108,14 +113,35 @@ class _HomePageState extends State<HomePage>
                       },
                     ),
                     IconButton(
-                      icon:
-                          Icon(Icons.location_on_outlined, color: Colors.black),
+                      icon: Icon(Icons.location_on_outlined, color: Colors.black),
                       onPressed: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) => MapaOSMPage(),
                           ),
+                        );
+                      },
+                    ),
+                    // Botón de idioma
+                    BlocBuilder<LanguageBloc, LanguageState>(
+                      builder: (context, state) {
+                        if (state is LanguageLoaded) {
+                          return IconButton(
+                            icon: Text(
+                              state.locale.languageCode == 'es' ? '🇪🇸' : '🇺🇸',
+                              style: TextStyle(fontSize: 20),
+                            ),
+                            onPressed: () {
+                              _showLanguageDialog(context, state.locale.languageCode);
+                            },
+                          );
+                        }
+                        return IconButton(
+                          icon: Text('🇪🇸', style: TextStyle(fontSize: 20)),
+                          onPressed: () {
+                            _showLanguageDialog(context, 'es');
+                          },
                         );
                       },
                     ),
@@ -151,10 +177,10 @@ class _HomePageState extends State<HomePage>
                   child: TextField(
                     controller: _searchController,
                     decoration: InputDecoration(
-                      hintText: 'Buscar...',
-                      prefixIcon: Icon(Icons.search),
+                      hintText: AppLocalizations.of(context)!.searchProducts,
+                      prefixIcon: const Icon(Icons.search),
                       border: InputBorder.none,
-                      contentPadding:
+                      contentPadding: const
                           EdgeInsets.symmetric(horizontal: 20, vertical: 14),
                     ),
                   ),
@@ -166,8 +192,8 @@ class _HomePageState extends State<HomePage>
               padding: const EdgeInsets.symmetric(
                   horizontal: 16.0, vertical: 8.0),
               child: Text(
-                "Promociones",
-                style: TextStyle(
+                AppLocalizations.of(context)!.todaysOffers,
+                style: const TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                     color: Colors.black),
@@ -234,8 +260,8 @@ class _HomePageState extends State<HomePage>
               padding: const EdgeInsets.symmetric(
                   horizontal: 16.0, vertical: 8.0),
               child: Text(
-                "Novedades",
-                style: TextStyle(
+                AppLocalizations.of(context)!.popularProducts,
+                style: const TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                     color: Colors.black),
@@ -295,8 +321,8 @@ class _HomePageState extends State<HomePage>
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
-                      'Nuevo',
-                      style: TextStyle(
+                      AppLocalizations.of(context)!.newProduct,
+                      style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
                         fontSize: 12,
@@ -330,6 +356,44 @@ class _HomePageState extends State<HomePage>
           ],
         ),
       ),
+    );
+  }
+
+  void _showLanguageDialog(BuildContext context, String currentLanguage) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(AppLocalizations.of(context)!.selectLanguage),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: Text('🇪🇸', style: TextStyle(fontSize: 24)),
+                title: Text('Español'),
+                trailing: currentLanguage == 'es' 
+                  ? Icon(Icons.check, color: Colors.green) 
+                  : null,
+                onTap: () {
+                  context.read<LanguageBloc>().add(ChangeLanguage(languageCode: 'es'));
+                  Navigator.of(context).pop();
+                },
+              ),
+              ListTile(
+                leading: Text('🇺🇸', style: TextStyle(fontSize: 24)),
+                title: Text('English'),
+                trailing: currentLanguage == 'en' 
+                  ? Icon(Icons.check, color: Colors.green) 
+                  : null,
+                onTap: () {
+                  context.read<LanguageBloc>().add(ChangeLanguage(languageCode: 'en'));
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

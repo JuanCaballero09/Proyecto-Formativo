@@ -2,9 +2,11 @@
     <application
         android:label="first_flutter"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher"
-        android:name="com.google.android.geo.API_KEY"
-        android:value="AIzaSyDgxAHvancHA5d7V7YtjETQIhDyr5P4K-A"/>
+        android:icon="@mipmap/ic_launcher">
+        
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyDgxAHvancHA5d7V7YtjETQIhDyr5P4K-A"/>
 
         <activity
             android:name=".MainActivity"

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../l10n/app_localizations.dart';
 import 'menu_page.dart';
 import 'home_Page.dart';
 import 'carrito_Page.dart';
@@ -48,13 +49,13 @@ class _ProductPageState extends State<ProductPage> {
                   const SizedBox(width: 20),
                   _buildNavItem(
                     icon: Icons.restaurant_menu,
-                    label: 'Menú',
+                    label: AppLocalizations.of(context)!.menu,
                     index: 1,
                   ),
                   const SizedBox(width: 50),
                   _buildNavItem(
                     icon: Icons.shopping_cart,
-                    label: 'Carrito',
+                    label: AppLocalizations.of(context)!.cart,
                     index: 2,
                   ),
                 ],
@@ -64,7 +65,7 @@ class _ProductPageState extends State<ProductPage> {
 
                 _buildNavItem(
                     icon: Icons.delivery_dining, 
-                    label: 'Domicilio', 
+                    label: AppLocalizations.of(context)!.delivery, 
                     index: 4
                     ),
 
@@ -72,7 +73,7 @@ class _ProductPageState extends State<ProductPage> {
 
                 _buildNavItem(
                     icon: Icons.person,
-                    label: 'Perfil',
+                    label: AppLocalizations.of(context)!.profile,
                     index: 3,
                   ),
 

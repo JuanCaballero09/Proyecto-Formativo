@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../l10n/app_localizations.dart';
 import 'category_products_page.dart';
 
 class MenuPage extends StatefulWidget {
@@ -9,13 +10,16 @@ class MenuPage extends StatefulWidget {
 }
 
 class _MenuPageState extends State<MenuPage> {
-  final List<Map<String, String>> categorias = [
-    {"titulo": "PIZZA", "imagen": "assets/Pizza Hawiana.jpg"},
-    {"titulo": "HAMBURGUESA", "imagen": "assets/Hamburguesa sencilla.jpg"},
-    {"titulo": "TACO", "imagen": "assets/Tacos de Pollo.jpg"},
-    {"titulo": "ENSALADA", "imagen": "assets/Ensalada Cesar.jpg"},
-    {"titulo": "SALCHIPAPA", "imagen": ""},
-  ];
+  
+  List<Map<String, String>> getCategorias(BuildContext context) {
+    return [
+      {"titulo": AppLocalizations.of(context)!.pizzas.toUpperCase(), "imagen": "assets/Pizza Hawiana.jpg"},
+      {"titulo": AppLocalizations.of(context)!.burgers.toUpperCase(), "imagen": "assets/Hamburguesa sencilla.jpg"},
+      {"titulo": AppLocalizations.of(context)!.tacos.toUpperCase(), "imagen": "assets/Tacos de Pollo.jpg"},
+      {"titulo": AppLocalizations.of(context)!.salads.toUpperCase(), "imagen": "assets/Ensalada Cesar.jpg"},
+      {"titulo": "SALCHIPAPA", "imagen": ""},
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,8 +34,8 @@ class _MenuPageState extends State<MenuPage> {
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Text(
-                'NUESTRO MENÚ',
-                style: TextStyle(
+                AppLocalizations.of(context)!.ourMenu.toUpperCase(),
+                style: const TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                   color: Colors.black87,
@@ -43,7 +47,7 @@ class _MenuPageState extends State<MenuPage> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Text(
-                'Selecciona una categoría para ver todos nuestros productos',
+                AppLocalizations.of(context)!.selectCategoryToSeeProducts,
                 style: TextStyle(
                   fontSize: 16,
                   color: Colors.grey[600],
@@ -59,7 +63,7 @@ class _MenuPageState extends State<MenuPage> {
               child: GridView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
-                itemCount: categorias.length,
+                itemCount: getCategorias(context).length,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                   crossAxisSpacing: 16,
@@ -67,7 +71,7 @@ class _MenuPageState extends State<MenuPage> {
                   childAspectRatio: 1.2,
                 ),
                 itemBuilder: (context, index) {
-                  return _buildCategoryCard(categorias[index]);
+                  return _buildCategoryCard(getCategorias(context)[index]);
                 },
               ),
             ),
@@ -181,9 +185,9 @@ class _MenuPageState extends State<MenuPage> {
                           color: const Color.fromRGBO(237, 88, 33, 1),
                           borderRadius: BorderRadius.circular(20),
                         ),
-                        child: const Text(
-                          'Ver productos',
-                          style: TextStyle(
+                        child: Text(
+                          AppLocalizations.of(context)!.viewProducts,
+                          style: const TextStyle(
                             color: Colors.white,
                             fontSize: 12,
                             fontWeight: FontWeight.w500,

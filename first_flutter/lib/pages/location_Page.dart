@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
+import '../l10n/app_localizations.dart';
 
 class MapaOSMPage extends StatelessWidget {
   @override
@@ -9,7 +10,9 @@ class MapaOSMPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('¿Como LLegar?'),
+        title: Text(AppLocalizations.of(context)!.selectLocation),
+        backgroundColor: const Color.fromRGBO(237, 88, 33, 1),
+        foregroundColor: Colors.white,
       ),
       body: FlutterMap(
         options: MapOptions(
