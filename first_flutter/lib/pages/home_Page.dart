@@ -296,8 +296,8 @@ class _HomePageState extends State<HomePage>
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
-                      'Nuevo',
-                      style: TextStyle(
+                      AppLocalizations.of(context)!.newProduct,
+                      style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
                         fontSize: 12,

@@ -206,6 +206,12 @@ abstract class AppLocalizations {
   /// **'Delete'**
   String get delete;
 
+  /// No description provided for @newProduct.
+  ///
+  /// In en, this message translates to:
+  /// **'New'**
+  String get newProduct;
+
   /// No description provided for @search.
   ///
   /// In en, this message translates to:
@@ -265,6 +271,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Profile'**
   String get profile;
+
+  /// No description provided for @delivery.
+  ///
+  /// In en, this message translates to:
+  /// **'Delivery'**
+  String get delivery;
 
   /// No description provided for @orders.
   ///

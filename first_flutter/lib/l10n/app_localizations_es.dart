@@ -63,6 +63,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get delete => 'Eliminar';
 
   @override
+  String get newProduct => 'Nuevo';
+
+  @override
   String get search => 'Buscar';
 
   @override
@@ -91,6 +94,9 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get profile => 'Perfil';
+
+  @override
+  String get delivery => 'Domicilio';
 
   @override
   String get orders => 'Pedidos';
