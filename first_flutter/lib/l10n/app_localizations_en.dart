@@ -150,6 +150,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ourMenu => 'Our Menu';
 
   @override
+  String get selectCategoryToSeeProducts =>
+      'Select a category to see all our products';
+
+  @override
+  String get viewProducts => 'View products';
+
+  @override
   String get allCategories => 'All Categories';
 
   @override
@@ -352,6 +359,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get orderNumber => 'Order Number';
+
+  @override
+  String get orderID => 'Order';
+
+  @override
+  String get orderStatus => 'Status';
 
   @override
   String get thankYou => 'Thank you for your order!';

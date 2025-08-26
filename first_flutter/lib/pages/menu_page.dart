@@ -47,7 +47,7 @@ class _MenuPageState extends State<MenuPage> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Text(
-                'Selecciona una categoría para ver todos nuestros productos',
+                AppLocalizations.of(context)!.selectCategoryToSeeProducts,
                 style: TextStyle(
                   fontSize: 16,
                   color: Colors.grey[600],
@@ -185,9 +185,9 @@ class _MenuPageState extends State<MenuPage> {
                           color: const Color.fromRGBO(237, 88, 33, 1),
                           borderRadius: BorderRadius.circular(20),
                         ),
-                        child: const Text(
-                          'Ver productos',
-                          style: TextStyle(
+                        child: Text(
+                          AppLocalizations.of(context)!.viewProducts,
+                          style: const TextStyle(
                             color: Colors.white,
                             fontSize: 12,
                             fontWeight: FontWeight.w500,

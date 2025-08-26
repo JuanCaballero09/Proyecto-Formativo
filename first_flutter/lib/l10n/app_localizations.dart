@@ -380,6 +380,18 @@ abstract class AppLocalizations {
   /// **'Our Menu'**
   String get ourMenu;
 
+  /// No description provided for @selectCategoryToSeeProducts.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a category to see all our products'**
+  String get selectCategoryToSeeProducts;
+
+  /// No description provided for @viewProducts.
+  ///
+  /// In en, this message translates to:
+  /// **'View products'**
+  String get viewProducts;
+
   /// No description provided for @allCategories.
   ///
   /// In en, this message translates to:
@@ -787,6 +799,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Order Number'**
   String get orderNumber;
+
+  /// No description provided for @orderID.
+  ///
+  /// In en, this message translates to:
+  /// **'Order'**
+  String get orderID;
+
+  /// No description provided for @orderStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get orderStatus;
 
   /// No description provided for @thankYou.
   ///

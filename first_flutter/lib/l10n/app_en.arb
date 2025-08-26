@@ -48,6 +48,8 @@
   "freeDelivery": "Free delivery on orders over $25",
   
   "ourMenu": "Our Menu",
+  "selectCategoryToSeeProducts": "Select a category to see all our products",
+  "viewProducts": "View products",
   "allCategories": "All Categories",
   "burgers": "Burgers",
   "pizzas": "Pizzas",
@@ -119,6 +121,8 @@
   "trackOrder": "Track Order",
   "orderConfirmation": "Order Confirmation",
   "orderNumber": "Order Number",
+  "orderID": "Order",
+  "orderStatus": "Status",
   "thankYou": "Thank you for your order!",
   
   "orderReceived": "Order Received",
