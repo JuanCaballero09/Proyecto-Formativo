@@ -18,19 +18,19 @@ document.addEventListener("turbo:load", () => {
         if (data.status === "approved") {
           statusBox.className = "state success";
           document.getElementById("loader").style.display = "none";
-          document.getElementById("success").style.display = "block";
+          document.getElementById("success").style.display = "flex";
           document.getElementById("cancel-btn").style.display = "none";
           clearInterval(interval);
         } else if (data.status === "declined") {
           statusBox.className = "state error";
           document.getElementById("loader").style.display = "none";
-          document.getElementById("declined").style.display = "block";
+          document.getElementById("declined").style.display = "flex";
           document.getElementById("cancel-btn").style.display = "none";
           clearInterval(interval);
         } else if (data.status === "cancelled") {
           statusBox.className = "state error"
           document.getElementById("loader").style.display = "none";
-          document.getElementById("declined").style.display = "block";
+          document.getElementById("declined").style.display = "flex";
           document.getElementById("cancel-btn").style.display = "none";
           clearInterval(interval);
         }
@@ -193,7 +193,7 @@ document.addEventListener("turbo:load", function() {
   const cardInput = form.querySelector("[name='payment[card_number]']");
   const expMonthInput = form.querySelector("[name='payment[exp_month]']");
   const expYearInput = form.querySelector("[name='payment[exp_year]']");
-  const cvvInput = form.querySelector("[name='payment[cvv]']");
+  const cvvInput = form.querySelector("[name='payment[cvc]']");
   const emailInput = form.querySelector("[name='payment[email]']");
   const holderInput = form.querySelector("[name='payment[card_holder]']");
   const termsCheck = document.getElementById("payment_accept_terms");
@@ -202,7 +202,7 @@ document.addEventListener("turbo:load", function() {
   const errorCard = document.getElementById("error-card");
   const errorMonth = document.getElementById("error-month");
   const errorYear = document.getElementById("error-year");
-  const errorCvv = document.getElementById("error-cvv");
+  const errorCvv = document.getElementById("error-cvc");
   const errorEmail = document.getElementById("error-email");
   const errorHolder = document.getElementById("error-holder");
 
@@ -293,7 +293,7 @@ document.addEventListener("turbo:load", function() {
     // CVV según tipo de tarjeta
     let cvvPattern = type === "Amex" ? /^\d{4}$/ : /^\d{3}$/;
     let cvvValid = cvvPattern.test(cvvInput.value.trim());
-    let cvvErrorMsg = type === "Amex" ? "CVV debe tener 4 dígitos" : "CVV debe tener 3 dígitos";
+    let cvvErrorMsg = type === "Amex" ? "CVC debe tener 4 dígitos" : "CVC debe tener 3 dígitos";
     validateField(cvvInput, cvvValid, errorCvv, cvvErrorMsg, "cvv");
 
     // Titular

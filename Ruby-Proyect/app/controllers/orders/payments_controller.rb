@@ -36,7 +36,7 @@ class  Orders::PaymentsController < ApplicationController
       card_number: payment_params[:card_number],
       exp_month: payment_params[:exp_month].to_s.rjust(2, "0"),
       exp_year: payment_params[:exp_year].to_s[-2..],
-      cvv: payment_params[:cvv],
+      cvv: payment_params[:cvc],
       card_holder: payment_params[:card_holder]
     )
 
@@ -126,7 +126,7 @@ class  Orders::PaymentsController < ApplicationController
   def payment_params
     params.require(:payment).permit(
       :payment_method, :card_number, :exp_year,
-      :exp_month, :cvv, :installments,
+      :exp_month, :cvc, :installments,
       :email, :card_holder, :accept_terms, :accept_data)
   end
 end

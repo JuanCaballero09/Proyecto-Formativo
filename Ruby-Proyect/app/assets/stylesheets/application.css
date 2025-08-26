@@ -1090,7 +1090,7 @@ input:focus{outline: none;}
     box-shadow: 0 0 15px rgba(0,0,0,0.1);
     margin: 20px auto;
     max-width: 900px;
-    min-height: 95vh;
+    min-height: 740px;
     justify-content: center;
 }
 
@@ -1219,6 +1219,7 @@ input:focus{outline: none;}
     font-size: 16px;
     transition: background-color 0.2s ease;
 }
+
 .btn-copiar img{
     width: 20px;
     height: 20px;
@@ -1229,6 +1230,281 @@ input:focus{outline: none;}
     background-color: var(--blanco);
 }
 
+/* Formulario metodo de pago */
+.payment-content{
+    display: flex; 
+    flex-direction: row;
+    gap: 5px;
+}
+
+.payment-details{
+    padding: 20px;
+    width: 50%;
+    max-height: 550px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.payment-form{
+    padding: 20px;
+    width: 50%;
+    border: 1px solid;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+}
+
+.inputs-form-payment {
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border: 2px solid #afafaf;
+    font-size: 16px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.payment-form select {
+    padding: 7px 10px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border: 2px solid #afafaf;
+    font-size: 16px;
+    background-color: white;
+    box-sizing: border-box;
+}
+
+.input-error {
+  border: 2px solid #e74c3c !important;
+  background: #ffeaea;
+
+}
+
+.input-success:focus, .input-success:active, .input-success {
+  border: 2px solid #27ae60 !important;
+  background: #eaffea;
+}
+
+.error-msg {
+  color: #e74c3c;
+  font-size: 0.9em;
+  display: block;
+  margin-top: 2px;
+  min-height: 18px;
+}
+
+.payment-checkbox-container{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.payment-checkbox-container div{
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.btn-pay{
+    text-decoration: none;
+    margin: auto;
+    border: none;
+    color: white;
+    font-weight: bold;
+    background-color: var(--base);
+    padding: 13px;
+    border-radius: 15px;
+    box-shadow: 0 0 5px rgba(255, 68, 0, 0.2);
+    transition: all 0.3s ease;
+    width: 100%;
+    margin-top: 25px;
+}
+
+.btn-pay:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.order-items-table-payment {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.order-items-table-payment thead th {
+    background-color: #f2f2f2;
+    color: #333;
+    font-weight: bold;
+    padding: 12px;
+    text-align: left;
+    border-bottom: 2px solid #ddd;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+}
+
+.order-items-table-payment tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.order-items-table-payment td {
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+    color: #555;
+}
+
+.order-items-table-payment tfoot {
+    font-weight: bold;
+    background-color: #e0e0e0;
+}
+
+.order-items-table-payment tfoot td {
+    padding: 12px;
+    border-top: 2px solid #ddd;
+    color: #333;
+    /* Bordes redondeados en la parte inferior del pie de página */
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+}
+
+/* Estado de la order */
+
+.status-view{
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.result-status{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.btn-status {
+    text-decoration: none;
+    background: #2ecc71;
+    color: #fff;
+    padding: 15px 25px;
+    margin: 10px auto;
+    border: 2px solid;
+    border-radius: 15px;
+    box-shadow: 0 0 10px rgba(0,0,0,.3);
+    width: fit-content;
+    text-align: center;
+    font-size: 16px;
+    font-weight: bold;
+    transition: all .3s ease;
+}
+
+.btn-status:hover{
+    transform: scale(1.1);
+}
+
+.status-container{
+    text-align: center;
+    background-color: white;
+    width: 500px;
+    height: fit-content;
+    padding: 30px;
+    border-radius: 15px;
+    border: 2px solid #fafafa;
+    box-shadow: 0 0 10px rgba(0,0,0,.5);
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+/* Animacion circulo estado */
+
+/* ---- CONTENEDOR ---- */
+.state {
+    margin: auto;
+    width: 160px;
+    height: 160px;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* ---- CÍRCULO ---- */
+.state svg circle {
+    fill: none;
+    stroke-width: 10;
+    stroke-linecap: round;
+    stroke-dasharray: 283; /* circunferencia aprox */
+    stroke-dashoffset: 283; /* Valor corregido para que no se vea al inicio */
+    transform: rotate(-90deg);
+    transform-origin: 50% 50%;
+    transition: stroke-dashoffset 0.8s ease, stroke 0.5s ease, fill 0.5s ease;
+}
+
+/* Loading: círculo animado */
+.state.loading svg circle {
+    stroke: #3498db;
+    animation: spin 1s linear infinite;
+}
+
+/* Success: círculo relleno y check */
+.state.success svg circle {
+    stroke: #2ecc71;
+    stroke-dashoffset: 0;
+    fill: #2ecc71;
+    animation: none;
+}
+
+/* Error: círculo relleno y X */
+.state.error svg circle {
+    stroke: #e74c3c;
+    stroke-dashoffset: 0;
+    fill: #e74c3c;
+    animation: none;
+}
+
+/* ---- ICONOS INTERNOS (check / X) ---- */
+.icon {
+    position: absolute;
+    width: 70px; /* Tamaño del icono aumentado */
+    height: 70px; /* Tamaño del icono aumentado */
+    stroke-width: 5;
+    stroke: #fff;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    fill: none;
+    opacity: 0;
+    transform: scale(0.5);
+    transition: all 0.5s ease;
+}
+
+/* Mostrar check solo en success */
+.state.success .check {
+    opacity: 1;
+    transform: scale(1);
+    transition-delay: 0.3s;
+}
+
+/* Mostrar X solo en error */
+.state.error .cross {
+    opacity: 1;
+    transform: scale(1);
+    transition-delay: 0.3s;
+}
+
+/* Animación de carga */
+@keyframes spin {
+    0% { 
+        transform: rotate(-90deg) rotate(0deg); 
+        stroke-dashoffset: 283;
+    }
+    50% { 
+        stroke-dashoffset: 70;
+    }
+    100% { 
+        transform: rotate(270deg) rotate(360deg); 
+        stroke-dashoffset: 283;
+    }
+}
 
 /* Iconos cambio idioma */
 

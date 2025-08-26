@@ -1,7 +1,7 @@
-<section>
-  <div id="status-container" style="text-align:center; margin-top: 60px;">
+<section class="status-view">
+  <div id="status-container" class="status-container">
     <div class="state loading" id="stateBox"  data-status-url="<%= status_order_payments_path(@order, format: :json) %>">
-      <svg width="100" height="100" viewBox="0 0 100 100">
+      <svg width="100%" height="100%" viewBox="0 0 100 100">
         <circle cx="50" cy="50" r="45"></circle>
       </svg>
 
@@ -9,7 +9,7 @@
       <svg class="icon check" viewBox="0 0 52 52">
         <polyline points="14,27 22,35 38,18"></polyline>
       </svg>
-
+      
       <!-- Cross ❌ -->
       <svg class="icon cross" viewBox="0 0 52 52">
         <line x1="16" y1="16" x2="36" y2="36"></line>
@@ -17,19 +17,19 @@
       </svg>
     </div>
 
-    <div id="loader">
+    <div id="loader" class="result-status">
       <p id="processing-msg">Esperando aprobación del pago...</p>
       <%= link_to "Reintentar pago", new_order_payments_path(@order), id: "reintentar", style: "display:none;" %>
     </div>
-    <div id="success" style="display:none;">
+    <div id="success" style="display:none;" class="result-status">
       <h2>¡Pago realizado con éxito!</h2>
-      <%= link_to "Ir al inicio", root_path, class: "btn" %>
+      <%= link_to "Ir al inicio", root_path, class: "btn-status" %>
     </div>
-    <div id="declined" style="display:none;">
+    <div id="declined" style="display:none;" class="result-status">
       <h2>Tu pago no se ha concretado</h2>
-      <%= link_to "Reintentar pago", new_order_payments_path(@order), class: "btn" %>
+      <%= link_to "Reintentar pago", new_order_payments_path(@order), class: "btn-status" %>
     </div>
-    <button id="cancel-btn" class="btn" style="margin-top:20px;">Cancelar</button>
+    <button id="cancel-btn" class="btn-status" style="margin-top:20px;">Cancelar</button>
   </div>
 </section>
 
@@ -41,103 +41,3 @@
       });
   }
 </script>
-
-
-
-<style>
-.btn {
-  padding: 10px 20px;
-  background: #2ecc71;
-  color: #fff;
-  border-radius: 5px;
-  text-decoration: none;
-  font-weight: bold;
-  border: none;
-  cursor: pointer;
-  margin: 10px;
-}
-</style>
-
-<style>
-
-/* ---- CONTENEDOR ---- */
-.state {
-  margin: auto;
-  width: 100px;
-  height: 100px;
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-/* ---- CÍRCULO ---- */
-.state svg circle {
-  fill: none;
-  stroke-width: 10;
-  stroke-linecap: round;
-  stroke-dasharray: 283; /* circunferencia aprox */
-  stroke-dashoffset: 280;
-  transform: rotate(-90deg);
-  transform-origin: 50% 50%;
-  transition: stroke-dashoffset 0.8s ease, stroke 0.5s ease, fill 0.5s ease;
-}
-
-/* Loading: círculo animado */
-.state.loading svg circle {
-  stroke: #3498db;
-  animation: spin 1s linear infinite;
-}
-
-/* Success: círculo relleno y check */
-.state.success svg circle {
-  stroke: #2ecc71;
-  stroke-dashoffset: 0;
-  fill: #2ecc71;
-  animation: none;
-}
-
-/* Error: círculo relleno y X */
-.state.error svg circle {
-  stroke: #e74c3c;
-  stroke-dashoffset: 0;
-  fill: #e74c3c;
-  animation: none;
-}
-
-/* ---- ICONOS INTERNOS (check / X) ---- */
-.icon {
-  position: absolute;
-  width: 40px;
-  height: 40px;
-  stroke-width: 5;
-  stroke: #fff;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  fill: none;
-  opacity: 0;
-  transform: scale(0.5);
-  transition: all 0.5s ease;
-}
-
-/* Mostrar check solo en success */
-.state.success .check {
-  opacity: 1;
-  transform: scale(1);
-  transition-delay: 0.3s;
-}
-
-/* Mostrar X solo en error */
-.state.error .cross {
-  opacity: 1;
-  transform: scale(1);
-  transition-delay: 0.3s;
-}
-
-/* Animación de carga */
-@keyframes spin {
-  0% { transform: rotate(-90deg) rotate(0deg); }
-  100% { transform: rotate(-90deg) rotate(360deg); }
-}
-
-</style>
