@@ -21,25 +21,63 @@ class Product extends Equatable {
 
   factory Product.fromJson(Map<String, dynamic> json) {
     List<String> ingredientsList = [];
-    if (json['ingredientes'] != null) {
-      if (json['ingredientes'] is String) {
-        ingredientsList = (json['ingredientes'] as String)
+    
+    // Check for ingredients in both languages and formats
+    final ingredientsField = json['ingredientes'] ?? json['ingredients'];
+    if (ingredientsField != null) {
+      if (ingredientsField is String) {
+        ingredientsList = ingredientsField
             .split(',')
             .map((e) => e.trim())
             .where((e) => e.isNotEmpty)
             .toList();
-      } else if (json['ingredientes'] is List) {
-        ingredientsList = List<String>.from(json['ingredientes']);
+      } else if (ingredientsField is List) {
+        ingredientsList = List<String>.from(ingredientsField);
+      }
+    }
+    
+    // Handle ID conversion
+    int productId;
+    if (json['id'] is String) {
+      productId = int.tryParse(json['id']) ?? 0;
+    } else {
+      productId = json['id'] ?? 0;
+    }
+    
+    // Handle price conversion
+    double productPrice;
+    final priceField = json['price'] ?? json['precio'] ?? 0;
+    if (priceField is String) {
+      productPrice = double.tryParse(priceField) ?? 0.0;
+    } else {
+      productPrice = (priceField as num).toDouble();
+    }
+    
+    // Map grupo_id to category names
+    String category = json['category'] ?? json['categoria'] ?? 'General';
+    if (category == 'General' && json['grupo_id'] != null) {
+      switch (json['grupo_id']) {
+        case 1:
+          category = 'hamburguesas';
+          break;
+        case 2:
+          category = 'salchipapas';
+          break;
+        case 3:
+          category = 'pizzas';
+          break;
+        default:
+          category = 'General';
       }
     }
     
     return Product(
-      id: json['id'] ?? 0,
-      name: json['nombre'] ?? '',
-      category: json['categoria'] ?? 'General',
-      price: (json['precio'] as num?)?.toDouble() ?? 0.0,
-      description: json['descripcion'] ?? '',
-      image: json['imagen_url'] ?? '',
+      id: productId,
+      name: json['name'] ?? json['nombre'] ?? '',
+      category: category,
+      price: productPrice,
+      description: json['description'] ?? json['descripcion'] ?? '',
+      image: json['image'] ?? json['imagen'] ?? json['imagen_url'] ?? '',
       ingredients: ingredientsList,
     );
   }
