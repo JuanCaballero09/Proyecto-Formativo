@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../l10n/app_localizations.dart';
 import 'menu_page.dart';
 import 'home_Page.dart';
 import 'carrito_Page.dart';
@@ -23,6 +24,7 @@ class _ProductPageState extends State<ProductPage> {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
     final pages = [HomePage(), MenuPage(), CarritoPage(), PerfilPage(), DomicilioPage()];
 
     return Scaffold(
@@ -41,13 +43,13 @@ class _ProductPageState extends State<ProductPage> {
                   const SizedBox(width: 20),
                   _buildNavItem(
                     icon: Icons.restaurant_menu,
-                    label: 'Menú',
+                    label: localizations.menu,
                     index: 1,
                   ),
                   const SizedBox(width: 50),
                   _buildNavItem(
                     icon: Icons.shopping_cart,
-                    label: 'Carrito',
+                    label: localizations.cart,
                     index: 2,
                   ),
                 ],
@@ -57,7 +59,7 @@ class _ProductPageState extends State<ProductPage> {
 
                 _buildNavItem(
                     icon: Icons.delivery_dining, 
-                    label: 'Domicilio', 
+                    label: localizations.delivery, 
                     index: 4
                     ),
 
@@ -65,7 +67,7 @@ class _ProductPageState extends State<ProductPage> {
 
                 _buildNavItem(
                     icon: Icons.person,
-                    label: 'Perfil',
+                    label: localizations.profile,
                     index: 3,
                   ),
 

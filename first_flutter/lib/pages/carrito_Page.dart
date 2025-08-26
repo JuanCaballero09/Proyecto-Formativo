@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../l10n/app_localizations.dart';
 import '../bloc/cart_bloc.dart';
 
 class CarritoPage extends StatefulWidget {
@@ -12,6 +13,7 @@ class CarritoPage extends StatefulWidget {
 class CarritoPageState extends State<CarritoPage> {
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
     return Scaffold(
        appBar: PreferredSize(
         preferredSize: Size.fromHeight(80),
@@ -44,6 +46,7 @@ class CarritoPageState extends State<CarritoPage> {
         builder: (context, state) {
           final cartItems = state.cart.items;
 
+<<<<<<< Updated upstream
           if (cartItems.isEmpty) {
             return Center(
               child: Column(
@@ -63,6 +66,82 @@ class CarritoPageState extends State<CarritoPage> {
               ),
             );
           }
+=======
+         if (cartItems.isEmpty) {
+  return Center(
+    child: Padding(
+      padding: const EdgeInsets.all(24.0),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Imagen de carrito vacío
+          Image.asset(
+            'assets/carro_vacio.jpeg',
+            width: 180,
+            height: 180,
+          ),
+          const SizedBox(height: 24),
+
+          // Texto principal
+          Text(
+            localizations.emptyCart.toUpperCase(),
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 8),
+
+          // Subtexto
+          Text(
+            localizations.emptyCartSubtitle,
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.black54,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 24),
+
+          // Botón para ir al menú
+          SizedBox(
+            width: 220,
+            height: 50,
+            child: ElevatedButton(
+            onPressed: () {
+  Navigator.pushReplacement(
+    context,
+    MaterialPageRoute(
+      builder: (context) => ProductPage(initialIndex: 1), // 👈 abrir directo el Menú
+    ),
+  );
+},
+
+              style: ElevatedButton.styleFrom(
+               backgroundColor: const Color.fromRGBO(237, 88, 33, 1),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                padding: const EdgeInsets.symmetric(vertical: 16),
+              ),
+              child: Text(
+                localizations.addFood,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
+>>>>>>> Stashed changes
 
           return ListView.builder(
             itemCount: cartItems.length,
@@ -122,7 +201,7 @@ class CarritoPageState extends State<CarritoPage> {
                                         );
                                   },
                                 ),
-                                Text('Cantidad: ${item.quantity}'),
+                                Text('${localizations.quantity}: ${item.quantity}'),
                                 IconButton(
                                   icon: const Icon(Icons.add_circle),
                                   onPressed: () {
@@ -184,13 +263,13 @@ class CarritoPageState extends State<CarritoPage> {
                   onPressed: () {
                     context.read<CartBloc>().add(ClearCart());
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Carrito vaciado')),
+                      SnackBar(content: Text(localizations.cartCleared)),
                     );
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.red,
                   ),
-                  child: const Text('Vaciar Carrito'),
+                  child: Text(localizations.clearCart),
                 ),
               ],
             ),

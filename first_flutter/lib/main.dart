@@ -2,17 +2,27 @@ import 'package:first_flutter/pages/carrito_Page.dart';
 import 'package:first_flutter/pages/menu_page.dart';
 import 'package:first_flutter/pages/welcome_page.dart';
 import 'package:first_flutter/pages/login_page.dart';
+import 'package:first_flutter/pages/register_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'l10n/app_localizations.dart';
+import 'package:provider/provider.dart';
 import 'bloc/product_bloc.dart';
 import 'bloc/cart_bloc.dart';
 import 'repository/product_repository.dart';
 //import 'repository/http_product_repository.dart';
 import 'repository/mocki_product_repository.dart';
 import 'pages/splash_page.dart';
+<<<<<<< Updated upstream
 import 'package:first_flutter/pages/register_page.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'l10n/app_localizations.dart';
+=======
+import 'package:first_flutter/pages/inter_page.dart';
+import 'providers/locale_provider.dart';
+
+>>>>>>> Stashed changes
 
 void main() {
   // Para usar datos locales, descomenta la siguiente línea y comenta la de HttpProductRepository:
@@ -54,6 +64,7 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
+<<<<<<< Updated upstream
     return LanguageProvider(
       changeLanguage: _changeLanguage,
       child: MultiBlocProvider(
@@ -77,6 +88,52 @@ class _MyAppState extends State<MyApp> {
               onSecondary: Colors.white,
               onSurface: Colors.black,
               onSurfaceVariant: Colors.black,
+=======
+    return ChangeNotifierProvider(
+      create: (context) => LocaleProvider(),
+      child: Consumer<LocaleProvider>(
+        builder: (context, localeProvider, child) {
+          return MultiBlocProvider(
+            providers: [
+              BlocProvider(create: (_) => ProductBloc(repository)),
+              BlocProvider(create: (_) => CartBloc()),
+            ],
+            child: MaterialApp(
+              title: 'Restaurante',
+              debugShowCheckedModeBanner: false,
+              localizationsDelegates: const [
+                AppLocalizations.delegate,
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+              ],
+              supportedLocales: L10n.all,
+              locale: localeProvider.locale,
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: Colors.amber,
+            brightness: Brightness.light,
+            primary: Colors.amber[800]!,
+            secondary: Colors.deepOrangeAccent,
+            surface: Colors.white,
+            surfaceVariant: Colors.amber[50]!,
+            onPrimary: Colors.white,
+            onSecondary: Colors.white,
+            onSurface: Colors.black,
+            onSurfaceVariant: Colors.black,
+          ),
+          useMaterial3: true,
+          fontFamily: 'Roboto',
+          appBarTheme: const AppBarTheme(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            centerTitle: true,
+            iconTheme: IconThemeData(color: Colors.amber),
+            titleTextStyle: TextStyle(
+              color: Colors.amber,
+              fontWeight: FontWeight.bold,
+              fontSize: 24,
+>>>>>>> Stashed changes
             ),
             useMaterial3: true,
             fontFamily: 'Roboto',
@@ -143,6 +200,7 @@ class _MyAppState extends State<MyApp> {
             ),
           },
         ),
+<<<<<<< Updated upstream
       ),
     );
   }
@@ -183,6 +241,20 @@ class MyHomePage extends StatelessWidget {
       ),
       body: Center(
         child: Text(title),
+=======
+        initialRoute: '/',
+        routes: {
+          '/': (context) => const WelcomePage(),
+          '/menu': (context) => const MenuPage(),
+          '/carrito': (context) => CarritoPage(key: UniqueKey()),
+          '/login': (context) => const LoginPage(),
+          '/register': (context) => const RegisterPage(),
+          '/home': (context) => const ProductPage(),
+        },
+            ),
+          );
+        },
+>>>>>>> Stashed changes
       ),
     );
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../l10n/app_localizations.dart';
 import 'inter_page.dart'; // Tu página principal con el menú
 import 'package:google_fonts/google_fonts.dart';
 
@@ -66,23 +67,23 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   }
 
   // Validaciones mejoradas
-  String? _validateEmail(String? value) {
+  String? _validateEmail(String? value, AppLocalizations localizations) {
     if (value == null || value.isEmpty) {
-      return 'El correo electrónico es requerido';
+      return localizations.emailRequired;
     }
     final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
     if (!emailRegex.hasMatch(value)) {
-      return 'Ingresa un correo electrónico válido';
+      return localizations.emailInvalid;
     }
     return null;
   }
 
-  String? _validatePassword(String? value) {
+  String? _validatePassword(String? value, AppLocalizations localizations) {
     if (value == null || value.isEmpty) {
-      return 'La contraseña es requerida';
+      return localizations.passwordRequired;
     }
     if (value.length < 6) {
-      return 'La contraseña debe tener al menos 6 caracteres';
+      return localizations.passwordMinLength;
     }
     return null;
   }
@@ -204,6 +205,8 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
+    
     return Scaffold(
       backgroundColor: const Color.fromRGBO(237, 88, 33, 1),
       appBar: AppBar(
@@ -213,7 +216,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => Navigator.pop(context),
-          tooltip: 'Regresar',
+          tooltip: localizations.backTooltip,
         ),
       ),
       body: FadeTransition(
@@ -223,7 +226,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
             padding: const EdgeInsets.symmetric(horizontal: 30),
             child: AnimatedSwitcher(
               duration: const Duration(milliseconds: 300),
-              child: isLoading ? _buildLoadingWidget() : _buildLoginForm(),
+              child: isLoading ? _buildLoadingWidget(localizations) : _buildLoginForm(localizations),
             ),
           ),
         ),
@@ -231,7 +234,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     );
   }
 
-  Widget _buildLoadingWidget() {
+  Widget _buildLoadingWidget(AppLocalizations localizations) {
     return Column(
       key: const ValueKey('loading'),
       mainAxisAlignment: MainAxisAlignment.center,
@@ -254,7 +257,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
           opacity: 1.0,
           duration: const Duration(milliseconds: 800),
           child: Text(
-            'Tus antojos los verás pronto...',
+            localizations.loadingMessage,
             style: GoogleFonts.quicksand(
               textStyle: const TextStyle(
                 color: Colors.white,
@@ -276,7 +279,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     );
   }
 
-  Widget _buildLoginForm() {
+  Widget _buildLoginForm(AppLocalizations localizations) {
     return AnimatedBuilder(
       animation: _shakeAnimation,
       builder: (context, child) {
@@ -335,7 +338,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                       controller: _userController,
                       keyboardType: TextInputType.emailAddress,
                       textInputAction: TextInputAction.next,
-                      validator: _validateEmail,
+                      validator: (value) => _validateEmail(value, localizations),
                       autovalidateMode: _userFieldTouched 
                           ? AutovalidateMode.onUserInteraction 
                           : AutovalidateMode.disabled,
@@ -398,7 +401,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                       controller: _passController,
                       obscureText: _obscurePassword,
                       textInputAction: TextInputAction.done,
-                      validator: _validatePassword,
+                      validator: (value) => _validatePassword(value, localizations),
                       autovalidateMode: _passFieldTouched 
                           ? AutovalidateMode.onUserInteraction 
                           : AutovalidateMode.disabled,

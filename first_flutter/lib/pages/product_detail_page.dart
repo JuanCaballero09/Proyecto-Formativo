@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../l10n/app_localizations.dart';
 import '../models/product.dart';
 import '../bloc/cart_bloc.dart';
 import '../models/cart_model.dart';
@@ -13,6 +14,7 @@ class ProductDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
         title: Text(product.name),
@@ -59,7 +61,7 @@ class ProductDetailPage extends StatelessWidget {
                   const Icon(Icons.description, color: Colors.amber),
                   const SizedBox(width: 8),
                   Text(
-                    'Descripción',
+                    localizations.description,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: Colors.amber[800],
@@ -138,7 +140,7 @@ class ProductDetailPage extends StatelessWidget {
                 width: double.infinity,
                 child: ElevatedButton.icon(
                   icon: const Icon(Icons.shopping_cart_checkout_rounded),
-                  label: const Text('Agregar al pedido'),
+                  label: Text(localizations.addToOrder),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.amber[800],
                     foregroundColor: Colors.white,

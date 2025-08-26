@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../l10n/app_localizations.dart';
 import 'category_products_page.dart';
 
 class MenuPage extends StatefulWidget {
@@ -9,16 +10,17 @@ class MenuPage extends StatefulWidget {
 }
 
 class _MenuPageState extends State<MenuPage> {
-  final List<Map<String, String>> categorias = [
-    {"titulo": "PIZZA", "imagen": "assets/Pizza Hawiana.jpg"},
-    {"titulo": "HAMBURGUESA", "imagen": "assets/Hamburguesa sencilla.jpg"},
-    {"titulo": "TACO", "imagen": "assets/Tacos de Pollo.jpg"},
-    {"titulo": "ENSALADA", "imagen": "assets/Ensalada Cesar.jpg"},
-    {"titulo": "SALCHIPAPA", "imagen": ""},
-  ];
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
+    final List<Map<String, String>> categorias = [
+      {"titulo": localizations.pizza, "imagen": "assets/Pizza Hawiana.jpg"},
+      {"titulo": localizations.hamburger, "imagen": "assets/Hamburguesa sencilla.jpg"},
+      {"titulo": localizations.taco, "imagen": "assets/Tacos de Pollo.jpg"},
+      {"titulo": localizations.salad, "imagen": "assets/Ensalada Cesar.jpg"},
+      {"titulo": localizations.salsichipapa, "imagen": ""},
+    ];
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(80),
@@ -55,7 +57,7 @@ class _MenuPageState extends State<MenuPage> {
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Text(
-                'NUESTRO MENÚ',
+                localizations.ourMenu,
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
@@ -68,7 +70,7 @@ class _MenuPageState extends State<MenuPage> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Text(
-                'Selecciona una categoría para ver todos nuestros productos',
+                localizations.menuSubtitle,
                 style: TextStyle(
                   fontSize: 16,
                   color: Colors.grey[600],

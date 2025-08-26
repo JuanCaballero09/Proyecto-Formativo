@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../l10n/app_localizations.dart';
+import '../widgets/language_selector.dart';
 import 'login_page.dart';
 import '../main.dart';
 import '../l10n/app_localizations.dart';
@@ -18,6 +20,8 @@ class WelcomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
+    
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -42,6 +46,16 @@ class WelcomePage extends StatelessWidget {
         ],
       ),
       backgroundColor: const Color.fromRGBO(237, 88, 33, 1), // Fondo naranja
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: const LanguageSelector(),
+          ),
+        ],
+      ),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 30),
@@ -56,14 +70,22 @@ class WelcomePage extends StatelessWidget {
 
               // Texto del título
               Text(
+<<<<<<< Updated upstream
                 AppLocalizations.of(context)!.welcomeTitle,
+=======
+                localizations.welcomeTitle,
+>>>>>>> Stashed changes
                 textAlign: TextAlign.center,
                 style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily:'Arial', color: Colors.white),
               ),
   
 
               Text(
+<<<<<<< Updated upstream
                 AppLocalizations.of(context)!.welcomeSubtitle,
+=======
+                localizations.welcomeSubtitle,
+>>>>>>> Stashed changes
                 textAlign: TextAlign.center,
                 style: const TextStyle(fontSize: 16, fontWeight: FontWeight.normal, fontFamily:'Arial', color: Colors.white),
               ),
@@ -87,7 +109,11 @@ class WelcomePage extends StatelessWidget {
                     ),
                   ),
                   child: Text(
+<<<<<<< Updated upstream
                     AppLocalizations.of(context)!.loginButton,
+=======
+                    localizations.loginButton,
+>>>>>>> Stashed changes
                     style: const TextStyle(fontSize: 18, color: Colors.white),
                   ),
                 ),
@@ -111,7 +137,11 @@ class WelcomePage extends StatelessWidget {
                     ),
                   ),
                   child: Text(
+<<<<<<< Updated upstream
                     AppLocalizations.of(context)!.registerButton,
+=======
+                    localizations.registerButton,
+>>>>>>> Stashed changes
                     style: const TextStyle(fontSize: 18),
                   ),
                 ),

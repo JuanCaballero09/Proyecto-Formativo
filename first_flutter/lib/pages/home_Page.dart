@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import '../l10n/app_localizations.dart';
 import 'notificacion_Page.dart';
 import 'location_Page.dart';
 
@@ -69,6 +70,8 @@ class _HomePageState extends State<HomePage>
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
+    
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(80),
@@ -150,7 +153,7 @@ class _HomePageState extends State<HomePage>
                   child: TextField(
                     controller: _searchController,
                     decoration: InputDecoration(
-                      hintText: 'Buscar...',
+                      hintText: localizations.searchHint,
                       prefixIcon: Icon(Icons.search),
                       border: InputBorder.none,
                       contentPadding:
@@ -165,7 +168,7 @@ class _HomePageState extends State<HomePage>
               padding: const EdgeInsets.symmetric(
                   horizontal: 16.0, vertical: 8.0),
               child: Text(
-                "Promociones",
+                localizations.promotions,
                 style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
@@ -233,7 +236,7 @@ class _HomePageState extends State<HomePage>
               padding: const EdgeInsets.symmetric(
                   horizontal: 16.0, vertical: 8.0),
               child: Text(
-                "Novedades",
+                localizations.newItems,
                 style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
@@ -246,11 +249,11 @@ class _HomePageState extends State<HomePage>
                 scrollDirection: Axis.horizontal,
                 children: [
                   _buildProductCard(
-                      'BBQ', 'assets/Hamburguesa BBQ.jpeg', '\$16.000'),
+                      'BBQ', 'assets/Hamburguesa BBQ.jpeg', '\$16.000', context),
                   _buildProductCard('Doble Queso',
-                      'assets/Hamburgesa Doble Queso.jpeg', '\$15.000'),
+                      'assets/Hamburgesa Doble Queso.jpeg', '\$15.000', context),
                   _buildProductCard(
-                      'BBQ', 'assets/Hamburguesa BBQ.jpeg', '\$18.000'),
+                      'BBQ', 'assets/Hamburguesa BBQ.jpeg', '\$18.000', context),
                 ],
               ),
             ),
@@ -260,7 +263,8 @@ class _HomePageState extends State<HomePage>
     );
   }
 
-  Widget _buildProductCard(String title, String imagePath, String price) {
+  Widget _buildProductCard(String title, String imagePath, String price, BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
     return Container(
       width: 160,
       margin: EdgeInsets.only(right: 12),
@@ -294,7 +298,7 @@ class _HomePageState extends State<HomePage>
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
-                      'Nuevo',
+                      localizations.newBadge,
                       style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,

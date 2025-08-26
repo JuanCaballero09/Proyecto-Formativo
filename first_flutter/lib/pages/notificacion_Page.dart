@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../l10n/app_localizations.dart';
 
 class NotificacionPage extends StatefulWidget {
   @override
@@ -8,9 +9,10 @@ class NotificacionPage extends StatefulWidget {
 class NotificacionPageState extends State<NotificacionPage> {
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: Text('Notificacion'),
+        title: Text(localizations.notifications),
 
     ));
   }

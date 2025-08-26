@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
+import '../l10n/app_localizations.dart';
 
 class MapaOSMPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
     final LatLng barranquilla = LatLng(10.96854, -74.78132);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('¿Como LLegar?'),
+        title: Text(localizations.howToGetThere),
       ),
       body: FlutterMap(
         options: MapOptions(

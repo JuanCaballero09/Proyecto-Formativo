@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../l10n/app_localizations.dart';
 import 'login_page.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -17,7 +18,7 @@ class _RegisterPageState extends State<RegisterPage> {
   void _register() {
     if (_formKey.currentState!.validate()) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('¡Registro exitoso!')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.registrationSuccessful)),
       );
       Navigator.pushReplacementNamed(context, '/home');
     }
@@ -25,6 +26,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: const Color.fromRGBO(237, 88, 33, 1),
       appBar: AppBar(
@@ -43,8 +45,8 @@ class _RegisterPageState extends State<RegisterPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Text(
-                  'Registrarse',
+                Text(
+                  localizations.register,
                   style: TextStyle(
                     fontSize: 32,
                     fontWeight: FontWeight.bold,
@@ -120,8 +122,8 @@ class _RegisterPageState extends State<RegisterPage> {
                         borderRadius: BorderRadius.circular(10),
                       ),
                     ),
-                    child: const Text(
-                      'Registrarse',
+                    child: Text(
+                      localizations.register,
                       style: TextStyle(fontSize: 18, color: Colors.white),
                     ),
                   ),
@@ -137,8 +139,8 @@ class _RegisterPageState extends State<RegisterPage> {
                           builder: (context) => const LoginPage()),
                     );
                   },
-                  child: const Text(
-                    '¿Ya tienes una cuenta?',
+                  child: Text(
+                    localizations.alreadyHaveAccount,
                     style: TextStyle(
                       color: Colors.black,
                       decoration: TextDecoration.underline,

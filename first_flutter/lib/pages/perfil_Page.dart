@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import '../l10n/app_localizations.dart';
 
 class PerfilPage extends StatelessWidget {
   const PerfilPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(80),
@@ -65,10 +67,10 @@ class PerfilPage extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 20),
-          const Padding(
+          Padding(
             padding: EdgeInsets.symmetric(horizontal: 16),
             child: Text(
-              'Cuenta',
+              localizations.account,
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black54),
             ),
           ),
@@ -90,7 +92,7 @@ class PerfilPage extends StatelessWidget {
           // Cerrar sesión
           ListTile(
             leading: const Icon(Icons.logout, color: Colors.black),
-            title: const Text('Cerrar sesión'),
+            title: Text(localizations.logout),
             onTap: () {
               // Acción funcional
               Navigator.pushNamedAndRemoveUntil(
