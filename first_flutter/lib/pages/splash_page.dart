@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../l10n/app_localizations.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
@@ -79,9 +80,9 @@ class _SplashPageState extends State<SplashPage>
                   ),
                   SizedBox(height: 25),
                   Text(
-                    'Tus antojos los verás pronto...',
+                    AppLocalizations.of(context)!.loading,
                     style: GoogleFonts.quicksand(
-                      textStyle: TextStyle(
+                      textStyle: const TextStyle(
                         color: Colors.white,
                         fontSize: 18,
                         fontWeight: FontWeight.w500,

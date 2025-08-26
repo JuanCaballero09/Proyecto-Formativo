@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import '../l10n/app_localizations.dart';
 import 'notificacion_Page.dart';
 import 'location_Page.dart';
 
@@ -151,10 +152,10 @@ class _HomePageState extends State<HomePage>
                   child: TextField(
                     controller: _searchController,
                     decoration: InputDecoration(
-                      hintText: 'Buscar...',
-                      prefixIcon: Icon(Icons.search),
+                      hintText: AppLocalizations.of(context)!.searchProducts,
+                      prefixIcon: const Icon(Icons.search),
                       border: InputBorder.none,
-                      contentPadding:
+                      contentPadding: const
                           EdgeInsets.symmetric(horizontal: 20, vertical: 14),
                     ),
                   ),
@@ -166,8 +167,8 @@ class _HomePageState extends State<HomePage>
               padding: const EdgeInsets.symmetric(
                   horizontal: 16.0, vertical: 8.0),
               child: Text(
-                "Promociones",
-                style: TextStyle(
+                AppLocalizations.of(context)!.todaysOffers,
+                style: const TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                     color: Colors.black),
@@ -234,8 +235,8 @@ class _HomePageState extends State<HomePage>
               padding: const EdgeInsets.symmetric(
                   horizontal: 16.0, vertical: 8.0),
               child: Text(
-                "Novedades",
-                style: TextStyle(
+                AppLocalizations.of(context)!.popularProducts,
+                style: const TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                     color: Colors.black),

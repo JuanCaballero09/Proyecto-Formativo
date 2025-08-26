@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../l10n/app_localizations.dart';
 
 class PedidoPage extends StatefulWidget {
   @override
@@ -20,8 +21,8 @@ class _PedidoPageState extends State<PedidoPage> {
             Image.asset('assets/imagen6.png', height: 100),
 
             Text(
-              'Pedido Realizado',
-              style: TextStyle(
+              AppLocalizations.of(context)!.orderPlaced,
+              style: const TextStyle(
                 fontSize: 40,
                 fontWeight: FontWeight.bold,
                 fontFamily: 'Arial',
@@ -29,8 +30,8 @@ class _PedidoPageState extends State<PedidoPage> {
               ),
             ),
             Text(
-              'Tu pedido ha sido realizado con éxito',
-              style: TextStyle(
+              AppLocalizations.of(context)!.thankYou,
+              style: const TextStyle(
                 fontSize: 20,
                 fontFamily: 'Arial',
                 color: Colors.white,
@@ -45,7 +46,7 @@ class _PedidoPageState extends State<PedidoPage> {
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: Text("Aceptar"),
+              child: Text(AppLocalizations.of(context)!.ok),
               style: ElevatedButton.styleFrom(
                  backgroundColor: Colors.white,
                 foregroundColor: Colors.black,

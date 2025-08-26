@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../l10n/app_localizations.dart';
 import 'inter_page.dart'; // Tu página principal con el menú
 import 'package:google_fonts/google_fonts.dart';
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../l10n/app_localizations.dart';
 import 'login_page.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -17,7 +18,7 @@ class _RegisterPageState extends State<RegisterPage> {
   void _register() {
     if (_formKey.currentState!.validate()) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('¡Registro exitoso!')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.registrationSuccess)),
       );
       Navigator.pushReplacementNamed(context, '/home');
     }
@@ -43,9 +44,9 @@ class _RegisterPageState extends State<RegisterPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Text(
-                  'Registrarse',
-                  style: TextStyle(
+                Text(
+                  AppLocalizations.of(context)!.register,
+                  style: const TextStyle(
                     fontSize: 32,
                     fontWeight: FontWeight.bold,
                     color: Colors.black,
@@ -56,7 +57,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 TextFormField(
                   controller: _nameController,
                   decoration: InputDecoration(
-                    hintText: 'Nombre',
+                    hintText: AppLocalizations.of(context)!.firstName,
                     filled: true,
                     fillColor: Colors.white,
                     contentPadding: const EdgeInsets.symmetric(
@@ -67,14 +68,14 @@ class _RegisterPageState extends State<RegisterPage> {
                     ),
                   ),
                   validator: (value) =>
-                      value!.isEmpty ? 'Ingresa tu nombre y tu apellido' : null,
+                      value!.isEmpty ? AppLocalizations.of(context)!.enterValidName : null,
                 ),
                 const SizedBox(height: 15),
 
                 TextFormField(
                   controller: _emailController,
                   decoration: InputDecoration(
-                    hintText: 'Correo electrónico',
+                    hintText: AppLocalizations.of(context)!.email,
                     filled: true,
                     fillColor: Colors.white,
                     contentPadding: const EdgeInsets.symmetric(
@@ -86,7 +87,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                   validator: (value) => value!.contains('@')
                       ? null
-                      : 'Ingresa un correo válido',
+                      : AppLocalizations.of(context)!.enterValidEmail,
                 ),
                 const SizedBox(height: 15),
 
@@ -94,7 +95,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   controller: _passwordController,
                   obscureText: true,
                   decoration: InputDecoration(
-                    hintText: 'Contraseña',
+                    hintText: AppLocalizations.of(context)!.password,
                     filled: true,
                     fillColor: Colors.white,
                     contentPadding: const EdgeInsets.symmetric(
@@ -120,9 +121,9 @@ class _RegisterPageState extends State<RegisterPage> {
                         borderRadius: BorderRadius.circular(10),
                       ),
                     ),
-                    child: const Text(
-                      'Registrarse',
-                      style: TextStyle(fontSize: 18, color: Colors.white),
+                    child: Text(
+                      AppLocalizations.of(context)!.register,
+                      style: const TextStyle(fontSize: 18, color: Colors.white),
                     ),
                   ),
                 ),
@@ -137,9 +138,9 @@ class _RegisterPageState extends State<RegisterPage> {
                           builder: (context) => const LoginPage()),
                     );
                   },
-                  child: const Text(
-                    '¿Ya tienes una cuenta?',
-                    style: TextStyle(
+                  child: Text(
+                    AppLocalizations.of(context)!.alreadyHaveAccount,
+                    style: const TextStyle(
                       color: Colors.black,
                       decoration: TextDecoration.underline,
                     ),

@@ -17,7 +17,7 @@ import 'repository/mocki_product_repository.dart';
 import 'pages/splash_page.dart';
 import 'package:first_flutter/pages/register_page.dart';
 import 'package:first_flutter/pages/inter_page.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'l10n/app_localizations.dart';
 
 
 void main() {
@@ -40,10 +40,24 @@ class MyApp extends StatelessWidget {
       providers: [
         BlocProvider(create: (_) => ProductBloc(repository)),
         BlocProvider(create: (_) => CartBloc()),
+        BlocProvider(create: (_) => LanguageBloc()..add(const LoadLanguage())),
       ],
-      child: MaterialApp(
-        title: 'Restaurante',
-        debugShowCheckedModeBanner: false,
+      child: BlocBuilder<LanguageBloc, LanguageState>(
+        builder: (context, languageState) {
+          return MaterialApp(
+            title: 'Restaurante',
+            debugShowCheckedModeBanner: false,
+            locale: languageState is LanguageLoaded ? languageState.locale : const Locale('es'),
+            localizationsDelegates: const [
+              AppLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            supportedLocales: const [
+              Locale('en'), // English
+              Locale('es'), // Spanish
+            ],
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(
             seedColor: Colors.amber,
@@ -101,17 +115,19 @@ class MyApp extends StatelessWidget {
             labelStyle: const TextStyle(color: Colors.amber),
           ),
         ),
-         initialRoute: '/',
-         routes: {
-         '/': (context) => SplashPage(key: UniqueKey()),
-         '/menu': (context) => const MenuPage(),
-         '/carrito': (context) => CarritoPage(key: UniqueKey()),
-         // '/welcome': (context) => const WelcomePage(),
-         // '/login': (context) => const LoginPage(),
-         // '/register': (context) => const RegisterPage(),
-        '/home': (context) => const ProductPage(),
+            initialRoute: '/',
+            routes: {
+              '/': (context) => SplashPage(key: UniqueKey()),
+              '/menu': (context) => const MenuPage(),
+              '/carrito': (context) => CarritoPage(key: UniqueKey()),
+              // '/welcome': (context) => const WelcomePage(),
+              // '/login': (context) => const LoginPage(),
+              // '/register': (context) => const RegisterPage(),
+              '/home': (context) => const ProductPage(),
+            },
+          );
         },
-),
+      ),
     );
   }
 }

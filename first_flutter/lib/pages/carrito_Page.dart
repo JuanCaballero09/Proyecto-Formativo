@@ -3,6 +3,7 @@ import 'package:first_flutter/pages/inter_page.dart';
 //import 'package:first_flutter/pages/menu_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../l10n/app_localizations.dart';
 import '../bloc/cart_bloc.dart';
 
 class CarritoPage extends StatefulWidget {
@@ -37,9 +38,9 @@ class CarritoPageState extends State<CarritoPage> {
           const SizedBox(height: 24),
 
           // Texto principal
-          const Text(
-            "TU CARRITO ESTÁ VACÍO",
-            style: TextStyle(
+          Text(
+            AppLocalizations.of(context)!.cartEmpty.toUpperCase(),
+            style: const TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
             ),
@@ -48,9 +49,9 @@ class CarritoPageState extends State<CarritoPage> {
           const SizedBox(height: 8),
 
           // Subtexto
-          const Text(
-            "explora nuestro menú y empieza a pedir.",
-            style: TextStyle(
+          Text(
+            AppLocalizations.of(context)!.cartEmptyMessage,
+            style: const TextStyle(
               fontSize: 16,
               color: Colors.black54,
             ),
@@ -79,9 +80,9 @@ class CarritoPageState extends State<CarritoPage> {
                 ),
                 padding: const EdgeInsets.symmetric(vertical: 16),
               ),
-              child: const Text(
-                "agregar comida",
-                style: TextStyle(
+              child: Text(
+                AppLocalizations.of(context)!.startShopping,
+                style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
@@ -154,7 +155,7 @@ class CarritoPageState extends State<CarritoPage> {
                                         );
                                   },
                                 ),
-                                Text('Cantidad: ${item.quantity}'),
+                                Text('${AppLocalizations.of(context)!.quantity}: ${item.quantity}'),
                                 IconButton(
                                   icon: const Icon(Icons.add_circle),
                                   onPressed: () {
@@ -205,7 +206,7 @@ class CarritoPageState extends State<CarritoPage> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  'Total: \$ ${state.cart.totalPrice} COP',
+                  '${AppLocalizations.of(context)!.total}: \$ ${state.cart.totalPrice} COP',
                   style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -216,13 +217,13 @@ class CarritoPageState extends State<CarritoPage> {
                   onPressed: () {
                     context.read<CartBloc>().add(ClearCart());
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Carrito vaciado')),
+                      SnackBar(content: Text(AppLocalizations.of(context)!.cartUpdated)),
                     );
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.red,
                   ),
-                  child: const Text('Vaciar Carrito'),
+                  child: Text(AppLocalizations.of(context)!.removeFromCart),
                 ),
               ],
             ),

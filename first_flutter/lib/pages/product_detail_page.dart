@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../l10n/app_localizations.dart';
 import '../models/product.dart';
 import '../bloc/cart_bloc.dart';
 import '../models/cart_model.dart';
@@ -15,7 +16,7 @@ class ProductDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(product.name),
+        title: Text(AppLocalizations.of(context)!.productDetails),
         backgroundColor: const Color.fromRGBO(237, 88, 33, 1),
         foregroundColor: Colors.white,
         elevation: 0,
@@ -58,13 +59,13 @@ class ProductDetailPage extends StatelessWidget {
                 children: [
                   const Icon(Icons.description, color: Colors.amber),
                   const SizedBox(width: 8),
-                  Text(
-                    'Descripción',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.amber[800],
+                    Text(
+                      'Descripción',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.amber[800],
+                      ),
                     ),
-                  ),
                 ],
               ),
               const SizedBox(height: 8),
@@ -82,7 +83,7 @@ class ProductDetailPage extends StatelessWidget {
                     const Icon(Icons.restaurant, color: Colors.amber),
                     const SizedBox(width: 8),
                     Text(
-                      'Ingredientes',
+                      AppLocalizations.of(context)!.ingredients,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: Colors.amber[800],
@@ -138,7 +139,7 @@ class ProductDetailPage extends StatelessWidget {
                 width: double.infinity,
                 child: ElevatedButton.icon(
                   icon: const Icon(Icons.shopping_cart_checkout_rounded),
-                  label: const Text('Agregar al pedido'),
+                  label: Text(AppLocalizations.of(context)!.addToCart),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.amber[800],
                     foregroundColor: Colors.white,

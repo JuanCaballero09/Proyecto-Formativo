@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import '../l10n/app_localizations.dart';
 
 import '../bloc/product_bloc.dart';
 import '../bloc/product_event.dart';
@@ -128,8 +129,8 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
                     ),
                     SizedBox(height: 16),
                     Text(
-                      'No se han cargado productos desde la API',
-                      style: TextStyle(fontSize: 16),
+                      AppLocalizations.of(context)!.dataNotFound,
+                      style: const TextStyle(fontSize: 16),
                       textAlign: TextAlign.center,
                     ),
                   ],
@@ -149,7 +150,7 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      'No hay productos en esta categoría',
+                      AppLocalizations.of(context)!.noProductsFound,
                       style: TextStyle(
                         fontSize: 18,
                         color: Colors.grey[600],

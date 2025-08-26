@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../l10n/app_localizations.dart';
+import '../widgets/language_selector.dart';
 
 class PerfilPage extends StatelessWidget {
   const PerfilPage({super.key});
@@ -60,23 +62,40 @@ class PerfilPage extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 20),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Text(
-              'Cuenta',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black54),
+              AppLocalizations.of(context)!.personalInfo,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black54),
             ),
           ),
           const SizedBox(height: 8),
 
+          // Selector de idioma
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Row(
+              children: [
+                const Icon(Icons.language, color: Colors.black),
+                const SizedBox(width: 16),
+                Text(
+                  AppLocalizations.of(context)!.language,
+                  style: const TextStyle(fontSize: 16),
+                ),
+                const Spacer(),
+                const LanguageSelector(),
+              ],
+            ),
+          ),
+
           // Lista de opciones (solo visual)
-          _buildDisabledTile(Icons.restaurant_menu, 'Pedidos'),
+          _buildDisabledTile(Icons.restaurant_menu, AppLocalizations.of(context)!.orders),
           _buildDisabledTile(Icons.receipt_long, 'Datos de facturación'),
-          _buildDisabledTile(Icons.location_on, 'Dirección de entrega'),
-          _buildDisabledTile(Icons.edit, 'Editar perfil'),
-          _buildDisabledTile(Icons.privacy_tip, 'Configuración de privacidad'),
-          _buildDisabledTile(Icons.help_outline, 'Ayuda'),
-          _buildDisabledTile(Icons.article, 'Términos legales'),
+          _buildDisabledTile(Icons.location_on, AppLocalizations.of(context)!.addresses),
+          _buildDisabledTile(Icons.edit, AppLocalizations.of(context)!.editProfile),
+          _buildDisabledTile(Icons.privacy_tip, AppLocalizations.of(context)!.privacyPolicy),
+          _buildDisabledTile(Icons.help_outline, AppLocalizations.of(context)!.helpSupport),
+          _buildDisabledTile(Icons.article, AppLocalizations.of(context)!.termsConditions),
          
 
           const SizedBox(height: 10),
@@ -85,7 +104,7 @@ class PerfilPage extends StatelessWidget {
           // Cerrar sesión
           ListTile(
             leading: const Icon(Icons.logout, color: Colors.black),
-            title: const Text('Cerrar sesión'),
+            title: Text(AppLocalizations.of(context)!.logout),
             onTap: () {
               // Acción funcional
               Navigator.pushNamedAndRemoveUntil(
