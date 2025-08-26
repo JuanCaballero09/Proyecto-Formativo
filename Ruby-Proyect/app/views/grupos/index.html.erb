@@ -1,4 +1,6 @@
-<% if @grupos.any? %>
+<% grupos_con_productos = @grupos.select { |grupo| grupo.products.any?(&:disponible) } %>
+
+<% if grupos_con_productos.any? %>
   <section class="grupos" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
     <% @grupos.each do |grupo| %>
       <% productos_disponibles = grupo.products.select(&:disponible) %>
@@ -21,8 +23,8 @@
     <% end %>
   </section>
 <% else %>
-<div class="sin-productos">
-    <%= image_tag "ProductoNoDisponible.png", alt: "Producto No Disponible" %>
-    <h2>No hay grupos disponibles por ahora.</h2>
+  <div class="sin-productos">
+      <%= image_tag "ProductoNoDisponible.png", alt: "Producto No Disponible" %>
+      <h2>No hay grupos disponibles por ahora.</h2>
   </div>
 <% end %>

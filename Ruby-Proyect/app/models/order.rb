@@ -2,6 +2,7 @@ class Order < ApplicationRecord
   belongs_to :user
   belongs_to :carrito, optional: true
   has_many :order_items, dependent: :destroy
+  has_many :payments
 
   enum :status, {
     pendiente: 0,

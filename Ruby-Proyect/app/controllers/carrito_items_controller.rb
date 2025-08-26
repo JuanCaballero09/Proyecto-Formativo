@@ -10,6 +10,8 @@ class CarritoItemsController < ApplicationController
     @item.precio = @producto.precio
     @item.save
 
+    flash.now[:success] = "#{@producto.nombre} agregado al carrito"
+
     respond_to do |format|
       format.turbo_stream
       format.html { redirect_back fallback_location: root_path }

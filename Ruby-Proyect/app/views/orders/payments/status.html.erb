@@ -1,0 +1,43 @@
+<section class="status-view">
+  <div id="status-container" class="status-container">
+    <div class="state loading" id="stateBox"  data-status-url="<%= status_order_payments_path(@order, format: :json) %>">
+      <svg width="100%" height="100%" viewBox="0 0 100 100">
+        <circle cx="50" cy="50" r="45"></circle>
+      </svg>
+
+      <!-- Check ✅ -->
+      <svg class="icon check" viewBox="0 0 52 52">
+        <polyline points="14,27 22,35 38,18"></polyline>
+      </svg>
+      
+      <!-- Cross ❌ -->
+      <svg class="icon cross" viewBox="0 0 52 52">
+        <line x1="16" y1="16" x2="36" y2="36"></line>
+        <line x1="36" y1="16" x2="16" y2="36"></line>
+      </svg>
+    </div>
+
+    <div id="loader" class="result-status">
+      <p id="processing-msg">Esperando aprobación del pago...</p>
+      <%= link_to "Reintentar pago", new_order_payments_path(@order), id: "reintentar", style: "display:none;" %>
+    </div>
+    <div id="success" style="display:none;" class="result-status">
+      <h2>¡Pago realizado con éxito!</h2>
+      <%= link_to "Ir al inicio", root_path, class: "btn-status" %>
+    </div>
+    <div id="declined" style="display:none;" class="result-status">
+      <h2>Tu pago no se ha concretado</h2>
+      <%= link_to "Reintentar pago", new_order_payments_path(@order), class: "btn-status" %>
+    </div>
+    <button id="cancel-btn" class="btn-status" style="margin-top:20px;">Cancelar</button>
+  </div>
+</section>
+
+<script>
+  document.getElementById("cancel-btn").onclick = function() {
+    fetch("<%= cancel_order_payments_path(@order) %>", { method: "PATCH" })
+      .then(() => {
+        window.location.href = "<%= root_path %>";
+      });
+  }
+</script>

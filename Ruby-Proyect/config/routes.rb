@@ -12,14 +12,21 @@ Rails.application.routes.draw do
 
     resources :products, path: "productos", only: [:index] # rubocop:disable Layout/SpaceInsideArrayLiteralBrackets
 
-    resources :orders, only: [ :create, :show ]
-
     resource :carrito, only: [:show] # rubocop:disable Layout/SpaceInsideArrayLiteralBrackets
     resources :carrito_items, only: [ :create, :update, :destroy ] do
       member do
         put :incrementar
       end
-    end # rubocop:disable Layout/SpaceInsideArrayLiteralBrackets
+    end
+
+    resources :orders, param: :code, only: [ :show, :create ] do
+      resource :payments, path: "payment", only: [ :new, :create ], module: :orders do
+        get :status
+        patch :cancel
+      end
+    end
+
+    post "/wompi/webhook", to: "wompi#webhook"
   end
 
   # resources :pedidos, only: [:create] # rubocop:disable Layout/SpaceInsideArrayLiteralBrackets

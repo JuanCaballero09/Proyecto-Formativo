@@ -48,6 +48,6 @@ class OrdersController < ApplicationController
 
   def set_order
     # como usamos to_param -> code, buscamos por code en params[:id]
-    @order = Order.find_by!(code: params[:id])
+    @order = Order.find_by(code: params[:code])
   end
 end

@@ -4,6 +4,10 @@ class ApplicationController < ActionController::Base
   before_action :store_user_location!, if: :storable_location?
   before_action :set_locale
 
+  config.after_initialize do
+    Mime::Type.register "application/json", :json unless Mime::Type.lookup_by_extension(:json)
+  end
+
   layout :layout_by_resource
 
   private
@@ -28,7 +32,7 @@ class ApplicationController < ActionController::Base
     I18n.locale = params[:locale] || session[:locale] || I18n.default_locale
   end
 
-  def default_url_options 
+  def default_url_options
     { locale: I18n.locale }
   end
 
