@@ -1,7 +1,5 @@
 {
   "@@locale": "es",
-  
-  "@_GENERAL": {},
   "appTitle": "Aplicación de Restaurante",
   "welcome": "Bienvenido",
   "loading": "Cargando...",
@@ -27,8 +25,6 @@
   "selectLanguage": "Seleccionar Idioma",
   "language": "Idioma",
   "settings": "Configuración",
-  
-  "@_NAVIGATION": {},
   "home": "Inicio",
   "menu": "Menú",
   "cart": "Carrito",
@@ -41,8 +37,6 @@
   "back": "Atrás",
   "next": "Siguiente",
   "previous": "Anterior",
-  
-  "@_HOME_PAGE": {},
   "todaysOffers": "Ofertas de Hoy",
   "popularProducts": "Productos Populares",
   "searchProducts": "Buscar productos...",
@@ -52,8 +46,6 @@
   "quickOrder": "Pedido Rápido",
   "deliveryTime": "Tiempo de entrega: 30-45 min",
   "freeDelivery": "Entrega gratis en pedidos mayores a $25",
-  
-  "@_MENU_PAGE": {},
   "ourMenu": "Nuestro Menú",
   "allCategories": "Todas las Categorías",
   "burgers": "Hamburguesas",
@@ -78,8 +70,6 @@
   "reload": "Recargar",
   "category": "Categoría",
   "totalProductsLoaded": "Total productos cargados",
-  
-  "@_PRODUCT_DETAIL": {},
   "productDetails": "Detalles del Producto",
   "ingredients": "Ingredientes",
   "nutrition": "Información Nutricional",
@@ -95,8 +85,6 @@
   "medium": "Mediano",
   "large": "Grande",
   "extraLarge": "Extra Grande",
-  
-  "@_CART_PAGE": {},
   "shoppingCart": "Carrito de Compras",
   "cartEmpty": "Tu carrito está vacío",
   "cartEmptyMessage": "¡Agrega algunos productos deliciosos para comenzar!",
@@ -115,8 +103,6 @@
   "applyCoupon": "Aplicar Cupón",
   "couponApplied": "¡Cupón aplicado exitosamente!",
   "invalidCoupon": "Código de cupón inválido",
-  
-  "@_CHECKOUT_ORDER": {},
   "checkout": "Pagar",
   "orderSummary": "Resumen del Pedido",
   "deliveryAddress": "Dirección de Entrega",
@@ -130,8 +116,6 @@
   "orderConfirmation": "Confirmación del Pedido",
   "orderNumber": "Número de Pedido",
   "thankYou": "¡Gracias por tu pedido!",
-  
-  "@_ORDER_STATUS": {},
   "orderReceived": "Pedido Recibido",
   "preparing": "Preparando",
   "onTheWay": "En camino",
@@ -143,8 +127,6 @@
   "trackYourOrder": "Rastrea tu Pedido",
   "estimatedTime": "Tiempo estimado",
   "contactDelivery": "Contactar Entrega",
-  
-  "@_PROFILE_PAGE": {},
   "myProfile": "Mi Perfil",
   "personalInfo": "Información Personal",
   "accountSettings": "Configuración de Cuenta",
@@ -161,8 +143,6 @@
   "deleteAccount": "Eliminar Cuenta",
   "privacyPolicy": "Política de Privacidad",
   "termsConditions": "Términos y Condiciones",
-  
-  "@_AUTHENTICATION": {},
   "login": "Iniciar Sesión",
   "register": "Registrarse",
   "email": "Correo Electrónico",
@@ -183,8 +163,6 @@
   "registrationFailed": "Error en el registro",
   "resetPassword": "Restablecer Contraseña",
   "resetPasswordSent": "¡Correo de restablecimiento enviado!",
-  
-  "@_FORM_VALIDATION": {},
   "fieldRequired": "Este campo es obligatorio",
   "enterValidEmail": "Ingresa un correo válido",
   "passwordTooShort": "La contraseña debe tener al menos 6 caracteres",
@@ -195,8 +173,6 @@
   "emailAlreadyExists": "El correo ya existe",
   "weakPassword": "La contraseña es muy débil",
   "invalidCredentials": "Correo o contraseña inválidos",
-  
-  "@_LOCATION_DELIVERY": {},
   "selectLocation": "Seleccionar Ubicación",
   "currentLocation": "Ubicación Actual",
   "savedAddresses": "Direcciones Guardadas",
@@ -219,8 +195,6 @@
   "denyLocation": "Denegar",
   "deliveryNotAvailable": "Entrega no disponible en tu área",
   "selectDeliveryAddress": "Seleccionar dirección de entrega",
-  
-  "@_NOTIFICATIONS": {},
   "notificationsPage": "Notificaciones",
   "orderUpdates": "Actualizaciones de Pedidos",
   "promotions": "Promociones",
@@ -238,8 +212,6 @@
   "noNotifications": "No hay notificaciones",
   "markAllRead": "Marcar todas como leídas",
   "clearAll": "Limpiar todas",
-  
-  "@_ERRORS_MESSAGES": {},
   "networkError": "Error de conexión de red",
   "serverError": "Error del servidor, inténtalo de nuevo",
   "timeoutError": "Tiempo de espera agotado",
@@ -251,8 +223,6 @@
   "productOutOfStock": "Producto sin stock",
   "minimumOrderAmount": "El monto mínimo del pedido es $15",
   "deliveryAreaRestricted": "Entrega no disponible en tu área",
-  
-  "@_SUCCESS_MESSAGES": {},
   "profileUpdated": "Perfil actualizado exitosamente",
   "passwordChanged": "Contraseña cambiada exitosamente",
   "addressAdded": "Dirección agregada exitosamente",
@@ -262,8 +232,6 @@
   "reviewSubmitted": "Reseña enviada exitosamente",
   "feedbackSent": "Comentario enviado exitosamente",
   "subscriptionUpdated": "Preferencias de suscripción actualizadas",
-  
-  "@_SPLASH_WELCOME": {},
   "welcomeTitle": "Bienvenido a BiteVia",
   "welcomeSubtitle": "Comida deliciosa entregada a tu puerta",
   "getStarted": "Comenzar",

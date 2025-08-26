@@ -1,7 +1,5 @@
 {
   "@@locale": "en",
-  
-  "@_GENERAL": {},
   "appTitle": "Restaurant App",
   "welcome": "Welcome",
   "loading": "Loading...",
@@ -27,8 +25,6 @@
   "selectLanguage": "Select Language",
   "language": "Language",
   "settings": "Settings",
-  
-  "@_NAVIGATION": {},
   "home": "Home",
   "menu": "Menu",
   "cart": "Cart",
@@ -41,8 +37,6 @@
   "back": "Back",
   "next": "Next",
   "previous": "Previous",
-  
-  "@_HOME_PAGE": {},
   "todaysOffers": "Today's Offers",
   "popularProducts": "Popular Products",
   "searchProducts": "Search products...",
@@ -53,7 +47,6 @@
   "deliveryTime": "Delivery time: 30-45 min",
   "freeDelivery": "Free delivery on orders over $25",
   
-  "@_MENU_PAGE": {},
   "ourMenu": "Our Menu",
   "allCategories": "All Categories",
   "burgers": "Burgers",
@@ -79,7 +72,6 @@
   "category": "Category",
   "totalProductsLoaded": "Total products loaded",
   
-  "@_PRODUCT_DETAIL": {},
   "productDetails": "Product Details",
   "ingredients": "Ingredients",
   "nutrition": "Nutrition Information",
@@ -96,7 +88,6 @@
   "large": "Large",
   "extraLarge": "Extra Large",
   
-  "@_CART_PAGE": {},
   "shoppingCart": "Shopping Cart",
   "cartEmpty": "Your cart is empty",
   "cartEmptyMessage": "Add some delicious items to get started!",
@@ -116,7 +107,6 @@
   "couponApplied": "Coupon applied successfully!",
   "invalidCoupon": "Invalid coupon code",
   
-  "@_CHECKOUT_ORDER": {},
   "checkout": "Checkout",
   "orderSummary": "Order Summary",
   "deliveryAddress": "Delivery Address",
@@ -131,7 +121,6 @@
   "orderNumber": "Order Number",
   "thankYou": "Thank you for your order!",
   
-  "@_ORDER_STATUS": {},
   "orderReceived": "Order Received",
   "preparing": "Preparing",
   "onTheWay": "On the way",
@@ -144,7 +133,6 @@
   "estimatedTime": "Estimated time",
   "contactDelivery": "Contact Delivery",
   
-  "@_PROFILE_PAGE": {},
   "myProfile": "My Profile",
   "personalInfo": "Personal Information",
   "accountSettings": "Account Settings",
@@ -162,7 +150,6 @@
   "privacyPolicy": "Privacy Policy",
   "termsConditions": "Terms & Conditions",
   
-  "@_AUTHENTICATION": {},
   "login": "Login",
   "register": "Register",
   "email": "Email",
@@ -184,7 +171,6 @@
   "resetPassword": "Reset Password",
   "resetPasswordSent": "Password reset email sent!",
   
-  "@_FORM_VALIDATION": {},
   "fieldRequired": "This field is required",
   "enterValidEmail": "Enter a valid email",
   "passwordTooShort": "Password must be at least 6 characters",
@@ -196,7 +182,6 @@
   "weakPassword": "Password is too weak",
   "invalidCredentials": "Invalid email or password",
   
-  "@_LOCATION_DELIVERY": {},
   "selectLocation": "Select Location",
   "currentLocation": "Current Location",
   "savedAddresses": "Saved Addresses",
@@ -220,7 +205,6 @@
   "deliveryNotAvailable": "Delivery not available in your area",
   "selectDeliveryAddress": "Select delivery address",
   
-  "@_NOTIFICATIONS": {},
   "notificationsPage": "Notifications",
   "orderUpdates": "Order Updates",
   "promotions": "Promotions",
@@ -239,7 +223,6 @@
   "markAllRead": "Mark all as read",
   "clearAll": "Clear all",
   
-  "@_ERRORS_MESSAGES": {},
   "networkError": "Network connection error",
   "serverError": "Server error, please try again",
   "timeoutError": "Request timed out",
@@ -252,7 +235,6 @@
   "minimumOrderAmount": "Minimum order amount is $15",
   "deliveryAreaRestricted": "Delivery not available in your area",
   
-  "@_SUCCESS_MESSAGES": {},
   "profileUpdated": "Profile updated successfully",
   "passwordChanged": "Password changed successfully",
   "addressAdded": "Address added successfully",
@@ -263,7 +245,6 @@
   "feedbackSent": "Feedback sent successfully",
   "subscriptionUpdated": "Subscription preferences updated",
   
-  "@_SPLASH_WELCOME": {},
   "welcomeTitle": "Welcome to BiteVia",
   "welcomeSubtitle": "Delicious food delivered to your door",
   "getStarted": "Get Started",
