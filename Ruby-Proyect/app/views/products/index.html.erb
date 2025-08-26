@@ -1,35 +1,37 @@
-<% productos_por_grupo = @products.group_by(&:grupo) %>
+<section id="productosIndex">
+  <% productos_por_grupo = @products.group_by(&:grupo) %>
 
-<% if @products.any? %>
-  <% productos_por_grupo.each do |grupo, productos| %>
-    <div class="grupo">
-      <h2><%= grupo.nombre %></h2>
+  <% if @products.any? %>
+    <% productos_por_grupo.each do |grupo, productos| %>
+      <div class="grupo" >
+        <h2><%= grupo.nombre %></h2>
 
-      <div class="slider-wrapper">
-        <button class="botonL" onclick="moverSlider('slider-<%= grupo.id %>', -1)">←</button>
+        <div class="slider-wrapper">
+          <button class="botonL" onclick="moverSlider('slider-<%= grupo.id %>', -1)">←</button>
 
-        <div class="slider-container" id="slider-<%= grupo.id %>">
-          <% productos.each do |producto| %>
-            <div class="carta">
-              <%= link_to grupo_product_path(producto.grupo, producto) do %>
-                <%= image_tag(producto.imagen.attached? ? producto.imagen : "LogoLogoText2.svg") %>
-                <h4><%= producto.nombre %></h4>
-                <p><strong><%= number_to_currency(producto.precio, unit: "COP ", separator: ",", delimiter: ".", precision: 0) %> $</strong></p>
-              <% end %>
-              <div class="botones-compra">
-                <%= button_to t("home.section.agregar_carrito"), carrito_items_path(product_id: producto.id), method: :post, data: { turbo_frame: "_top" } %>
+          <div class="slider-container" id="slider-<%= grupo.id %>">
+            <% productos.each do |producto| %>
+              <div class="carta">
+                <%= link_to grupo_product_path(producto.grupo, producto) do %>
+                  <%= image_tag(producto.imagen.attached? ? producto.imagen : "LogoLogoText2.svg") %>
+                  <h4><%= producto.nombre %></h4>
+                  <p><strong><%= number_to_currency(producto.precio, unit: "COP ", separator: ",", delimiter: ".", precision: 0) %> $</strong></p>
+                <% end %>
+                <div class="botones-compra">
+                  <%= button_to t("home.section.agregar_carrito"), carrito_items_path(product_id: producto.id), method: :post, data: { turbo_frame: "_top" } %>
+                </div>
               </div>
-            </div>
-          <% end %>
-        </div>
+            <% end %>
+          </div>
 
-        <button class="botonR" onclick="moverSlider('slider-<%= grupo.id %>', 1)">→</button>
+          <button class="botonR" onclick="moverSlider('slider-<%= grupo.id %>', 1)">→</button>
+        </div>
       </div>
+    <% end %>
+  <% else %>
+    <div class="sin-productos">
+      <%= image_tag "ProductoNoDisponible.png", alt: "Producto No Disponible" %>
+      <h2>No hay productos disponibles por ahora.</h2>
     </div>
   <% end %>
-<% else %>
-  <div class="sin-productos">
-    <%= image_tag "ProductoNoDisponible.png", alt: "Producto No Disponible" %>
-    <h2>No hay productos disponibles por ahora.</h2>
-  </div>
-<% end %>
+</section>

@@ -1,75 +1,40 @@
-<div id="status-container" style="text-align:center; margin-top: 60px;">
-  <div class="state loading" id="stateBox">
-    <svg width="100" height="100" viewBox="0 0 100 100">
-      <circle cx="50" cy="50" r="45"></circle>
-    </svg>
+<section>
+  <div id="status-container" style="text-align:center; margin-top: 60px;">
+    <div class="state loading" id="stateBox"  data-status-url="<%= status_order_payments_path(@order, format: :json) %>">
+      <svg width="100" height="100" viewBox="0 0 100 100">
+        <circle cx="50" cy="50" r="45"></circle>
+      </svg>
 
-    <!-- Check ✅ -->
-    <svg class="icon check" viewBox="0 0 52 52">
-      <polyline points="14,27 22,35 38,18"></polyline>
-    </svg>
+      <!-- Check ✅ -->
+      <svg class="icon check" viewBox="0 0 52 52">
+        <polyline points="14,27 22,35 38,18"></polyline>
+      </svg>
 
-    <!-- Cross ❌ -->
-    <svg class="icon cross" viewBox="0 0 52 52">
-      <line x1="16" y1="16" x2="36" y2="36"></line>
-      <line x1="36" y1="16" x2="16" y2="36"></line>
-    </svg>
+      <!-- Cross ❌ -->
+      <svg class="icon cross" viewBox="0 0 52 52">
+        <line x1="16" y1="16" x2="36" y2="36"></line>
+        <line x1="36" y1="16" x2="16" y2="36"></line>
+      </svg>
+    </div>
+
+    <div id="loader">
+      <p id="processing-msg">Esperando aprobación del pago...</p>
+      <%= link_to "Reintentar pago", new_order_payments_path(@order), id: "reintentar", style: "display:none;" %>
+    </div>
+    <div id="success" style="display:none;">
+      <h2>¡Pago realizado con éxito!</h2>
+      <%= link_to "Ir al inicio", root_path, class: "btn" %>
+    </div>
+    <div id="declined" style="display:none;">
+      <h2>Tu pago no se ha concretado</h2>
+      <%= link_to "Reintentar pago", new_order_payments_path(@order), class: "btn" %>
+    </div>
+    <button id="cancel-btn" class="btn" style="margin-top:20px;">Cancelar</button>
   </div>
+</section>
 
-  <div id="loader">
-    <p id="processing-msg">Esperando aprobación del pago...</p>
-  
-  </div>
-  <div id="success" style="display:none;">
-    <h2>¡Pago realizado con éxito!</h2>
-    <%= link_to "Ir al inicio", root_path, class: "btn" %>
-  </div>
-  <div id="declined" style="display:none;">
-    <h2>Tu pago no se ha concretado</h2>
-    <%= link_to "Reintentar pago", new_order_payments_path(@order), class: "btn" %>
-  </div>
-  <button id="cancel-btn" class="btn" style="margin-top:20px;">Cancelar</button>
-</div>
 
-<script>
 
-  let interval = setInterval(checkStatus, 2000);
-
-  function checkStatus() {
-    const statusBox = document.getElementById("stateBox");
-    fetch("<%= status_order_payments_path(@order, format: :json) %>")
-      .then(res => res.json())
-      .then(data => {
-        console.log("Estado recibido:", data); // <-- agrega esto
-        if (data.status === "approved") {
-          statusBox.className = "state success";
-          document.getElementById("loader").style.display = "none";
-          document.getElementById("success").style.display = "block";
-          document.getElementById("cancel-btn").style.display = "none";
-          clearInterval(interval);
-        } else if (data.status === "declined") {
-          statusBox.className = "state error";
-          document.getElementById("loader").style.display = "none";
-          document.getElementById("declined").style.display = "block";
-          document.getElementById("cancel-btn").style.display = "none";
-          clearInterval(interval);
-        } else if (data.status === "cancelled") {
-          statusBox.className = "state error"
-          document.getElementById("loader").style.display = "none";
-          document.getElementById("declined").style.display = "block";
-          document.getElementById("cancel-btn").style.display = "none";
-          clearInterval(interval);
-        }
-      });
-  }
-
-  document.getElementById("cancel-btn").onclick = function() {
-    fetch("<%= cancel_order_payments_path(@order) %>", { method: "PATCH" })
-      .then(() => {
-        window.location.href = "<%= root_path %>";
-      });
-  };
-</script>
 
 <style>
 .btn {

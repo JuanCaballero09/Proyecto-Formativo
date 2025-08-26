@@ -12,22 +12,13 @@ class  Orders::PaymentsController < ApplicationController
   def create
     service = WompiService.new
 
-    # Obtener datos del formulario
-    card_number = payment_params[:card_number]
-    exp_month   = payment_params[:exp_month].to_s.rjust(2, "0")
-    exp_year    = payment_params[:exp_year].to_s[-2..]
-    cvv         = payment_params[:cvv]
-    card_holder = payment_params[:card_holder]
-    email       = payment_params[:email]
-    installments = payment_params[:installments].to_i || 1
-
     # 1. tokenizar tarjeta
     token_response = service.tokenize_card(
-      card_number: card_number,
-      exp_month: exp_month,
-      exp_year: exp_year,
-      cvv: cvv,
-      card_holder: card_holder
+      card_number: payment_params[:card_number],
+      exp_month: payment_params[:exp_month].to_s.rjust(2, "0"),
+      exp_year: payment_params[:exp_year].to_s[-2..],
+      cvv: payment_params[:cvv],
+      card_holder: payment_params[:card_holder]
     )
 
     puts "=== RESPUESTA DE TOKENIZACIÓN ==="
@@ -43,9 +34,9 @@ class  Orders::PaymentsController < ApplicationController
       response = service.create_card_transaction(
         reference: reference,
         amount_in_cents: amount_in_cents,
-        customer_email: email,
+        customer_email: payment_params[:email],
         token: token,
-        installments: installments
+        installments: payment_params[:installments].to_i || 1
       )
 
       puts "=== RESPUESTA DE WOMPI ==="

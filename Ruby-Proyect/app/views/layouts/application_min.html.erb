@@ -23,7 +23,6 @@
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.10.2/lottie.min.js"></script>
 </head>
 <body>
     <!-- Contenedor de alertas -->
@@ -54,19 +53,32 @@
       if (fetchResponse && !fetchResponse.ok) {
         fetchResponse.text().then(text => {
           let message = "Error desconocido";
-          try {
-            const data = JSON.parse(text);
-            message = data.message || message;
-          } catch(e) {
-            console.error("No se pudo parsear JSON:", e, text);
+
+          // Detecta si es JSON o HTML
+          if (text.trim().startsWith("{")) {
+            try {
+              const data = JSON.parse(text);
+              message = data.message || message;
+            } catch (e) {
+              console.error("Error parseando JSON:", e);
+            }
+          } else {
+            // Probablemente HTML devuelto por Rails
+            message = "Hubo un error al procesar tu solicitud";
           }
 
           const flashToast = document.getElementById("flash-toast");
-          if(flashToast){
+          if (flashToast) {
             const alert = document.createElement("div");
             alert.className = "alert error";
             alert.innerText = message;
             flashToast.appendChild(alert);
+
+            // Auto-remover después de 5s
+            setTimeout(() => {
+              alert.style.animation = "slideUp 0.5s forwards";
+              setTimeout(() => alert.remove(), 500);
+            }, 5000);
           }
         });
       }

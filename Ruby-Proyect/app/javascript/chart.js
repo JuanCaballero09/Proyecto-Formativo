@@ -4,6 +4,9 @@ document.addEventListener("turbo:load", function () {
   const base = colores.getPropertyValue("--base").trim();
   const claro = colores.getPropertyValue("--base-claro").trim();
   const oscuro = colores.getPropertyValue("--base-oscuro").trim();
+  const dashboard = document.getElementById("dashboard");
+  
+  if (!dashboard) return;
 
   // === Productos por grupo ===
   new Chart(document.getElementById("chartBarras"), {
