@@ -68,25 +68,25 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
           
           if (state is ProductInitial) {
             print('State is ProductInitial - triggering FetchProducts');
-            return const Center(
+            return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  CircularProgressIndicator(),
-                  SizedBox(height: 16),
-                  Text('Iniciando carga de productos...'),
+                  const CircularProgressIndicator(),
+                  const SizedBox(height: 16),
+                  Text(AppLocalizations.of(context)!.loadingProducts),
                 ],
               ),
             );
           } else if (state is ProductLoading) {
             print('State is ProductLoading');
-            return const Center(
+            return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  CircularProgressIndicator(),
-                  SizedBox(height: 16),
-                  Text('Cargando productos...'),
+                  const CircularProgressIndicator(),
+                  const SizedBox(height: 16),
+                  Text(AppLocalizations.of(context)!.loadingProducts),
                 ],
               ),
             );
@@ -118,16 +118,16 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
             final displayProducts = filteredProducts.isEmpty ? state.products : filteredProducts;
             
             if (state.products.isEmpty) {
-              return const Center(
+              return Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(
+                    const Icon(
                       Icons.restaurant_menu_outlined,
                       size: 80,
                       color: Colors.grey,
                     ),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                     Text(
                       AppLocalizations.of(context)!.dataNotFound,
                       style: const TextStyle(fontSize: 16),
@@ -159,14 +159,14 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'Categoría: ${widget.categoryName}',
+                      AppLocalizations.of(context)!.category + ': ${widget.categoryName}',
                       style: TextStyle(
                         fontSize: 14,
                         color: Colors.grey[500],
                       ),
                     ),
                     Text(
-                      'Total productos cargados: ${state.products.length}',
+                      AppLocalizations.of(context)!.totalProductsLoaded + ': ${state.products.length}',
                       style: TextStyle(
                         fontSize: 14,
                         color: Colors.grey[500],
@@ -179,7 +179,7 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
                         showDialog(
                           context: context,
                           builder: (context) => AlertDialog(
-                            title: const Text('Productos disponibles'),
+                            title: Text(AppLocalizations.of(context)!.availableProducts),
                             content: SizedBox(
                               width: double.maxFinite,
                               child: ListView.builder(
@@ -196,13 +196,13 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
                             actions: [
                               TextButton(
                                 onPressed: () => Navigator.pop(context),
-                                child: const Text('Cerrar'),
+                                child: Text(AppLocalizations.of(context)!.close),
                               ),
                             ],
                           ),
                         );
                       },
-                      child: const Text('Ver todos los productos (Debug)'),
+                      child: Text(AppLocalizations.of(context)!.seeAllProductsDebug),
                     ),
                   ],
                 ),
@@ -252,14 +252,14 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
                             ),
                           ),
                           if (filteredProducts.isEmpty)
-                            const Text(
-                              '(Mostrando todos los productos para debug)',
-                              style: TextStyle(
-                                color: Colors.yellow,
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
+                        Text(
+                          AppLocalizations.of(context)!.showingAllProductsDebug,
+                          style: const TextStyle(
+                            color: Colors.yellow,
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                         ],
                       ),
                     ),
@@ -354,7 +354,7 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
                                         if (product.ingredients.isNotEmpty) ...[
                                           const SizedBox(height: 6),
                                           Text(
-                                            'Ingredientes:',
+                                            AppLocalizations.of(context)!.ingredients + ':',
                                             style: TextStyle(
                                               fontSize: 11,
                                               fontWeight: FontWeight.bold,
@@ -423,7 +423,7 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    'Error al cargar productos',
+                    AppLocalizations.of(context)!.loadingProductsError,
                     style: TextStyle(
                       fontSize: 18,
                       color: Colors.grey[600],
@@ -445,7 +445,7 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
                       print('Retry button pressed - triggering FetchProducts');
                       context.read<ProductBloc>().add(FetchProducts());
                     },
-                    child: const Text('Reintentar'),
+                    child: Text(AppLocalizations.of(context)!.retry),
                   ),
                 ],
               ),
@@ -456,14 +456,14 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text('Estado desconocido'),
+                  Text(AppLocalizations.of(context)!.unknownState),
                   const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () {
                       print('Reload button pressed - triggering FetchProducts');
                       context.read<ProductBloc>().add(FetchProducts());
                     },
-                    child: const Text('Recargar'),
+                    child: Text(AppLocalizations.of(context)!.reload),
                   ),
                 ],
               ),

@@ -116,6 +116,24 @@ abstract class AppLocalizations {
   /// **'Loading...'**
   String get loading;
 
+  /// No description provided for @loadingProducts.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading products...'**
+  String get loadingProducts;
+
+  /// No description provided for @initializing.
+  ///
+  /// In en, this message translates to:
+  /// **'Initializing...'**
+  String get initializing;
+
+  /// No description provided for @dataNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No data found'**
+  String get dataNotFound;
+
   /// No description provided for @error.
   ///
   /// In en, this message translates to:
@@ -439,6 +457,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No products found'**
   String get noProductsFound;
+
+  /// No description provided for @showingAllProductsDebug.
+  ///
+  /// In en, this message translates to:
+  /// **'(Showing all products for debug)'**
+  String get showingAllProductsDebug;
+
+  /// No description provided for @seeAllProductsDebug.
+  ///
+  /// In en, this message translates to:
+  /// **'See all products (Debug)'**
+  String get seeAllProductsDebug;
+
+  /// No description provided for @availableProducts.
+  ///
+  /// In en, this message translates to:
+  /// **'Available products'**
+  String get availableProducts;
+
+  /// No description provided for @loadingProductsError.
+  ///
+  /// In en, this message translates to:
+  /// **'Error loading products'**
+  String get loadingProductsError;
+
+  /// No description provided for @unknownState.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown state'**
+  String get unknownState;
+
+  /// No description provided for @reload.
+  ///
+  /// In en, this message translates to:
+  /// **'Reload'**
+  String get reload;
+
+  /// No description provided for @category.
+  ///
+  /// In en, this message translates to:
+  /// **'Category'**
+  String get category;
+
+  /// No description provided for @totalProductsLoaded.
+  ///
+  /// In en, this message translates to:
+  /// **'Total products loaded'**
+  String get totalProductsLoaded;
 
   /// No description provided for @productDetails.
   ///
@@ -1315,12 +1381,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'An unknown error occurred'**
   String get unknownError;
-
-  /// No description provided for @dataNotFound.
-  ///
-  /// In en, this message translates to:
-  /// **'Data not found'**
-  String get dataNotFound;
 
   /// No description provided for @accessDenied.
   ///

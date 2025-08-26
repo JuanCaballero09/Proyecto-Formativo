@@ -1,8 +1,5 @@
 import 'package:first_flutter/pages/carrito_Page.dart';
-import 'package:first_flutter/pages/home_Page.dart';
 import 'package:first_flutter/pages/menu_page.dart';
-import 'package:first_flutter/pages/welcome_page.dart';
-import 'package:first_flutter/pages/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -15,7 +12,6 @@ import 'repository/product_repository.dart';
 //import 'repository/http_product_repository.dart';
 import 'repository/mocki_product_repository.dart';
 import 'pages/splash_page.dart';
-import 'package:first_flutter/pages/register_page.dart';
 import 'package:first_flutter/pages/inter_page.dart';
 import 'l10n/app_localizations.dart';
 

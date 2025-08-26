@@ -18,6 +18,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get loading => 'Loading...';
 
   @override
+  String get loadingProducts => 'Loading products...';
+
+  @override
+  String get initializing => 'Initializing...';
+
+  @override
+  String get dataNotFound => 'No data found';
+
+  @override
   String get error => 'Error';
 
   @override
@@ -178,6 +187,30 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noProductsFound => 'No products found';
+
+  @override
+  String get showingAllProductsDebug => '(Showing all products for debug)';
+
+  @override
+  String get seeAllProductsDebug => 'See all products (Debug)';
+
+  @override
+  String get availableProducts => 'Available products';
+
+  @override
+  String get loadingProductsError => 'Error loading products';
+
+  @override
+  String get unknownState => 'Unknown state';
+
+  @override
+  String get reload => 'Reload';
+
+  @override
+  String get category => 'Category';
+
+  @override
+  String get totalProductsLoaded => 'Total products loaded';
 
   @override
   String get productDetails => 'Product Details';
@@ -617,9 +650,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get unknownError => 'An unknown error occurred';
-
-  @override
-  String get dataNotFound => 'Data not found';
 
   @override
   String get accessDenied => 'Access denied';

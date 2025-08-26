@@ -16,6 +16,7 @@ class _SplashPageState extends State<SplashPage>
   late Animation<double> _fadeAnimation;
   late Animation<double> _scaleAnimation;
   late Animation<Offset> _slideAnimation;
+  Timer? _navigationTimer;
 
   @override
   void initState() {
@@ -43,13 +44,16 @@ class _SplashPageState extends State<SplashPage>
 
     _controller.forward();
 
-    Timer(Duration(seconds: 4), () {
-      Navigator.pushReplacementNamed(context, '/home');
+    _navigationTimer = Timer(Duration(seconds: 4), () {
+      if (mounted) {
+        Navigator.pushReplacementNamed(context, '/home');
+      }
     });
   }
 
   @override
   void dispose() {
+    _navigationTimer?.cancel();
     _controller.dispose();
     super.dispose();
   }
