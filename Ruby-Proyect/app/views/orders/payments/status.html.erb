@@ -33,6 +33,14 @@
   </div>
 </section>
 
+<script>
+  document.getElementById("cancel-btn").onclick = function() {
+    fetch("<%= cancel_order_payments_path(@order) %>", { method: "PATCH" })
+      .then(() => {
+        window.location.href = "<%= root_path %>";
+      });
+  }
+</script>
 
 
 

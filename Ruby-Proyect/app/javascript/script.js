@@ -41,14 +41,7 @@ document.addEventListener("turbo:load", () => {
   let intervalShow = setInterval(() => {
     btn.style.display = "inline-block";
     clearInterval(intervalShow);
-  }, 10000);
-
-  document.getElementById("cancel-btn").onclick = function() {
-    fetch("<%= cancel_order_payments_path(@order) %>", { method: "PATCH" })
-      .then(() => {
-        window.location.href = "<%= root_path %>";
-      });
-  }
+  }, 8000);
 });
 
 // ==============================
@@ -187,7 +180,7 @@ document.addEventListener("turbo:load", function () {
 });
 
 // =====================================================
-// 🎞️ Fuciones para verificar parametros de las tarjetas
+// 💳 Fuciones para verificar parametros de las tarjetas
 // =====================================================
 
 
@@ -195,7 +188,7 @@ document.addEventListener("turbo:load", function() {
   const form = document.getElementById("payment-form");
   const payBtn = document.getElementById("pay-btn");
 
-  if (!form || !payBtn) return;
+  if (!form ) return;
 
   const cardInput = form.querySelector("[name='payment[card_number]']");
   const expMonthInput = form.querySelector("[name='payment[exp_month]']");
@@ -203,6 +196,8 @@ document.addEventListener("turbo:load", function() {
   const cvvInput = form.querySelector("[name='payment[cvv]']");
   const emailInput = form.querySelector("[name='payment[email]']");
   const holderInput = form.querySelector("[name='payment[card_holder]']");
+  const termsCheck = document.getElementById("payment_accept_terms");
+  const dataCheck = document.getElementById("payment_accept_data");
 
   const errorCard = document.getElementById("error-card");
   const errorMonth = document.getElementById("error-month");
@@ -216,7 +211,8 @@ document.addEventListener("turbo:load", function() {
     month: false,
     year: false,
     cvv: false,
-    holder: false
+    holder: false,
+    email: false
   };
 
   // Algoritmo Luhn para validar tarjeta
@@ -308,7 +304,14 @@ document.addEventListener("turbo:load", function() {
     const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailInput.value.trim());
     validateField(emailInput, emailValid, errorEmail, "Correo electrónico no válido", "email");
 
-    if (cardValid && monthValid && yearValid && dateValid && cvvValid && emailValid && holderValid) {
+    // Terminos y condiciones 
+    const termsAccepted = termsCheck.checked
+
+    // Tratamientod de datos
+    const dataAccepted = dataCheck.checked
+
+
+    if (cardValid && monthValid && yearValid && dateValid && cvvValid && emailValid && holderValid && termsAccepted && dataAccepted) {
       payBtn.disabled = false;
     } else {
       payBtn.disabled = true;
@@ -322,6 +325,8 @@ document.addEventListener("turbo:load", function() {
   cvvInput.addEventListener("input", function() { interacted.cvv = true; validateForm(); });
   emailInput.addEventListener("input", function() { interacted.email = true; validateForm(); });
   holderInput.addEventListener("input", function() { interacted.holder = true; validateForm(); });
+  termsCheck.addEventListener("change", validateForm);
+  dataCheck.addEventListener("change", validateForm);
 
   // Validación inicial solo para estilos, sin mostrar errores
   validateForm();

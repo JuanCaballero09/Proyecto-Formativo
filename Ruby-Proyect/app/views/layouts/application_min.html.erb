@@ -27,60 +27,50 @@
 <body>
     <!-- Contenedor de alertas -->
     <div id="alert-container">
-        <% flash.each do |key, message| %>
+      <% flash.each do |key, message| %>
         <% css_class = case key.to_sym
-            when :notice then "info"
-            when :alert  then "warning"
-            when :error  then "error"
-            when :success then "success"
-            else "info"
-            end %>
+          when :notice then "info"
+          when :alert  then "warning"
+          when :error  then "error"
+          when :success then "success"
+          else "info"
+          end %>
         <div class="alert <%= css_class %>"><%= message %></div>
-        <% end %>
+      <% end %>
 
-        <!-- Contenedor vacío para toasts dinámicos -->
-        <div id="flash-toast"></div>
+      <!-- Contenedor vacío para toasts dinámicos -->
+      <div id="flash-toast"></div>
     </div>
 
-    
     <%= yield %>
     
 
     <script>
-    document.addEventListener("turbo:submit-end", (event) => {
-      const { fetchResponse } = event.detail;
+    document.addEventListener("turbo:load", () => {
+      const showAlert = (alertElement) => {
+        alertElement.style.animation = "slideDown 0.5s forwards";
+        setTimeout(() => {
+          alertElement.style.animation = "slideUp 0.5s forwards";
+          alertElement.addEventListener("animationend", () => alertElement.remove());
+        }, 5000);
+      }
 
-      if (fetchResponse && !fetchResponse.ok) {
-        fetchResponse.text().then(text => {
-          let message = "Error desconocido";
+      // Animar alertas que ya existían
+      document.querySelectorAll("#alert-container .alert").forEach(showAlert);
 
-          // Detecta si es JSON o HTML
-          if (text.trim().startsWith("{")) {
-            try {
-              const data = JSON.parse(text);
-              message = data.message || message;
-            } catch (e) {
-              console.error("Error parseando JSON:", e);
-            }
-          } else {
-            // Probablemente HTML devuelto por Rails
-            message = "Hubo un error al procesar tu solicitud";
-          }
-
-          const flashToast = document.getElementById("flash-toast");
-          if (flashToast) {
-            const alert = document.createElement("div");
-            alert.className = "alert error";
-            alert.innerText = message;
-            flashToast.appendChild(alert);
-
-            // Auto-remover después de 5s
-            setTimeout(() => {
-              alert.style.animation = "slideUp 0.5s forwards";
-              setTimeout(() => alert.remove(), 500);
-            }, 5000);
-          }
+      // Observar cambios en flash-toast para los nuevos toasts
+      const flashToast = document.getElementById("flash-toast");
+      if (flashToast) {
+        const observer = new MutationObserver((mutations) => {
+          mutations.forEach((mutation) => {
+            mutation.addedNodes.forEach((node) => {
+              if (node.nodeType === 1 && node.classList.contains("alert")) {
+                showAlert(node);
+              }
+            });
+          });
         });
+        observer.observe(flashToast, { childList: true });
       }
     });
     </script>

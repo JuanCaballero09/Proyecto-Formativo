@@ -5,11 +5,30 @@ class  Orders::PaymentsController < ApplicationController
   before_action :set_order
 
   def new
-    @payment = @order.payments.new
+    case @order.status
+    when "pagado"
+      redirect_to root_path, alert: "Esta orden ya fue pagada."
+    when "cancelado"
+      redirect_to root_path, alert: "Esta orden fue cancelada."
+    else
+      @payment = @order.payments.new
+    end
   end
 
+  def cancel
+    payment = @order.payments.last
+    if payment && payment.status == "pending"
+      payment.update(status: "cancelled")
+    end
+
+    redirect_to root_path, alert: "La orden ha sido cancelada."
+  end
 
   def create
+    unless payment_params[:accept_terms] == "1" && payment_params[:accept_data] == "1"
+      redirect_to new_order_payments_path(@order), alert: "Debes aceptar los términos y autorizar el tratamiento de datos." and return
+    end
+
     service = WompiService.new
 
     # 1. tokenizar tarjeta
@@ -36,7 +55,7 @@ class  Orders::PaymentsController < ApplicationController
         amount_in_cents: amount_in_cents,
         customer_email: payment_params[:email],
         token: token,
-        installments: payment_params[:installments].to_i || 1
+        installments: (payment_params[:installments].presence || 1).to_i
       )
 
       puts "=== RESPUESTA DE WOMPI ==="
@@ -49,17 +68,18 @@ class  Orders::PaymentsController < ApplicationController
           amount: amount_in_cents / 100.0,
           payment_method: "CARD",
           transaction_id: transaction_id,
-          token: token
+          token: token,
+          status: "pending"
         )
         # render json: { status: "success", transaction_id: transaction_id, wompi: response }
         redirect_to status_order_payments_path(@order) and return
       else
         error_message = response["error"] ? response["error"]["messages"].values.flatten.join(", ") : "Error desconocido"
-        render json: { status: "error", message: error_message }, status: :unprocessable_entity
+        redirect_to new_order_payments_path(@order), alert: error_message and return
       end
     else
       error_message = token_response["error"] ? token_response["error"]["messages"].values.flatten.join(", ") : "Error desconocido"
-      render json: { status: "error", message: error_message }, status: :unprocessable_entity
+      redirect_to new_order_payments_path(@order), alert: error_message and return
     end
   end
 
@@ -104,6 +124,9 @@ class  Orders::PaymentsController < ApplicationController
   end
 
   def payment_params
-    params.require(:payment).permit(:payment_method, :card_number, :exp_year, :exp_month, :cvv, :installments, :email, :card_holder)
+    params.require(:payment).permit(
+      :payment_method, :card_number, :exp_year,
+      :exp_month, :cvv, :installments,
+      :email, :card_holder, :accept_terms, :accept_data)
   end
 end

@@ -14,7 +14,7 @@ class Dashboard::OrdersController < ApplicationController
   end
 
   def employee
-    @orders = Order.includes(:user, :order_items).where(status: [ :pagado, :en_preparacion, :enviado, :entregado, :cancelado ]).order(created_at: :asc)
+    @orders = Order.includes(:user, :order_items).where(status: [ :pagado, :en_preparacion, :enviado, :entregado ]).order(created_at: :asc)
   end
 
   def cambiar_estado

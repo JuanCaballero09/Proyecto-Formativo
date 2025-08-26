@@ -39,6 +39,25 @@
     <span id="error-email" class="error-msg"></span>
   </div>
 
+  <div>
+    <%= f.check_box :accept_terms, required: true, class: "inputs-form-payment" %>
+    <%= f.label :accept_terms do %>
+      Acepto los 
+      <a href="https://wompi.com/assets/downloadble/reglamento-Usuarios-Colombia.pdf?_gl=1*126i4oi*_gcl_aw*R0NMLjE3NTYyMjY0MjQuQ2p3S0NBand0clhGQmhCaUVpd0FFS2VuMXpvMWtBb2dwUkpBWklvc3JjNkJuZ3NIRktrMVRfT3hzODRBWnFTQXdhNGd2Z3JLaVhBWGhSb0NJVnNRQXZEX0J3RQ..*_gcl_au*MjA5MDc4MDUwMy4xNzU1NzE1ODAz*_ga*MTMzNjc3NjQyNC4xNzU1NzE1ODA1*_ga_BQ9HE5B63X*czE3NTYyMjY0MzUkbzE0JGcxJHQxNzU2MjI2ODQ2JGo2MCRsMCRoMA.." target="_blank">términos y condiciones</a>
+      de Wompi
+    <% end %>
+  </div>
+
+  <div>
+    <%= f.check_box :accept_data, required: true, class: "inputs-form-payment" %>
+    <%= f.label :accept_data do %>
+      Acepto la
+      <a target="_blank" href="https://wompi.com/assets/downloadble/autorizacion-tratamiento-datos-personales.pdf?_gl=1*jcrp79*_gcl_aw*R0NMLjE3NTYyMjY0MjQuQ2p3S0NBand0clhGQmhCaUVpd0FFS2VuMXpvMWtBb2dwUkpBWklvc3JjNkJuZ3NIRktrMVRfT3hzODRBWnFTQXdhNGd2Z3JLaVhBWGhSb0NJVnNRQXZEX0J3RQ..*_gcl_au*MjA5MDc4MDUwMy4xNzU1NzE1ODAz*_ga*MTMzNjc3NjQyNC4xNzU1NzE1ODA1*_ga_BQ9HE5B63X*czE3NTYyMjY0MzUkbzE0JGcxJHQxNzU2MjI2NTU3JGo0JGwwJGgw">autorización para la administración de datos personales</a>
+      y conozco la 
+      <a target="_blank" href="https://wompi.com/es/co/politica-de-privacidad?_gl=1*13f7i2g*_gcl_aw*R0NMLjE3NTYyMjY0MjQuQ2p3S0NBand0clhGQmhCaUVpd0FFS2VuMXpvMWtBb2dwUkpBWklvc3JjNkJuZ3NIRktrMVRfT3hzODRBWnFTQXdhNGd2Z3JLaVhBWGhSb0NJVnNRQXZEX0J3RQ..*_gcl_au*MjA5MDc4MDUwMy4xNzU1NzE1ODAz*_ga*MTMzNjc3NjQyNC4xNzU1NzE1ODA1*_ga_BQ9HE5B63X*czE3NTYyMjY0MzUkbzE0JGcxJHQxNzU2MjI2NTU3JGo0JGwwJGgw" target="_blank">política para el tratamiento de datos personales.</a>
+    <% end %>
+  </div>
+
   <%= f.hidden_field :installments, value: 1 %>
 
   <%= f.submit "Pagar", id: "pay-btn", disabled: true %>
