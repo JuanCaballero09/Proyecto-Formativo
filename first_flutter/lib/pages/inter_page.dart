@@ -42,26 +42,21 @@ class _ProductPageState extends State<ProductPage> {
         child: SizedBox(
           height: 40, 
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              Row(
-                children: [
-                  const SizedBox(width: 20),
                   _buildNavItem(
                     icon: Icons.restaurant_menu,
                     label: AppLocalizations.of(context)!.menu,
                     index: 1,
                   ),
-                  const SizedBox(width: 50),
                   _buildNavItem(
                     icon: Icons.shopping_cart,
                     label: AppLocalizations.of(context)!.cart,
                     index: 2,
                   ),
-                ],
-              ),
-              Row(
-                children: [
+
+                  const SizedBox(width: 48,),
+
 
                 _buildNavItem(
                     icon: Icons.delivery_dining, 
@@ -69,18 +64,12 @@ class _ProductPageState extends State<ProductPage> {
                     index: 4
                     ),
 
-                  const SizedBox(width: 50),
-
                 _buildNavItem(
                     icon: Icons.person,
                     label: AppLocalizations.of(context)!.profile,
                     index: 3,
                   ),
-
-                SizedBox(width: 20),
                 ],
-              ),
-            ],
           ),
         ),
       ),

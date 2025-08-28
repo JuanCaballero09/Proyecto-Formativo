@@ -10,7 +10,9 @@ class MapaOSMPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.selectLocation),
+        title: Text(AppLocalizations.of(context)!.selectLocation,
+        style: TextStyle(color: Colors.white)
+        ),
         backgroundColor: const Color.fromRGBO(237, 88, 33, 1),
         foregroundColor: Colors.white,
       ),
