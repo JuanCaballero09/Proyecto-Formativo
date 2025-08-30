@@ -8,28 +8,6 @@ class PerfilPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PreferredSize(
-         preferredSize: Size.fromHeight(70),
-  child: SafeArea(
-    child: Padding(
-      padding: const EdgeInsets.only(left: 10.0, right: 12.0), // 👈 casi pegado a la izquierda
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          // LOGO
-          Image.asset(
-            'assets/loogo.jpg',
-            width: 55,  // 👈 ajusta al tamaño que quieras
-            height: 55,
-            fit: BoxFit.contain,
-          ),
-        ]            
-                  ),
-                
-              ),
-            ),
-      ),
-          
             body: ListView(
         children: [
           // Encabezado del perfil
