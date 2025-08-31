@@ -18,8 +18,8 @@ class MapaOSMPage extends StatelessWidget {
       ),
       body: FlutterMap(
         options: MapOptions(
-          center: barranquilla,
-          zoom: 13.0,
+          initialCenter: barranquilla,
+          initialZoom: 13.0,
         ),
         children: [
           TileLayer(
@@ -31,14 +31,15 @@ class MapaOSMPage extends StatelessWidget {
             markers: [
               Marker(
                 point: barranquilla,
-                width: 80,
-                height: 80,
-                builder: (context) => const Icon(
-                  Icons.location_pin,
+                width: 40,
+                height: 40,
+                child: const Icon(
+                  Icons.location_on,
                   color: Colors.red,
-                  size: 40,
-                ),
-              ),
+                   size: 40,
+               ),
+            )
+
             ],
           ),
         ],

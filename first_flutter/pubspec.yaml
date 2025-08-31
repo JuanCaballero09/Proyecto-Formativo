@@ -1,35 +1,33 @@
 name: first_flutter
 description: "A new Flutter project."
 publish_to: "none"
-version: 0.1.0
+version: 1.0.0+1
 
 environment:
-  sdk: ^3.8.0
+  sdk: ">=2.18.0 <4.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
-  flutter_bloc: ^8.1.3
+  flutter_bloc: ^9.1.1
   equatable: ^2.0.5
-  http: ^0.13.6
-  carousel_slider: ^4.2.0
-  google_fonts: ^4.0.4
+  http: ^1.5.0
+  carousel_slider: ^5.1.1
+  google_fonts: ^6.3.1
   intl: ^0.20.2
-  flutter_map: ^4.0.0
+  flutter_map: ^8.2.1
   positioned_tap_detector_2: ^1.0.4
-  latlong2: ^0.8.1
+  latlong2: ^0.9.1
   smooth_page_indicator: ^1.1.0
   shared_preferences: ^2.2.2
-
-
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^5.0.0
-  flutter_launcher_icons: ^0.13.1
+  flutter_lints: ^6.0.0
+  flutter_launcher_icons: ^0.14.4
 
 flutter:
   uses-material-design: true
@@ -66,8 +64,8 @@ flutter:
     - assets/promocion2.jpg
     - assets/promocion3.webp
     - assets/loogo.jpg
-   
-    
+    - assets/logobitevia.png
+
 flutter_launcher_icons:
   android: true
   ios: true
