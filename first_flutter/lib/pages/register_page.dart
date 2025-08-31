@@ -252,10 +252,14 @@ const SizedBox(height: 14),
             ]),
 
             const SizedBox(height: 12),
-            GestureDetector(
-              onTap: () => Navigator.pop(context),
+           TextButton(
+              onPressed: () {
+                Navigator.pop(context); // Vuelve a la pantalla anterior (Login)
+              },
               child: Text('¿Ya tienes una cuenta? Inicia sesión', style: GoogleFonts.poppins(color: kOrange, fontWeight: FontWeight.w600)),
+              
             ),
+
           ],
         ),
       ),
