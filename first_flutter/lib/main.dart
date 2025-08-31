@@ -1,5 +1,7 @@
 import 'package:first_flutter/pages/carrito_Page.dart';
+import 'package:first_flutter/pages/login_page.dart';
 import 'package:first_flutter/pages/menu_page.dart';
+import 'package:first_flutter/pages/register_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -14,6 +16,8 @@ import 'repository/mocki_product_repository.dart';
 import 'pages/splash_page.dart';
 import 'package:first_flutter/pages/inter_page.dart';
 import 'l10n/app_localizations.dart';
+import 'bloc/auth_bloc.dart';
+import 'pages/perfil_wrapper.dart';
 
 
 void main() {
@@ -37,6 +41,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (_) => ProductBloc(repository)),
         BlocProvider(create: (_) => CartBloc()),
         BlocProvider(create: (_) => LanguageBloc()..add(const LoadLanguage())),
+        BlocProvider<AuthBloc>(create: (_) => AuthBloc()),
       ],
       child: BlocBuilder<LanguageBloc, LanguageState>(
         builder: (context, languageState) {
@@ -111,14 +116,16 @@ class MyApp extends StatelessWidget {
             labelStyle: const TextStyle(color: Colors.amber),
           ),
         ),
+        
             initialRoute: '/',
             routes: {
               '/': (context) => SplashPage(key: UniqueKey()),
               '/menu': (context) => const MenuPage(),
               '/carrito': (context) => CarritoPage(key: UniqueKey()),
               // '/welcome': (context) => const WelcomePage(),
-              // '/login': (context) => const LoginPage(),
-              // '/register': (context) => const RegisterPage(),
+              "wrapper": (context) => const PerfilWrapper(),
+               '/login': (context) => const  LoginPage(),
+              '/register': (context) => const RegisterPage(),
               '/home': (context) => const ProductPage(),
             },
           );

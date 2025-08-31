@@ -82,30 +82,43 @@ class _SplashPageState extends State<SplashPage>
                     valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                     strokeWidth: 3,
                   ),
-                  SizedBox(height: 25),
-                  Text(
-                    AppLocalizations.of(context)!.loading,
-                    style: GoogleFonts.quicksand(
-                      textStyle: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w500,
-                        shadows: [
-                          Shadow(
-                            color: Colors.black26,
-                            offset: Offset(1, 2),
-                            blurRadius: 4,
-                          ),
-                        ],
-                      ),
-                    ),
+                  
+                
+                  
+                    
+          const SizedBox(height: 20),
+          AnimatedOpacity(
+          opacity: 1.0,
+          duration: const Duration(milliseconds: 800),
+          child: Text(
+            'Tus antojos los verás pronto...',
+            style: GoogleFonts.quicksand(
+              textStyle: const TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+                fontWeight: FontWeight.w500,
+                shadows: [
+                  Shadow(
+                    color: Colors.black26,
+                    offset: Offset(1, 2),
+                    blurRadius: 4,
                   ),
                 ],
               ),
             ),
+            textAlign: TextAlign.center,
           ),
         ),
-      ),
+                ]
+                    ),
+                  
+                
+              ),
+            ),
+          ),
+        )
     );
+      
+    
   }
 }
