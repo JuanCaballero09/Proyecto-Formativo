@@ -103,4 +103,12 @@ en:
       precio: "Price"
       opiniones: "Reviews"
       categoria: "category"
-      
+      generar_orden: "Create order"
+
+    order-pago:
+      numero-tarjeta: "Card number:"
+      mes-expiracion: "Expiration month:" 
+      año-expiracion: "Year of expiration:"
+      nombre-titular: "Name of the holder:"
+      correo-electronico: "Email:"
+      pagar: "Pay"
