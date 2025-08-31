@@ -30,15 +30,15 @@
             <td><%= image_tag oi.product.imagen %></td>
             <td><%= oi.product.nombre %></td>
             <td><%= oi.quantity %></td>
-            <td><%= number_to_currency(oi.price, unit: "COP ", separator: ",", delimiter: ".") %></td>
-            <td><%= number_to_currency(oi.price * oi.quantity, unit: "COP ", separator: ",", delimiter: ".") %></td>
+            <td><strong class="precio" data-precio="<%= oi.price %>" data-locale="<%= I18n.locale %>">$</strong></td>
+            <td><span class="precio" data-precio="<%= oi.price * oi.quantity %>" data-locale="<%= I18n.locale %>"><%= number_to_currency(oi.price * oi.quantity, unit: "COP ", separator: ",", delimiter: ".") %></span></td>
           </tr>
         <% end %>
       </tbody>
     </table>
   </div>
 
-  <p><strong><%= t("home.order.total_pagar")%></strong> <%= number_to_currency(@order.total, unit: "COP ", separator: ",", delimiter: ".") %></p>
+  <p><strong><%= t("home.order.total_pagar")%></strong> <strong class="precio" data-precio="<%= @order.total %>" data-locale="<%= I18n.locale %>">$</strong></p>
 
   <!-- Botón de pago (por integrar) -->
   

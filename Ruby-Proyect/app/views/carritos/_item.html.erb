@@ -15,7 +15,14 @@
       <%= button_to "+", incrementar_carrito_item_path(item), method: :put, data: { turbo_stream: true } %>
     </div>
 
-    <p><strong>Total:</strong>  <p><strong class="precio" data-precio="<%= item.precio%>" data-locale="<%= I18n.locale %>">$</strong></p> $</p>
+    <p>
+      <strong>Total:</strong>
+        <span class="precio"
+          data-precio="<%= item.precio * item.cantidad %>"
+          data-locale="<%= I18n.locale %>">
+          <%= number_to_currency(item.precio * item.cantidad, unit: "COP ", separator: ",", delimiter: ".") %>
+        </span>
+    </p>
     
     <%= button_to t("home.carrito.eliminar_todo"), carrito_item_path(item), method: :delete, data: { turbo_confirm: "¿Eliminar este producto del carrito?" } %>
 
