@@ -1,3 +1,4 @@
+import 'package:first_flutter/pages/register_page.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -32,8 +33,10 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
       vsync: this,
       duration: const Duration(milliseconds: 900),
     );
-    _fadeAnimation = CurvedAnimation(parent: _animController, curve: Curves.easeIn);
-    _slideAnimation = Tween<Offset>(begin: const Offset(0, .2), end: Offset.zero)
+    _fadeAnimation =
+        CurvedAnimation(parent: _animController, curve: Curves.easeIn);
+    _slideAnimation = Tween<Offset>(
+            begin: const Offset(0, .2), end: Offset.zero)
         .animate(CurvedAnimation(parent: _animController, curve: Curves.easeOut));
     _animController.forward();
   }
@@ -46,7 +49,8 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     super.dispose();
   }
 
-  void _togglePassword() => setState(() => _obscurePassword = !_obscurePassword);
+  void _togglePassword() =>
+      setState(() => _obscurePassword = !_obscurePassword);
 
   Future<void> _login() async {
     final user = userController.text.trim();
@@ -59,11 +63,47 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     await Future.delayed(const Duration(seconds: 1));
     if (user.toLowerCase() == 'admin@terraza.com' && pass == '123456') {
       if (!mounted) return;
+
+        // ✅ Mostrar popup en el centro
+    showDialog(
+      context: context,
+      barrierDismissible: false, // no se cierra tocando afuera
+      builder: (context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20)),
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.check_circle,
+                    color: Colors.green, size: 80),
+                const SizedBox(height: 16),
+                const Text(
+                  "Inicio de sesión exitoso",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+
+    // ⏳ Esperar 1.5 seg y navegar
+    Future.delayed(const Duration(seconds: 2), () {
+      Navigator.pop(context); // cierra el dialog
       context.read<AuthBloc>().add(LoginRequested(user, pass));
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => const ProductPage()),
       );
+    });
     } else {
       setState(() => errorMessage = 'Credenciales inválidas');
     }
@@ -105,9 +145,12 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: const [
-                      Icon(Icons.arrow_back_ios_new_rounded, size: 18, color: Colors.black87),
+                      Icon(Icons.arrow_back_ios_new_rounded,
+                          size: 18, color: Colors.black87),
                       SizedBox(width: 4),
-                      Text('Atrás', style: TextStyle(fontSize: 16, color: Colors.black87)),
+                      Text('Atrás',
+                          style:
+                              TextStyle(fontSize: 16, color: Colors.black87)),
                     ],
                   ),
                 ),
@@ -161,7 +204,8 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                           keyboardType: TextInputType.emailAddress,
                           decoration: InputDecoration(
                             labelText: 'Correo electrónico',
-                            prefixIcon: const Icon(Icons.email_outlined, color: kOrange),
+                            prefixIcon:
+                                const Icon(Icons.email_outlined, color: kOrange),
                             filled: true,
                             fillColor: Colors.white,
                             border: OutlineInputBorder(
@@ -177,11 +221,14 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                           obscureText: _obscurePassword,
                           decoration: InputDecoration(
                             labelText: 'Contraseña',
-                            prefixIcon: const Icon(Icons.lock_outline, color: kOrange),
+                            prefixIcon:
+                                const Icon(Icons.lock_outline, color: kOrange),
                             suffixIcon: IconButton(
                               onPressed: _togglePassword,
                               icon: Icon(
-                                _obscurePassword ? Icons.visibility : Icons.visibility_off,
+                                _obscurePassword
+                                    ? Icons.visibility
+                                    : Icons.visibility_off,
                                 color: kOrange,
                               ),
                             ),
@@ -197,7 +244,8 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                         Align(
                           alignment: Alignment.centerRight,
                           child: Text('¿Olvidaste tu contraseña?',
-                              style: GoogleFonts.poppins(fontSize: 14, color: kOrange)),
+                              style: GoogleFonts.poppins(
+                                  fontSize: 14, color: kOrange)),
                         ),
                         const SizedBox(height: 18),
 
@@ -214,22 +262,27 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                               ),
                             ),
                             child: isLoading
-                                ? const CircularProgressIndicator(color: Colors.white)
+                                ? const CircularProgressIndicator(
+                                    color: Colors.white)
                                 : const Text('Ingresar',
-                                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                                    style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold)),
                           ),
                         ),
 
                         const SizedBox(height: 18),
                         Text('O ingresa con tus redes sociales',
-                            style: GoogleFonts.poppins(fontSize: 14, color: Colors.black54)),
+                            style: GoogleFonts.poppins(
+                                fontSize: 14, color: Colors.black54)),
                         const SizedBox(height: 12),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: const [
                             Icon(Icons.facebook, color: Colors.blue, size: 32),
                             SizedBox(width: 26),
-                            Icon(Icons.alternate_email, color: Colors.lightBlue, size: 32),
+                            Icon(Icons.alternate_email,
+                                color: Colors.lightBlue, size: 32),
                           ],
                         ),
 
@@ -240,10 +293,17 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                             Text('¿No tienes una cuenta?',
                                 style: GoogleFonts.poppins(fontSize: 14)),
                             TextButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (_) => const RegisterPage()),
+                                );
+                              },
                               child: const Text('Regístrate aquí',
                                   style: TextStyle(
-                                      color: kOrange, fontWeight: FontWeight.bold)),
+                                      color: kOrange,
+                                      fontWeight: FontWeight.bold)),
                             ),
                           ],
                         ),

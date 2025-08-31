@@ -19,7 +19,7 @@ class PerfilWrapper extends StatelessWidget {
         } else if (state is Authenticated) {
           return const PerfilPage();
         } else if (state is Unauthenticated) {
-          return const WelcomePage();
+          return const PerfilPage();
         } else {
           return const Scaffold(
             body: Center(child: Text("Error de autenticación")),

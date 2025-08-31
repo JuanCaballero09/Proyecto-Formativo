@@ -1,5 +1,6 @@
 import 'package:first_flutter/bloc/auth_event.dart';
 import 'package:first_flutter/l10n/app_localizations.dart';
+import 'package:first_flutter/pages/register_page.dart';
 import 'package:first_flutter/widgets/language_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -140,33 +141,63 @@ class PerfilPage extends StatelessWidget {
             ),
           );
         } else {
-          // 🔹 Vista cuando NO hay sesión
-          return Scaffold(
-            appBar: AppBar(title: const Text("Perfil")),
-            body: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.account_circle,
-                      size: 120, color: Colors.blueGrey),
-                  const SizedBox(height: 24),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, "/login");
-                    },
-                    child: const Text("Iniciar Sesión"),
-                  ),
-                  const SizedBox(height: 12),
-                  OutlinedButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, "/register");
-                    },
-                    child: const Text("Registrarse"),
-                  ),
-                ],
+        // 🔹 Vista cuando NO hay sesión
+return Scaffold(
+  body: Center(
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Icon(Icons.account_circle, size: 120, color: Colors.blueGrey),
+        const SizedBox(height: 24),
+
+        // Botón Iniciar Sesión
+        SizedBox(
+          width: 220,
+          height: 50,
+          child: ElevatedButton(
+            onPressed: () {
+              Navigator.pushNamed(context, "/login");
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: kOrange,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
               ),
             ),
-          );
+            child: const Text(
+              'Iniciar Sesión',
+              style: TextStyle(fontSize: 18, color: Colors.white),
+            ),
+          ),
+        ),
+        const SizedBox(height: 12),
+
+        // Botón Registrarse
+        SizedBox(
+          width: 220,
+          height: 50,
+          child: OutlinedButton(
+            onPressed: () {
+              Navigator.pushNamed(context, "/register");
+            },
+            style: OutlinedButton.styleFrom(
+              backgroundColor: Colors.white,
+              foregroundColor: Colors.black,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+            child: const Text(
+              'Registrarse',
+              style: TextStyle(fontSize: 18),
+            ),
+          ),
+        ),
+      ],
+    ),
+  ),
+);
+
         }
       },
     );

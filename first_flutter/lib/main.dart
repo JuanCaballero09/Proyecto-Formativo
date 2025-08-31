@@ -116,6 +116,7 @@ class MyApp extends StatelessWidget {
             labelStyle: const TextStyle(color: Colors.amber),
           ),
         ),
+        
             initialRoute: '/',
             routes: {
               '/': (context) => SplashPage(key: UniqueKey()),
