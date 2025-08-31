@@ -95,6 +95,12 @@ en:
       estado: "State:"
       imagen: "Image"
       or_producto: "Product"
-      cantidad: "Amount"
+      cantidad: "Amount:"
       precio_unitario: "Unit price"
       total: "Total to pay"
+
+    show-vista:
+      precio: "Price"
+      opiniones: "Reviews"
+      categoria: "category"
+      

@@ -1,4 +1,37 @@
 // ========================================
+// 💵 Converción COP a USD
+// ========================================
+
+document.addEventListener("turbo:load", () => {
+  const priceChange = document.querySelectorAll(".precio");
+  if (!priceChange) return;
+
+  const cambioDinero = 4000; 
+
+  priceChange.forEach(el =>{
+    const precio = parseFloat(el.dataset.precio);
+    const locale = el.dataset.locale
+
+    let precioFinal, currency; 
+
+    if (locale ===   "en"){
+      precioFinal = precio / cambioDinero;
+      currency = "USD";
+    } else {
+      precioFinal = precio;
+      currency = "COP";
+    }
+
+    el.innerText = new Intl.NumberFormat(locale, {
+      style: "currency",
+      currency: currency
+    }).format(precioFinal);
+  });
+}); 
+
+
+
+// ========================================
 // 💵 Función verificar status de la compra
 // ========================================
 

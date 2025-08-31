@@ -11,7 +11,7 @@
 
     <p><strong><%= t("home.carrito.total_pagar")%></strong> <span id="total-carrito">
       <%= number_to_currency(@carrito.carrito_items.sum { |item| item.precio * item.cantidad }, unit: "COP ", separator: ",", delimiter: ".") %>
-    </span></p>
+    </span></p> 
 
     <div class="botones-compra">
       <%= button_to "Generar Orden", orders_path, method: :post %>

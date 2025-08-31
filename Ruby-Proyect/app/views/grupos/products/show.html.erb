@@ -23,12 +23,12 @@
         <p><%= @product.descripcion %></p>
 
         <div>
-          <h3>Precio</h3>
-          <p><%= number_to_currency(@product.precio, unit: "COP ", separator: ",", delimiter: ".", precision: 0) %> $</p>
+          <h3><%= t("home.show-vista.precio")%></h3>
+          <p><strong class="precio" data-precio="<%= @product.precio%>" data-locale="<%= I18n.locale %>">$</strong></p>
         </div>
 
         <div>
-          <h3>Ingredientes</h3>
+          <h3><%= t("home.dashboard.ingredientes")%></h3>
           <ul>
             <% @product.ingredientes.each do |ingrediente| %>
               <li><%= ingrediente.nombre %></li>
@@ -37,13 +37,13 @@
         </div>
 
         <div>
-          <h3>Categoría</h3>
+          <h3><%= t("home.show-vista.categoria")%></h3>
           <p><%= @product.grupo.nombre %></p>
         </div>
       </div>
 
       <div class="producto-comentarios">
-        <h3>Opiniones</h3>
+        <h3><%= t("home.show-vista.opiniones")%></h3>
         <ul>
           <li>“Muy rica y jugosa” – Ana</li>
           <li>“Me encantó la combinación” – Luis</li>

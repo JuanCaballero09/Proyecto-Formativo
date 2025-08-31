@@ -100,7 +100,13 @@ es:
       estado: "Estado:"
       imagen: "Imagen"
       or_producto: "Producto"
-      cantidad: "Cantidad"
+      cantidad: "Cantidad:"
       precio_unitario: "Precio unitario"
       total: "Total"
-        
+
+
+    show-vista:
+      precio: "Precio"
+      opiniones: "Opiniones"
+      categoria: "Categoria"
+      
