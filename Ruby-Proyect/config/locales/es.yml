@@ -100,7 +100,22 @@ es:
       estado: "Estado:"
       imagen: "Imagen"
       or_producto: "Producto"
-      cantidad: "Cantidad"
+      cantidad: "Cantidad:"
       precio_unitario: "Precio unitario"
       total: "Total"
-        
+
+
+    show-vista:
+      precio: "Precio"
+      opiniones: "Opiniones"
+      categoria: "Categoria"
+      generar_orden: "Generar orden"
+
+    order-pago:
+      numero-tarjeta: "Número de tarjeta"
+      mes-expiracion: "Mes de expiración:" 
+      año-expiracion: "Año de expiración:"
+      nombre-titular: "Nombre del titular:"
+      correo-electronico: "Correo electrónico:" 
+      pagar: "Pagar"
+      

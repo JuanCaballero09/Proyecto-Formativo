@@ -16,16 +16,16 @@
           <% @order.order_items.each do |item| %>
             <tr>
               <td><%= item.product.nombre %></td>
-              <td><%= number_to_currency(item.product.precio) %></td>
+              <td> <span class="precio" data-precio="<%= item.product.precio %>" data-locale="<%= I18n.locale %>"> <%= number_to_currency(item.product.precio, unit: "COP ", separator: ",", delimiter: ".") %></span></td>
               <td><%= item.quantity %></td>
-              <td><%= number_to_currency(item.quantity * item.product.precio) %></td>
+              <td><span class="precio" data-precio="<%= item.quantity * item.product.precio %>" data-locale="<%= I18n.locale %>"> <%= number_to_currency(item.quantity * item.product.precio, unit: "COP ", separator: ",", delimiter: ".") %></span></td>
             </tr>
           <% end %>
         </tbody>
         <tfoot>
           <tr>
             <td colspan="3"><b>Total: </b></td>
-            <td><b><%= number_to_currency(@order.total) %></b></td>
+            <td><b><strong class="precio" data-precio="<%= @order.total %>" data-locale="<%= I18n.locale %>">$</strong></b></td>
           </tr>
         </tfoot>
       </table>  
@@ -35,7 +35,7 @@
     <%= form_with model: [@order, @payment], local: true, html: { id: "payment-form", class: "payment-form" } do |f| %>
 
       <div>
-        <%= f.label :card_number, "Número de tarjeta" %>
+        <%= f.label :card_number, t("home.order-pago.numero-tarjeta") %>
         <br>
         <%= f.text_field :card_number, maxlength: 16, required: true, class: "inputs-form-payment" %>
         <span id="error-card" class="error-msg"></span>
@@ -43,13 +43,13 @@
 
       <div style="display: flex; flex-direction: row; gap: 20px; ">
         <div>
-          <%= f.label :exp_month, "Mes de expiración: " %>
+          <%= f.label :exp_month, t("home.order-pago.mes-expiracion") %>
           <%= f.select :exp_month, (1..12).map { |m| [m.to_s.rjust(2, "0"), m] }, required: true, class: "inputs-form-payment" %>
           <span id="error-month" class="error-msg"></span>
         </div>
 
         <div>
-          <%= f.label :exp_year, "Año de expiración: " %>
+          <%= f.label :exp_year, t("home.order-pago.año-expiracion") %>
           <%= f.select :exp_year, (Date.today.year..(Date.today.year+10)).map { |y| [y, y] }, required: true, class: "inputs-form-payment" %>
           <span id="error-year" class="error-msg"></span>
         </div>
@@ -64,14 +64,14 @@
           <span id="error-cvc" class="error-msg"></span>
         </div>
         <div style="width: 100%;">
-          <%= f.label :card_holder, "Nombre del titular" %>
+          <%= f.label :card_holder, t("home.order-pago.nombre-titular") %>
           <%= f.text_field :card_holder, required: true, class: "inputs-form-payment" %>
           <span id="error-holder" class="error-msg"></span>
         </div>
       </div>
 
       <div>
-        <%= f.label :email, "Correo electrónico" %>
+        <%= f.label :email, t("home.order-pago.correo-electronico") %>
         <%= f.email_field :email, required: true, class: "inputs-form-payment" %>
         <span id="error-email" class="error-msg"></span>
       </div>
@@ -99,7 +99,7 @@
 
       <%= f.hidden_field :installments, value: 1 %>
 
-      <%= f.submit "Pagar", id: "pay-btn", class: "btn-pay", disabled: true %>
+      <%= f.submit t("home.order-pago.pagar"), id: "pay-btn", class: "btn-pay", disabled: true %>
     <% end %>
   </div>
 </section>

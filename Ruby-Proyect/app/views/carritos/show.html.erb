@@ -10,11 +10,15 @@
     <p><strong><%= t("home.carrito.total_producto")%></strong> <span id="contador-productos"><%= @carrito.carrito_items.sum(:cantidad) %></span></p>
 
     <p><strong><%= t("home.carrito.total_pagar")%></strong> <span id="total-carrito">
-      <%= number_to_currency(@carrito.carrito_items.sum { |item| item.precio * item.cantidad }, unit: "COP ", separator: ",", delimiter: ".") %>
-    </span></p>
+      <span class="precio"
+        data-precio="<%= @carrito.carrito_items.sum { |item| item.precio * item.cantidad } %>"
+        data-locale="<%= I18n.locale %>">
+        <%= number_to_currency(@carrito.carrito_items.sum { |item| item.precio * item.cantidad }, unit: "COP ", separator: ",", delimiter: ".") %>
+      </span>
+    </span></p> 
 
     <div class="botones-compra">
-      <%= button_to "Generar Orden", orders_path, method: :post %>
+      <%= button_to t("home.show-vista.generar_orden"), orders_path, method: :post %>
     </div>
   
   <% end %>

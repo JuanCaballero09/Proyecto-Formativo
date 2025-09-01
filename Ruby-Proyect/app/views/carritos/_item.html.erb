@@ -6,16 +6,23 @@
   <div class="carrito-item-info">
     <h3><%= item.product.nombre %></h3>
 
-    <p><strong><%= t("home.carrito.precio_unidad")%></strong> <%= number_to_currency(item.precio, unit: "COP ", separator: ",", delimiter: ".") %></p>
+    <p><strong><%= t("home.carrito.precio_unidad")%></strong>  <p><strong class="precio" data-precio="<%= item.precio%>" data-locale="<%= I18n.locale %>">$</strong></p></p>
 
-    <p><strong>Cantidad:</strong></p>
+    <p><strong><%= t("home.order.cantidad")%></strong></p>
     <div class="carrito-item-info-cantidad">
       <%= button_to "-", carrito_item_path(item), method: :patch, data: { turbo_stream: true } %>
       <p><%= item.cantidad %></p>
       <%= button_to "+", incrementar_carrito_item_path(item), method: :put, data: { turbo_stream: true } %>
     </div>
 
-    <p><strong>Total:</strong> <%= number_to_currency(item.precio * item.cantidad, unit: "COP ", separator: ",", delimiter: ".") %> $</p>
+    <p>
+      <strong>Total:</strong>
+        <span class="precio"
+          data-precio="<%= item.precio * item.cantidad %>"
+          data-locale="<%= I18n.locale %>">
+          <%= number_to_currency(item.precio * item.cantidad, unit: "COP ", separator: ",", delimiter: ".") %>
+        </span>
+    </p>
     
     <%= button_to t("home.carrito.eliminar_todo"), carrito_item_path(item), method: :delete, data: { turbo_confirm: "¿Eliminar este producto del carrito?" } %>
 
