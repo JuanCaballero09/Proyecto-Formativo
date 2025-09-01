@@ -1,4 +1,4 @@
-
+<%= turbo_stream_from "employee_orders" %>
 
 <button id="btn-fullscreen" class="btn-eliminar" style="padding: 20px; font-weight: bold;">Pantalla completa</button>
 
@@ -8,15 +8,15 @@
         <button id="btn-exit-fullscreen" class="btn-eliminar" style="display: none; font-size: 25px;f ont-weight: bold;">Salir</button>
     </div>
 
+    <div id="employee-orders-list" class="order-carts">
     <% if @orders.any? %>
-        <div class="order-carts">
-            <%= render partial: "dashboard/orders/order", collection: @orders, as: :order %>
-        </div>
+        <%= render partial: "dashboard/orders/order", collection: @orders, as: :order %>
     <% else %>
         <div style="text-align: center; margin-top: 50px; font-size: 25px;">
-            <p style="color: gray;">No hay órdenes registradas para preparar.</p>
+        <p style="color: gray;">No hay órdenes registradas para preparar.</p>
         </div>
     <% end %>
+    </div>
 </section>
 
 <script>

@@ -20,6 +20,25 @@ class Order < ApplicationRecord
 
   before_validation :generate_unique_code, on: :create
 
+  after_create_commit -> {
+    broadcast_append_to "employee_orders",
+      target: "employee-orders-list",
+      partial: "dashboard/orders/order",
+      locals: { order: self }
+
+  }
+
+  after_update_commit -> {
+    broadcast_replace_to "employee_orders",
+      partial: "dashboard/orders/order",
+      locals: { order: self }
+
+  }
+
+  after_destroy_commit -> {
+    broadcast_remove_to "employee_orders"
+  }
+
   # Use código en la URL en vez de id
   def to_param
     code
