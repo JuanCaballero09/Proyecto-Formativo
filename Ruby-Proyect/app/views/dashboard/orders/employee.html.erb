@@ -11,10 +11,6 @@
     <div id="employee-orders-list" class="order-carts">
     <% if @orders.any? %>
         <%= render partial: "dashboard/orders/order", collection: @orders, as: :order %>
-    <% else %>
-        <div style="text-align: center; margin-top: 50px; font-size: 25px;">
-        <p style="color: gray;">No hay órdenes registradas para preparar.</p>
-        </div>
     <% end %>
     </div>
 </section>
