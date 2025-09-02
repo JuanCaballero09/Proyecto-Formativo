@@ -52,19 +52,19 @@ document.addEventListener("turbo:load", () => {
           statusBox.className = "state success";
           document.getElementById("loader").style.display = "none";
           document.getElementById("success").style.display = "flex";
-          document.getElementById("cancel-btn").style.display = "none";
+          //document.getElementById("cancel-btn").style.display = "none";
           clearInterval(interval);
         } else if (data.status === "declined") {
           statusBox.className = "state error";
           document.getElementById("loader").style.display = "none";
           document.getElementById("declined").style.display = "flex";
-          document.getElementById("cancel-btn").style.display = "none";
+          //document.getElementById("cancel-btn").style.display = "none";
           clearInterval(interval);
         } else if (data.status === "cancelled") {
           statusBox.className = "state error"
           document.getElementById("loader").style.display = "none";
           document.getElementById("declined").style.display = "flex";
-          document.getElementById("cancel-btn").style.display = "none";
+          //document.getElementById("cancel-btn").style.display = "none";
           clearInterval(interval);
         }
       });

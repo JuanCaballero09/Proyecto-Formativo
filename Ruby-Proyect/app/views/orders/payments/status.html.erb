@@ -19,7 +19,7 @@
 
     <div id="loader" class="result-status">
       <p id="processing-msg">Esperando aprobación del pago...</p>
-      <%= link_to "Reintentar pago", new_order_payments_path(@order), id: "reintentar", style: "display:none;" %>
+      <%= link_to "Reintentar pago", new_order_payments_path(@order), id: "reintentar", style: "display:none;", class: "btn-status" %>
     </div>
     <div id="success" style="display:none;" class="result-status">
       <h2>¡Pago realizado con éxito!</h2>
@@ -29,15 +29,15 @@
       <h2>Tu pago no se ha concretado</h2>
       <%= link_to "Reintentar pago", new_order_payments_path(@order), class: "btn-status" %>
     </div>
-    <button id="cancel-btn" class="btn-status" style="margin-top:20px;">Cancelar</button>
+    <%#<button id="cancel-btn" class="btn-status" style="margin-top:20px;">Cancelar</button>%>
   </div>
 </section>
 
 <script>
-  document.getElementById("cancel-btn").onclick = function() {
-    fetch("<%= cancel_order_payments_path(@order) %>", { method: "PATCH" })
-      .then(() => {
-        window.location.href = "<%= root_path %>";
-      });
-  }
+  //document.getElementById("cancel-btn").onclick = function() {
+    //fetch("<%= cancel_order_payments_path(@order) %>", { method: "PATCH" })
+      //.then(() => {
+        //window.location.href = "<%= root_path %>";
+      //});
+  //}
 </script>
