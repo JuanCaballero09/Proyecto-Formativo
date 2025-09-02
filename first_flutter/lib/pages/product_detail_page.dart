@@ -166,10 +166,28 @@ class ProductDetailPage extends StatelessWidget {
                       ),
                     );
 
-                    Navigator.push(
-                      context, 
-                      MaterialPageRoute(builder: (context) => PedidoPage()),
-                      );
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Center( 
+                          child: Text('Añadido Con Exito', style: TextStyle(fontFamily: 'Arial', fontWeight: FontWeight.bold, color: Colors.black),),
+                      
+                        ),
+
+                        backgroundColor: const Color.fromARGB(255, 113, 219, 140),
+                        duration: Duration(seconds: 3),
+                        behavior: SnackBarBehavior.floating,
+                        margin: EdgeInsets.only(
+                          bottom: 10,
+                          left: 100,
+                          right: 100,
+                        ),
+                        shape: BeveledRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+
+                        ),
+
+                      ),
+                    );
                   },
                 ),
               ),
