@@ -1,0 +1,9 @@
+<h1>Cupón: <%= @coupon.code %></h1>
+
+<p><strong>Tipo:</strong> <%= @coupon.discount_type.humanize %></p>
+<p><strong>Valor:</strong> <%= @coupon.discount_value %></p>
+<p><strong>Expira:</strong> <%= @coupon.expires_at&.strftime("%d/%m/%Y %H:%M") %></p>
+<p><strong>Activo:</strong> <%= @coupon.active? ? "Sí" : "No" %></p>
+
+<%= link_to "Editar", edit_dashboard_coupon_path(@coupon) %> |
+<%= link_to "Volver", dashboard_coupons_path %>

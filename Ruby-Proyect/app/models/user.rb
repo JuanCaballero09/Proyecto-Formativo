@@ -1,5 +1,7 @@
 class User < ApplicationRecord
   has_many :orders, dependent: :destroy
+  has_many :coupon_redemptions
+  has_many :coupons, through: :coupon_redemptions
 
   # Devise modules
   devise :database_authenticatable, :registerable,

@@ -32,8 +32,9 @@ Rails.application.routes.draw do
   # resources :pedidos, only: [:create] # rubocop:disable Layout/SpaceInsideArrayLiteralBrackets
   namespace :dashboard do
     root to: "dashboard#index"
-    resources :grupos, path: "grupos"
+    resources :grupos, path: "categorias"
     resources :ingredientes
+    resources :coupons
     resources :users
     resources :banners
     resources :orders do

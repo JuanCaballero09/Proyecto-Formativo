@@ -1,0 +1,32 @@
+<h1>Cupones</h1>
+
+<%= link_to "Nuevo Cupón", new_dashboard_coupon_path, class: "btn btn-primary" %>
+
+<table>
+  <thead>
+    <tr>
+      <th>Código</th>
+      <th>Tipo de descuento</th>
+      <th>Valor</th>
+      <th>Expira</th>
+      <th>Activo</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @coupons.each do |coupon| %>
+      <tr>
+        <td><%= coupon.code %></td>
+        <td><%= coupon.discount_type.humanize %></td>
+        <td><%= coupon.discount_value %></td>
+        <td><%= coupon.expires_at&.strftime("%d/%m/%Y %H:%M") %></td>
+        <td><%= coupon.active? ? "Sí" : "No" %></td>
+        <td>
+          <%= link_to "Ver", dashboard_coupon_path(coupon) %> |
+          <%= link_to "Editar", edit_dashboard_coupon_path(coupon) %> |
+          <%= link_to "Eliminar", dashboard_coupon_path(coupon), method: :delete, data: { confirm: "¿Seguro que deseas eliminarlo?" } %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

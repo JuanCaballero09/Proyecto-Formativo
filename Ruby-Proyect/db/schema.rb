@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_22_180319) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_03_025534) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -62,6 +62,27 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_22_180319) do
     t.string "numero_orden"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "coupon_redemptions", force: :cascade do |t|
+    t.bigint "coupon_id", null: false
+    t.bigint "user_id", null: false
+    t.datetime "redeemed_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["coupon_id"], name: "index_coupon_redemptions_on_coupon_id"
+    t.index ["user_id"], name: "index_coupon_redemptions_on_user_id"
+  end
+
+  create_table "coupons", force: :cascade do |t|
+    t.string "code", null: false
+    t.integer "discount_type", null: false
+    t.decimal "discount_value", precision: 10, scale: 2, null: false
+    t.datetime "expires_at"
+    t.boolean "active", default: true, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["code"], name: "index_coupons_on_code", unique: true
   end
 
   create_table "grupos", force: :cascade do |t|
@@ -161,6 +182,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_22_180319) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "carrito_items", "carritos"
   add_foreign_key "carrito_items", "products"
+  add_foreign_key "coupon_redemptions", "coupons"
+  add_foreign_key "coupon_redemptions", "users"
   add_foreign_key "ingrediente_productos", "ingredientes"
   add_foreign_key "ingrediente_productos", "products"
   add_foreign_key "order_items", "orders"

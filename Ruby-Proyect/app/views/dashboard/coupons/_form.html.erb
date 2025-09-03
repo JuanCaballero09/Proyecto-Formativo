@@ -1,0 +1,34 @@
+<h1><%= @coupon.new_record? ? "Nuevo Cupón" : "Editar Cupón" %></h1>
+
+<%= form_with(model: [:dashboard, @coupon], local: true) do |f| %>
+    <div>
+        <%= f.label :code, "Código" %>
+        <%= f.text_field :code, required: true %>
+    </div>
+
+    <div>
+        <%= f.label :discount_type, "Tipo de Descuento" %>
+        <%= f.select :discount_type, Coupon.discount_types.keys.map { |k| [k.humanize, k] }, {}, id: "discount_type" %>
+    </div>
+
+    <div>
+        <%= f.label :discount_value, "Valor del Descuento" %>
+        <%= f.number_field :discount_value, step: 0.01, required: true, id: "discount_value" %>
+    </div>
+    <p id="errorValor" style="color: red;"></p>
+
+    <div>
+        <%= f.label :expires_at, "Fecha de Expiración" %>
+        <%= f.date_select :expires_at, start_year: Date.today.year, end_year: Date.today.year + 5 %>
+    </div>
+
+    <div>
+        <%= f.label :active, "Activo" %>
+        <%= f.check_box :active %>
+    </div>
+
+    <div>
+        <%= f.submit "Guardar Cupón" %>
+    </div>
+<% end %>
+

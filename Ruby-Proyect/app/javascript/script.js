@@ -1,3 +1,49 @@
+document.addEventListener("turbo:load", () => {
+  const typeField = document.getElementById("discount_type");
+  const valueField = document.getElementById("discount_value");
+  if (!typeField || !valueField) return;
+
+  const textError = document.getElementById("errorValor");
+
+  function tipoDescuento () {
+    let numero = parseFloat(valueField.value);
+
+    textError.innerHTML = ""
+
+    if (typeField.value === "porcentaje"){
+      valueField.min = 0;
+      valueField.max = 101;
+      valueField.step = 1;
+
+      if (numero < 1) {
+        numero = 1;
+        textError.innerHTML = "El valor debe ser mayor a 1";
+      }
+      if (numero > 100) {
+        numero = 100
+        textError.innerHTML = "El valor debe ser menor a 100"
+      };
+      valueField.value = numero;
+    } else {
+        valueField.removeAttribute("max");
+        valueField.min = 0;
+        valueField.step = 100;
+
+        if (numero < 1 ) {
+          numero = 1
+          textError.innerHTML = "El valor debe ser mayor a 1";
+        }
+
+        valueField.value = numero
+    }
+  }
+
+  typeField.addEventListener("input", tipoDescuento)
+  valueField.addEventListener("input", tipoDescuento)
+  tipoDescuento()
+});
+
+
 // ========================================
 // 💵 Converción COP a USD
 // ========================================
