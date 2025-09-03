@@ -1,3 +1,8 @@
+// ========================================
+// 🎟️ validacion de valor por tipo de cupon
+// ========================================
+
+
 document.addEventListener("turbo:load", () => {
   const typeField = document.getElementById("discount_type");
   const valueField = document.getElementById("discount_value");
