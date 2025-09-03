@@ -32,7 +32,7 @@ Este repositorio contiene el desarrollo de un sistema completo compuesto por:
 │   ├── views/
 │   ├── index.html
 │   └── ...
-├── docs/               # Programa para la terraza del pri
+├── TerrazaDelPri-Web/               # Programa para la terraza del pri
 │   ├── app/
 │   ├── config/
 │   ├── db/
