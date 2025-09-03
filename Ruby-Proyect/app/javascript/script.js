@@ -29,17 +29,19 @@ document.addEventListener("turbo:load", () => {
         textError.innerHTML = "El valor debe ser menor a 100"
       };
       valueField.value = numero;
+
     } else {
-        valueField.removeAttribute("max");
-        valueField.min = 0;
-        valueField.step = 100;
+      
+      valueField.removeAttribute("max");
+      valueField.min = 0;
+      valueField.step = 100;
 
-        if (numero < 1 ) {
-          numero = 1
-          textError.innerHTML = "El valor debe ser mayor a 1";
-        }
+      if (numero < 1 ) {
+        numero = 1
+        textError.innerHTML = "El valor debe ser mayor a 1";
+      }
 
-        valueField.value = numero
+      valueField.value = numero
     }
   }
 
