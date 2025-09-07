@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import '../l10n/app_localizations.dart';
-
 import '../bloc/product_bloc.dart';
 import '../bloc/product_event.dart';
-import '../bloc/product_state.dart';
+import '../bloc/base_state.dart';
+import '../widgets/status_widgets.dart';
+import '../models/product.dart';
 import 'product_detail_page.dart';
 
 class CategoryProductsPage extends StatefulWidget {
@@ -49,64 +50,33 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
           onPressed: () => Navigator.pop(context),
         ),
       ),
-      body: BlocBuilder<ProductBloc, ProductState>(
+      body: BlocBuilder<ProductBloc, BaseState>(
         builder: (context, state) {
-          print('Current state: ${state.runtimeType}');
+          if (state is InitialState) {
+            return LoadingWidget(
+              message: AppLocalizations.of(context)!.loadingProducts
+            );
+          } 
           
-          if (state is ProductInitial) {
-            print('State is ProductInitial - triggering FetchProducts');
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const CircularProgressIndicator(),
-                  const SizedBox(height: 16),
-                  Text(AppLocalizations.of(context)!.loadingProducts),
-                ],
-              ),
+          if (state is LoadingState) {
+            return LoadingWidget(
+              message: state.message ?? AppLocalizations.of(context)!.loadingProducts
             );
-          } else if (state is ProductLoading) {
-            print('State is ProductLoading');
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const CircularProgressIndicator(),
-                  const SizedBox(height: 16),
-                  Text(AppLocalizations.of(context)!.loadingProducts),
-                ],
-              ),
+          } 
+          
+          if (state is ErrorState) {
+            return ErrorDisplayWidget(
+              message: state.message,
+              onRetry: state.onRetry,
             );
-          } else if (state is ProductLoaded) {
-            if (state.products.isEmpty) {
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.restaurant_menu_outlined,
-                      size: 80,
-                      color: Colors.grey[400],
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      AppLocalizations.of(context)!.noProductsFound,
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.grey[600],
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      '${AppLocalizations.of(context)!.category}: ${widget.categoryName}',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey[500],
-                      ),
-                    ),
-                  ],
-                ),
+          } 
+          
+          if (state is SuccessState<List<Product>>) {
+            final products = state.data;
+            if (products.isEmpty) {
+              return EmptyStateWidget(
+                message: AppLocalizations.of(context)!.noProductsFound,
+                icon: Icons.restaurant_menu_outlined,
               );
             }
 
@@ -128,31 +98,26 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
                         colors: [
-                          Colors.transparent,
                           Colors.black.withOpacity(0.6),
+                          Colors.black.withOpacity(0.3),
                         ],
                       ),
                     ),
                     child: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            widget.categoryName.toUpperCase(),
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 28,
-                              fontWeight: FontWeight.bold,
-                              shadows: [
-                                Shadow(
-                                  offset: Offset(0, 2),
-                                  blurRadius: 4,
-                                  color: Colors.black54,
-                                ),
-                              ],
+                      child: Text(
+                        widget.categoryName.toUpperCase(),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 32,
+                          fontWeight: FontWeight.bold,
+                          shadows: [
+                            Shadow(
+                              offset: Offset(0, 2),
+                              blurRadius: 4,
+                              color: Colors.black54,
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -168,9 +133,9 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
                         crossAxisSpacing: 16,
                         childAspectRatio: 0.65,
                       ),
-                      itemCount: state.products.length,
+                      itemCount: products.length,
                       itemBuilder: (context, index) {
-                        final product = state.products[index];
+                        final product = products[index];
                         return Card(
                           elevation: 6,
                           shape: RoundedRectangleBorder(
@@ -182,8 +147,7 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) =>
-                                      ProductDetailPage(product: product),
+                                  builder: (context) => ProductDetailPage(product: product),
                                 ),
                               );
                             },
@@ -195,19 +159,18 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
                                   flex: 3,
                                   child: ClipRRect(
                                     borderRadius: const BorderRadius.vertical(
-                                        top: Radius.circular(16)),
+                                      top: Radius.circular(16),
+                                    ),
                                     child: Image.network(
                                       product.image,
                                       fit: BoxFit.cover,
-                                      errorBuilder: (context, error, stackTrace) =>
-                                          Container(
-                                        color: Colors.grey[200],
-                                        child: const Icon(
-                                          Icons.broken_image,
+                                      errorBuilder: (context, error, stackTrace) {
+                                        return const Icon(
+                                          Icons.broken_image_outlined,
                                           size: 50,
                                           color: Colors.grey,
-                                        ),
-                                      ),
+                                        );
+                                      },
                                     ),
                                   ),
                                 ),
@@ -215,77 +178,25 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
                                 Expanded(
                                   flex: 2,
                                   child: Padding(
-                                    padding: const EdgeInsets.all(12.0),
+                                    padding: const EdgeInsets.all(8.0),
                                     child: Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
-                                        // Nombre del producto
                                         Text(
                                           product.name,
                                           style: const TextStyle(
                                             fontWeight: FontWeight.bold,
                                             fontSize: 16,
                                           ),
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                        const SizedBox(height: 4),
-                                        
-                                        // Descripción del producto
-                                        Text(
-                                          product.description,
-                                          style: TextStyle(
-                                            fontSize: 12,
-                                            color: Colors.grey[600],
-                                          ),
                                           maxLines: 2,
                                           overflow: TextOverflow.ellipsis,
                                         ),
-                                        
-                                        // Ingredientes si existen
-                                        if (product.ingredients.isNotEmpty) ...[
-                                          const SizedBox(height: 6),
-                                          Text(
-                                            '${AppLocalizations.of(context)!.ingredients}:',
-                                            style: TextStyle(
-                                              fontSize: 11,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.orange[700],
-                                            ),
-                                          ),
-                                          const SizedBox(height: 2),
-                                          Expanded(
-                                            child: Text(
-                                              product.ingredients.join(', '),
-                                              style: TextStyle(
-                                                fontSize: 10,
-                                                color: Colors.grey[700],
-                                                fontStyle: FontStyle.italic,
-                                              ),
-                                              maxLines: 2,
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                          ),
-                                        ] else ...[
-                                          // Si no hay ingredientes, dar más espacio a la descripción
-                                          Expanded(
-                                            child: Container(),
-                                          ),
-                                        ],
-                                        
-                                        const SizedBox(height: 8),
-                                        
-                                        // Precio del producto
                                         Text(
-                                          NumberFormat.currency(
-                                            locale: 'es_CO',
-                                            symbol: '\$',
-                                            decimalDigits: 0,
-                                          ).format(product.price),
-                                          style: const TextStyle(
-                                            color: Color.fromRGBO(237, 88, 33, 1),
+                                          '\$${NumberFormat('#,###', 'es_CO').format(product.price)} COP',
+                                          style: TextStyle(
+                                            color: Colors.green[700],
                                             fontWeight: FontWeight.bold,
-                                            fontSize: 16,
                                           ),
                                         ),
                                       ],
@@ -302,61 +213,24 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
                 ),
               ],
             );
-          } else if (state is ProductError) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(
-                    Icons.error_outline,
-                    size: 80,
-                    color: Colors.red,
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    AppLocalizations.of(context)!.loadingProductsError,
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: Colors.grey[600],
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    state.message,
-                    style: const TextStyle(
-                      color: Colors.red,
-                      fontSize: 14,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: () {
-                      context.read<ProductBloc>().add(LoadProductsByCategory(widget.categoryName));
-                    },
-                    child: Text(AppLocalizations.of(context)!.retry),
-                  ),
-                ],
-              ),
-            );
-          } else {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(AppLocalizations.of(context)!.unknownState),
-                  const SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: () {
-                      context.read<ProductBloc>().add(LoadProductsByCategory(widget.categoryName));
-                    },
-                    child: Text(AppLocalizations.of(context)!.reload),
-                  ),
-                ],
-              ),
-            );
           }
+          
+          // Estado desconocido
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(AppLocalizations.of(context)!.unknownState),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () {
+                    context.read<ProductBloc>().add(LoadProductsByCategory(widget.categoryName));
+                  },
+                  child: Text(AppLocalizations.of(context)!.reload),
+                ),
+              ],
+            ),
+          );
         },
       ),
     );
