@@ -183,6 +183,7 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
+                                        // Nombre del producto
                                         Text(
                                           product.name,
                                           style: const TextStyle(
@@ -192,12 +193,61 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
                                           maxLines: 2,
                                           overflow: TextOverflow.ellipsis,
                                         ),
-                                        Text(
-                                          '\$${NumberFormat('#,###', 'es_CO').format(product.price)} COP',
-                                          style: TextStyle(
-                                            color: Colors.green[700],
-                                            fontWeight: FontWeight.bold,
+                                        const SizedBox(height: 4),
+                                        // Descripción del producto
+                                        if (product.description.isNotEmpty)
+                                          Text(
+                                            product.description,
+                                            style: const TextStyle(
+                                              fontSize: 12,
+                                              color: Colors.grey,
+                                            ),
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
                                           ),
+                                        const SizedBox(height: 4),
+                                        // Ingredientes (si hay)
+                                        if (product.ingredients.isNotEmpty)
+                                          Text(
+                                            'Ingredientes: ${product.ingredients.take(3).join(", ")}${product.ingredients.length > 3 ? "..." : ""}',
+                                            style: const TextStyle(
+                                              fontSize: 11,
+                                              fontStyle: FontStyle.italic,
+                                              color: Colors.black54,
+                                            ),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        const SizedBox(height: 4),
+                                        // Precio y categoría
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            // Precio
+                                            Text(
+                                              '\$${NumberFormat('#,###', 'es_CO').format(product.price)} COP',
+                                              style: TextStyle(
+                                                color: Colors.green[700],
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 13,
+                                              ),
+                                            ),
+                                            // Categoría
+                                            Container(
+                                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                              decoration: BoxDecoration(
+                                                color: const Color.fromRGBO(237, 88, 33, 0.1),
+                                                borderRadius: BorderRadius.circular(12),
+                                              ),
+                                              child: Text(
+                                                product.category,
+                                                style: const TextStyle(
+                                                  fontSize: 10,
+                                                  color: Color.fromRGBO(237, 88, 33, 1),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ],
                                     ),
