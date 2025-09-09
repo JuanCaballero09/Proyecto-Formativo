@@ -5,7 +5,7 @@ import '../l10n/app_localizations.dart';
 import '../models/product.dart';
 import '../bloc/cart_bloc.dart';
 import '../models/cart_model.dart';
-import 'pedido_Page.dart';
+//import 'pedido_Page.dart';
 
 class ProductDetailPage extends StatelessWidget {
   final Product product;
