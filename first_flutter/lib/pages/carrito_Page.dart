@@ -182,7 +182,7 @@ class CarritoPageState extends State<CarritoPage> {
                             },
                           ),
                           Text(
-                            '\$ ${item.price * item.quantity} COP',
+                            '\$ ${NumberFormat('#,###', 'es_CO').format(item.price * item.quantity)} COP',
                             style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
                         ],
