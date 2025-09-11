@@ -18,8 +18,12 @@ es:
 
 
   date:
-    abbr_month_names: [~, Ene, Feb, Mar, Abr, May, Jun, Jul, Ago, Sep, Oct, Nov, Dic]
-    month_names: [~, Enero, Febrero, Marzo, Abril, Junio, Julio, Agosto, Septiembre, Octubre, Noviembre, Diciembre]
+    abbr_month_names: [null, Ene, Feb, Mar, Abr, May, Jun, Jul, Ago, Sep, Oct, Nov, Dic]
+    month_names: [null, Enero, Febrero, Marzo, Abril, Mayo, Junio, Julio, Agosto, Septiembre, Octubre, Noviembre, Diciembre]
+    order: 
+      - day
+      - month
+      - year
 
 
   time:
@@ -28,7 +32,7 @@ es:
       short: "%d %b %H:%M"
       long: "%A %d de %B de %Y %H:%M" 
 
-    # Acciones del Layout
+  # Acciones del Layout
   home:
     navbar:
       inicio: "Inicio"
@@ -118,4 +122,4 @@ es:
       nombre-titular: "Nombre del titular:"
       correo-electronico: "Correo electrónico:" 
       pagar: "Pagar"
-      
+

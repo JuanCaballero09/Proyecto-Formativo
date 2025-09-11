@@ -1,3 +1,62 @@
+
+// ========================================
+// 💵 Ajuste de cupon
+// ========================================
+
+document.addEventListener("turbo:load", function() {
+  const tipoDescuento = document.getElementById("tipo_descuento");
+
+  if (!tipoDescuento) return;
+
+  const valorInput = document.getElementById("valor");
+  const errorMsg = document.getElementById("valor-error");
+  const form = document.getElementById("coupon-form");
+
+  valorInput.step = 0;
+
+  function validarValor() {
+    let tipo = tipoDescuento.value;
+    let valor = parseFloat(valorInput.value);
+    errorMsg.style.display = "none";
+    if (tipo === "porcentaje") {
+      valorInput.setAttribute("max", "101");
+      valorInput.setAttribute("min", "0");
+      valorInput.step = 1;
+      if (valor > 100) {
+        valorInput.value = 100;
+        errorMsg.textContent = "El porcentaje no puede ser mayor a 100%.";
+        errorMsg.style.display = "block";
+        return false;
+      }
+      if (valor < 1 && valorInput.value !== "") {
+        valorInput.value = 1;
+        errorMsg.textContent = "El porcentaje debe ser al menos 1%.";
+        errorMsg.style.display = "block";
+        return false;
+      }
+    } else {
+      valorInput.removeAttribute("max");
+      valorInput.setAttribute("min", "0");
+      valorInput.step = 100;
+    }
+    return true;
+  }
+
+  tipoDescuento.addEventListener("change", function() {
+    valorInput.value = "";
+    errorMsg.style.display = "none";
+    validarValor();
+  });
+
+  valorInput.addEventListener("input", validarValor);
+
+  form.addEventListener("submit", function(e) {
+    if (!validarValor()) {
+      e.preventDefault();
+    }
+  });
+});
+
 // ========================================
 // 💵 Converción COP a USD
 // ========================================

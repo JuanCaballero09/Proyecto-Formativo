@@ -1,0 +1,17 @@
+<% if carrito.coupon %>
+  <p>
+    Cupón aplicado: <strong><%= carrito.coupon.codigo %></strong>
+    (<%= carrito.coupon.tipo_descuento %> - <%= carrito.coupon.valor %>)
+    <%= button_to "Quitar cupón", quitar_cupon_carrito_path(carrito), method: :delete, form: { data: { turbo_frame: "carrito-cupon" } } %>
+  </p>
+<% else %>
+  <%= form_with url: aplicar_cupon_carrito_path(carrito), method: :post, data: { turbo_frame: "carrito-cupon" } do |f| %>
+    <%= f.label :codigo, "Código de cupón" %>
+    <%= f.text_field :codigo %>
+    <%= f.submit "Aplicar cupón" %>
+  <% end %>
+<% end %>
+
+<p>Subtotal: <%= number_to_currency(carrito.subtotal) %></p>
+<p>Descuento: <%= number_to_currency(carrito.descuento) %></p>
+<p>Total: <%= number_to_currency(carrito.total) %></p>

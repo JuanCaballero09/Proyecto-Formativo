@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  codigo: MyString
+  tipo_descuento: MyString
+  valor: 9.99
+  expira_en: 2025-09-09 21:21:22
+  activo: false
+
+two:
+  codigo: MyString
+  tipo_descuento: MyString
+  valor: 9.99
+  expira_en: 2025-09-09 21:21:22
+  activo: false

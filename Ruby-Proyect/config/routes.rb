@@ -12,7 +12,10 @@ Rails.application.routes.draw do
 
     resources :products, path: "productos", only: [:index] # rubocop:disable Layout/SpaceInsideArrayLiteralBrackets
 
-    resource :carrito, only: [:show] # rubocop:disable Layout/SpaceInsideArrayLiteralBrackets
+    resource :carrito, only: [ :show ] do
+      post :aplicar_cupon
+      delete :quitar_cupon
+    end
     resources :carrito_items, only: [ :create, :update, :destroy ] do
       member do
         put :incrementar
@@ -36,6 +39,11 @@ Rails.application.routes.draw do
     resources :ingredientes
     resources :users
     resources :banners
+    resources :coupons do
+      member do
+        patch :toggle_activo
+      end
+    end
     resources :orders do
       collection do
         get :employee

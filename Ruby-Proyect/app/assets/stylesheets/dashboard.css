@@ -860,3 +860,97 @@
     align-items: center;
 }
 
+/*==================================*/
+/*          Vista Cupones           */
+/*==================================*/
+
+.coupons-container {
+    margin: 2rem auto;
+}
+
+.coupons-title {
+    font-size: 2.1rem;
+    font-weight: 700;
+    color: #22223b;
+    margin-bottom: 1.5rem;
+    letter-spacing: 0.5px;
+}
+
+.coupons-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 2rem;
+    font-size: 1.05rem;
+}
+
+.coupons-table th, .coupons-table td {
+    border-bottom: 1px solid #e0e0e0;
+    padding: 0.85rem 1rem;
+    text-align: center;
+}
+
+.coupons-table th {
+    background: var(--base);
+    color: #fff;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.coupons-table td {
+    border: 1px solid #f6f6f6;
+}
+
+.coupons-table tr:nth-child(even) {
+    background: #f8f8fa;
+}
+
+.coupons-table tr:hover {
+    background: #e9ecef;
+}
+
+.coupons-table .btn {
+    margin-right: 0.3rem;
+    font-size: 0.97em;
+    border-radius: 6px;
+    padding: 0.35em 1em;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.coupons-table .btn-info { background: #2196f3; color: #fff; }
+.coupons-table .btn-warning { background: #fbc02d; color: #22223b; }
+.coupons-table .btn-danger { background: #e53935; color: #fff; }
+.coupons-table .btn-info:hover { background: #1976d2; }
+.coupons-table .btn-warning:hover { background: #f9a825; }
+.coupons-table .btn-danger:hover { background: #b71c1c; }
+.coupons-table .btn:last-child { margin-right: 0; }
+
+.input-cupon-fix select, .input-cupon-fix input{
+    width: fit-content;
+}
+
+/* Tarjeta de detalle de cupón */
+.coupon-detail-card {
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 4px 18px rgba(34,34,59,0.10);
+    padding: 2rem;
+    margin: 0 auto;
+    max-width: 500px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.coupon-detail-card p {
+    margin: 0 0 8px 0;
+    font-size: 1.08rem;
+}
+
+.coupon-detail-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 1.5rem;
+    justify-content: flex-start;
+}
