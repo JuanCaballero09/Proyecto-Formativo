@@ -62,6 +62,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_10_022122) do
     t.string "numero_orden"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "coupon_id"
+    t.index ["coupon_id"], name: "index_carritos_on_coupon_id"
   end
 
   create_table "coupons", force: :cascade do |t|
@@ -171,6 +173,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_10_022122) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "carrito_items", "carritos"
   add_foreign_key "carrito_items", "products"
+  add_foreign_key "carritos", "coupons"
   add_foreign_key "ingrediente_productos", "ingredientes"
   add_foreign_key "ingrediente_productos", "products"
   add_foreign_key "order_items", "orders"

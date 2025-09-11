@@ -12,27 +12,32 @@ class CarritosController < ApplicationController
     @carrito = Carrito.find_by(id: session[:carrito_id])
     cupon = Coupon.find_by(codigo: params[:codigo])
 
-    if cupon&.activo_y_no_expirado?
+    if @carrito && cupon&.activo_y_no_expirado?
       @carrito.update(coupon: cupon)
-      flash.now[:notice] = "Cupón aplicado correctamente."
+      flash.now[:notice] = "Cupón aplicado correctamente ✅"
     else
-      flash.now[:alert] = "Cupón inválido o expirado."
+      flash.now[:alert] = "El cupón no es válido, está vencido o ya fue usado ❌"
     end
 
     respond_to do |format|
       format.turbo_stream
-      format.html { redirect_to @carrito }
+      format.html { redirect_to carrito_path(@carrito) }
     end
   end
 
   def quitar_cupon
-    @carrito = Carrito.find(params[:id])
-    @carrito.update(coupon: nil)
-    flash.now[:notice] = "Cupón eliminado."
+    @carrito = Carrito.find_by(id: session[:carrito_id])
+
+    if @carrito&.coupon.present?
+      @carrito.update(coupon: nil)
+      flash.now[:notice] = "Cupón eliminado 🗑️"
+    else
+      flash.now[:alert] = "No hay cupón para quitar ❌"
+    end
 
     respond_to do |format|
       format.turbo_stream
-      format.html { redirect_to @carrito }
+      format.html { redirect_to carrito_path(@carrito) }
     end
   end
 end

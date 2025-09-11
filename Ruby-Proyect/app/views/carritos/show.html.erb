@@ -1,38 +1,35 @@
 <section id="carrito-contenido" class="carrito">
   <h2><%= t("home.carrito.tu_carrito")%></h2>
+
   <% if @items.empty? %>
     <p><%= t("home.carrito.carrito_vacio")%></p>
   <% else %>
     <%= turbo_frame_tag "carrito", class: "carrito-items" do %>
-      <%= render partial: "carritos/item", collection: @carrito.carrito_items, as: :item %>
+      <%= render partial: "carritos/item",
+                 collection: @carrito.carrito_items,
+                 as: :item %>
     <% end %>
 
-    <p><strong><%= t("home.carrito.total_producto")%></strong> <span id="contador-productos"><%= @carrito.carrito_items.sum(:cantidad) %></span></p>
+    <p>
+      <strong><%= t("home.carrito.total_producto")%></strong>
+      <span id="contador-productos"><%= @carrito.carrito_items.sum(:cantidad) %></span>
+    </p>
 
     <%= turbo_frame_tag "carrito-cupon" do %>
-      <% if @carrito.coupon %>
-        <p>
-          cupón aplicado: <strong><%= @carrito.coupon.codigo %></strong>
-          (<%= @carrito.coupon.tipo_descuento %> - <%= @carrito.coupon.valor %>)
-          <%= button_to "Quitar cupón", quitar_cupon_carrito_path(@carrito), method: :delete, form: { data: { turbo_frame: "carrito-cupon" } } %>
-        </p>
-      <% else %>
-        <%= form_with url: aplicar_cupon_carrito_path, method: :post, local: false do |f| %>
-          <%= f.label :codigo, "Código de cupón" %>
-          <%= f.text_field :codigo %>
-          <%= f.submit "Aplicar cupón" %>
-        <% end %>
-      <% end %>
+      <%= render "carritos/cupon", carrito: @carrito %>
     <% end %>
-    
 
-    <p>Subtotal: <%= number_to_currency(@carrito.subtotal) %></p>
-    <p>Descuento: <%= number_to_currency(@carrito.descuento) %></p>
-    <p>Total: <%= number_to_currency(@carrito.total) %></p>
-
-    <div class="botones-compra">
-      <%= button_to t("home.show-vista.generar_orden"), orders_path, method: :post %>
+    <div id="totales-carrito" class="totales-carrito" style="margin-top: 2em;">
+      <div><strong>Subtotal:</strong> <%= number_to_currency(@carrito.subtotal) %></div>
+      <div><strong>Descuento:</strong> <%= number_to_currency(@carrito.descuento) %></div>
+      <div><strong>Total:</strong> <%= number_to_currency(@carrito.total) %></div>
     </div>
-  
+
+    <div class="botones-compra" style="margin-top: 2em;">
+      <%= button_to t("home.show-vista.generar_orden"),
+                    orders_path,
+                    method: :post,
+                    class: "btn btn-success" %>
+    </div>
   <% end %>
 </section>
