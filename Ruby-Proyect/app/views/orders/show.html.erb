@@ -36,9 +36,22 @@
         <% end %>
       </tbody>
     </table>
-  </div>
+  </div>  
 
-  <p><strong><%= t("home.order.total_pagar")%></strong> <strong class="precio" data-precio="<%= @order.total %>" data-locale="<%= I18n.locale %>">$</strong></p>
+  <p>
+    <strong><%= t("home.order.total_pagar") %></strong> 
+    <strong class="precio" data-precio="<%= @order.total %>" data-locale="<%= I18n.locale %>">
+      <%= number_to_currency(@order.total, unit: "COP ", separator: ",", delimiter: ".") %>
+    </strong>
+  </p>
+
+
+  <% if @order.coupon.present? %>
+    <p style="color: green; font-weight: bold;">
+      Cupón aplicado: <%= @order.coupon.codigo %>
+    </p>
+  <% end %>
+
 
   <!-- Botón de pago (por integrar) -->
   

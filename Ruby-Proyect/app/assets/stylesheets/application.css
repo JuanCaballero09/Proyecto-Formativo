@@ -979,6 +979,42 @@ input:focus{outline: none;}
 
 .carrito-item-info-cantidad p{margin: 0;font-size: 20px;}
 
+.totales-carrito{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.totales-carrito p{
+    margin: 0;
+}
+
+.carrito-cupon form{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.carrito-cupon form input{
+    padding: 10px 20px;
+}
+
+.carrito-cupon input[type="submit"], .carrito-cupon button{
+    width: fit-content;
+    margin: 0 auto;
+    background-color: var(--base);
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.carrito-cupon input[type="submit"]:hover, .carrito-cupon button:hover{
+    background-color: var(--base-oscuro);
+}
+
 /* Editar Usuario */
 
 .edit{

@@ -13,6 +13,7 @@ class OrdersController < ApplicationController
     ActiveRecord::Base.transaction do
       @order = current_user.orders.build(status: :pendiente, total: 0)
       @order.carrito = carrito if carrito.respond_to?(:id)
+      @order.coupon  = carrito.coupon
       @order.save!
 
       carrito.carrito_items.each do |ci|
@@ -23,11 +24,14 @@ class OrdersController < ApplicationController
         )
       end
 
-      total = @order.order_items.sum("quantity * price")
+      total = carrito.total
       @order.update!(total: total)
 
       # opcional: vaciar carrito después de crear la orden
       carrito.carrito_items.destroy_all
+      carrito.update(coupon: nil)
+
+      session[:carrito_id] = nil
     end
 
     redirect_to order_path(@order)
