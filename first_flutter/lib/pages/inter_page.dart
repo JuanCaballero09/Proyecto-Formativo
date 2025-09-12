@@ -1,4 +1,6 @@
+import 'package:first_flutter/bloc/cart_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../l10n/app_localizations.dart';
 import 'menu_page.dart';
 import 'home_Page.dart';
@@ -47,10 +49,70 @@ class _ProductPageState extends State<ProductPage> {
                 label: AppLocalizations.of(context)!.menu,
                 index: 1,
               ),
-              _buildNavItem(
-                icon: Icons.shopping_cart,
-                label: AppLocalizations.of(context)!.cart,
-                index: 2,
+   BlocBuilder<CartBloc, CartState>(
+                builder: (context, state) {
+                  final cartCount = state.cart.items.fold<int>(
+                    0,
+                    (sum, item) => sum + item.quantity,
+                  );
+
+                  final isSelected = _selectedIndex == 2;
+
+                  return InkWell(
+                    onTap: () => _onItemTapped(2),
+                    child: SizedBox(
+                      width: 60,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Stack(
+                            clipBehavior: Clip.none,
+                            children: [
+                              Icon(
+                                Icons.shopping_cart,
+                                color: isSelected ? Colors.black : Colors.white,
+                                size: 24,
+                              ),
+                              if (cartCount > 0)
+                                Positioned(
+                                  right: -6,
+                                  top: -6,
+                                  child: Container(
+                                    padding: const EdgeInsets.all(3),
+                                    decoration: BoxDecoration(
+                                      color: Colors.red,
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    constraints: const BoxConstraints(
+                                      minWidth: 16,
+                                      minHeight: 16,
+                                    ),
+                                    child: Text(
+                                      '$cartCount',
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            AppLocalizations.of(context)!.cart,
+                            style: TextStyle(
+                              color: isSelected ? Colors.black : Colors.white,
+                              fontSize: 11,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
               ),
               _buildCenterHomeButton(),
               _buildNavItem(

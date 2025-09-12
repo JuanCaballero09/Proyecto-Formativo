@@ -3,6 +3,7 @@ import 'package:first_flutter/pages/inter_page.dart';
 //import 'package:first_flutter/pages/menu_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import '../l10n/app_localizations.dart';
 import '../bloc/cart_bloc.dart';
 
@@ -181,7 +182,7 @@ class CarritoPageState extends State<CarritoPage> {
                             },
                           ),
                           Text(
-                            '\$ ${item.price * item.quantity} COP',
+                            '\$ ${NumberFormat('#,###', 'es_CO').format(item.price * item.quantity)} COP',
                             style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
                         ],
@@ -206,7 +207,7 @@ class CarritoPageState extends State<CarritoPage> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  '${AppLocalizations.of(context)!.total}: \$ ${state.cart.totalPrice} COP',
+                  '${AppLocalizations.of(context)!.total}: \$ ${NumberFormat('#,###', 'es_CO').format(state.cart.totalPrice)} COP',
                   style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
