@@ -1,3 +1,6 @@
+# Brakeman workflow para análisis de seguridad en Rails
+# Corre en cada push o PR hacia main y sube los resultados como SARIF
+
 name: Brakeman Scan
 
 on:
@@ -14,28 +17,27 @@ permissions:
 jobs:
   brakeman-scan:
     permissions:
-      contents: read
-      security-events: write
-      actions: read
-    name: Brakeman Scan
+      contents: read           # para checkout
+      security-events: write   # para subir resultados a Security tab
+      actions: read            # necesario si es repo privado
     runs-on: ubuntu-22.04
     steps:
-    - name: Checkout
-      uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-    - name: Setup Ruby
-      uses: ruby/setup-ruby@v1
-      with:
-        ruby-version: '2.7'
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '2.7'   # ajusta si tu proyecto usa otra versión
 
-    - name: Setup Brakeman
-      run: gem install brakeman --version 4.10
+      - name: Install Brakeman
+        run: gem install brakeman -v 4.10
 
-    - name: Scan
-      continue-on-error: true
-      run: brakeman -f sarif -o output.sarif.json .
+      - name: Run Brakeman
+        continue-on-error: true
+        run: brakeman Ruby-Proyect -f sarif -o output.sarif.json
 
-    - name: Upload SARIF
-      uses: github/codeql-action/upload-sarif@v3
-      with:
-        sarif_file: output.sarif.json
+      - name: Upload SARIF
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: output.sarif.json
