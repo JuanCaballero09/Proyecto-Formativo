@@ -12,11 +12,21 @@ class CarritosController < ApplicationController
     @carrito = Carrito.find_by(id: session[:carrito_id])
     cupon = Coupon.find_by(codigo: params[:codigo])
 
-    if @carrito && cupon&.activo_y_no_expirado?
-      @carrito.update(coupon: cupon)
-      flash.now[:notice] = "Cupón aplicado correctamente ✅"
+    if @carrito && cupon
+      if cupon.usable_by?(current_user)
+        @carrito.update(coupon: cupon)
+        flash.now[:notice] = "Cupón aplicado correctamente ✅"
+      else
+        if !cupon.activo_y_no_expirado?
+          flash.now[:alert] = "El cupón no es válido o está vencido ❌"
+        elsif CouponUsage.exists?(user: current_user, coupon: cupon)
+          flash.now[:alert] = "Ya usaste este cupón ❌"
+        else
+          flash.now[:alert] = "No se puede aplicar el cupón ❌"
+        end
+      end
     else
-      flash.now[:alert] = "El cupón no es válido, está vencido o ya fue usado ❌"
+      flash.now[:alert] = "Cupón inválido ❌"
     end
 
     respond_to do |format|

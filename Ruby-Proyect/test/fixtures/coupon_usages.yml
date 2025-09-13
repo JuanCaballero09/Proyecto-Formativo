@@ -1,0 +1,11 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user: one
+  coupon: one
+  used_at: 2025-09-13 09:39:56
+
+two:
+  user: two
+  coupon: two
+  used_at: 2025-09-13 09:39:56

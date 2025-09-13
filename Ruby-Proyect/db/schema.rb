@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_12_024943) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_13_151000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -64,6 +64,17 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_12_024943) do
     t.datetime "updated_at", null: false
     t.bigint "coupon_id"
     t.index ["coupon_id"], name: "index_carritos_on_coupon_id"
+  end
+
+  create_table "coupon_usages", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "coupon_id", null: false
+    t.datetime "used_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["coupon_id"], name: "index_coupon_usages_on_coupon_id"
+    t.index ["user_id", "coupon_id"], name: "index_unique_user_coupon_usages", unique: true
+    t.index ["user_id"], name: "index_coupon_usages_on_user_id"
   end
 
   create_table "coupons", force: :cascade do |t|
@@ -176,6 +187,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_12_024943) do
   add_foreign_key "carrito_items", "carritos"
   add_foreign_key "carrito_items", "products"
   add_foreign_key "carritos", "coupons"
+  add_foreign_key "coupon_usages", "coupons"
+  add_foreign_key "coupon_usages", "users"
   add_foreign_key "ingrediente_productos", "ingredientes"
   add_foreign_key "ingrediente_productos", "products"
   add_foreign_key "order_items", "orders"

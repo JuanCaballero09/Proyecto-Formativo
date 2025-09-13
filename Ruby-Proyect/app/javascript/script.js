@@ -1,5 +1,33 @@
 
 // ========================================
+// 💵 Ajuste valor segun porcentaje o fijo
+// ========================================
+
+document.addEventListener("turbo:load", function(){
+  const rows = document.querySelectorAll("tr[id^='coupon-row-']")
+
+  console.log("hola")
+
+  rows.forEach((row) => {
+    const valor = document.querySelectorAll(".coupon-valor");
+    const tipo = document.querySelectorAll(".coupon-tipo");
+    
+    if (!valor || !tipo ) return;
+
+    const val = valor.textContent.trim();
+
+    if (tipo.textContent.trim() === "porcentaje"){ 
+      valor.textContent = val + "%";
+    } else if ( tipo.textContent.trim() === "fijo"){
+      valor.textContent = "COP $ " + val;
+    }
+
+    console.log("cambios realizados en todos los cupones");
+  })
+
+})
+
+// ========================================
 // 💵 Ajuste de cupon
 // ========================================
 
