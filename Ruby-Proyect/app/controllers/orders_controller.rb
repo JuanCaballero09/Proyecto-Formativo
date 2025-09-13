@@ -28,9 +28,9 @@ class OrdersController < ApplicationController
       @order.update!(total: total)
 
       if @order.coupon.present?
-        message = @order.coupon.apply_to(current_user)
-        if message.present?
-          raise ActiveRecord::Rollback, "No se pudo aplicar el cupón: #{message}"
+        resultado = @order.coupon.apply_to(current_user)
+        if resultado != "Cupón aplicado con éxito"
+          raise ActiveRecord::Rollback, "No se pudo aplicar el cupón: #{resultado}"
         end
       end
 
