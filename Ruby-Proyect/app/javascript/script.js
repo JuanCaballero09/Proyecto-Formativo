@@ -4,28 +4,45 @@
 // ========================================
 
 document.addEventListener("turbo:load", function(){
-  const rows = document.querySelectorAll("tr[id^='coupon-row-']")
-
-  console.log("hola")
+  const rows = document.querySelectorAll("tr[id^='coupon-row-']");
+  
+  if (!rows) return;
 
   rows.forEach((row) => {
-    const valor = document.querySelectorAll(".coupon-valor");
-    const tipo = document.querySelectorAll(".coupon-tipo");
-    
-    if (!valor || !tipo ) return;
+    const tipo = row.querySelector(".coupon-tipo");
+    const valor = row.querySelector(".coupon-valor");
 
     const val = valor.textContent.trim();
 
     if (tipo.textContent.trim() === "porcentaje"){ 
-      valor.textContent = val + "%";
+      valor.textContent = parseInt(val,10) + "%";
     } else if ( tipo.textContent.trim() === "fijo"){
-      valor.textContent = "COP $ " + val;
-    }
+      valor.textContent = "COP $ " + Number(val).toLocaleString("es-CO", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    };
+  });
+});
 
-    console.log("cambios realizados en todos los cupones");
-  })
+// ========================================
+// 💵 Ajuste valor segun porcentaje o fijo (show)
+// ========================================
 
-})
+document.addEventListener("turbo:load", function(){
+
+  const tipo = document.getElementById("coupon-tipo");
+  const valor = document.getElementById("coupon-valor");
+
+  if (!tipo || !valor) return;
+
+  const val = valor.textContent.trim();
+  console.log(val);
+
+  if (tipo.textContent.trim() === "porcentaje"){ 
+    valor.textContent = parseInt(val,10) + "%";
+  } else if ( tipo.textContent.trim() === "fijo"){
+    valor.textContent = "COP $ " + Number(val).toLocaleString("es-CO", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  };
+
+});
 
 // ========================================
 // 💵 Ajuste de cupon

@@ -3,7 +3,7 @@ class Dashboard::CouponsController < ApplicationController
   before_action :set_coupon, only: [:show, :toggle_activo, :edit, :update, :destroy] # rubocop:disable Layout/SpaceInsideArrayLiteralBrackets
 
   def index
-    @coupons = Coupon.all
+    @coupons = Coupon.all.order(created_at: :desc)
   end
 
   def toggle_activo
