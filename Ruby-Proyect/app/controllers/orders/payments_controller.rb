@@ -48,7 +48,7 @@ class  Orders::PaymentsController < ApplicationController
 
       # 2. Crear transacción con el token
       reference = "PAYMENT-#{@order.code}"
-      amount_in_cents = (@order.total * 100).to_i
+      amount_in_cents = (@order.calculate_total * 100).to_i
 
       response = service.create_card_transaction(
         reference: reference,

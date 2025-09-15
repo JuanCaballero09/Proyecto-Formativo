@@ -1,25 +1,35 @@
 <section id="carrito-contenido" class="carrito">
   <h2><%= t("home.carrito.tu_carrito")%></h2>
+
   <% if @items.empty? %>
     <p><%= t("home.carrito.carrito_vacio")%></p>
   <% else %>
     <%= turbo_frame_tag "carrito", class: "carrito-items" do %>
-      <%= render partial: "carritos/item", collection: @carrito.carrito_items, as: :item %>
+      <%= render partial: "carritos/item",
+                 collection: @carrito.carrito_items,
+                 as: :item %>
     <% end %>
 
-    <p><strong><%= t("home.carrito.total_producto")%></strong> <span id="contador-productos"><%= @carrito.carrito_items.sum(:cantidad) %></span></p>
+    <p>
+      <strong><%= t("home.carrito.total_producto")%></strong>
+      <span id="contador-productos"><%= @carrito.carrito_items.sum(:cantidad) %></span>
+    </p>
 
-    <p><strong><%= t("home.carrito.total_pagar")%></strong> <span id="total-carrito">
-      <span class="precio"
-        data-precio="<%= @carrito.carrito_items.sum { |item| item.precio * item.cantidad } %>"
-        data-locale="<%= I18n.locale %>">
-        <%= number_to_currency(@carrito.carrito_items.sum { |item| item.precio * item.cantidad }, unit: "COP ", separator: ",", delimiter: ".") %>
-      </span>
-    </span></p> 
+    <%= turbo_frame_tag "carrito-cupon" do %>
+      <%= render "carritos/cupon", carrito: @carrito %>
+    <% end %>
 
-    <div class="botones-compra">
-      <%= button_to t("home.show-vista.generar_orden"), orders_path, method: :post %>
+    <div id="totales-carrito" class="totales-carrito" style="margin-top: 2em;">
+      <p><strong>Subtotal:</strong> <%= number_to_currency(@carrito.subtotal, unit: "COP $", separator: ",", delimiter: ".") %></p>
+      <p><strong>Descuento:</strong> <%= number_to_currency(@carrito.descuento, unit: "COP $", separator: ",", delimiter: ".") %></p>
+      <p><strong>Total:</strong> <%= number_to_currency(@carrito.total, unit: "COP $", separator: ",", delimiter: ".") %></p>
     </div>
-  
+
+    <div class="botones-compra" style="margin-top: 2em;">
+      <%= button_to t("home.show-vista.generar_orden"),
+                    orders_path,
+                    method: :post,
+                    class: "btn btn-success" %>
+    </div>
   <% end %>
 </section>

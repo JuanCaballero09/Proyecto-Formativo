@@ -47,7 +47,13 @@
               <td class="orders-td orders-td--status <%= "status-#{order.status}" %>" data-label="Estado">
                 <p><%= order.status.humanize %></p>
               </td>
-              <td class="orders-td orders-td--right" data-label="Total">$<%= number_to_currency(order.total_price, unit: "", separator: ".", delimiter: ",") %></td>
+              <td class="orders-td orders-td--right" data-label="Total">
+                $<%= number_to_currency(order.total, unit: "COP ", separator: ",", delimiter: ".") %>
+                <% if order.coupon.present? %>
+                  <br><small style="color: green;">Cupón: <%= order.coupon.codigo %></small>
+                <% end %>
+              </td>
+
               <td class="orders-td" data-label="Fecha"><%= order.created_at.strftime("%d/%m/%Y %H:%M") %></td>
               <td class="orders-td orders-td--actions" data-label="Acciones">
                 <%= link_to 'Ver Detalles', dashboard_order_path(order), class: "btn-eliminar" %>

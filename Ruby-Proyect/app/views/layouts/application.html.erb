@@ -146,32 +146,44 @@
       </footer>
       <script>
       document.addEventListener("turbo:load", () => {
+        const AUTO_CLOSE_MS = 2000;
+
         const showAlert = (alertElement) => {
+          if (alertElement.dataset.flashProcessed) return;
+          alertElement.dataset.flashProcessed = "true";
+
           alertElement.style.animation = "slideDown 0.5s forwards";
+
           setTimeout(() => {
             alertElement.style.animation = "slideUp 0.5s forwards";
-            alertElement.addEventListener("animationend", () => alertElement.remove());
-          }, 2000);
-        }
+            alertElement.addEventListener("animationend", () => {
+              if (alertElement.parentNode) alertElement.remove();
+            }, { once: true });
+          }, AUTO_CLOSE_MS);
+        };
 
-        // Animar alertas que ya existían
         document.querySelectorAll("#alert-container .alert").forEach(showAlert);
 
-        // Observar cambios en flash-toast para los nuevos toasts
-        const flashToast = document.getElementById("flash-toast");
-        if (flashToast) {
-          const observer = new MutationObserver((mutations) => {
-            mutations.forEach((mutation) => {
-              mutation.addedNodes.forEach((node) => {
-                if (node.nodeType === 1 && node.classList.contains("alert")) {
+        const bodyObserver = new MutationObserver((mutations) => {
+          for (const mutation of mutations) {
+            for (const node of mutation.addedNodes) {
+              if (!(node instanceof Element)) continue;
+
+              if (node.id === "alert-container") {
+                node.querySelectorAll(".alert").forEach(showAlert);
+              } else {
+                if (node.classList && node.classList.contains("alert")) {
                   showAlert(node);
                 }
-              });
-            });
-          });
-          observer.observe(flashToast, { childList: true });
-        }
+                node.querySelectorAll && node.querySelectorAll(".alert").forEach(showAlert);
+              }
+            }
+          }
+        });
+
+        bodyObserver.observe(document.body, { childList: true, subtree: true });
       });
       </script>
+
     </body>    
   </html>

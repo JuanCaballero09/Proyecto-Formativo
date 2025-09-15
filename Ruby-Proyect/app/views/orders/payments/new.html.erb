@@ -23,9 +23,29 @@
           <% end %>
         </tbody>
         <tfoot>
+          <% if @order.coupon.present? %>
+            <tr>
+              <td colspan="3"><b>Cupón (<%= @order.coupon.codigo %>):</b></td>
+              <td>
+                <b>
+                  <% if @order.coupon.tipo_descuento == "porcentaje" %>
+                    - <%= @order.coupon.valor.to_i %>%
+                  <% else %>
+                    - <%= number_to_currency(@order.coupon.valor, unit: "COP $", separator: ",", delimiter: ".") %>
+                  <% end %>
+                </b>
+              </td>
+            </tr>
+          <% end %>
           <tr>
             <td colspan="3"><b>Total: </b></td>
-            <td><b><strong class="precio" data-precio="<%= @order.total %>" data-locale="<%= I18n.locale %>">$</strong></b></td>
+            <td>
+              <b>
+                <strong class="precio" data-precio="<%= @order.total %>" data-locale="<%= I18n.locale %>">
+                  <%= number_to_currency(@order.total, unit: "", separator: ",", delimiter: ".") %> COP
+                </strong>
+              </b>
+            </td>
           </tr>
         </tfoot>
       </table>  

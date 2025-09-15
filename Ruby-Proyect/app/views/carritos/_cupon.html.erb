@@ -1,0 +1,22 @@
+<div id="carrito-cupon" class="carrito-cupon">
+  <% if carrito&.coupon.present? %>
+    <p style="margin: 10px 0;">
+      <p style="display: inline; margin: 0;">Cupón aplicado: </p><strong><%= carrito.coupon.codigo %></strong>
+      <p style="color: green; display: inline; margin: 0;">( - <%= number_to_currency(carrito.descuento) %> )</p>
+    </p>
+
+    <%= button_to "Quitar cupón",
+                  quitar_cupon_carrito_path,
+                  method: :delete,
+                  form: { data: { turbo_stream: true } } %>
+  <% else %>
+    <%= form_with url: aplicar_cupon_carrito_path,
+                  method: :post,
+                  data: { turbo_stream: true },
+                  local: true,
+                  class: "form-cupon" do |f| %>
+      <%= f.text_field :codigo, placeholder: "Ingresa tu cupón", class: "buscador" %>
+      <%= f.submit "Aplicar" %>
+    <% end %>
+  <% end %>
+</div>

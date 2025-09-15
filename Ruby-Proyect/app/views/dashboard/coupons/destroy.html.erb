@@ -1,0 +1,10 @@
+<h1>¿Estás seguro que deseas eliminar este cupón?</h1>
+
+<p><strong>Código:</strong> <%= @coupon.codigo %></p>
+<p><strong>Tipo de descuento:</strong> <%= @coupon.tipo_descuento %></p>
+<p><strong>Valor:</strong> <%= @coupon.valor %></p>
+<p><strong>Expira en:</strong> <%= @coupon.expira_en&.strftime('%d/%m/%Y %H:%M') || 'Sin fecha' %></p>
+<p><strong>Estado:</strong> <%= @coupon.activo ? 'Activo' : 'Inactivo' %></p>
+
+<%= button_to "Eliminar", dashboard_coupon_path(@coupon), method: :delete, data: { confirm: "¿Seguro?" } %>
+<%= link_to "Cancelar", dashboard_coupons_path %>

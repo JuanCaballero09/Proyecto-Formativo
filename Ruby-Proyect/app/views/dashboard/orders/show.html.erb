@@ -33,6 +33,12 @@
 
     <p class="order-total"><strong>Total a pagar:</strong> <%= number_to_currency(@order.total, unit: "COP ", separator: ",", delimiter: ".") %></p>
 
+    <% if @order.coupon.present? %>
+        <p style="color: green; font-weight: bold;">
+            Cupón aplicado: <%= @order.coupon.codigo %> 
+            (<%= @order.coupon.tipo_descuento == "fijo" ? number_to_currency(@order.coupon.valor) : "#{@order.coupon.valor}%" %>)
+        </p>
+    <% end %>
   
     <%= link_to 'Volver al listado', dashboard_orders_path, class: "btn-eliminar", style: "margin: 10px auto;" %>
 

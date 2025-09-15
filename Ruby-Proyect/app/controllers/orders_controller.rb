@@ -13,6 +13,7 @@ class OrdersController < ApplicationController
     ActiveRecord::Base.transaction do
       @order = current_user.orders.build(status: :pendiente, total: 0)
       @order.carrito = carrito if carrito.respond_to?(:id)
+      @order.coupon  = carrito.coupon
       @order.save!
 
       carrito.carrito_items.each do |ci|
@@ -23,25 +24,36 @@ class OrdersController < ApplicationController
         )
       end
 
-      total = @order.order_items.sum("quantity * price")
+      total = carrito.total
       @order.update!(total: total)
+
+      if @order.coupon.present?
+        resultado = @order.coupon.apply_to(current_user)
+        if resultado != "Cupón aplicado con éxito"
+          raise ActiveRecord::Rollback, "No se pudo aplicar el cupón: #{resultado}"
+        end
+      end
 
       # opcional: vaciar carrito después de crear la orden
       carrito.carrito_items.destroy_all
+      carrito.update(coupon: nil)
+      session[:carrito_id] = nil
     end
 
     redirect_to order_path(@order)
+  rescue ActiveRecord::Rollback => e
+    redirect_to carrito_path, alert: "No se pudo generar la orden: #{e.message}"
   rescue ActiveRecord::RecordInvalid => e
     redirect_to carrito_path, alert: "No se pudo generar la orden: #{e.message}"
   end
 
   def show
+    return redirect_to root_path, alert: "Orden no encontrada" if @order.nil?
     # permiso: que sea el dueño o admin
     unless @order.user == current_user || current_user&.admin?
       redirect_to root_path, alert: "No autorizado a ver esta orden"
-      nil
+      return # rubocop:disable Style/RedundantReturn
     end
-    # la vista usará @order y @order.order_items
   end
 
   private

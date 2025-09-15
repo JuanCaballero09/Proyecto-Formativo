@@ -1,0 +1,29 @@
+<%= turbo_stream.replace "carrito-cupon",
+      partial: "carritos/cupon",
+      locals: { carrito: @carrito } %>
+
+<%= turbo_stream.replace "totales-carrito" do %>
+  <div id="totales-carrito" class="totales-carrito" style="margin-top: 2em;">
+    <p><strong>Subtotal:</strong> <%= number_to_currency(@carrito.subtotal, unit: "COP $", separator: ",", delimiter: ".") %></p>
+    <p><strong>Descuento:</strong> <%= number_to_currency(@carrito.descuento, unit: "COP $", separator: ",", delimiter: ".") %></p>
+    <p><strong>Total:</strong> <%= number_to_currency(@carrito.total, unit: "COP $", separator: ",", delimiter: ".") %></p>
+  </div>
+<% end %>
+
+<%= turbo_stream.update "contador-productos", @carrito.carrito_items.sum(:cantidad) %>
+
+<%= turbo_stream.replace "alert-container" do %>
+  <div id="alert-container">
+    <% flash.each do |key, message| %>
+      <% css_class = case key.to_sym
+        when :notice then "info"
+        when :alert  then "warning"
+        when :error  then "error"
+        when :success then "success"
+        else "info"
+        end %>
+      <div class="alert <%= css_class %>"><%= message %></div>
+    <% end %>
+    <div id="flash-toast"></div>
+  </div>
+<% end %>

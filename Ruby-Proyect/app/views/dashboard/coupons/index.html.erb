@@ -1,0 +1,20 @@
+<div class="coupons-container">
+  <div class="coupons-title">Cupones</div>
+  <%= link_to "Nuevo cupón", new_dashboard_coupon_path, class: "btn-aggr" %>
+  <table class="coupons-table">
+    <thead>
+      <tr>
+        <th>Código</th>
+        <th>Tipo</th>
+        <th>Valor</th>
+        <th>Expira</th>
+        <th>Estado</th>
+        <th>Acción</th>
+        <th>Opciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <%= render @coupons %>
+    </tbody>
+  </table>
+</div>

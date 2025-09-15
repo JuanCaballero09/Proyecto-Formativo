@@ -50,6 +50,13 @@
             </div>
         </details>
 
+        <details>
+          <summary><%= t("home.dashboard.cupones")%></summary>
+            <div class="details-content">
+              <%= link_to t("home.dashboard.ver_cupones"), dashboard_coupons_path %>
+              <%= link_to t("home.dashboard.crear_cupon"), new_dashboard_coupon_path %>
+            </div>
+        </details>
 
         <details>
           <summary><%= t("home.dashboard.producto")%></summary>

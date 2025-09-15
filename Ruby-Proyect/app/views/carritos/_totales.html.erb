@@ -1,0 +1,5 @@
+<div id="totales-carrito" class="totales-carrito" style="margin-top: 2em;">
+  <p><strong>Subtotal:</strong> <%= number_to_currency(@carrito.subtotal, unit: "COP $", separator: ",", delimiter: ".") %></p>
+  <p><strong>Descuento:</strong> <%= number_to_currency(@carrito.descuento, unit: "COP $", separator: ",", delimiter: ".") %></p>
+  <p><strong>Total:</strong> <%= number_to_currency(@carrito.total, unit: "COP $", separator: ",", delimiter: ".") %></p>
+</div>

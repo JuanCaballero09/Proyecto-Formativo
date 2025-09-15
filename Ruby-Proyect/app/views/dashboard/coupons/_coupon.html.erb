@@ -1,0 +1,23 @@
+<tr id="coupon-row-<%= coupon.id %>">
+  <td><%= coupon.codigo %></td>
+  <td class="coupon-tipo"><%= coupon.tipo_descuento %></td>
+  <td class="coupon-valor"><%= coupon.valor %></td>
+  <td><%= l(coupon.expira_en, format: "%d/%m/%Y %H:%M") %></td>
+  <td><%= coupon.activo? ? "Activo" : "Inactivo" %></td>
+  <td>
+    <% if coupon.activo? %>
+      <%= link_to "Desactivar", toggle_activo_dashboard_coupon_path(coupon),
+                  data: { turbo_method: :patch }, class: "btn btn-warning" %>
+    <% else %>
+      <%= link_to "Activar", toggle_activo_dashboard_coupon_path(coupon),
+                  data: { turbo_method: :patch }, class: "btn btn-primary" %>
+    <% end %>
+  </td>
+  <td style="display: flex; gap: 6px; justify-content: center;">
+    <%= link_to 'Ver', dashboard_coupon_path(coupon), class: 'btn btn-info' %>
+    <%= link_to 'Editar', edit_dashboard_coupon_path(coupon), class: 'btn btn-secondary' %>
+    <%= link_to 'Eliminar', dashboard_coupon_path(coupon),
+                data: { turbo_method: :delete, turbo_confirm: '¿Estás seguro?' },
+                class: 'btn btn-danger' %>
+  </td>
+</tr>

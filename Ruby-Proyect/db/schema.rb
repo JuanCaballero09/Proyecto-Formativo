@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_22_180319) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_13_151000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -62,6 +62,29 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_22_180319) do
     t.string "numero_orden"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "coupon_id"
+    t.index ["coupon_id"], name: "index_carritos_on_coupon_id"
+  end
+
+  create_table "coupon_usages", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "coupon_id", null: false
+    t.datetime "used_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["coupon_id"], name: "index_coupon_usages_on_coupon_id"
+    t.index ["user_id", "coupon_id"], name: "index_unique_user_coupon_usages", unique: true
+    t.index ["user_id"], name: "index_coupon_usages_on_user_id"
+  end
+
+  create_table "coupons", force: :cascade do |t|
+    t.string "codigo"
+    t.string "tipo_descuento"
+    t.decimal "valor"
+    t.datetime "expira_en"
+    t.boolean "activo", default: true
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "grupos", force: :cascade do |t|
@@ -105,8 +128,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_22_180319) do
     t.bigint "carrito_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "coupon_id"
     t.index ["carrito_id"], name: "index_orders_on_carrito_id"
     t.index ["code"], name: "index_orders_on_code", unique: true
+    t.index ["coupon_id"], name: "index_orders_on_coupon_id"
     t.index ["user_id"], name: "index_orders_on_user_id"
   end
 
@@ -161,11 +186,15 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_22_180319) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "carrito_items", "carritos"
   add_foreign_key "carrito_items", "products"
+  add_foreign_key "carritos", "coupons"
+  add_foreign_key "coupon_usages", "coupons"
+  add_foreign_key "coupon_usages", "users"
   add_foreign_key "ingrediente_productos", "ingredientes"
   add_foreign_key "ingrediente_productos", "products"
   add_foreign_key "order_items", "orders"
   add_foreign_key "order_items", "products"
   add_foreign_key "orders", "carritos"
+  add_foreign_key "orders", "coupons"
   add_foreign_key "orders", "users"
   add_foreign_key "payments", "orders"
   add_foreign_key "products", "grupos"
