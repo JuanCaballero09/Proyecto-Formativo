@@ -1,6 +1,7 @@
 import 'package:first_flutter/bloc/auth_event.dart';
 import 'package:first_flutter/l10n/app_localizations.dart';
 import 'package:first_flutter/pages/register_page.dart';
+import 'package:first_flutter/service/ApiService.dart';
 import 'package:first_flutter/widgets/language_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -128,14 +129,24 @@ class PerfilPage extends StatelessWidget {
                     AppLocalizations.of(context)!.logout,
                     style: const TextStyle(color: Colors.red),
                   ),
-                  onTap: () {
-                    context.read<AuthBloc>().add(LogoutRequested());
-                    Navigator.pushNamedAndRemoveUntil(
-                      context,
-                      '/welcome',
-                      (route) => false,
-                    );
-                  },
+                  onTap: () async {
+                    final api = ApiService();
+                    final success = await api.logout();
+                    if (success) {
+                      // ignore: use_build_context_synchronously
+                      context.read<AuthBloc>().add(LogoutRequested());
+                      Navigator.pushNamedAndRemoveUntil(
+                        // ignore: use_build_context_synchronously
+                        context,
+                        '/welcome',
+                        (route) => false,
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text("Error al cerrar sesión")),
+                      );
+                    }
+                  },  
                 ),
               ],
             ),

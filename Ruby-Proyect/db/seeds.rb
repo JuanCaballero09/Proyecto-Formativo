@@ -23,7 +23,8 @@ User.create(
   apellido: "Admin",
   telefono: "123456789",
   rol: :admin,
-  confirmed_at: Time.current
+  confirmed_at: Time.current,
+  authentication_token: SecureRandom.hex(20) # 👈 generar token al crear desde seeds
 )
 puts "Usuarios creados: #{User.count}"
 

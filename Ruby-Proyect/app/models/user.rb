@@ -8,6 +8,9 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable,
          :confirmable
 
+  # Token de autenticacion
+  before_create :generate_authentication_token
+
   # Enum roles
   enum :rol, { cliente: 0, empleado: 1, admin: 2 }
 
@@ -38,5 +41,11 @@ class User < ApplicationRecord
   # Logica para usuario inactivos por mas de un mes
   def inactive_for_a_month?
     ultimo_acceso.present? && ultimo_acceso < 1.month.ago
+  end
+
+  private
+
+  def generate_authentication_token
+    self.authentication_token = SecureRandom.hex(20)
   end
 end
