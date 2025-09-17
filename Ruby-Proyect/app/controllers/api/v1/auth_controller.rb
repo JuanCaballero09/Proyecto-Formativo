@@ -20,7 +20,7 @@ class Api::V1::AuthController < ApplicationController
         render json: { error: "Cuenta no confirmada o inactiva" }, status: :unauthorized
       end
     else
-      render json: { error: "Credenciales inválidas" }, status: :unauthorized
+      render json: { error: "Contraseña incorrecta" }, status: :unauthorized
     end
   end
 
