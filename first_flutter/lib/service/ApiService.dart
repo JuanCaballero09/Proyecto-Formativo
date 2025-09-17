@@ -26,7 +26,7 @@ class ApiService {
       await storage.write(key: 'token', value: data['token']);
 
       // ignore: avoid_print
-      print("✅ Login exitoso, token: ${data["token"]}");
+      print("✅ Login exitoso");
       return true;
     } else {
 
