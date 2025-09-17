@@ -63,7 +63,11 @@ Rails.application.routes.draw do
   # API routes
   namespace :api do
     namespace :v1 do
-      resources :products, only: [ :index ]
+      post "login",  to: "auth#login"
+      post "logout", to: "auth#logout"
+      resources :grupos, path: "categorias", only: [ :index, :show ] do
+        resources :products, path: "productos", only: [ :index, :show ], module: :grupos
+      end
     end
   end
 end

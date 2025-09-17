@@ -1,4 +1,5 @@
 import 'package:first_flutter/pages/register_page.dart';
+import 'package:first_flutter/service/ApiService.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -61,10 +62,14 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     }
     setState(() => isLoading = true);
     await Future.delayed(const Duration(seconds: 1));
-    if (user.toLowerCase() == 'admin@terraza.com' && pass == '123456') {
-      if (!mounted) return;
+    
+    final api = ApiService();
+    final success = await api.login(user, pass);
+    
+    if (!mounted) return;
 
-        // ✅ Mostrar popup en el centro
+    // ✅ Mostrar popup en el centro
+    if (success) {
     showDialog(
       context: context,
       barrierDismissible: false, // no se cierra tocando afuera
