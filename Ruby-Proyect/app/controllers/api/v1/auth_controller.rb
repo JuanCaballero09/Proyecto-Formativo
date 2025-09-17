@@ -13,7 +13,8 @@ class Api::V1::AuthController < ApplicationController
             nombre: user.nombre,
             apellido: user.apellido,
             email: user.email,
-            rol: user.rol
+            rol: user.rol,
+            telefono: user.telefono
           }
         }, status: :ok
       else
@@ -31,7 +32,7 @@ class Api::V1::AuthController < ApplicationController
       user.update(authentication_token: SecureRandom.hex(20)) # invalidamos token actual
       render json: { message: "Sesión cerrada correctamente" }, status: :ok
     else
-      render json: { error: "Token inválido" }, status: :unauthorized
+      render json: { error: "Token no encontrado o inválido" }, status: :unauthorized
     end
   end
 end
