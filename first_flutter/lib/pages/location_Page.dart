@@ -27,6 +27,15 @@ class _MapaOSMPageState extends State<MapaOSMPage> {
   // Estado de carga de ubicación
   bool _isLoadingLocation = false;
 
+  // Segundo punto para cálculo de distancia
+  LatLng? _secondPoint;
+
+  // Distancia calculada
+  double? _distance;
+
+  // Estado de modo de medición
+  bool _isMeasuringMode = false;
+
   // Obtener permisos de ubicación
   Future<bool> _handleLocationPermission() async {
     bool serviceEnabled;
@@ -76,6 +85,8 @@ class _MapaOSMPageState extends State<MapaOSMPage> {
 
       setState(() {
         _currentPosition = LatLng(position.latitude, position.longitude);
+        _secondPoint = null;
+        _distance = null;
       });
 
       // Centrar el mapa en la ubicación actual
@@ -91,6 +102,33 @@ class _MapaOSMPageState extends State<MapaOSMPage> {
     } finally {
       setState(() => _isLoadingLocation = false);
     }
+  }
+
+  // Calcular distancia entre dos puntos
+  void _calculateDistance() {
+    if (_secondPoint == null) return;
+    
+    final distanceInMeters = Geolocator.distanceBetween(
+      _currentPosition.latitude,
+      _currentPosition.longitude,
+      _secondPoint!.latitude,
+      _secondPoint!.longitude,
+    );
+
+    setState(() {
+      _distance = distanceInMeters / 1000; // Convertir a kilómetros
+    });
+  }
+
+  // Alternar modo de medición
+  void _toggleMeasuringMode() {
+    setState(() {
+      _isMeasuringMode = !_isMeasuringMode;
+      if (!_isMeasuringMode) {
+        _secondPoint = null;
+        _distance = null;
+      }
+    });
   }
 
   // Obtener la dirección a partir de las coordenadas
@@ -135,12 +173,32 @@ class _MapaOSMPageState extends State<MapaOSMPage> {
         backgroundColor: const Color.fromRGBO(237, 88, 33, 1),
         foregroundColor: Colors.white,
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _getCurrentLocation,
-        backgroundColor: const Color.fromRGBO(237, 88, 33, 1),
-        child: _isLoadingLocation
-          ? const CircularProgressIndicator(color: Colors.white)
-          : const Icon(Icons.my_location, color: Colors.white),
+      floatingActionButton: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          // Botón para modo de medición
+          FloatingActionButton(
+            onPressed: _toggleMeasuringMode,
+            backgroundColor: _isMeasuringMode 
+              ? Colors.blue 
+              : const Color.fromRGBO(237, 88, 33, 1),
+            heroTag: 'measureButton',
+            child: Icon(
+              _isMeasuringMode ? Icons.close : Icons.straighten,
+              color: Colors.white,
+            ),
+          ),
+          const SizedBox(width: 10),
+          // Botón de ubicación actual
+          FloatingActionButton(
+            onPressed: _getCurrentLocation,
+            backgroundColor: const Color.fromRGBO(237, 88, 33, 1),
+            heroTag: 'locationButton',
+            child: _isLoadingLocation
+              ? const CircularProgressIndicator(color: Colors.white)
+              : const Icon(Icons.my_location, color: Colors.white),
+          ),
+        ],
       ),
       body: Column(
         children: [
@@ -152,19 +210,26 @@ class _MapaOSMPageState extends State<MapaOSMPage> {
           initialZoom: 13.0,
           onTap: (tapPosition, point) async {
             setState(() {
-              _currentPosition = point;
-              _isDragging = true;
+              if (_isMeasuringMode && _secondPoint == null) {
+                _secondPoint = point;
+                _calculateDistance();
+              } else if (!_isMeasuringMode) {
+                _currentPosition = point;
+                _isDragging = true;
+              }
             });
             
-            // Obtener la dirección del nuevo punto
-            await _getAddressFromLatLng(point);
-            
-            // Animar el marcador
-            Future.delayed(const Duration(milliseconds: 500), () {
-              setState(() {
-                _isDragging = false;
+            if (!_isMeasuringMode) {
+              // Obtener la dirección del nuevo punto
+              await _getAddressFromLatLng(point);
+              
+              // Animar el marcador
+              Future.delayed(const Duration(milliseconds: 500), () {
+                setState(() {
+                  _isDragging = false;
+                });
               });
-            });
+            }
           },
         ),
         children: [
@@ -175,6 +240,7 @@ class _MapaOSMPageState extends State<MapaOSMPage> {
           ),
           MarkerLayer(
             markers: [
+              // Marcador principal
               Marker(
                 point: _currentPosition,
                 width: 40,
@@ -189,8 +255,31 @@ class _MapaOSMPageState extends State<MapaOSMPage> {
                   ),
                 ),
               ),
+              // Segundo marcador para medición
+              if (_secondPoint != null)
+                Marker(
+                  point: _secondPoint!,
+                  width: 40,
+                  height: 40,
+                  child: const Icon(
+                    Icons.place,
+                    color: Colors.blue,
+                    size: 40,
+                  ),
+                ),
             ],
           ),
+          // Línea entre los puntos si estamos midiendo
+          if (_secondPoint != null)
+            PolylineLayer(
+              polylines: [
+                Polyline(
+                  points: [_currentPosition, _secondPoint!],
+                  color: Colors.blue,
+                  strokeWidth: 3.0,
+                ),
+              ],
+            ),
         ],
       )),
       // Panel de información de la dirección
@@ -213,6 +302,21 @@ class _MapaOSMPageState extends State<MapaOSMPage> {
               _currentAddress,
               style: const TextStyle(fontSize: 14),
             ),
+            if (_distance != null) ...[
+              const SizedBox(height: 16),
+              const Text(
+                'Distancia:',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                '${_distance!.toStringAsFixed(2)} km',
+                style: const TextStyle(fontSize: 14),
+              ),
+            ],
           ],
         ),
       ),
