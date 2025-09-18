@@ -60,4 +60,27 @@ class ApiService {
       return false;
     }
   }
+
+  Future<List<dynamic>?> getCategorias () async{
+    final url = Uri.parse('${baseUrl}/categorias');
+
+    final response = await http.get(url);
+    print(response.body);
+
+    if(response.statusCode == 200){
+      final List<dynamic> decoded = jsonDecode(response.body);
+
+      print('✅ cargado exitosamente');
+
+      return decoded;
+    }else{
+      print('❌ Error: ${response.statusCode}');
+
+      return null;
+
+    }
+
+  }
+
+
 }
