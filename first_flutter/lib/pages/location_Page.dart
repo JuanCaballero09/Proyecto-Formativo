@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import '../l10n/app_localizations.dart';
 
 /// Página que muestra un mapa interactivo para seleccionar ubicaciones
@@ -22,6 +23,75 @@ class _MapaOSMPageState extends State<MapaOSMPage> {
 
   // Dirección actual
   String _currentAddress = '';
+
+  // Estado de carga de ubicación
+  bool _isLoadingLocation = false;
+
+  // Obtener permisos de ubicación
+  Future<bool> _handleLocationPermission() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('Los servicios de ubicación están desactivados. Por favor actívalos.'),
+      ));
+      return false;
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Los permisos de ubicación fueron denegados'),
+        ));
+        return false;
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text(
+          'Los permisos de ubicación están permanentemente denegados, no podemos solicitar permisos.'),
+      ));
+      return false;
+    }
+
+    return true;
+  }
+
+  // Obtener la ubicación actual
+  Future<void> _getCurrentLocation() async {
+    setState(() => _isLoadingLocation = true);
+
+    try {
+      final hasPermission = await _handleLocationPermission();
+      if (!hasPermission) return;
+
+      final position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high
+      );
+
+      setState(() {
+        _currentPosition = LatLng(position.latitude, position.longitude);
+      });
+
+      // Centrar el mapa en la ubicación actual
+      _mapController.move(_currentPosition, 15.0);
+
+      // Obtener la dirección de la ubicación actual
+      await _getAddressFromLatLng(_currentPosition);
+      
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('Error al obtener la ubicación actual'),
+      ));
+    } finally {
+      setState(() => _isLoadingLocation = false);
+    }
+  }
 
   // Obtener la dirección a partir de las coordenadas
   Future<void> _getAddressFromLatLng(LatLng position) async {
@@ -64,6 +134,13 @@ class _MapaOSMPageState extends State<MapaOSMPage> {
         ),
         backgroundColor: const Color.fromRGBO(237, 88, 33, 1),
         foregroundColor: Colors.white,
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _getCurrentLocation,
+        backgroundColor: const Color.fromRGBO(237, 88, 33, 1),
+        child: _isLoadingLocation
+          ? const CircularProgressIndicator(color: Colors.white)
+          : const Icon(Icons.my_location, color: Colors.white),
       ),
       body: Column(
         children: [
