@@ -47,6 +47,11 @@
       <canvas id="chartLineas"></canvas>
     </div>
 
+    <!-- Gráfico en barras -->
+    <div class= "card chart">
+      <h3><%= t("home.graficas.top_productos")%></h3>
+      <canvas id="chartTopOrders"></canvas>
+    </div>
   </div>
 </section>
 
@@ -62,4 +67,10 @@
     labels: <%= raw @grupos_growth.keys.to_json %>,
     data: <%= raw @grupos_growth.values.to_json %>
   };
+
+  // Producto más comprado
+  window.TopOrders = {
+    labels: <%= raw @top_products.keys.to_json %>,
+    data: <%= raw @top_products.values.to_json %>
+  }
 </script>

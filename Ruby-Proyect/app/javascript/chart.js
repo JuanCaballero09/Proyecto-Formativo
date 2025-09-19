@@ -112,4 +112,37 @@ document.addEventListener("turbo:load", function () {
       }
     }
   });
+
+  new Chart(document.getElementById("chartTopOrders"), {
+    type: "line",
+    data: {
+      labels: window.TopOrders.labels,
+      datasets: [{
+        label: "Productos más vendidos",
+        data:  window.TopOrders.data,
+        backgroundColor: [base, claro, oscuro],
+        borderColor: "#fff",
+        borderWidth: 2
+      }],
+     options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: "bottom",
+          labels: {
+            color: oscuro,
+            padding: 10
+          }
+        }
+      },
+      layout: {
+        padding: {
+          top: 10,
+          bottom: 10
+        }
+      }
+    }
+    }
+  })
 });
