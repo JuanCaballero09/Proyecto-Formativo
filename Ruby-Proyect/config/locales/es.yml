@@ -87,7 +87,9 @@ es:
       ultimo_grupo: "Ultimo grupo"
       producto_por_grupo: "Productos por grupos"
       distribuccion: "Distribución"
-      crecimiento: "Crecimiento" 
+      crecimiento: "Crecimiento"
+      producto_mas_vendido: "Productos más vendidos"
+      producto_menos_vendido: "Productos menos vendidos"
 
     carrito: # textos en vista carrito
       tu_carrito: "Tu Carrito"

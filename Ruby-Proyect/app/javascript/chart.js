@@ -113,6 +113,7 @@ document.addEventListener("turbo:load", function () {
     }
   });
 
+   // === Producto más vendido (line) ===
   new Chart(document.getElementById("chartTopOrders"), {
     type: "line",
     data: {
@@ -144,5 +145,39 @@ document.addEventListener("turbo:load", function () {
       }
     }
     }
-  })
+  });
+
+  // === Producto menos vendido (line) ===
+  new Chart(document.getElementById("charleastproducts"), {
+    type: "line",
+    data: {
+      labels: window.LeastOrder.labels,
+      datasets: [{
+        label: "Productos menos vendidos",
+        data:  window.LeastOrder.data,
+        backgroundColor: [base, claro, oscuro],
+        borderColor: "#fff",
+        borderWidth: 2
+      }],
+     options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: "bottom",
+          labels: {
+            color: oscuro,
+            padding: 10
+          }
+        }
+      },
+      layout: {
+        padding: {
+          top: 10,
+          bottom: 10
+        }
+      }
+    }
+    }
+  });
 });

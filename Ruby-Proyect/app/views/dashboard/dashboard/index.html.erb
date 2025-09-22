@@ -41,16 +41,22 @@
       <canvas id="chartTorta"></canvas>
     </div>
 
+     <!-- Gráfico en barras -->
+    <div class= "card chart normal">
+      <h3><%= t("home.graficas.producto_mas_vendido")%></h3>
+      <canvas id="chartTopOrders"></canvas>
+    </div>
+
+    <!-- Gráfico en barras -->
+    <div class= "card chart normal">
+      <h3><%= t("home.graficas.producto_menos_vendido")%></h3>
+      <canvas id="charleastproducts"></canvas>
+    </div>
+
     <!-- Gráfico de líneas -->
     <div class="card chart big">
       <h3><%= t("home.graficas.crecimiento")%></h3>
       <canvas id="chartLineas"></canvas>
-    </div>
-
-    <!-- Gráfico en barras -->
-    <div class= "card chart">
-      <h3><%= t("home.graficas.top_productos")%></h3>
-      <canvas id="chartTopOrders"></canvas>
     </div>
   </div>
 </section>
@@ -72,5 +78,11 @@
   window.TopOrders = {
     labels: <%= raw @top_products.keys.to_json %>,
     data: <%= raw @top_products.values.to_json %>
+  }
+
+  // producto menos vendido
+  window.LeastOrder = {
+    label: <%= raw @least_prodcts.keys.to_json %>,
+    data: <%= raw @least_prodcts.values.to_json %>
   }
 </script>
