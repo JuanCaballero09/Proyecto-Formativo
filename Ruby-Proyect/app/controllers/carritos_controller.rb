@@ -13,17 +13,18 @@ class CarritosController < ApplicationController
     cupon = Coupon.find_by(codigo: params[:codigo])
 
     if @carrito && cupon
-      if cupon.usable_by?(current_user)
-        @carrito.update(coupon: cupon)
-        flash.now[:notice] = "Cupón aplicado correctamente ✅"
-      else
-        if !cupon.activo_y_no_expirado?
-          flash.now[:alert] = "El cupón no es válido o está vencido ❌"
-        elsif CouponUsage.exists?(user: current_user, coupon: cupon)
-          flash.now[:alert] = "Ya usaste este cupón ❌"
+      if cupon.usable_by?(current_user) || cupon&.activo_y_no_expirado?
+        @carrito.coupon = cupon
+        if @carrito.total >= 3000
+          @carrito.save
+          flash.now[:notice] = "Cupón aplicado correctamente ✅"
         else
-          flash.now[:alert] = "No se puede aplicar el cupón ❌"
+          @carrito.coupon = nil
+          @carrito.save
+          flash.now[:alert] = "Lo lamentamos, el monto mínimo para aplicar un cupón es menor a COP $3,000. ❌"
         end
+      else
+        flash.now[:alert] = "Cupón inválido o expirado."
       end
     else
       flash.now[:alert] = "Cupón inválido ❌"

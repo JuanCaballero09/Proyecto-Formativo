@@ -6,7 +6,7 @@
   <div class="carrito-item-info">
     <h3><%= item.product.nombre %></h3>
 
-    <p><strong><%= t("home.carrito.precio_unidad")%></strong>  <p><strong class="precio" data-precio="<%= item.precio%>" data-locale="<%= I18n.locale %>">$</strong></p></p>
+    <p><strong><%= t("home.carrito.precio_unidad")%></strong>  <p><strong class="precio" data-precio="<%= item.precio%>" data-locale="<%= I18n.locale %>"><%= number_to_currency(item.precio, unit: "COP ", separator: ",", delimiter: ".") %></strong></p></p>
 
     <p><strong><%= t("home.order.cantidad")%></strong></p>
     <div class="carrito-item-info-cantidad">
