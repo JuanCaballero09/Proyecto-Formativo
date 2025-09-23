@@ -20,11 +20,44 @@ import 'bloc/auth_bloc.dart';
 import 'pages/perfil_wrapper.dart';
 
 
+import 'package:first_flutter/pages/carrito_Page.dart';
+import 'package:first_flutter/pages/login_page.dart';
+import 'package:first_flutter/pages/menu_page.dart';
+import 'package:first_flutter/pages/register_page.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'bloc/product_bloc.dart';
+import 'bloc/cart_bloc.dart';
+import 'bloc/language_bloc.dart';
+import 'bloc/language_event.dart';
+import 'bloc/language_state.dart';
+import 'repository/product_repository.dart';
+import 'repository/http_product_repository.dart';
+import 'repository/mocki_product_repository.dart';
+import 'repository/api_product_repository.dart'; // Nuevo repositorio
+import 'pages/splash_page.dart';
+import 'package:first_flutter/pages/inter_page.dart';
+import 'l10n/app_localizations.dart';
+import 'bloc/auth_bloc.dart';
+import 'pages/perfil_wrapper.dart';
+import 'utils/api_config.dart'; // Configuración de API
+
+
 void main() {
-  // Para usar datos locales, descomenta la siguiente línea y comenta la de HttpProductRepository:
-  final ProductRepository repository = MockiProductRepository();
-  //const String apiUrl = 'https://64e8e7e299cf45b15fdffb7e.mockapi.io/api/v1/products';
-  //final ProductRepository repository = HttpProductRepository(apiUrl: apiUrl);
+  // Configuración de repositorio de productos
+  // Opción 1: Para usar la nueva API REST (recomendado)
+  final ProductRepository repository = ApiProductRepository();
+  
+  // Opción 2: Para usar datos de MockAPI (comentar línea anterior y descomentar estas)
+  // const String apiUrl = 'https://64e8e7e299cf45b15fdffb7e.mockapi.io/api/v1/products';
+  // final ProductRepository repository = HttpProductRepository(apiUrl: apiUrl);
+  
+  // Opción 3: Para usar datos locales (comentar línea ApiProductRepository y descomentar esta)
+  // final ProductRepository repository = MockiProductRepository();
+
+  // Configurar URL base personalizada si es necesario
+  // ApiConfig.setBaseUrl('https://tu-api-personalizada.com/api/v1');
 
   runApp(MyApp(repository: repository));
 }
