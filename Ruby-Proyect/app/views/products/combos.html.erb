@@ -1,0 +1,104 @@
+<section class="combos-page-modern">
+  <div class="combos-page-container">
+    <!-- Header -->
+    <div class="combos-page-header">
+      <div class="header-content">
+        <div class="header-badge">
+          <span class="badge-icon">🎉</span>
+          <span class="badge-text">OFERTAS ESPECIALES</span>
+        </div>
+        <h1 class="combos-page-titulo">Combos y Promociones</h1>
+        <p class="combos-page-subtitulo">
+          Descubre nuestras ofertas especiales diseñadas para brindarte la mejor experiencia gastronómica al mejor precio
+        </p>
+      </div>
+      <div class="header-stats">
+        <div class="stat-item">
+          <span class="stat-number"><%= @combos.count %></span>
+          <span class="stat-label">Combos disponibles</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">20%</span>
+          <span class="stat-label">Descuento promedio</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Combos Grid -->
+    <% if @combos.any? %>
+      <div class="combos-grid">
+        <% @combos.each do |combo| %>
+          <div class="combo-card-premium">
+            <!-- Imagen del combo -->
+            <div class="combo-imagen-container">
+              <%= image_tag(combo.imagen.attached? ? combo.imagen : "LogoLogoText2.svg", 
+                           class: "combo-imagen-premium", 
+                           alt: combo.nombre) %>
+              <div class="combo-overlay">
+                <div class="combo-label">
+                  <span class="combo-icon">🔥</span>
+                  <span class="combo-text">COMBO</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Contenido del combo -->
+            <div class="combo-content">
+              <div class="combo-header">
+                <h3 class="combo-nombre"><%= combo.nombre %></h3>
+                <div class="combo-precio-container">
+                  <span class="combo-precio">
+                    <strong class="precio" data-precio="<%= combo.precio%>" data-locale="<%= I18n.locale %>">$</strong>
+                  </span>
+                </div>
+              </div>
+
+              <div class="combo-descripcion">
+                <p><%= combo.descripcion %></p>
+              </div>
+
+              <!-- Productos incluidos -->
+              <% if combo.combo_items.any? %>
+                <div class="combo-items">
+                  <h4 class="items-titulo">Incluye:</h4>
+                  <div class="items-list">
+                    <% combo.combo_items.includes(:product).each do |item| %>
+                      <div class="combo-item">
+                        <span class="item-cantidad"><%= item.cantidad %>x</span>
+                        <span class="item-nombre"><%= item.product.nombre %></span>
+                      </div>
+                    <% end %>
+                  </div>
+                </div>
+              <% end %>
+
+              <!-- Acciones -->
+              <div class="combo-acciones">
+                <%= button_to t("home.section.agregar_carrito"), 
+                             carrito_items_path(product_id: combo.id), 
+                             method: :post, 
+                             class: "combo-btn-agregar",
+                             data: { turbo_frame: "_top" } %>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="sin-combos-page">
+        <%= image_tag "ProductoNoDisponible.png", alt: "Sin combos disponibles", class: "sin-combos-imagen" %>
+        <h3>No hay combos disponibles</h3>
+        <p>Estamos preparando ofertas especiales para ti. ¡Vuelve pronto!</p>
+        <%= link_to "Ver todas las categorías", grupos_path, class: "btn-volver-categorias" %>
+      </div>
+    <% end %>
+
+    <!-- Botón de regreso -->
+    <div class="combos-page-footer">
+      <%= link_to grupos_path, class: "btn-volver-grupos" do %>
+        <span class="btn-icon">←</span>
+        <span class="btn-text">Volver a categorías</span>
+      <% end %>
+    </div>
+  </div>
+</section>

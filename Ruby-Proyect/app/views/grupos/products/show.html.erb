@@ -1,58 +1,92 @@
-<section class="producto">
-  <aside class="producto-aside">
-    <% if @product.imagen.attached? %>
-      <%= image_tag(@product.imagen, alt: @product.nombre ) %>
-    <% else %>
-      <%= image_tag('LogoLogoText2.svg', alt: 'Producto sin imagen') %>
-    <% end %>
+<section class="producto-show-modern">
+  <div class="producto-container">
+    <!-- Sidebar con imagen y acciones -->
+    <aside class="producto-sidebar">
+      <div class="producto-imagen-main">
+        <% if @product.imagen.attached? %>
+          <%= image_tag(@product.imagen, alt: @product.nombre, class: "imagen-principal") %>
+        <% else %>
+          <%= image_tag('LogoLogoText2.svg', alt: 'Producto sin imagen', class: "imagen-principal") %>
+        <% end %>
+      </div>
 
-    <div>
-      <h2>Calificación</h2>
-      <p>&starf;&starf;&starf;&starf;&star; </p>
-    </div>
-
-    <div class="botones-compra">
-      <%= button_to t("home.section.agregar_carrito"), carrito_items_path(product_id: @product.id), method: :post, data: { turbo_frame: "_top" } %>
-    </div>
-
-  </aside>
-  <article class="producto-vista">
-    <div class="producto-detalles">
-      <div class="producto-info">
-        <h1><%= @product.nombre %></h1>
-        <p><%= @product.descripcion %></p>
-
-        <div>
-          <h3><%= t("home.show-vista.precio")%></h3>
-          <p><strong class="precio" data-precio="<%= @product.precio%>" data-locale="<%= I18n.locale %>">$</strong></p>
+      <div class="producto-precio-card">
+        <div class="precio-container">
+          <span class="precio-label"><%= t("home.show-vista.precio")%></span>
+          <span class="precio-valor">
+            <strong class="precio" data-precio="<%= @product.precio%>" data-locale="<%= I18n.locale %>">$</strong>
+          </span>
         </div>
+      </div>
 
-        <div>
-          <h3><%= t("home.dashboard.ingredientes")%></h3>
-          <ul>
+      <div class="producto-rating">
+        <h3>Calificación</h3>
+        <div class="stars">
+          <span class="star filled">★</span>
+          <span class="star filled">★</span>
+          <span class="star filled">★</span>
+          <span class="star filled">★</span>
+          <span class="star">★</span>
+          <span class="rating-number">(4.0)</span>
+        </div>
+      </div>
+
+      <div class="producto-acciones">
+        <%= button_to t("home.section.agregar_carrito"), 
+                     carrito_items_path(product_id: @product.id), 
+                     method: :post, 
+                     class: "btn-agregar-modern",
+                     data: { turbo_frame: "_top" } %>
+      </div>
+    </aside>
+
+    <!-- Contenido principal -->
+    <main class="producto-contenido">
+      <header class="producto-header">
+        <h1 class="producto-titulo"><%= @product.nombre %></h1>
+        <p class="producto-categoria">
+          <span class="categoria-badge"><%= @product.grupo.nombre %></span>
+        </p>
+      </header>
+
+      <div class="producto-descripcion">
+        <h3 class="seccion-titulo">Descripción</h3>
+        <p class="descripcion-texto"><%= @product.descripcion %></p>
+      </div>
+
+      <div class="producto-detalles-grid">
+        <div class="detalle-card">
+          <h3 class="card-titulo">
+            <span class="icono">🌿</span>
+            <%= t("home.dashboard.ingredientes")%>
+          </h3>
+          <ul class="ingredientes-lista">
             <% @product.ingredientes.each do |ingrediente| %>
-              <li><%= ingrediente.nombre %></li>
+              <li class="ingrediente-item">
+                <span class="ingrediente-bullet">•</span>
+                <%= ingrediente.nombre %>
+              </li>
             <% end %>
           </ul>
         </div>
 
-        <div>
-          <h3><%= t("home.show-vista.categoria")%></h3>
-          <p><%= @product.grupo.nombre %></p>
+        <div class="detalle-card">
+          <h3 class="card-titulo">
+            <span class="icono">💬</span>
+            <%= t("home.show-vista.opiniones")%>
+          </h3>
+          <div class="opiniones-lista">
+            <div class="opinion-item">
+              <div class="opinion-texto">"Muy rica y jugosa"</div>
+              <div class="opinion-autor">— Ana</div>
+            </div>
+            <div class="opinion-item">
+              <div class="opinion-texto">"Me encantó la combinación"</div>
+              <div class="opinion-autor">— Luis</div>
+            </div>
+          </div>
         </div>
       </div>
-
-      <div class="producto-comentarios">
-        <h3><%= t("home.show-vista.opiniones")%></h3>
-        <ul>
-          <li>“Muy rica y jugosa” – Ana</li>
-          <li>“Me encantó la combinación” – Luis</li>
-        </ul>
-      </div>
-
-
-    </div>
-
-  </article>
-
+    </main>
+  </div>
 </section>

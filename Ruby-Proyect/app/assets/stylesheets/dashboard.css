@@ -310,6 +310,17 @@
     font-size: 16px;
 }
 
+.combo-item{
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+    align-items: center;
+}
+
+.combo-item select, .combo-item input{
+    margin: 0;
+}
+
 .checkbox-container {  
     display: flex;  
     align-items: center;

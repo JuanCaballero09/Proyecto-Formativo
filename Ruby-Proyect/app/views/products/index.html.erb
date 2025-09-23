@@ -1,8 +1,17 @@
 <section id="productosIndex">
   <% productos_por_grupo = @products.group_by(&:grupo) %>
+  
+  <% # Separar el grupo de combos y ordenar %>
+  <% grupo_combos = productos_por_grupo.find { |grupo, productos| grupo&.nombre&.downcase&.match?(/combo/) } %>
+  <% otros_grupos = productos_por_grupo.reject { |grupo, productos| grupo&.nombre&.downcase&.match?(/combo/) } %>
+  
+  <% # Reorganizar para mostrar combos primero %>
+  <% grupos_ordenados = [] %>
+  <% grupos_ordenados << grupo_combos if grupo_combos %>
+  <% grupos_ordenados.concat(otros_grupos.to_a) %>
 
   <% if @products.any? %>
-    <% productos_por_grupo.each do |grupo, productos| %>
+    <% grupos_ordenados.each do |grupo, productos| %>
       <div class="grupo" >
         <h2><%= grupo.nombre %></h2>
 
@@ -12,13 +21,21 @@
           <div class="slider-container" id="slider-<%= grupo.id %>">
             <% productos.each do |producto| %>
               <div class="carta">
-                <%= link_to grupo_product_path(producto.grupo, producto) do %>
-                  <%= image_tag(producto.imagen.attached? ? producto.imagen : "LogoLogoText2.svg") %>
-                  <h4><%= producto.nombre %></h4>
-                  <p><strong class="precio" data-precio="<%= producto.precio %>" data-locale="<%= I18n.locale %>">$</strong></p>
+                <%= link_to grupo_product_path(producto.grupo, producto), class: "carta-link" do %>
+                  <%= image_tag(producto.imagen.attached? ? producto.imagen : "LogoLogoText2.svg", 
+                               class: "carta-imagen", 
+                               alt: producto.nombre) %>
+                  <div class="carta-info">
+                    <h4 class="carta-nombre"><%= producto.nombre %></h4>
+                    <p class="carta-precio"><strong class="precio" data-precio="<%= producto.precio %>" data-locale="<%= I18n.locale %>">$</strong></p>
+                  </div>
                 <% end %>
-                <div class="botones-compra">
-                  <%= button_to t("home.section.agregar_carrito"), carrito_items_path(product_id: producto.id), method: :post, data: { turbo_frame: "_top" } %>
+                <div class="carta-acciones">
+                  <%= button_to t("home.section.agregar_carrito"), 
+                               carrito_items_path(product_id: producto.id), 
+                               method: :post, 
+                               class: "carta-btn",
+                               data: { turbo_frame: "_top" } %>
                 </div>
               </div>
             <% end %>

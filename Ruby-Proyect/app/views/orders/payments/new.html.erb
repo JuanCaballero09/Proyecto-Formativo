@@ -1,125 +1,137 @@
-<section class="order-details" style="max-width: fit-content;">  
-  <h2 style="flex: .3; padding: 20px;">Pagar Orden <%= @order.code %></h2>
+<div class="simple-payment-container">
+  <div class="simple-payment-header">
+    <h1>Pagar Orden <%= @order.code %></h1>
+    <p>Completa tu información de pago</p>
+  </div>
 
-  <div class="payment-content">
-    <div class="payment-details">
-      <table class="order-items-table-payment">
-        <thead>
-          <tr>
-            <th>Producto</th>
-            <th>Precio</th>
-            <th>Cantidad</th>
-            <th>Subtotal</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% @order.order_items.each do |item| %>
-            <tr>
-              <td><%= item.product.nombre %></td>
-              <td> <span class="precio" data-precio="<%= item.product.precio %>" data-locale="<%= I18n.locale %>"> <%= number_to_currency(item.product.precio, unit: "COP ", separator: ",", delimiter: ".") %></span></td>
-              <td><%= item.quantity %></td>
-              <td><span class="precio" data-precio="<%= item.quantity * item.product.precio %>" data-locale="<%= I18n.locale %>"> <%= number_to_currency(item.quantity * item.product.precio, unit: "COP ", separator: ",", delimiter: ".") %></span></td>
-            </tr>
-          <% end %>
-        </tbody>
-        <tfoot>
-          <% if @order.coupon.present? %>
-            <tr>
-              <td colspan="3"><b>Cupón (<%= @order.coupon.codigo %>):</b></td>
-              <td>
-                <b>
-                  <% if @order.coupon.tipo_descuento == "porcentaje" %>
-                    - <%= @order.coupon.valor.to_i %>%
-                  <% else %>
-                    - <%= number_to_currency(@order.coupon.valor, unit: "COP $", separator: ",", delimiter: ".") %>
-                  <% end %>
-                </b>
-              </td>
-            </tr>
-          <% end %>
-          <tr>
-            <td colspan="3"><b>Total: </b></td>
-            <td>
-              <b>
-                <strong class="precio" data-precio="<%= @order.total %>" data-locale="<%= I18n.locale %>">
-                  <%= number_to_currency(@order.total, unit: "", separator: ",", delimiter: ".") %> COP
-                </strong>
-              </b>
-            </td>
-          </tr>
-        </tfoot>
-      </table>  
+  <div class="simple-payment-grid">
+    <!-- Order Summary -->
+    <div class="simple-order-summary">
+      <h3>Resumen de la Orden</h3>
+      
+      <div class="simple-order-items">
+        <% @order.order_items.each do |item| %>
+          <div class="simple-order-item">
+            <span class="item-name"><%= item.product.nombre %></span>
+            <span class="item-details">
+              Cantidad: <%= item.quantity %> x 
+              <span class="precio" data-precio="<%= item.product.precio %>" data-locale="<%= I18n.locale %>">
+                <%= number_to_currency(item.product.precio, unit: "COP ", separator: ",", delimiter: ".") %>
+              </span>
+            </span>
+            <span class="item-total">
+              <span class="precio" data-precio="<%= item.quantity * item.product.precio %>" data-locale="<%= I18n.locale %>">
+                <%= number_to_currency(item.quantity * item.product.precio, unit: "COP ", separator: ",", delimiter: ".") %>
+              </span>
+            </span>
+          </div>
+        <% end %>
+      </div>
+
+      <div class="simple-order-footer">
+        <% if @order.coupon.present? %>
+          <div class="coupon-line">
+            <span>Cupón (<%= @order.coupon.codigo %>):</span>
+            <span class="discount">
+              <% if @order.coupon.tipo_descuento == "porcentaje" %>
+                - <%= @order.coupon.valor.to_i %>%
+              <% else %>
+                - <%= number_to_currency(@order.coupon.valor, unit: "COP ", separator: ",", delimiter: ".") %>
+              <% end %>
+            </span>
+          </div>
+        <% end %>
+        
+        <div class="total-line">
+          <span>Total a Pagar:</span>
+          <span class="total-amount">
+            <span class="precio" data-precio="<%= @order.total %>" data-locale="<%= I18n.locale %>">
+              <%= number_to_currency(@order.total, unit: "", separator: ",", delimiter: ".") %> COP
+            </span>
+          </span>
+        </div>
+      </div>
     </div>
 
-
-    <%= form_with model: [@order, @payment], local: true, html: { id: "payment-form", class: "payment-form" } do |f| %>
-
-      <div>
-        <%= f.label :card_number, t("home.order-pago.numero-tarjeta") %>
-        <br>
-        <%= f.text_field :card_number, maxlength: 16, required: true, class: "inputs-form-payment" %>
-        <span id="error-card" class="error-msg"></span>
-      </div>
-
-      <div style="display: flex; flex-direction: row; gap: 20px; ">
-        <div>
-          <%= f.label :exp_month, t("home.order-pago.mes-expiracion") %>
-          <%= f.select :exp_month, (1..12).map { |m| [m.to_s.rjust(2, "0"), m] }, required: true, class: "inputs-form-payment" %>
-          <span id="error-month" class="error-msg"></span>
+    <!-- Payment Form -->
+    <div class="simple-payment-form">
+      <h3>Información de Pago</h3>
+      
+      <%= form_with model: [@order, @payment], local: true, html: { id: "payment-form", class: "simple-form" } do |f| %>
+        <div class="form-field">
+          <%= f.label :card_number, t("home.order-pago.numero-tarjeta"), class: "field-label" %>
+          <%= f.text_field :card_number, maxlength: 16, required: true, class: "field-input", placeholder: "1234 5678 9012 3456" %>
+          <span id="error-card" class="error-msg"></span>
         </div>
 
-        <div>
-          <%= f.label :exp_year, t("home.order-pago.año-expiracion") %>
-          <%= f.select :exp_year, (Date.today.year..(Date.today.year+10)).map { |y| [y, y] }, required: true, class: "inputs-form-payment" %>
-          <span id="error-year" class="error-msg"></span>
+        <div class="form-row">
+          <div class="form-field">
+            <%= f.label :exp_month, t("home.order-pago.mes-expiracion"), class: "field-label" %>
+            <%= f.select :exp_month, 
+                options_for_select((1..12).map { |m| [sprintf("%02d", m), m] }, nil), 
+                { prompt: "Mes" }, 
+                { required: true, class: "field-select" } %>
+            <span id="error-month" class="error-msg"></span>
+          </div>
+
+          <div class="form-field">
+            <%= f.label :exp_year, t("home.order-pago.año-expiracion"), class: "field-label" %>
+            <%= f.select :exp_year, 
+                options_for_select((Date.today.year..(Date.today.year+10)).map { |y| [y.to_s, y] }, nil), 
+                { prompt: "Año" }, 
+                { required: true, class: "field-select" } %>
+            <span id="error-year" class="error-msg"></span>
+          </div>
         </div>
 
-      </div>
+        <div class="form-row">
+          <div class="form-field">
+            <%= f.label :cvc, "CVC", class: "field-label" %>
+            <%= f.text_field :cvc, maxlength: 4, required: true, class: "field-input", placeholder: "123" %>
+            <span id="error-cvc" class="error-msg"></span>
+          </div>
 
-      <div style="display: flex; gap: 20px;">
-        <div>
-          <%= f.label :cvc, "CVC" %>
-          <br>
-          <%= f.text_field :cvc, maxlength: 4, required: true, class: "inputs-form-payment", style: "width: fit-content;" %>
-          <span id="error-cvc" class="error-msg"></span>
-        </div>
-        <div style="width: 100%;">
-          <%= f.label :card_holder, t("home.order-pago.nombre-titular") %>
-          <%= f.text_field :card_holder, required: true, class: "inputs-form-payment" %>
-          <span id="error-holder" class="error-msg"></span>
-        </div>
-      </div>
-
-      <div>
-        <%= f.label :email, t("home.order-pago.correo-electronico") %>
-        <%= f.email_field :email, required: true, class: "inputs-form-payment" %>
-        <span id="error-email" class="error-msg"></span>
-      </div>
-
-      <div class="payment-checkbox-container">
-        <div>
-          <%= f.check_box :accept_terms, required: true, class: "inputs-form-payment-checkbox" %>
-          <%= f.label :accept_terms do %>
-            Acepto los 
-            <a href="https://wompi.com/assets/downloadble/reglamento-Usuarios-Colombia.pdf?_gl=1*126i4oi*_gcl_aw*R0NMLjE3NTYyMjY0MjQuQ2p3S0NBand0clhGQmhCaUVpd0FFS2VuMXpvMWtBb2dwUkpBWklvc3JjNkJuZ3NIRktrMVRfT3hzODRBWnFTQXdhNGd2Z3JLaVhBWGhSb0NJVnNRQXZEX0J3RQ..*_gcl_au*MjA5MDc4MDUwMy4xNzU1NzE1ODAz*_ga*MTMzNjc3NjQyNC4xNzU1NzE1ODA1*_ga_BQ9HE5B63X*czE3NTYyMjY0MzUkbzE0JGcxJHQxNzU2MjI2ODQ2JGo2MCRsMCRoMA.." target="_blank">términos y condiciones</a>
-            de Wompi
-          <% end %>
+          <div class="form-field">
+            <%= f.label :card_holder, t("home.order-pago.nombre-titular"), class: "field-label" %>
+            <%= f.text_field :card_holder, required: true, class: "field-input", placeholder: "Nombre completo" %>
+            <span id="error-holder" class="error-msg"></span>
+          </div>
         </div>
 
-        <div>
-          <%= f.check_box :accept_data, required: true, class: "inputs-form-payment-checkbox" %>
-          <%= f.label :accept_data do %>
-            Acepto la
-            <a target="_blank" href="https://wompi.com/assets/downloadble/autorizacion-tratamiento-datos-personales.pdf?_gl=1*jcrp79*_gcl_aw*R0NMLjE3NTYyMjY0MjQuQ2p3S0NBand0clhGQmhCaUVpd0FFS2VuMXpvMWtBb2dwUkpBWklvc3JjNkJuZ3NIRktrMVRfT3hzODRBWnFTQXdhNGd2Z3JLaVhBWGhSb0NJVnNRQXZEX0J3RQ..*_gcl_au*MjA5MDc4MDUwMy4xNzU1NzE1ODAz*_ga*MTMzNjc3NjQyNC4xNzU1NzE1ODA1*_ga_BQ9HE5B63X*czE3NTYyMjY0MzUkbzE0JGcxJHQxNzU2MjI2NTU3JGo0JGwwJGgw">autorización para la administración de datos personales</a>
-            y conozco la 
-            <a target="_blank" href="https://wompi.com/es/co/politica-de-privacidad?_gl=1*13f7i2g*_gcl_aw*R0NMLjE3NTYyMjY0MjQuQ2p3S0NBand0clhGQmhCaUVpd0FFS2VuMXpvMWtBb2dwUkpBWklvc3JjNkJuZ3NIRktrMVRfT3hzODRBWnFTQXdhNGd2Z3JLaVhBWGhSb0NJVnNRQXZEX0J3RQ..*_gcl_au*MjA5MDc4MDUwMy4xNzU1NzE1ODAz*_ga*MTMzNjc3NjQyNC4xNzU1NzE1ODA1*_ga_BQ9HE5B63X*czE3NTYyMjY0MzUkbzE0JGcxJHQxNzU2MjI2NTU3JGo0JGwwJGgw" target="_blank">política para el tratamiento de datos personales.</a>
-          <% end %>
+        <div class="form-field">
+          <%= f.label :email, t("home.order-pago.correo-electronico"), class: "field-label" %>
+          <%= f.email_field :email, required: true, class: "field-input", placeholder: "tu@email.com" %>
+          <span id="error-email" class="error-msg"></span>
         </div>
-      </div>
 
-      <%= f.hidden_field :installments, value: 1 %>
+        <div class="checkbox-section">
+          <div class="checkbox-item">
+            <%= f.check_box :accept_terms, required: true, class: "checkbox" %>
+            <%= f.label :accept_terms, class: "checkbox-label" do %>
+              Acepto los 
+              <a href="https://wompi.com/assets/downloadble/reglamento-Usuarios-Colombia.pdf?_gl=1*126i4oi*_gcl_aw*R0NMLjE3NTYyMjY0MjQuQ2p3S0NBand0clhGQmhCaUVpd0FFK2VuMXpvMWtBb2dwUkpBWklvc3JjNkJuZ3NIRktrMVRfT3hzODRBWnFTQXdhNGd2Z3JLaVhBWGhSb0NJVnNRQXZEX0J3RQ..*_gcl_au*MjA5MDc4MDUwMy4xNzU1NzE1ODAz*_ga*MTMzNjc3NjQyNC4xNzU1NzE1ODA1*_ga_BQ9HE5B63X*czE3NTYyMjY0MzUkbzE0JGcxJHQxNzU2MjI2ODQ2JGo2MCRsMCRoMA.." target="_blank">términos y condiciones</a>
+              de Wompi
+            <% end %>
+          </div>
 
-      <%= f.submit t("home.order-pago.pagar"), id: "pay-btn", class: "btn-pay", disabled: true %>
-    <% end %>
+          <div class="checkbox-item">
+            <%= f.check_box :accept_data, required: true, class: "checkbox" %>
+            <%= f.label :accept_data, class: "checkbox-label" do %>
+              Acepto la
+              <a target="_blank" href="https://wompi.com/assets/downloadble/autorizacion-tratamiento-datos-personales.pdf?_gl=1*jcrp79*_gcl_aw*R0NMLjE3NTYyMjY0MjQuQ2p3S0NBand0clhGQmhCaUVpd0FFK2VuMXpvMWtBb2dwUkpBWklvc3JjNkJuZ3NIRktrMVRfT3hzODRBWnFTQXdhNGd2Z3JLaVhBWGhSb0NJVnNRQXZEX0J3RQ..*_gcl_au*MjA5MDc4MDUwMy4xNzU1NzE1ODAz*_ga*MTMzNjc3NjQyNC4xNzU1NzE1ODA1*_ga_BQ9HE5B63X*czE3NTYyMjY0MzUkbzE0JGcxJHQxNzU2MjI2NTU3JGo0JGwwJGgw">autorización para la administración de datos personales</a>
+              y conozco la 
+              <a target="_blank" href="https://wompi.com/es/co/politica-de-privacidad?_gl=1*13f7i2g*_gcl_aw*R0NMLjE3NTYyMjY0MjQuQ2p3S0NBand0clhGQmhCaUVpd0FFK2VuMXpvMWtBb2dwUkpBWklvc3JjNkJuZ3NIRktrMVRfT3hzODRBWnFTQXdhNGd2Z3JLaVhBWGhSb0NJVnNRQXZEX0J3RQ..*_gcl_au*MjA5MDc4MDUwMy4xNzU1NzE1ODAz*_ga*MTMzNjc3NjQyNC4xNzU1NzE1ODA1*_ga_BQ9HE5B63X*czE3NTYyMjY0MzUkbzE0JGcxJHQxNzU2MjI2NTU3JGo0JGwwJGgw" target="_blank">política para el tratamiento de datos personales.</a>
+            <% end %>
+          </div>
+        </div>
+
+        <%= f.hidden_field :installments, value: 1 %>
+
+        <div class="submit-section">
+          <%= f.submit t("home.order-pago.pagar"), id: "pay-btn", class: "pay-button", disabled: true %>
+          <p class="security-note">🔒 Pago seguro protegido por SSL</p>
+        </div>
+      <% end %>
+    </div>
   </div>
-</section>
+</div>

@@ -23,8 +23,26 @@
   </template>
 </turbo-stream>
 
-<turbo-stream action="update" target="total-carrito">
+<!-- Actualizar los totales del carrito -->
+<turbo-stream action="replace" target="totales-carrito">
   <template>
-    <%= number_to_currency(@carrito.carrito_items.sum { |item| item.precio * item.cantidad }, unit: "COP ", separator: ",", delimiter: ".") %>
+    <div id="totales-carrito" class="totales-detalle">
+      <div class="total-item">
+        <span class="total-label">Subtotal:</span>
+        <span class="total-value"><%= number_to_currency(@carrito.subtotal, unit: "COP $", separator: ",", delimiter: ".") %></span>
+      </div>
+      
+      <% if @carrito.descuento > 0 %>
+        <div class="total-item descuento">
+          <span class="total-label">Descuento:</span>
+          <span class="total-value">-<%= number_to_currency(@carrito.descuento, unit: "COP $", separator: ",", delimiter: ".") %></span>
+        </div>
+      <% end %>
+      
+      <div class="total-item total-final">
+        <span class="total-label">Total:</span>
+        <span class="total-value"><%= number_to_currency(@carrito.total, unit: "COP $", separator: ",", delimiter: ".") %></span>
+      </div>
+    </div>
   </template>
 </turbo-stream>

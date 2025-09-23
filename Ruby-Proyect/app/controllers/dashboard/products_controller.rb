@@ -6,23 +6,46 @@ class Dashboard::ProductsController < ApplicationController
 
   def index
     if params[:query].present?
-    query = I18n.transliterate(params[:query].downcase.strip)
-    @products = Product.all.select do |p|
-      I18n.transliterate(p.nombre.downcase).include?(query)
-    end.sort_by(&:id)
+      query = I18n.transliterate(params[:query].downcase.strip)
+      all_products = Product.all.select do |p|
+        I18n.transliterate(p.nombre.downcase).include?(query)
+      end
+
+      @combos = all_products.select { |p| p.type == "Combo" }.sort_by(&:id)
+      @productos_por_grupo = all_products.reject { |p| p.type == "Combo" }
+                                       .group_by(&:grupo)
+                                       .sort_by { |grupo, _| grupo&.id || 0 }
     else
-      @products = Product.order(:id)
+      @combos = Product.where(type: "Combo").order(:id)
+      @productos_por_grupo = Product.where(type: [ nil, "" ])
+                                   .includes(:grupo)
+                                   .group_by(&:grupo)
+                                   .sort_by { |grupo, _| grupo&.id || 0 }
     end
   end
 
   def new
-    @product = Product.new
+    @product = params[:type] == "Combo" ? Combo.new : Product.new
+
+    # Para nuevos combos, agregar un combo_item vacío para el formulario
+    if @product.is_a?(Combo)
+      @product.combo_items.build
+    end
+
     @ingredientes = Ingrediente.all
+    @products_for_combo = Product.where(type: [ nil, "" ])
   end
 
   def edit
     @product = Product.find(params[:id])
+
+    # Para combos sin componentes, agregar un combo_item vacío para el formulario
+    if @product.is_a?(Combo) && @product.combo_items.empty?
+      @product.combo_items.build
+    end
+
     @ingredientes = Ingrediente.all
+    @products_for_combo = Product.where(type: [ nil, "" ])
   end
 
   def destroy
@@ -32,11 +55,27 @@ class Dashboard::ProductsController < ApplicationController
   end
 
   def create
-    @product = Product.new(product_params)
-    if @product.save
-      redirect_to dashboard_products_path,
-      notice: "El producto fue creado exitosamente."
+    if params[:product][:type] == "Combo"
+      @product = Combo.new(product_params)
+      # Si no se asigna grupo, buscar o crear el grupo "Combos"
+      if @product.grupo_id.blank?
+        combos_group = Grupo.find_by(nombre: "Combos") ||
+                      Grupo.find_by(nombre: "combo") ||
+                      Grupo.find_by(nombre: "COMBOS") ||
+                      Grupo.find_or_create_by(nombre: "Combos") do |grupo|
+                        grupo.descripcion = "Grupo para combos y promociones especiales"
+                      end
+        @product.grupo_id = combos_group.id
+      end
     else
+      @product = Product.new(product_params)
+    end
+
+    if @product.save
+      redirect_to dashboard_products_path, notice: "#{@product.type == 'Combo' ? 'Combo' : 'Producto'} creado exitosamente."
+    else
+      @ingredientes = Ingrediente.all
+      @products_for_combo = Product.where(type: [ nil, "" ])
       render :new
     end
   end
@@ -60,10 +99,6 @@ class Dashboard::ProductsController < ApplicationController
     end
   end
 
-  def product_params
-    params.require(:product).permit(:nombre, :precio, :descripcion, :grupo_id, :imagen, :disponible, ingrediente_ids: [])
-  end
-
   private
 
   def set_product
@@ -71,7 +106,7 @@ class Dashboard::ProductsController < ApplicationController
   end
 
   def product_params
-    params.require(:product).permit(
+    base_params = [
       :nombre,
       :precio,
       :descripcion,
@@ -79,8 +114,15 @@ class Dashboard::ProductsController < ApplicationController
       :grupo_id,
       :disponible,
       :calificacion,
+      :type,
       ingrediente_ids: []
-    )
+    ]
+
+    if params.dig(:product, :type) == "Combo"
+      base_params << { combo_items_attributes: [ :id, :product_id, :cantidad, :_destroy ] }
+    end
+
+    params.require(:product).permit(base_params)
   end
 
   def check_admin

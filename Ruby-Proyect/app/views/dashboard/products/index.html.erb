@@ -1,73 +1,86 @@
 <section>
   <h2>Lista de Productos</h2>
 
-  <div style="display: flex; justify-content: space-between; align-items: center; flex-direction: row; margin-bottom: 20px;">
-    <%= link_to "Nuevo Producto", new_dashboard_product_path, class: "btn-aggr" %>
+  <!-- Botones y buscador -->
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <div style="display: flex; gap: 10px;">
+      <%= link_to "Nuevo Producto", new_dashboard_product_path, class: "btn-aggr" %>
+      <%= link_to "Nuevo Combo", new_dashboard_product_path(type: "Combo"), class: "btn-aggr" %>
+    </div>
 
     <%= form_with url: dashboard_products_path, method: :get, local: true, html: {class: "buscador"} do %>
       <%= search_field_tag :query, params[:query], placeholder: "Buscar producto...", autocomplete: "off", id: "buscador-productos" %>
     <% end %>
   </div>
-  <br> 
-  <% if @products.any? %>
-    <div class="productss">
-      <% @products.each do |product| %>
-        <div class="product-card" data-nombre="<%= I18n.transliterate(product.nombre.downcase) %>">
-          <h3><%= product.nombre %></h3>
-          <%= image_tag(product.imagen.attached? ? product.imagen : "LogoLogoText2.svg") %>
-          <p><strong>id:</strong> <%= product.id %></p>
-          <p><strong>Ingredientes:</strong> <%= product.ingredientes.map(&:nombre).join(", ")%></p>
-          <p><strong>Descripción:</strong> <%= product.descripcion %></p>
-          <p><strong>Precio:</strong> <%= number_to_currency(product.precio, unit: "COP ", separator: ",", delimiter: ".", precision: 0) %> $</p>
 
-          <div id="estado-<%= product.id %>">
-            <%= button_to '',
-              toggle_disponibilidad_dashboard_product_path(product),
-              method: :patch,
-              data: { turbo_stream: true }, 
-              class: (product.disponible ? 'btn-on' : 'btn-off'),
-              form: { data: { turbo: true } } 
-            %>
+  <!-- Sección de Combos -->
+  <% if @combos.present? %>
+    <div style="margin-bottom: 40px;">
+      <h3 style="color: #e74c3c; border-bottom: 2px solid #e74c3c; padding-bottom: 10px;">COMBOS</h3>
+      <div class="productss">
+        <% @combos.each do |combo| %>
+          <div class="product-card" data-nombre="<%= I18n.transliterate(combo.nombre.downcase) %>">
+            <h3><%= combo.nombre %> <span style="font-size: 0.8em; color: #e74c3c;">(COMBO)</span></h3>
+            <%= image_tag(combo.imagen.attached? ? combo.imagen : "LogoLogoText2.svg") %>
+            <p><strong>ID:</strong> <%= combo.id %></p>
+
+            <% if combo.respond_to?(:combo_items) && combo.combo_items.any? %>
+              <p><strong>Componentes:</strong> 
+                <%= combo.combo_items.includes(:product).map { |ci| "#{ci.cantidad}x #{ci.product.nombre}" }.join(", ") %>
+              </p>
+            <% end %>
+
+            <p><strong>Descripción:</strong> <%= combo.descripcion %></p>
+            <p><strong>Precio:</strong> <%= number_to_currency(combo.precio, unit: "COP ", separator: ",", delimiter: ".", precision: 0) %></p>
+
+            <div id="estado-<%= combo.id %>">
+              <%= render "disponibilidad_toggle", product: combo %>
+            </div>
+
+            <div style="display: flex; gap: 6px; justify-content: center;">
+              <%= link_to 'Editar', edit_dashboard_product_path(combo), class: 'btn btn-secondary' %>
+              <%= link_to 'Eliminar', dashboard_product_path(combo),
+                    data: { turbo_method: :delete, turbo_confirm: '¿Estás seguro?' },
+                    class: 'btn btn-danger' %>
+            </div>
           </div>
-
-          <%= link_to "Editar", edit_dashboard_product_path(product), class: "btn-editar" %>
-          <%= button_to "Eliminar", dashboard_product_path(product), method: :delete, class: "btn-eliminar", data: { turbo_confirm: "¿Estás seguro que quieres eliminar este producto?" } %>
-        </div>
-      <% end %>
-      <div id="sin-resultados-productos" style="display: none; text-align: center; margin-top: 20px; color: gray;">
-        No se encontraron productos.
+        <% end %>
       </div>
     </div>
-    <% else %>
-    <div style="text-align: center; margin-top: 20px; color: gray;">
-      No hay productos registrados.
-    </div>
+  <% end %>
+
+  <!-- Sección de Productos por Grupo -->
+  <% @productos_por_grupo&.each do |grupo, productos| %>
+    <% if productos.any? %>
+      <div style="margin-bottom: 40px;">
+        <h3 style="color: var(--base); border-bottom: 2px solid var(--base-oscuro); padding-bottom: 5px; margin-bottom: 10px;">
+          <%= grupo&.nombre || "Sin Categoría" %>
+        </h3>
+
+        <div class="productss">
+          <% productos.each do |product| %>
+            <div class="product-card" data-nombre="<%= I18n.transliterate(product.nombre.downcase) %>">
+              <h3><%= product.nombre %></h3>
+              <%= image_tag(product.imagen.attached? ? product.imagen : "LogoLogoText2.svg") %>
+              <p><strong>ID:</strong> <%= product.id %></p>
+              <p><strong>Ingredientes:</strong> <%= product.ingredientes.map(&:nombre).join(", ") %></p>
+              <p><strong>Descripción:</strong> <%= product.descripcion %></p>
+              <p><strong>Precio:</strong> <%= number_to_currency(product.precio, unit: "COP ", separator: ",", delimiter: ".", precision: 0) %></p>
+
+              <div id="estado-<%= product.id %>">
+                <%= render "disponibilidad_toggle", product: product %>
+              </div>
+
+              <div style="display: flex; gap: 6px; justify-content: center;">
+                <%= link_to 'Editar', edit_dashboard_product_path(product), class: 'btn btn-secondary' %>
+                <%= link_to 'Eliminar', dashboard_product_path(product),
+                      data: { turbo_method: :delete, turbo_confirm: '¿Estás seguro?' },
+                      class: 'btn btn-danger' %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
   <% end %>
 </section>
-
-<script>
-  document.addEventListener("turbo:load", function () {
-    const input = document.getElementById("buscador-productos");
-    const cards = document.querySelectorAll(".product-card");
-    const mensaje = document.getElementById("sin-resultados-productos");
-
-    const normalizar = (str) =>
-      str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-
-    input.addEventListener("input", function () {
-      const valor = normalizar(input.value.trim());
-      let visibles = 0;
-
-      cards.forEach((card) => {
-        const nombre = normalizar(card.dataset.nombre);
-        const visible = nombre.includes(valor);
-        card.style.display = visible ? "" : "none";
-        if (visible) visibles++;
-      });
-
-      mensaje.style.display = visibles === 0 ? "block" : "none";
-    });
-  });
-</script>
-
-

@@ -1,56 +1,136 @@
-<section style="padding: 20px; diplay:flex; flex-direction: column;">
-  <br>
-  <h2>Resultados para "<%= params[:q] %>"</h2>
-  <hr>
+<div class="search-results-container">
+  <!-- Header de búsqueda premium -->
+  <div class="search-header">
+    <div class="search-header-content">
+      <h1 class="search-title">
+        <i class="search-icon">🔍</i>
+        Resultados de búsqueda
+      </h1>
+      <div class="search-query">
+        Mostrando resultados para: <span class="highlight-query">"<%= params[:q] %>"</span>
+      </div>
+    </div>
+  </div>
 
-  <% if @grupos.any? %>
-    <h3>Grupos encontrados</h3>
-    <section class="grupos" style="padding: 0;">
-      <% @grupos.each do |grupo| %>
-        <%= link_to grupo_products_path(grupo), class: "grupo-carta", style: "max-width: 350px;" do %>
-          <div class="grupo-imagen">
-            <% if grupo.imagen.attached? %>
-              <%= image_tag url_for(grupo.imagen), alt: grupo.nombre %>
-            <% else %>
-              <%= image_tag 'LogoLogo.svg', alt: grupo.nombre %>
+  <div class="search-content">
+    <% total_results = (@grupos&.count || 0) + (@productos&.count || 0) %>
+    
+    <!-- Contador de resultados -->
+    <div class="results-counter">
+      <span class="results-number"><%= total_results %></span>
+      <span class="results-text">resultado<%= total_results != 1 ? 's' : '' %> encontrado<%= total_results != 1 ? 's' : '' %></span>
+    </div>
+
+    <% if @grupos.any? %>
+      <!-- Sección de grupos -->
+      <div class="search-section">
+        <div class="section-header-search">
+          <h2 class="section-title">
+            <i class="section-icon">📁</i>
+            Categorías encontradas
+          </h2>
+          <span class="section-count"><%= @grupos.count %></span>
+        </div>
+        
+        <div class="search-grid">
+          <% @grupos.each do |grupo| %>
+            <%= link_to grupo_products_path(grupo), class: "search-card grupo-card" do %>
+              <div class="card-image">
+                <% if grupo.imagen.attached? %>
+                  <%= image_tag url_for(grupo.imagen), alt: grupo.nombre, class: "responsive-image" %>
+                <% else %>
+                  <%= image_tag 'LogoLogo.svg', alt: grupo.nombre, class: "responsive-image placeholder-image" %>
+                <% end %>
+                <div class="card-overlay">
+                  <span class="card-type">Categoría</span>
+                </div>
+              </div>
+              <div class="card-content">
+                <h3 class="card-title"><%= grupo.nombre %></h3>
+                <p class="card-description">
+                  <%= grupo.descripcion.present? ? truncate(grupo.descripcion, length: 100) : "Explora esta categoría de productos" %>
+                </p>
+                <div class="card-action">
+                  <span class="action-text">Ver productos</span>
+                  <i class="action-arrow">→</i>
+                </div>
+              </div>
             <% end %>
-          </div>
-          <div class="grupo-info">
-            <h3><%= grupo.nombre %></h3>
-            <p><%= grupo.descripcion.present? ? truncate(grupo.descripcion, length: 80) : "No hay descripción disponible" %></p>
-          </div>
-        <% end %>
-      <% end %>
-    </section>
-    <br>
-    <hr>
-  <% end %>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
 
-  <br>
-  <% if @productos.any? %>
-    <h3>Productos encontrados</h3>
-    <section class="grupos" style="padding: 0;">
-      <% @productos.each do |producto| %>
-        <%= link_to grupo_product_path(producto.grupo, producto), class: "grupo-carta", style: "max-width: 350px;" do %>
-          <div class="grupo-imagen">
-            <% if producto.imagen.attached? %>
-              <%= image_tag url_for(producto.imagen), alt: producto.nombre %>
-            <% else %>
-              <%= image_tag 'LogoLogo.svg', alt: producto.nombre %>
+    <% if @productos.any? %>
+      <!-- Sección de productos -->
+      <div class="search-section">
+        <div class="section-header-search">
+          <h2 class="section-title">
+            <i class="section-icon">🍽️</i>
+            Productos encontrados
+          </h2>
+          <span class="section-count"><%= @productos.count %></span>
+        </div>
+        
+        <div class="search-grid">
+          <% @productos.each do |producto| %>
+            <%= link_to grupo_product_path(producto.grupo, producto), class: "search-card producto-card" do %>
+              <div class="card-image">
+                <% if producto.imagen.attached? %>
+                  <%= image_tag url_for(producto.imagen), alt: producto.nombre, class: "responsive-image" %>
+                <% else %>
+                  <%= image_tag 'LogoLogo.svg', alt: producto.nombre, class: "responsive-image placeholder-image" %>
+                <% end %>
+                <div class="card-overlay">
+                  <span class="card-type">Producto</span>
+                </div>
+                <% if producto.precio.present? %>
+                  <div class="price-badge">
+                    $<%= number_with_delimiter(producto.precio) %>
+                  </div>
+                <% end %>
+              </div>
+              <div class="card-content">
+                <h3 class="card-title"><%= producto.nombre %></h3>
+                <p class="card-description">
+                  <%= producto.descripcion.present? ? truncate(producto.descripcion, length: 100) : "Descubre este delicioso producto" %>
+                </p>
+                <div class="card-meta">
+                  <span class="category-tag"><%= producto.grupo.nombre %></span>
+                  <div class="card-action">
+                    <span class="action-text">Ver detalles</span>
+                    <i class="action-arrow">→</i>
+                  </div>
+                </div>
+              </div>
             <% end %>
-          </div>
-          <div class="grupo-info">
-            <h3><%= producto.nombre %></h3>
-            <p><%= producto.descripcion.present? ? truncate(producto.descripcion, length: 80) : "No hay descripción disponible" %></p>
-          </div>
-        <% end %>
-      <% end %>
-    </section>
-  <% end %>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
 
-  <% if @grupos.empty? && @productos.empty? %>
-    <p>No se encontraron resultados.</p>
-  <% end %>
-
-</section>
+    <!-- Estado vacío mejorado -->
+    <% if @grupos.empty? && @productos.empty? %>
+      <div class="empty-state">
+        <div class="empty-state-icon">🔍</div>
+        <h2 class="empty-state-title">No se encontraron resultados</h2>
+        <p class="empty-state-description">
+          No pudimos encontrar resultados para "<strong><%= params[:q] %></strong>".
+        </p>
+        <div class="empty-state-suggestions">
+          <h3>Sugerencias:</h3>
+          <ul>
+            <li>Verifica la ortografía de las palabras</li>
+            <li>Usa términos más generales</li>
+            <li>Prueba con sinónimos o palabras relacionadas</li>
+          </ul>
+        </div>
+        <div class="empty-state-actions">
+          <%= link_to "Ver todas las categorías", grupos_path, class: "empty-action-btn primary" %>
+          <%= link_to "Explorar productos", products_path, class: "empty-action-btn secondary" %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
 

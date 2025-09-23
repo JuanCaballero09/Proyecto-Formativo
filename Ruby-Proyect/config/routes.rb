@@ -12,6 +12,9 @@ Rails.application.routes.draw do
 
     resources :products, path: "productos", only: [:index] # rubocop:disable Layout/SpaceInsideArrayLiteralBrackets
 
+    # Ruta especial para combos
+    get "/combos", to: "products#combos", as: "combos"
+
     resource :carrito, only: [ :show ] do
       post :aplicar_cupon
       delete :quitar_cupon
