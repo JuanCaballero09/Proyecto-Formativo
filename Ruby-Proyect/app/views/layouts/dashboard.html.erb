@@ -32,15 +32,15 @@
 
         <p>Bienvenido, <%= current_user.nombre %>!</p>
 
-        <%= link_to "Órdenes", employee_dashboard_orders_path %>
+        <%= link_to t("home.ordenes.ordenes"), employee_dashboard_orders_path %>
       
       <% elsif current_user.admin? %>
       
         <p>Bienvenido, <%= current_user.nombre %>!</p>
 
         <%= link_to t("home.dashboard.dash"), dashboard_root_path %>
-        <%= link_to "Usuarios", dashboard_users_path %>
-        <%= link_to "Órdenes", dashboard_orders_path %>
+        <%= link_to t("home.usuarios.usuarios"), dashboard_users_path %>
+        <%= link_to t("home.ordenes.ordenes"), dashboard_orders_path %>
         
         <details>
           <summary><%= t("home.dashboard.banner")%></summary>
@@ -51,7 +51,7 @@
         </details>
 
         <details>
-          <summary><%= t("home.dashboard.cupones")%></summary>
+          <summary><%= t("home.dashboard.cuponn")%></summary>
             <div class="details-content">
               <%= link_to t("home.dashboard.ver_cupones"), dashboard_coupons_path %>
               <%= link_to t("home.dashboard.crear_cupon"), new_dashboard_coupon_path %>

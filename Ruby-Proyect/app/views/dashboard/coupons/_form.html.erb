@@ -3,29 +3,29 @@
 
 <%= form_with model: [:dashboard, @coupon], html: { id: "coupon-form" , class: "dashboard-form" } do |f| %>
   <div>
-    <%= f.label :codigo, "Código" %>
+    <%= f.label :codigo, t("home.cupones.codigo") %>
     <%= f.text_field :codigo %>
   </div>
   <div>
-    <%= f.label :tipo_descuento, "Tipo de descuento" %>
+    <%= f.label :tipo_descuento, t("home.cupones.tipo_descuento") %>
     <%= f.select :tipo_descuento, [["Fijo", "fijo"], ["Porcentaje", "porcentaje"]], {}, { id: "tipo_descuento" } %>
   </div>
   <div class="input-cupon-fix">
     <%= f.label :valor, "Valor" %>
-    <%= f.number_field :valor, id: "valor" %>
+    <%= f.number_field :valor, id: t("home.cupones.valor") %>
     <p id="valor-error" style="color: red; display: none;"></p>
   </div>
   <div class="input-cupon-fix">
-    <%= f.label :expira_en, "Expira en" %>
+    <%= f.label :expira_en, t("home.cupones.expira_en") %>
     <%= f.date_select :expira_en, include_blank: true, start_year: current_year, end_year: current_year+10 %>
     <%= f.hidden_field :expira_en_hour, value: 0 %>
     <%= f.hidden_field :expira_en_minute, value: 0 %>
   </div>
   <div class="checkbox-container">
-    <%= f.label :activo, "Activo" %>
+    <%= f.label :activo, t("home.cupones.activo") %>
     <%= f.check_box :activo %>
   </div>
   <div>
-    <%= f.submit @coupon.new_record? ? 'Crear cupón' : 'Actualizar cupón' %>
+    <%= f.submit @coupon.new_record? ? t("home.cupones.crear_cupon") : t("home.cupones.actualizar_cupon") %>
   </div>
 <% end %>

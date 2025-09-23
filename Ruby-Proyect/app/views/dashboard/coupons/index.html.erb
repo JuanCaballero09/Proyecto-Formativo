@@ -1,16 +1,16 @@
 <div class="coupons-container">
-  <div class="coupons-title">Cupones</div>
-  <%= link_to "Nuevo cupón", new_dashboard_coupon_path, class: "btn-aggr" %>
+  <div class="coupons-title"><%= t("home.cupones.cupones")%></div>
+  <%= link_to t("home.cupones.nuevo_cupon"), new_dashboard_coupon_path, class: "btn-aggr" %>
   <table class="coupons-table">
     <thead>
       <tr>
-        <th>Código</th>
-        <th>Tipo</th>
-        <th>Valor</th>
-        <th>Expira</th>
-        <th>Estado</th>
-        <th>Acción</th>
-        <th>Opciones</th>
+        <th><%= t("home.cupones.codigo")%></th>
+        <th><%= t("home.cupones.tipo")%></th>
+        <th><%= t("home.cupones.valor")%></th>
+        <th><%= t("home.cupones.expira")%></th>
+        <th><%= t("home.cupones.estado")%></th>
+        <th><%= t("home.cupones.accion")%></th>
+        <th><%= t("home.cupones.opciones")%></th>
       </tr>
     </thead>
     <tbody>

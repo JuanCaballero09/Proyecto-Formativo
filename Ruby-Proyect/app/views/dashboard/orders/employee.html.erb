@@ -1,11 +1,11 @@
 <%= turbo_stream_from "employee_orders" %>
 
-<button id="btn-fullscreen" class="btn-eliminar" style="padding: 20px; font-weight: bold;">Pantalla completa</button>
+<button id="btn-fullscreen" class="btn-eliminar" style="padding: 20px; font-weight: bold;"><%= t("home.ordenes.pantalla_completa")%></button>
 
 <section id="vista" class="vista">
     <div class="orders-employee-header" id="header">
-        <h1 class="orders-title">Órdenes</h1>
-        <button id="btn-exit-fullscreen" class="btn-eliminar" style="display: none; font-size: 25px;f ont-weight: bold;">Salir</button>
+        <h1 class="orders-title"><%= t("home.ordenes.ordenes")%></h1>
+        <button id="btn-exit-fullscreen" class="btn-eliminar" style="display: none; font-size: 25px;f ont-weight: bold;"><%= t("home.ordenes.salir")%></button>
     </div>
 
     <div id="employee-orders-list" class="order-carts">

@@ -13,7 +13,7 @@
     </form>
 
     <div style="display: flex; gap: 10px; align-items: center;">
-      <%= link_to "Órdenes Empleado", employee_dashboard_orders_path, class: "btn-eliminar" %>
+      <%= link_to t("home.ordenes.ordenes_empleados"), employee_dashboard_orders_path, class: "btn-eliminar" %>
       <%= link_to request.path, class: "btn-eliminar", style: "display: flex; width: fit-content;" do %>
         <%= image_tag "icons/arrows-rotate-solid-full.svg", alt: "Refrescar", class: "btn-refresh" %>
       <% end %>
@@ -26,17 +26,17 @@
 
     <% if @orders.any? %>
 
-      <h1 class="orders-title">Listado de Órdenes</h1>
+      <h1 class="orders-title"><%= t("home.ordenes.lista_ordenes")%></h1>
 
       <table class="orders-table">
         <thead class="orders-thead">
           <tr>
-            <th class="orders-th">ID</th>
-            <th class="orders-th">Cliente</th>
-            <th class="orders-th">Estado</th>
-            <th class="orders-th orders-th--right">Total</th>
-            <th class="orders-th">Fecha</th>
-            <th class="orders-th">Acciones</th>
+            <th class="orders-th"><%= t("home.ordenes.Id")%></th>
+            <th class="orders-th"><%= t("home.ordenes.clientee")%></th>
+            <th class="orders-th"><%= t("home.ordenes.estado")%></th>
+            <th class="orders-th orders-th--right"><%= t("home.ordenes.total")%></th>
+            <th class="orders-th"><%= t("home.ordenes.fecha")%></th>
+            <th class="orders-th"><%= t("home.ordenes.acciones")%></th>
           </tr>
         </thead>
         <tbody class="orders-tbody">
@@ -56,7 +56,7 @@
 
               <td class="orders-td" data-label="Fecha"><%= order.created_at.strftime("%d/%m/%Y %H:%M") %></td>
               <td class="orders-td orders-td--actions" data-label="Acciones">
-                <%= link_to 'Ver Detalles', dashboard_order_path(order), class: "btn-eliminar" %>
+                <%= link_to t("home.ordenes.ver_detalles"), dashboard_order_path(order), class: "btn-eliminar" %>
               </td>
             </tr>
           <% end %>
