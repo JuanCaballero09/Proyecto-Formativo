@@ -165,20 +165,4 @@ class ApiProductRepository implements ProductRepository {
         return 1; // Categoria por defecto: hamburguesas
     }
   }
-
-  /// Obtiene el nombre de la categoría a partir de su ID
-  /// [categoryId] - ID de la categoría
-  /// Retorna el nombre de la categoría
-  String _getCategoryNameFromId(int categoryId) {
-    switch (categoryId) {
-      case 1:
-        return 'hamburguesas';
-      case 2:
-        return 'salchipapas';
-      case 3:
-        return 'pizzas';
-      default:
-        return 'General';
-    }
-  }
 }

@@ -11,28 +11,6 @@ import 'bloc/language_bloc.dart';
 import 'bloc/language_event.dart';
 import 'bloc/language_state.dart';
 import 'repository/product_repository.dart';
-//import 'repository/http_product_repository.dart';
-import 'repository/mocki_product_repository.dart';
-import 'pages/splash_page.dart';
-import 'package:first_flutter/pages/inter_page.dart';
-import 'l10n/app_localizations.dart';
-import 'bloc/auth_bloc.dart';
-import 'pages/perfil_wrapper.dart';
-
-
-import 'package:first_flutter/pages/carrito_Page.dart';
-import 'package:first_flutter/pages/login_page.dart';
-import 'package:first_flutter/pages/menu_page.dart';
-import 'package:first_flutter/pages/register_page.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
-import 'bloc/product_bloc.dart';
-import 'bloc/cart_bloc.dart';
-import 'bloc/language_bloc.dart';
-import 'bloc/language_event.dart';
-import 'bloc/language_state.dart';
-import 'repository/product_repository.dart';
 import 'repository/http_product_repository.dart';
 import 'repository/mocki_product_repository.dart';
 import 'repository/api_product_repository.dart'; // Nuevo repositorio
