@@ -44,7 +44,9 @@
 
       <!-- Grupos regulares -->
       <% @grupos.each do |grupo| %>
+        <% next if grupo.nombre.match?(/🎁|combos/i) %> <!-- Excluir grupo de combos -->
         <% productos_disponibles = grupo.products.select(&:disponible) %>
+        
         <% if productos_disponibles.any? %>
           <div class="grupo-carta">
             <%= link_to grupo_products_path(grupo), class: "grupo-carta-link" do %>
