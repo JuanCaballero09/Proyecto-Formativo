@@ -12,22 +12,33 @@ class CarritosController < ApplicationController
     @carrito = Carrito.find_by(id: session[:carrito_id])
     cupon = Coupon.find_by(codigo: params[:codigo])
 
-    if @carrito && cupon
-      if cupon.usable_by?(current_user) || cupon&.activo_y_no_expirado?
-        @carrito.coupon = cupon
-        if @carrito.total >= 3000
-          @carrito.save
-          flash.now[:notice] = "Cupón aplicado correctamente ✅"
-        else
-          @carrito.coupon = nil
-          @carrito.save
-          flash.now[:alert] = "Lo lamentamos, el monto mínimo para aplicar un cupón es menor a COP $3,000. ❌"
-        end
-      else
-        flash.now[:alert] = "Cupón inválido o expirado."
-      end
+    if @carrito.nil?
+      flash.now[:alert] = "No se encontró tu carrito ❌"
+    elsif cupon.nil?
+      flash.now[:alert] = "El cupón ingresado no existe ❌"
+    elsif !cupon.activo_y_no_expirado?
+      flash.now[:alert] = "El cupón ha expirado o está inactivo ❌"
+    elsif !cupon.usable_by?(current_user)
+      flash.now[:alert] = "Este cupón ya ha sido utilizado anteriormente ❌"
+    elsif @carrito.subtotal < 3000
+      flash.now[:alert] = "El monto mínimo para aplicar un cupón es de COP $3,000 ❌"
     else
-      flash.now[:alert] = "Cupón inválido ❌"
+      # Calcular el total con el descuento aplicado
+      descuento_temporal = calcular_descuento_cupon(@carrito, cupon)
+      total_con_descuento = @carrito.subtotal - descuento_temporal
+
+      if total_con_descuento < 3000
+        descuento_formateado = ActionController::Base.helpers.number_to_currency(descuento_temporal, unit: "COP $", separator: ".", delimiter: ",")
+        total_formateado = ActionController::Base.helpers.number_to_currency(total_con_descuento, unit: "COP $", separator: ".", delimiter: ",")
+        flash.now[:alert] = "Con este cupón (descuento #{descuento_formateado}) tu total sería #{total_formateado}, pero el mínimo permitido es COP $3,000 ❌"
+      else
+        @carrito.coupon = cupon
+        if @carrito.save
+          flash.now[:notice] = "¡Cupón aplicado exitosamente! ✅"
+        else
+          flash.now[:alert] = "Error al aplicar el cupón, intenta nuevamente ❌"
+        end
+      end
     end
 
     respond_to do |format|
@@ -49,6 +60,20 @@ class CarritosController < ApplicationController
     respond_to do |format|
       format.turbo_stream
       format.html { redirect_to carrito_path(@carrito) }
+    end
+  end
+
+  private
+
+  def calcular_descuento_cupon(carrito, cupon)
+    return 0 unless cupon&.activo_y_no_expirado?
+
+    if cupon.tipo_descuento == "fijo"
+      [ cupon.valor, carrito.subtotal ].min
+    elsif cupon.tipo_descuento == "porcentaje"
+      (carrito.subtotal * cupon.valor / 100.0).round(2)
+    else
+      0
     end
   end
 end

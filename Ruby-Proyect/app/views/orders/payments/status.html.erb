@@ -36,18 +36,22 @@
     <!-- Status Messages -->
     <div class="status-messages">
       <div id="loading-message" class="status-message active">
-        <h2>Procesando tu pago...</h2>
-        <p>Por favor espera mientras verificamos tu transacción</p>
-        <div class="loading-dots">
-          <span></span>
-          <span></span>
-          <span></span>
+        <div class="status-content">
+          <h2>Procesando tu pago...</h2>
+          <p>Por favor espera mientras verificamos tu transacción</p>
+          <div class="loading-dots">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
         </div>
       </div>
 
       <div id="success-message" class="status-message">
-        <h2>¡Pago realizado con éxito!</h2>
-        <p>Tu orden ha sido procesada correctamente</p>
+        <div class="status-content">
+          <h2>¡Pago realizado con éxito!</h2>
+          <p>Tu orden ha sido procesada correctamente</p>
+        </div>
         <div class="status-actions">
           <%= link_to root_path, class: "status-btn primary" do %>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -60,8 +64,10 @@
       </div>
 
       <div id="error-message" class="status-message">
-        <h2>Error en el pago</h2>
-        <p>Tu pago no se ha podido procesar. Puedes intentarlo nuevamente.</p>
+        <div class="status-content">
+          <h2>Error en el pago</h2>
+          <p>Tu pago no se ha podido procesar. Puedes intentarlo nuevamente.</p>
+        </div>
         <div class="status-actions">
           <%= link_to new_order_payments_path(@order), class: "status-btn primary" do %>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">

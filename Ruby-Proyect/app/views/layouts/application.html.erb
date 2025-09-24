@@ -98,27 +98,6 @@
 
       <main class="vistas">
 
-        <!-- Contenedor de alertas premium -->
-        <div id="alert-container">
-          <% flash.each do |key, message| %>
-            <% css_class = case key.to_sym
-              when :notice then "info"
-              when :alert  then "warning"
-              when :error  then "error"
-              when :success then "success"
-              else "info"
-              end %>
-            <div class="alert <%= css_class %>" data-alert-type="<%= css_class %>">
-              <span class="alert-icon"></span>
-              <%= message %>
-              <button class="alert-close" onclick="this.parentElement.classList.add('removing')">&times;</button>
-              <div class="alert-progress"></div>
-            </div>
-          <% end %>
-
-          <!-- Contenedor vacío para toasts dinámicos -->
-          <div id="flash-toast"></div>
-        </div>
         
         <%= yield %>
 
@@ -147,103 +126,70 @@
         <p>v3.7.0</p>
         <p>© 2025 Bitevia Software. <%= t("home.footer.derechos_reservados")%></p>
       </footer>
+
+            <!-- Contenedor de alertas -->
+      <div id="alert-container">
+        <% flash.each do |key, message| %>
+          <% css_class = case key.to_sym
+            when :notice then "success"
+            when :alert  then "error"
+            when :error  then "error"
+            when :success then "success"
+            else "info"
+            end %>
+          <div class="alert <%= css_class %>"><%= message %></div>
+        <% end %>
+
+        <!-- Contenedor vacío para toasts dinámicos -->
+        <div id="flash-toast"></div>
+      </div>
+
       <script>
       document.addEventListener("turbo:load", () => {
-        const AUTO_CLOSE_MS = 4000; // Aumentado a 4 segundos
-
         const showAlert = (alertElement) => {
-          if (alertElement.dataset.flashProcessed) return;
-          alertElement.dataset.flashProcessed = "true";
-
-          // Aplicar animación de entrada
+          // Mostrar inmediatamente
+          alertElement.style.opacity = '1';
           alertElement.style.animation = "alertSlideIn 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards";
-
-          // Auto-close después del tiempo especificado
-          const autoCloseTimer = setTimeout(() => {
-            closeAlert(alertElement);
-          }, AUTO_CLOSE_MS);
-
-          // Pausar auto-close al hover
-          alertElement.addEventListener("mouseenter", () => {
-            clearTimeout(autoCloseTimer);
-            const progressBar = alertElement.querySelector('.alert-progress');
-            if (progressBar) {
-              progressBar.style.animationPlayState = 'paused';
-            }
-          });
-
-          // Reanudar auto-close al salir del hover
-          alertElement.addEventListener("mouseleave", () => {
-            const progressBar = alertElement.querySelector('.alert-progress');
-            if (progressBar) {
-              progressBar.style.animationPlayState = 'running';
-            }
-            setTimeout(() => closeAlert(alertElement), 1000);
-          });
-
-          // Cerrar con Escape
-          const handleEscape = (e) => {
-            if (e.key === 'Escape') {
-              closeAlert(alertElement);
-              document.removeEventListener('keydown', handleEscape);
-            }
-          };
-          document.addEventListener('keydown', handleEscape);
+          
+          // Ocultar después de 3 segundos
+          setTimeout(() => {
+            alertElement.style.animation = "alertSlideOut 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards";
+            
+            // Remover completamente después de la animación
+            setTimeout(() => {
+              if (alertElement.parentNode) {
+                alertElement.remove();
+              }
+            }, 400); // 400ms = duración de alertSlideOut
+          }, 3000);
         };
 
-        const closeAlert = (alertElement) => {
-          if (alertElement.classList.contains('removing')) return;
-          
-          alertElement.classList.add('removing');
-          alertElement.style.animation = "alertSlideOut 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards";
-          
-          alertElement.addEventListener("animationend", () => {
-            if (alertElement.parentNode) {
-              alertElement.remove();
-            }
-          }, { once: true });
-        };
-
-        // Procesar alertas existentes
+        // Animar alertas que ya existían
         document.querySelectorAll("#alert-container .alert").forEach(showAlert);
 
-        // Observar nuevas alertas
-        const bodyObserver = new MutationObserver((mutations) => {
-          for (const mutation of mutations) {
-            for (const node of mutation.addedNodes) {
-              if (!(node instanceof Element)) continue;
-
-              if (node.id === "alert-container") {
-                node.querySelectorAll(".alert").forEach(showAlert);
-              } else {
-                if (node.classList && node.classList.contains("alert")) {
+        // Observar cambios en el contenedor para nuevas alertas
+        const alertContainer = document.getElementById("alert-container");
+        if (alertContainer) {
+          const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+              mutation.addedNodes.forEach((node) => {
+                if (node.nodeType === 1 && node.classList.contains("alert")) {
                   showAlert(node);
                 }
-                if (node.querySelectorAll) {
-                  node.querySelectorAll(".alert").forEach(showAlert);
-                }
-              }
-            }
-          }
-        });
-
-        bodyObserver.observe(document.body, { childList: true, subtree: true });
+              });
+            });
+          });
+          observer.observe(alertContainer, { childList: true, subtree: true });
+        }
 
         // Función global para crear alertas dinámicas
-        window.showFlashAlert = function(message, type = 'info') {
+        window.showFlashAlert = function(message, type = 'success') {
           const container = document.getElementById('flash-toast');
           if (!container) return;
 
           const alert = document.createElement('div');
           alert.className = `alert ${type}`;
-          alert.dataset.alertType = type;
-          alert.innerHTML = `
-            <span class="alert-icon"></span>
-            ${message}
-            <button class="alert-close" onclick="this.parentElement.classList.add('removing')">&times;</button>
-            <div class="alert-progress"></div>
-          `;
-
+          alert.textContent = message;
           container.appendChild(alert);
           showAlert(alert);
         };
