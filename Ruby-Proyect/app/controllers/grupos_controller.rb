@@ -3,7 +3,18 @@ class GruposController < ApplicationController
 
   # GET /grupos or /grupos.json
   def index
-    @grupos = Grupo.order(:id)
+    # Buscar el grupo de combos
+    combos_group = Grupo.find_by(nombre: [ "Combos", "combo", "COMBOS" ])
+
+    # Excluir el grupo de combos de la lista regular de grupos
+    if combos_group
+      @grupos = Grupo.where.not(id: combos_group.id).order(:id)
+    else
+      @grupos = Grupo.order(:id)
+    end
+
+    @combos_group = combos_group
+    @combos = combos_group&.products&.where(type: "Combo", disponible: true) || []
   end
 
   # GET /grupos/1 or /grupos/1.json
@@ -11,6 +22,13 @@ class GruposController < ApplicationController
   end
 
   def dashboard
+    # Buscar combos desde cualquier grupo, pero preferir el grupo específico de combos
+    combos_group = Grupo.find_by(nombre: [ "Combos", "combo", "COMBOS" ])
+    if combos_group
+      @combos = combos_group.products.where(type: "Combo", disponible: true).order(created_at: :desc).limit(6)
+    else
+      @combos = Product.where(type: "Combo", disponible: true).order(created_at: :desc).limit(6)
+    end
   end
 
 

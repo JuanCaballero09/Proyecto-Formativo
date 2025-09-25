@@ -1,26 +1,39 @@
 <% productos_disponibles = @grupo.products.where(disponible: true).order(id: :asc) %>
 
 <% if productos_disponibles.any? %>
-  <div class="grupo">
-    <div class="producto-btn grupo-show-links">
-      <h2><%= @grupo.nombre %></h2>
-      <%= link_to t("home.section.mostrar_categorias"), grupos_path %>
+<br>
+  <div class="grupo-productos-page">
+    <div class="grupo-header">
+      <h2 class="grupo-titulo-page"><%= @grupo.nombre %></h2>
+      <%= link_to grupos_path, class: "btn-volver-grupos" do %>
+        <span class="btn-icon">←</span>
+        <span class="btn-text">Volver a categorías</span>
+      <% end %>
     </div>
-    <div class="grupos">
+    
+    <div class="productos-grid">
       <% productos_disponibles.each do |producto| %>
-        <div class="grupo-carta grupo-producto">
-          <%= link_to grupo_product_path(@grupo, producto), class: "link-carta" do %>
-            <div class="grupo-imagen">
-              <%= image_tag(producto.imagen.attached? ? producto.imagen : "LogoLogoText2.svg") %>
+        <div class="producto-card-page">
+          <%= link_to grupo_product_path(@grupo, producto), class: "producto-link-page" do %>
+            <div class="producto-imagen-container">
+              <%= image_tag(producto.imagen.attached? ? producto.imagen : "LogoLogoText2.svg", 
+                           class: "producto-imagen-page", 
+                           alt: producto.nombre) %>
             </div>
-            <h4><%= producto.nombre %></h4> 
-            <p><strong class="precio" data-precio="<%= producto.precio%>" data-locale="<%= I18n.locale %>">$</strong></p>
+            <div class="producto-info-page">
+              <h4 class="producto-nombre-page"><%= producto.nombre %></h4> 
+              <p class="producto-precio-page">
+                <strong class="precio" data-precio="<%= producto.precio%>" data-locale="<%= I18n.locale %>">$</strong>
+              </p>
+            </div>
           <% end %>
-          <div class="botones-compra">
-            <div class="botones-compra">
-              <%= button_to t("home.section.agregar_carrito"), carrito_items_path(product_id: producto.id), method: :post, data: { turbo_frame: "_top" } %>
-            </div>
-          </div> 
+          <div class="producto-acciones-page">
+            <%= button_to t("home.section.agregar_carrito"), 
+                         carrito_items_path(product_id: producto.id), 
+                         method: :post, 
+                         class: "producto-btn-page",
+                         data: { turbo_frame: "_top" } %>
+          </div>
         </div>
       <% end %>
     </div>

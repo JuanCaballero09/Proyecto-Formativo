@@ -1,30 +1,85 @@
 <% grupos_con_productos = @grupos.select { |grupo| grupo.products.any?(&:disponible) } %>
+<% combos_group = Grupo.find_by(nombre: ["Combos", "combo", "COMBOS"]) %>
+<% combos_disponibles = combos_group&.products&.where(type: "Combo", disponible: true) || Product.where(type: "Combo", disponible: true) %>
 
-<% if grupos_con_productos.any? %>
-  <section class="grupos" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
-    <% @grupos.each do |grupo| %>
-      <% productos_disponibles = grupo.products.select(&:disponible) %>
-      <% if productos_disponibles.any? %>
-        <%= link_to grupo_products_path(grupo), class: "grupo-carta" do %>
-        <%#<%= link_to grupo_path(grupo), class: "grupo-carta" do %>
-          <div class="grupo-imagen">
-            <% if grupo.imagen.attached? %>
-              <%= image_tag url_for(grupo.imagen), alt: grupo.nombre %>
-            <% else %>
-              <%= image_tag 'LogoLogo.svg', alt: grupo.nombre %>
+<% if grupos_con_productos.any? || combos_disponibles.any? %>
+  <section class="grupos-index-modern">
+    <!-- Header con título mejorado -->
+    <div class="grupos-header">
+      <h1 class="grupos-titulo">Nuestras Categorías</h1>
+      <p class="grupos-subtitulo">Descubre nuestra deliciosa variedad de productos organizados por categorías</p>
+    </div>
+
+    <div class="grupos-grid-container">
+      <!-- Combos como grupo especial (si existen) -->
+      <% if combos_disponibles.any? %>
+        <div class="grupo-carta grupo-carta-combos">
+          <% link_url = combos_group ? grupo_products_path(combos_group) : "/combos" %>
+          <%= link_to link_url, class: "grupo-carta-link" do %>
+            <div class="grupo-imagen">
+              <div class="combo-collage">
+                <% combos_disponibles.limit(4).each_with_index do |combo, index| %>
+                  <div class="combo-mini combo-<%= index + 1 %>">
+                    <%= image_tag(combo.imagen.attached? ? combo.imagen : 'LogoLogo.svg', alt: combo.nombre) %>
+                  </div>
+                <% end %>
+              </div>
+              <div class="grupo-overlay">
+                <div class="combo-badge">
+                  <span class="combo-icon">🎉</span>
+                  <span class="combo-text">COMBOS ESPECIALES</span>
+                </div>
+              </div>
+            </div>
+            <div class="grupo-info">
+              <h3>Combos y Promociones</h3>
+              <p>Descubre nuestras ofertas especiales y combos únicos con los mejores precios</p>
+              <div class="combo-stats">
+                <span class="combo-count"><%= combos_disponibles.count %> combos disponibles</span>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+
+      <!-- Grupos regulares -->
+      <% @grupos.each do |grupo| %>
+        <% next if grupo.nombre.match?(/🎁|combos/i) %> <!-- Excluir grupo de combos -->
+        <% productos_disponibles = grupo.products.select(&:disponible) %>
+        
+        <% if productos_disponibles.any? %>
+          <div class="grupo-carta">
+            <%= link_to grupo_products_path(grupo), class: "grupo-carta-link" do %>
+              <div class="grupo-imagen">
+                <% if grupo.imagen.attached? %>
+                  <%= image_tag url_for(grupo.imagen), alt: grupo.nombre, class: "grupo-imagen-principal" %>
+                <% else %>
+                  <%= image_tag 'LogoLogo.svg', alt: grupo.nombre, class: "grupo-imagen-principal" %>
+                <% end %>
+                <div class="grupo-overlay">
+                  <div class="productos-count">
+                    <span class="count-number"><%= productos_disponibles.count %></span>
+                    <span class="count-text">productos</span>
+                  </div>
+                </div>
+              </div>
+              <div class="grupo-info">
+                <h3><%= grupo.nombre %></h3>
+                <p><%= grupo.descripcion.present? ? truncate(grupo.descripcion, length: 80) : "Explora nuestra selección de #{grupo.nombre.downcase}" %></p>
+                <div class="grupo-meta">
+                  <span class="producto-count"><%= productos_disponibles.count %> productos disponibles</span>
+                </div>
+              </div>
             <% end %>
-          </div>
-          <div class="grupo-info">
-            <h3><%= grupo.nombre %></h3>
-            <p><%= grupo.descripcion.present? ? truncate(grupo.descripcion, length: 80) : "No hay descripción disponible" %></p>
           </div>
         <% end %>
       <% end %>
-    <% end %>
+    </div>
   </section>
 <% else %>
   <div class="sin-productos">
-      <%= image_tag "ProductoNoDisponible.png", alt: "Producto No Disponible" %>
-      <h2>No hay grupos disponibles por ahora.</h2>
+    <%= image_tag "ProductoNoDisponible.png", alt: "Producto No Disponible" %>
+    <h2>No hay grupos disponibles por ahora.</h2>
+    <p>Pronto tendremos nuevas categorías para ti</p>
   </div>
 <% end %>

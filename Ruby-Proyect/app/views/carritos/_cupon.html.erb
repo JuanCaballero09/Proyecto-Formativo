@@ -1,22 +1,30 @@
-<div id="carrito-cupon" class="carrito-cupon">
+<div id="carrito-cupon" class="cupon-container">
+  <h4 class="cupon-titulo">💎 Cupón de descuento</h4>
+  
   <% if carrito&.coupon.present? %>
-    <p style="margin: 10px 0;">
-      <p style="display: inline; margin: 0;">Cupón aplicado: </p><strong><%= carrito.coupon.codigo %></strong>
-      <p style="color: green; display: inline; margin: 0;">( - <%= number_to_currency(carrito.descuento) %> )</p>
-    </p>
-
-    <%= button_to "Quitar cupón",
-                  quitar_cupon_carrito_path,
-                  method: :delete,
-                  form: { data: { turbo_stream: true } } %>
+    <div class="cupon-aplicado">
+      <div class="cupon-info">
+        <span class="cupon-codigo">🎫 <%= carrito.coupon.codigo %></span>
+        <span class="cupon-descuento">-<%= number_to_currency(carrito.descuento, unit: "COP $", separator: ",", delimiter: ".") %></span>
+      </div>
+      <%= button_to "Quitar cupón",
+                    quitar_cupon_carrito_path,
+                    method: :delete,
+                    form: { data: { turbo_stream: true } },
+                    class: "btn-quitar-cupon" %>
+    </div>
   <% else %>
-    <%= form_with url: aplicar_cupon_carrito_path,
-                  method: :post,
-                  data: { turbo_stream: true },
-                  local: true,
-                  class: "form-cupon" do |f| %>
-      <%= f.text_field :codigo, placeholder: "Ingresa tu cupón", class: "buscador" %>
-      <%= f.submit "Aplicar" %>
-    <% end %>
+    <div class="cupon-form">
+      <%= form_with url: aplicar_cupon_carrito_path,
+                    method: :post,
+                    data: { turbo_stream: true },
+                    local: true,
+                    class: "form-cupon-modern" do |f| %>
+        <div class="input-group">
+          <%= f.text_field :codigo, placeholder: "Ingresa tu código de cupón", class: "cupon-input" %>
+          <%= f.submit "Aplicar", class: "btn-aplicar-cupon" %>
+        </div>
+      <% end %>
+    </div>
   <% end %>
 </div>

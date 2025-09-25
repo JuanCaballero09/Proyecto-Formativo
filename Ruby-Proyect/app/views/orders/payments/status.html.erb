@@ -1,37 +1,101 @@
-<section class="status-view">
-  <div id="status-container" class="status-container">
-    <div class="state loading" id="stateBox"  data-status-url="<%= status_order_payments_path(@order, format: :json) %>">
-      <svg width="100%" height="100%" viewBox="0 0 100 100">
-        <circle cx="50" cy="50" r="45"></circle>
-      </svg>
-
-      <!-- Check ✅ -->
-      <svg class="icon check" viewBox="0 0 52 52">
-        <polyline points="14,27 22,35 38,18"></polyline>
-      </svg>
-      
-      <!-- Cross ❌ -->
-      <svg class="icon cross" viewBox="0 0 52 52">
-        <line x1="16" y1="16" x2="36" y2="36"></line>
-        <line x1="36" y1="16" x2="16" y2="36"></line>
-      </svg>
+<div class="payment-status-container">
+  <div class="payment-status-card">
+    <div class="status-header">
+      <h1>Estado del Pago</h1>
+      <p>Orden: <span class="order-code" style="color: var(--base);"><%= @order.code %></span></p>
     </div>
 
-    <div id="loader" class="result-status">
-      <p id="processing-msg">Esperando aprobación del pago...</p>
-      <%= link_to "Reintentar pago", new_order_payments_path(@order), id: "reintentar", style: "display:none;", class: "btn-status" %>
+    <div class="status-animation-section">
+      <div id="status-animation" class="status-animation loading" data-status-url="<%= status_order_payments_path(@order, format: :json) %>">
+        <!-- Loading Spinner -->
+        <div class="loading-spinner">
+          <div class="spinner-ring"></div>
+          <div class="spinner-ring"></div>
+          <div class="spinner-ring"></div>
+        </div>
+        
+        <!-- Success Icon -->
+        <div class="status-icon success-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+            <polyline points="22,4 12,14.01 9,11.01"/>
+          </svg>
+        </div>
+        
+        <!-- Error Icon -->
+        <div class="status-icon error-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="15" y1="9" x2="9" y2="15"/>
+            <line x1="9" y1="9" x2="15" y2="15"/>
+          </svg>
+        </div>
+      </div>
     </div>
-    <div id="success" style="display:none;" class="result-status">
-      <h2>¡Pago realizado con éxito!</h2>
-      <%= link_to "Ir al inicio", root_path, class: "btn-status" %>
+
+    <!-- Status Messages -->
+    <div class="status-messages">
+      <div id="loading-message" class="status-message active">
+        <div class="status-content">
+          <h2>Procesando tu pago...</h2>
+          <p>Por favor espera mientras verificamos tu transacción</p>
+          <div class="loading-dots">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+        </div>
+      </div>
+
+      <div id="success-message" class="status-message">
+        <div class="status-content">
+          <h2>¡Pago realizado con éxito!</h2>
+          <p>Tu orden ha sido procesada correctamente</p>
+        </div>
+        <div class="status-actions">
+          <%= link_to root_path, class: "status-btn primary" do %>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+              <polyline points="9,22 9,12 15,12 15,22"/>
+            </svg>
+            Ir al inicio
+          <% end %>
+        </div>
+      </div>
+
+      <div id="error-message" class="status-message">
+        <div class="status-content">
+          <h2>Error en el pago</h2>
+          <p>Tu pago no se ha podido procesar. Puedes intentarlo nuevamente.</p>
+        </div>
+        <div class="status-actions">
+          <%= link_to new_order_payments_path(@order), class: "status-btn primary" do %>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M21 12a9 9 0 11-6.219-8.56"/>
+              <path d="M15 3h6v6"/>
+            </svg>
+            Reintentar pago
+          <% end %>
+          <%= link_to root_path, class: "status-btn secondary" do %>
+            Cancelar
+          <% end %>
+        </div>
+      </div>
     </div>
-    <div id="declined" style="display:none;" class="result-status">
-      <h2>Tu pago no se ha concretado</h2>
-      <%= link_to "Reintentar pago", new_order_payments_path(@order), class: "btn-status" %>
+
+    <div class="order-summary">
+      <h3>Resumen de la orden</h3>
+      <div class="summary-item">
+        <span>Total:</span>
+        <span class="amount">
+          <span class="precio" data-precio="<%= @order.total %>" data-locale="<%= I18n.locale %>">
+            <%= number_to_currency(@order.total, unit: "", separator: ",", delimiter: ".") %> COP
+          </span>
+        </span>
+      </div>
     </div>
-    <%#<button id="cancel-btn" class="btn-status" style="margin-top:20px;">Cancelar</button>%>
   </div>
-</section>
+</div>
 
 <script>
   //document.getElementById("cancel-btn").onclick = function() {

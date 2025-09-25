@@ -1,71 +1,281 @@
-<section class="order-details">
-  <p class="return-btn" style="position: absolute; top: 20px; left: 20px; margin: 0;">
-    <%= link_to "← Regresar", root_path %>
-  </p>
-  <h1>
-    Orden <span id="order-code"><%= @order.code %></span>
-    <button class="btn-copiar" onclick="copiarCodigo()"><%= image_tag "icons/copy-solid-full.svg"%></button>
-  </h1>
-
-
-  <p><strong><%= t("home.order.cliente")%></strong> <%= @order.user.nombre %> <%= @order.user.apellido %></p>
-  <p><strong><%= t("home.order.estado")%></strong> <%= @order.status %></p>
-
-  <h2><%= t("home.order.or_producto")%></h2>
-  
-  <div class="order-tabla-container">
-    <table class="order-tabla-products">
-      <thead>
-        <tr>
-          <th><%= t("home.order.imagen")%></th>
-          <th><%= t("home.order.or_producto")%></th>
-          <th><%= t("home.order.cantidad")%></th>
-          <th><%= t("home.order.precio")%></th>
-          <th><%= t("home.order.total")%></th>
-        </tr>
-      </thead>
-      <tbody>
-        <% @order.order_items.each do |oi| %>
-          <tr>
-            <td><%= image_tag oi.product.imagen %></td>
-            <td><%= oi.product.nombre %></td>
-            <td><%= oi.quantity %></td>
-            <td><strong class="precio" data-precio="<%= oi.price %>" data-locale="<%= I18n.locale %>">$</strong></td>
-            <td><span class="precio" data-precio="<%= oi.price * oi.quantity %>" data-locale="<%= I18n.locale %>"><%= number_to_currency(oi.price * oi.quantity, unit: "COP ", separator: ",", delimiter: ".") %></span></td>
-          </tr>
+<div class="order-details-premium">
+  <!-- Header de la orden -->
+  <div class="order-header">
+    <div class="order-header-content">
+      <div class="back-button-container">
+        <%= link_to root_path, class: "back-button-premium" do %>
+          <i class="back-icon">←</i>
+          <span>Regresar</span>
         <% end %>
-      </tbody>
-    </table>
-  </div>  
+      </div>
+      
+      <div class="order-title-section">
+        <h1 class="order-title">
+          <i class="order-icon">📋</i>
+          Detalles de la Orden
+        </h1>
+        
+        <div class="order-code-container">
+          <span class="code-label">Código:</span>
+          <span class="order-code" id="order-code"><%= @order.code %></span>
+          <button class="copy-button" onclick="copyOrderCode()" title="Copiar código">
+            <%= image_tag "icons/copy-solid-full.svg", class: "copy-icon" %>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 
-  <p>
-    <strong><%= t("home.order.total_pagar") %></strong> 
-    <strong class="precio" data-precio="<%= @order.total %>" data-locale="<%= I18n.locale %>">
-      <%= number_to_currency(@order.total, unit: "COP ", separator: ",", delimiter: ".") %>
-    </strong>
-  </p>
+  <!-- Información del cliente y estado -->
+  <div class="order-content-grid">
+    <!-- Columna izquierda: Información de la orden -->
+    <div class="order-left-column">
+      <div class="order-info-section">
+        <h2 class="info-section-title">
+          <i class="info-section-icon">ℹ️</i>
+          Información de la Orden
+        </h2>
+        
+        <div class="info-cards-vertical">
+          <div class="info-card customer-info">
+            <div class="info-header">
+              <i class="info-icon">👤</i>
+              <h3><%= t("home.order.cliente") %></h3>
+            </div>
+            <p class="customer-name"><%= @order.user.nombre %> <%= @order.user.apellido %></p>
+          </div>
+          
+          <div class="info-card status-info">
+            <div class="info-header">
+              <i class="info-icon">📊</i>
+              <h3><%= t("home.order.estado") %></h3>
+            </div>
+            <span class="order-status status-<%= @order.status.downcase.gsub(' ', '-') %>">
+              <%= @order.status %>
+            </span>
+          </div>
+          
+          <% if @order.coupon.present? %>
+            <div class="info-card coupon-info">
+              <div class="info-header">
+                <i class="info-icon">🏷️</i>
+                <h3>Cupón Aplicado</h3>
+              </div>
+              <p class="coupon-code"><%= @order.coupon.codigo %></p>
+            </div>
+          <% end %>
+        </div>
+      </div>
 
+      <!-- Total de la orden -->
+      <div class="order-total-section">
+        <div class="total-card">
+          <div class="total-header">
+            <h3 class="total-title">
+              <i class="total-icon">💰</i>
+              <%= t("home.order.total_pagar") %>
+            </h3>
+          </div>
+          
+          <div class="total-amount">
+            <%= number_to_currency(@order.total, unit: "COP ", separator: ",", delimiter: ".") %>
+          </div>
+          
+          <% if @order.coupon.present? %>
+            <div class="discount-info">
+              <i class="discount-icon">🏷️</i>
+              <span>Descuento aplicado con cupón <%= @order.coupon.codigo %></span>
+            </div>
+          <% end %>
+        </div>
+      </div>
 
-  <% if @order.coupon.present? %>
-    <p style="color: green; font-weight: bold;">
-      Cupón aplicado: <%= @order.coupon.codigo %>
-    </p>
-  <% end %>
+      <!-- Botón de pago -->
+      <div class="payment-section">
+        <%= link_to new_order_payments_path(@order), class: "payment-button" do %>
+          <i class="payment-icon">💳</i>
+          <span>Proceder al Pago</span>
+          <i class="payment-arrow">→</i>
+        <% end %>
+      </div>
+    </div>
 
-
-  <!-- Botón de pago (por integrar) -->
-  
-  <%= link_to "Ir al pago", new_order_payments_path(@order), class: "btn-pagar" %>
-
-</section>
+    <!-- Columna derecha: Productos de la orden -->
+    <div class="order-right-column">
+      <div class="products-section">
+        <div class="section-header">
+          <h2 class="section-title">
+            <i class="section-icon">🍽️</i>
+            <%= t("home.order.or_producto") %>
+          </h2>
+          <span class="items-count"><%= @order.order_items.count %> producto<%= @order.order_items.count != 1 ? 's' : '' %></span>
+        </div>
+        
+        <div class="products-container">
+          <% @order.order_items.each_with_index do |order_item, index| %>
+            <div class="product-item <%= 'is-combo' if order_item.product.is_a?(Combo) %>">
+              <div class="product-main-info">
+                <div class="product-image-container">
+                  <% if order_item.product.imagen.attached? %>
+                    <%= image_tag order_item.product.imagen, alt: order_item.product.nombre, class: "product-image" %>
+                  <% else %>
+                    <%= image_tag 'LogoLogo.svg', alt: order_item.product.nombre, class: "product-image placeholder" %>
+                  <% end %>
+                  
+                  <% if order_item.product.is_a?(Combo) %>
+                    <div class="combo-badge">
+                      <span>COMBO</span>
+                    </div>
+                  <% end %>
+                </div>
+                
+                <div class="product-details">
+                  <div class="product-header">
+                    <h3 class="product-name"><%= order_item.product.nombre %></h3>
+                    <div class="product-meta">
+                      <span class="product-category"><%= order_item.product.grupo.nombre %></span>
+                    </div>
+                  </div>
+                  
+                  <div class="quantity-price-info">
+                    <div class="quantity-container">
+                      <span class="quantity-label">Cantidad:</span>
+                      <span class="quantity-value"><%= order_item.quantity %></span>
+                    </div>
+                    
+                    <div class="price-container">
+                      <div class="unit-price">
+                        <span class="price-label">Precio unitario:</span>
+                        <span class="price-value">
+                          <%= number_to_currency(order_item.price, unit: "COP ", separator: ",", delimiter: ".") %>
+                        </span>
+                      </div>
+                      
+                      <div class="total-price">
+                        <span class="price-label">Subtotal:</span>
+                        <span class="price-value total">
+                          <%= number_to_currency(order_item.price * order_item.quantity, unit: "COP ", separator: ",", delimiter: ".") %>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Componentes del combo -->
+              <% if order_item.product.is_a?(Combo) && order_item.product.combo_items.any? %>
+                <div class="combo-components">
+                  <div class="combo-header">
+                    <h4 class="combo-title">
+                      <i class="combo-icon">📦</i>
+                      Componentes del combo:
+                    </h4>
+                    <button class="toggle-combo" onclick="toggleComboDetails(<%= index %>)">
+                      <span class="toggle-text">Ver componentes</span>
+                      <i class="toggle-arrow">▼</i>
+                    </button>
+                  </div>
+                  
+                  <div class="combo-details" id="combo-details-<%= index %>" style="display: none;">
+                    <div class="combo-items-grid">
+                      <% order_item.product.combo_items.each do |combo_item| %>
+                        <div class="combo-item">
+                          <div class="combo-item-image">
+                            <% if combo_item.product.imagen.attached? %>
+                              <%= image_tag combo_item.product.imagen, alt: combo_item.product.nombre, class: "combo-product-image" %>
+                            <% else %>
+                              <%= image_tag 'LogoLogo.svg', alt: combo_item.product.nombre, class: "combo-product-image placeholder" %>
+                            <% end %>
+                          </div>
+                          
+                          <div class="combo-item-info">
+                            <h5 class="combo-item-name"><%= combo_item.product.nombre %></h5>
+                            <div class="combo-item-quantity">
+                              <span class="quantity-badge"><%= combo_item.cantidad %>x</span>
+                            </div>
+                            <p class="combo-item-description">
+                              <%= combo_item.product.descripcion.present? ? truncate(combo_item.product.descripcion, length: 80) : "Componente del combo" %>
+                            </p>
+                          </div>
+                        </div>
+                      <% end %>
+                    </div>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <script>
-  function copiarCodigo() {
-      const codigo = document.getElementById('order-code').innerText;
-      navigator.clipboard.writeText(codigo).then(() => {
-          alert("Código copiado: " + codigo);
-      }).catch(err => {
-          console.error("Error al copiar: ", err);
-      });
-  }
+function copyOrderCode() {
+    const codigo = document.getElementById('order-code').innerText;
+    navigator.clipboard.writeText(codigo).then(() => {
+        // Usar el sistema de alertas premium
+        if (window.createFlashAlert) {
+            window.createFlashAlert(`Código copiado: ${codigo}`, 'success', 3000);
+        } else {
+            alert("Código copiado: " + codigo);
+        }
+    }).catch(err => {
+        console.error("Error al copiar: ", err);
+        if (window.createFlashAlert) {
+            window.createFlashAlert('Error al copiar el código', 'error', 3000);
+        } else {
+            alert("Error al copiar el código");
+        }
+    });
+}
+
+function toggleComboDetails(index) {
+    const details = document.getElementById(`combo-details-${index}`);
+    const button = details.previousElementSibling.querySelector('.toggle-combo');
+    const arrow = button.querySelector('.toggle-arrow');
+    const text = button.querySelector('.toggle-text');
+    
+    if (details.style.display === 'none') {
+        details.style.display = 'block';
+        arrow.style.transform = 'rotate(180deg)';
+        text.textContent = 'Ocultar componentes';
+        
+        // Animación de aparición
+        details.style.opacity = '0';
+        details.style.transform = 'translateY(-10px)';
+        setTimeout(() => {
+            details.style.transition = 'all 0.3s ease';
+            details.style.opacity = '1';
+            details.style.transform = 'translateY(0)';
+        }, 10);
+    } else {
+        details.style.transition = 'all 0.3s ease';
+        details.style.opacity = '0';
+        details.style.transform = 'translateY(-10px)';
+        
+        setTimeout(() => {
+            details.style.display = 'none';
+            arrow.style.transform = 'rotate(0deg)';
+            text.textContent = 'Ver componentes';
+        }, 300);
+    }
+}
+
+// Inicializar efectos al cargar la página
+document.addEventListener('DOMContentLoaded', function() {
+    // Animación de entrada para las tarjetas de productos
+    const productItems = document.querySelectorAll('.product-item');
+    productItems.forEach((item, index) => {
+        item.style.opacity = '0';
+        item.style.transform = 'translateY(20px)';
+        
+        setTimeout(() => {
+            item.style.transition = 'all 0.5s ease';
+            item.style.opacity = '1';
+            item.style.transform = 'translateY(0)';
+        }, index * 100);
+    });
+});
 </script>

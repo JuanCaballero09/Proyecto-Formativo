@@ -1,0 +1,325 @@
+<%= form_with model: [:dashboard, @product], local: true, html: { class: "dashboard-form", id: "product-form" } do |f| %>
+  <div>
+    <%= f.label :nombre %>
+    <%= f.text_field :nombre, required: true %>
+  </div>
+
+  <div>
+    <%= f.label :precio %>
+    <%= f.number_field :precio, step: 0.01, required: true %>
+  </div>
+
+  <div>
+    <%= f.label :type, "Tipo de producto" %>
+    <%= f.select :type, options_for_select([["Producto Normal", ""], ["Combo", "Combo"]], @product.type), {}, { class: "form-control", id: "product-type" } %>
+  </div>
+
+  <!-- Sección de ingredientes (solo para productos normales) -->
+  <div id="ingredientes-section" style="<%= 'display: none;' if @product.type == 'Combo' %>">
+    <div>
+      <%= f.label :ingredientes, "Ingredientes" %><br>
+      <div style="border: 1px solid #ccc; padding: 10px; height: 150px; overflow-y: auto; border-radius: 5px;" class="ingredientes-list">
+        <% if @ingredientes&.any? %>
+          <% @ingredientes.each do |ingrediente| %>
+            <label>
+              <%= check_box_tag "product[ingrediente_ids][]", ingrediente.id, @product.ingrediente_ids.include?(ingrediente.id) %>
+              <%= ingrediente.nombre %>
+            </label><br>
+          <% end %>
+        <% else %>
+          <p style="color: #666; font-style: italic;">No hay ingredientes disponibles. <a href="<%= dashboard_ingredientes_path %>">Crear ingredientes</a></p>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sección de componentes del combo (solo para combos) -->
+  <div id="combo-section" style="<%= 'display: none;' unless @product.type == 'Combo' %>">
+    <label>Componentes del combo</label>
+    <div class="combo-info" style="margin-bottom: 15px; padding: 10px; background-color: #f8f9fa; border-left: 4px solid #007bff; border-radius: 4px;">
+      <small style="color: #6c757d;">
+        <strong>💡 Tip:</strong> Puedes agregar el mismo producto múltiples veces con diferentes cantidades o agregar diferentes productos para crear tu combo perfecto.
+      </small>
+    </div>
+    <div id="combo-items">
+      <%= f.fields_for :combo_items do |ci| %>
+        <div class="combo-item" style="display: flex; gap: 10px; margin-bottom: 10px; align-items: center; padding: 10px; background-color: #f8f9fa; border-radius: 5px; border: 1px solid #dee2e6;">
+          <%= ci.collection_select :product_id, (@products_for_combo || []), :id, :nombre, { prompt: "Seleccionar producto" }, { class: "form-control", style: "flex: 1;" } %>
+          <div style="display: flex; align-items: center; gap: 5px;">
+            <label style="margin: 0; font-size: 0.9em; color: #6c757d;">Cant:</label>
+            <%= ci.number_field :cantidad, min: 1, step: 1, value: (ci.object&.cantidad || 1), class: "form-control", style: "width: 80px;" %>
+          </div>
+          <%= ci.check_box :_destroy, style: "display: none;" %>
+          <button type="button" class="btn btn-danger btn-sm remove-combo-item" title="Quitar componente">🗑️</button>
+        </div>
+      <% end %>
+    </div>
+    <div style="text-align: center; margin-top: 15px;">
+      <button type="button" id="add-combo-item" class="btn btn-success btn-sm" style="padding: 8px 16px;">
+        <span style="font-size: 1.1em;">➕</span> Agregar componente
+      </button>
+    </div>
+  </div>
+
+  <div>
+    <%= f.label :descripcion %>
+    <%= f.text_area :descripcion, required: true %>
+  </div>
+
+  <div id="grupo-section">
+    <%= f.label :grupo_id, "Grupo" %>
+    <%= f.collection_select :grupo_id, Grupo.all, :id, :nombre, { prompt: "Seleccionar grupo" }, { required: false, id: "grupo-select" } %>
+  </div>
+
+  <div>
+    <%= f.label :imagen %>
+    <%= f.file_field :imagen, accept: 'image/*', id: 'imagen-input'%>
+    
+    <% if @product.persisted? && @product.imagen.attached? %>
+      <div class="current-image" style="margin-top: 10px;">
+        <p><strong>Imagen actual:</strong></p>
+        <%= image_tag @product.imagen, alt: @product.nombre, style: "max-width: 200px; height: auto; border: 1px solid #ddd; border-radius: 5px;" %>
+        <p style="font-size: 0.9em; color: #666;">Subir una nueva imagen reemplazará la actual</p>
+      </div>
+    <% elsif @product.persisted? %>
+      <div class="current-image" style="margin-top: 10px;">
+        <p style="color: #666; font-style: italic;">No hay imagen actualmente</p>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="checkbox-container">
+    <%= f.label :disponible %>
+    <%= f.check_box :disponible %>
+  </div>
+
+  <div>
+    <%= f.submit @product.new_record? ? "Crear producto" : "Actualizar producto" %>
+  </div>
+<% end %>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const typeSelect = document.getElementById("product-type");
+  const ingredientesSection = document.getElementById("ingredientes-section");
+  const comboSection = document.getElementById("combo-section");
+  const addComboButton = document.getElementById("add-combo-item");
+  const comboItemsContainer = document.getElementById("combo-items");
+
+  // Agregar estilos CSS para animaciones
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes pulse {
+      0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(40,167,69,0.7); }
+      50% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(40,167,69,0); }
+      100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(40,167,69,0); }
+    }
+    
+    .combo-item {
+      transition: all 0.3s ease;
+    }
+    
+    .combo-item:hover {
+      box-shadow: 0 2px 8px rgba(0,123,255,0.15);
+      transform: translateY(-1px);
+    }
+    
+    .remove-combo-item:hover {
+      transform: scale(1.1);
+      background-color: #dc3545 !important;
+    }
+    
+    #add-combo-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(40,167,69,0.3);
+    }
+  `;
+  document.head.appendChild(style);
+
+  // Productos disponibles para combos
+  const availableProducts = [
+    <% if @products_for_combo&.any? %>
+      <% @products_for_combo.each do |product| %>
+        { id: <%= product.id %>, nombre: "<%= j(product.nombre) %>" },
+      <% end %>
+    <% end %>
+  ];
+
+  // Manejar cambio de tipo
+  if (typeSelect) {
+    const grupoSelect = document.getElementById("grupo-select");
+    
+    function toggleSections() {
+      if (typeSelect.value === "Combo") {
+        ingredientesSection.style.display = "none";
+        comboSection.style.display = "block";
+        // Para combos, el grupo es opcional
+        if (grupoSelect) {
+          grupoSelect.required = false;
+        }
+      } else {
+        ingredientesSection.style.display = "block";
+        comboSection.style.display = "none";
+        // Para productos normales, el grupo es requerido
+        if (grupoSelect) {
+          grupoSelect.required = true;
+        }
+      }
+    }
+    
+    // Ejecutar al cargar la página
+    toggleSections();
+    
+    // Ejecutar cuando cambie el tipo
+    typeSelect.addEventListener("change", toggleSections);
+  }
+
+  // Agregar nuevo componente de combo
+  if (addComboButton) {
+    addComboButton.addEventListener("click", function() {
+      const timestamp = new Date().getTime();
+      
+      const productsOptions = availableProducts.map(product => 
+        `<option value="${product.id}">${product.nombre}</option>`
+      ).join('');
+      
+      const newItem = document.createElement('div');
+      newItem.className = 'combo-item';
+      newItem.style.cssText = 'display: flex; gap: 10px; margin-bottom: 10px; align-items: center; padding: 10px; background-color: #f8f9fa; border-radius: 5px; border: 1px solid #dee2e6; animation: fadeIn 0.3s ease-in;';
+      newItem.innerHTML = `
+        <select name="product[combo_items_attributes][${timestamp}][product_id]" class="form-control" style="flex: 1;" required>
+          <option value="">Seleccionar producto</option>
+          ${productsOptions}
+        </select>
+        <div style="display: flex; align-items: center; gap: 5px;">
+          <label style="margin: 0; font-size: 0.9em; color: #6c757d;">Cant:</label>
+          <input type="number" name="product[combo_items_attributes][${timestamp}][cantidad]" min="1" step="1" value="1" class="form-control" style="width: 80px;" required>
+        </div>
+        <input type="hidden" name="product[combo_items_attributes][${timestamp}][_destroy]" value="false">
+        <button type="button" class="btn btn-danger btn-sm remove-combo-item" title="Quitar componente">🗑️</button>
+      `;
+      comboItemsContainer.appendChild(newItem);
+      
+      // Agregar efecto visual
+      setTimeout(() => {
+        newItem.style.transform = 'scale(1.02)';
+        setTimeout(() => {
+          newItem.style.transform = 'scale(1)';
+        }, 200);
+      }, 100);
+      
+      // Enfocar el select del nuevo elemento
+      const newSelect = newItem.querySelector('select');
+      if (newSelect) {
+        newSelect.focus();
+      }
+    });
+  }
+
+  // Quitar componente de combo
+  document.addEventListener("click", function(e) {
+    if (e.target.classList.contains("remove-combo-item")) {
+      const item = e.target.closest(".combo-item");
+      const destroyField = item.querySelector('input[name*="_destroy"]');
+      
+      // Confirmación antes de eliminar
+      const productSelect = item.querySelector('select');
+      const selectedProduct = productSelect.options[productSelect.selectedIndex];
+      const productName = selectedProduct && selectedProduct.value ? selectedProduct.text : "este componente";
+      
+      if (confirm(`¿Estás seguro de que quieres quitar ${productName} del combo?`)) {
+        if (destroyField) {
+          // Para elementos existentes, marcar para destrucción
+          destroyField.value = "true";
+          item.style.opacity = "0.5";
+          item.style.transform = "scale(0.95)";
+          item.style.pointerEvents = "none";
+          
+          // Agregar texto de eliminación
+          const removeLabel = document.createElement('div');
+          removeLabel.innerHTML = '<small style="color: #dc3545; font-weight: bold;">⚠️ Se eliminará al guardar</small>';
+          item.appendChild(removeLabel);
+        } else {
+          // Para elementos nuevos, remover directamente
+          item.style.transition = "all 0.3s ease";
+          item.style.opacity = "0";
+          item.style.transform = "translateX(-100%)";
+          setTimeout(() => {
+            item.remove();
+          }, 300);
+        }
+      }
+    }
+  });
+  
+  // Validación antes de enviar el formulario
+  const form = document.getElementById("product-form");
+  if (form) {
+    form.addEventListener("submit", function(e) {
+      const typeSelect = document.getElementById("product-type");
+      
+      if (typeSelect && typeSelect.value === "Combo") {
+        // Verificar que tenga al menos un componente válido
+        const comboItems = document.querySelectorAll('.combo-item');
+        let validItems = 0;
+        
+        comboItems.forEach(item => {
+          const isDestroyed = item.querySelector('input[name*="_destroy"]')?.value === "true";
+          const hasProduct = item.querySelector('select')?.value;
+          const hasQuantity = parseInt(item.querySelector('input[type="number"]')?.value) > 0;
+          
+          if (!isDestroyed && hasProduct && hasQuantity) {
+            validItems++;
+          }
+        });
+        
+        if (validItems === 0) {
+          e.preventDefault();
+          alert("⚠️ Error: Un combo debe tener al menos un componente.\n\nPor favor, agrega al menos un producto al combo antes de guardar.");
+          
+          // Enfocar el botón de agregar componente
+          if (addComboButton) {
+            addComboButton.focus();
+            addComboButton.style.animation = "pulse 0.5s ease-in-out 3";
+          }
+          return false;
+        }
+        
+        // Mostrar resumen antes de guardar
+        if (validItems > 0) {
+          const itemNames = [];
+          comboItems.forEach(item => {
+            const isDestroyed = item.querySelector('input[name*="_destroy"]')?.value === "true";
+            const productSelect = item.querySelector('select');
+            const quantity = item.querySelector('input[type="number"]')?.value;
+            
+            if (!isDestroyed && productSelect.value && quantity > 0) {
+              const productName = productSelect.options[productSelect.selectedIndex].text;
+              itemNames.push(`${quantity}x ${productName}`);
+            }
+          });
+          
+          console.log(`✅ Combo creado con ${validItems} componente(s): ${itemNames.join(', ')}`);
+        }
+      }
+    });
+  }
+
+  // Validación de imagen
+  const input = document.getElementById("imagen-input");
+  if (input) {
+    input.addEventListener("change", function () {
+      const file = this.files[0];
+      if (file && !file.type.startsWith("image/")) {
+        alert("Por favor selecciona solo archivos de imagen.");
+        this.value = "";
+      }
+    });
+  }
+});
+</script>

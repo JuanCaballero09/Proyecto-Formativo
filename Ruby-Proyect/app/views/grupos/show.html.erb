@@ -1,21 +1,64 @@
-<section class="grupo-show">
-  <% if @grupo.imagen.attached? %>
-    <%= image_tag @grupo.imagen, alt: @grupo.nombre, class: "grupo-imagen", width: 200 %>
-  <% else %>
-    <%= image_tag 'LogoLogo.svg', alt: @grupo.nombre, class: "grupo-imagen", width: 200 %>
-  <%end%>
-
-  <div class="grupo-show-def">
-    <div class="grupo-show-info">
-      <strong><%= t("home.section.grupo")%></strong> 
-      <p><%= @grupo.nombre %></p>
-      <p><strong><%= t("home.section.descripcion")%></strong> <%= @grupo.descripcion %></p>
+<section class="grupo-show-modern">
+  <div class="grupo-show-container">
+    <!-- Hero Section -->
+    <div class="grupo-hero">
+      <div class="grupo-imagen-container">
+        <% if @grupo.imagen.attached? %>
+          <%= image_tag @grupo.imagen, alt: @grupo.nombre, class: "grupo-imagen-hero" %>
+        <% else %>
+          <%= image_tag 'LogoLogo.svg', alt: @grupo.nombre, class: "grupo-imagen-hero" %>
+        <% end %>
+        <div class="imagen-overlay"></div>
+      </div>
+      
+      <div class="grupo-hero-content">
+        <div class="grupo-badge">
+          <span class="badge-icon">🍽️</span>
+          <%= t("home.section.grupo")%>
+        </div>
+        <h1 class="grupo-titulo-hero"><%= @grupo.nombre %></h1>
+        <p class="grupo-subtitulo">Descubre nuestra deliciosa selección</p>
+      </div>
     </div>
 
-    <div class="grupo-show-links">
-      <%= link_to t("home.section.mostrar_productos"), grupo_products_path(@grupo)%>
-      <%= link_to t("home.section.mostrar_grupos"), grupos_path %>
+    <!-- Content Section -->
+    <div class="grupo-content">
+      <div class="grupo-info-card">
+        <div class="info-header">
+          <h2 class="info-titulo">
+            <span class="info-icon">📝</span>
+            <%= t("home.section.descripcion")%>
+          </h2>
+        </div>
+        <div class="info-content">
+          <p class="descripcion-texto"><%= @grupo.descripcion %></p>
+        </div>
+      </div>
+
+      <!-- Action Cards -->
+      <div class="grupo-actions">
+        <div class="action-card primary">
+          <%= link_to grupo_products_path(@grupo), class: "action-link" do %>
+            <div class="action-icon">🛍️</div>
+            <div class="action-content">
+              <h3 class="action-title"><%= t("home.section.mostrar_productos")%></h3>
+              <p class="action-description">Explora todos los productos de esta categoría</p>
+            </div>
+            <div class="action-arrow">→</div>
+          <% end %>
+        </div>
+
+        <div class="action-card secondary">
+          <%= link_to grupos_path, class: "action-link" do %>
+            <div class="action-icon">📂</div>
+            <div class="action-content">
+              <h3 class="action-title"><%= t("home.section.mostrar_grupos")%></h3>
+              <p class="action-description">Ver todas las categorías disponibles</p>
+            </div>
+            <div class="action-arrow">→</div>
+          <% end %>
+        </div>
+      </div>
     </div>
   </div>
-
 </section>

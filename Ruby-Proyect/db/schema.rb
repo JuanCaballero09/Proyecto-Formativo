@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_17_042317) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_24_050905) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -64,6 +64,17 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_17_042317) do
     t.datetime "updated_at", null: false
     t.bigint "coupon_id"
     t.index ["coupon_id"], name: "index_carritos_on_coupon_id"
+  end
+
+  create_table "combo_items", force: :cascade do |t|
+    t.bigint "combo_id", null: false
+    t.bigint "product_id", null: false
+    t.integer "cantidad", default: 1, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["combo_id", "product_id"], name: "index_combo_items_on_combo_id_and_product_id"
+    t.index ["combo_id"], name: "index_combo_items_on_combo_id"
+    t.index ["product_id"], name: "index_combo_items_on_product_id"
   end
 
   create_table "coupon_usages", force: :cascade do |t|
@@ -156,7 +167,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_17_042317) do
     t.datetime "updated_at", null: false
     t.bigint "grupo_id", null: false
     t.decimal "calificacion", precision: 2, scale: 1
+    t.string "type"
     t.index ["grupo_id"], name: "index_products_on_grupo_id"
+    t.index ["type"], name: "index_products_on_type"
   end
 
   create_table "users", force: :cascade do |t|
@@ -189,6 +202,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_17_042317) do
   add_foreign_key "carrito_items", "carritos"
   add_foreign_key "carrito_items", "products"
   add_foreign_key "carritos", "coupons"
+  add_foreign_key "combo_items", "products"
+  add_foreign_key "combo_items", "products", column: "combo_id"
   add_foreign_key "coupon_usages", "coupons"
   add_foreign_key "coupon_usages", "users"
   add_foreign_key "ingrediente_productos", "ingredientes"

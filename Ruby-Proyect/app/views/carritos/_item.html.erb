@@ -1,30 +1,36 @@
-<div id="carrito-item-<%= item.id %>" class="carrito-item">
-  <div class="carrito-item-imagen">
-    <%= image_tag item.product.imagen, alt: item.product.nombre %>
+<div id="carrito-item-<%= item.id %>" class="carrito-item-modern">
+  <div class="item-imagen">
+    <%= image_tag item.product.imagen, alt: item.product.nombre, class: "producto-imagen" %>
   </div>
 
-  <div class="carrito-item-info">
-    <h3><%= item.product.nombre %></h3>
-
-    <p><strong><%= t("home.carrito.precio_unidad")%></strong>  <p><strong class="precio" data-precio="<%= item.precio%>" data-locale="<%= I18n.locale %>">$</strong></p></p>
-
-    <p><strong><%= t("home.order.cantidad")%></strong></p>
-    <div class="carrito-item-info-cantidad">
-      <%= button_to "-", carrito_item_path(item), method: :patch, data: { turbo_stream: true } %>
-      <p><%= item.cantidad %></p>
-      <%= button_to "+", incrementar_carrito_item_path(item), method: :put, data: { turbo_stream: true } %>
+  <div class="item-info">
+    <div class="item-header">
+      <h4 class="item-nombre"><%= item.product.nombre %></h4>
+      <div class="item-precio-unitario">
+        <%= number_to_currency(item.precio, unit: "COP $", separator: ",", delimiter: ".") %>
+      </div>
     </div>
 
-    <p>
-      <strong>Total:</strong>
-        <span class="precio"
-          data-precio="<%= item.precio * item.cantidad %>"
-          data-locale="<%= I18n.locale %>">
-          <%= number_to_currency(item.precio * item.cantidad, unit: "COP ", separator: ",", delimiter: ".") %>
-        </span>
-    </p>
-    
-    <%= button_to t("home.carrito.eliminar_todo"), carrito_item_path(item), method: :delete, data: { turbo_confirm: "¿Eliminar este producto del carrito?" } %>
+    <div class="item-cantidad-control">
+      <span class="cantidad-label">Cantidad:</span>
+      <div class="cantidad-buttons">
+        <%= button_to "-", carrito_item_path(item), method: :patch, data: { turbo_stream: true }, class: "btn-cantidad btn-menos" %>
+        <span class="cantidad-display"><%= item.cantidad %></span>
+        <%= button_to "+", incrementar_carrito_item_path(item), method: :put, data: { turbo_stream: true }, class: "btn-cantidad btn-mas" %>
+      </div>
+    </div>
 
+    <div class="item-total">
+      <span class="total-label">Total:</span>
+      <span class="total-precio">
+        <%= number_to_currency(item.precio * item.cantidad, unit: "COP $", separator: ",", delimiter: ".") %>
+      </span>
+    </div>
+    
+    <div class="item-acciones">
+      <%= button_to "🗑️ Eliminar", carrito_item_path(item), method: :delete, 
+                    data: { turbo_confirm: "¿Eliminar este producto del carrito?" }, 
+                    class: "btn-eliminar" %>
+    </div>
   </div>
 </div>

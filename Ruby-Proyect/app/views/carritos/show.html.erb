@@ -1,35 +1,114 @@
-<section id="carrito-contenido" class="carrito">
-  <h2><%= t("home.carrito.tu_carrito")%></h2>
-
-  <% if @items.empty? %>
-    <p><%= t("home.carrito.carrito_vacio")%></p>
-  <% else %>
-    <%= turbo_frame_tag "carrito", class: "carrito-items" do %>
-      <%= render partial: "carritos/item",
-                 collection: @carrito.carrito_items,
-                 as: :item %>
-    <% end %>
-
-    <p>
-      <strong><%= t("home.carrito.total_producto")%></strong>
-      <span id="contador-productos"><%= @carrito.carrito_items.sum(:cantidad) %></span>
-    </p>
-
-    <%= turbo_frame_tag "carrito-cupon" do %>
-      <%= render "carritos/cupon", carrito: @carrito %>
-    <% end %>
-
-    <div id="totales-carrito" class="totales-carrito" style="margin-top: 2em;">
-      <p><strong>Subtotal:</strong> <%= number_to_currency(@carrito.subtotal, unit: "COP $", separator: ",", delimiter: ".") %></p>
-      <p><strong>Descuento:</strong> <%= number_to_currency(@carrito.descuento, unit: "COP $", separator: ",", delimiter: ".") %></p>
-      <p><strong>Total:</strong> <%= number_to_currency(@carrito.total, unit: "COP $", separator: ",", delimiter: ".") %></p>
+<section class="carrito-modern">
+  <div class="carrito-container">
+    <!-- Header del carrito -->
+    <div class="carrito-header">
+      <div class="header-content">
+        <div class="header-icon">🛒</div>
+        <div class="header-info">
+          <h1 class="carrito-titulo"><%= t("home.carrito.tu_carrito")%></h1>
+          <% unless @items.empty? %>
+            <p class="carrito-subtitulo">
+              <span class="item-count"><%= @carrito.carrito_items.sum(:cantidad) %></span> 
+              <%= @carrito.carrito_items.sum(:cantidad) == 1 ? "producto" : "productos" %> en tu carrito
+            </p>
+          <% end %>
+        </div>
+      </div>
     </div>
 
-    <div class="botones-compra" style="margin-top: 2em;">
-      <%= button_to t("home.show-vista.generar_orden"),
-                    orders_path,
-                    method: :post,
-                    class: "btn btn-success" %>
-    </div>
-  <% end %>
+    <% if @items.empty? %>
+      <!-- Carrito vacío -->
+      <div class="carrito-vacio">
+        <div class="vacio-icon">🛒</div>
+        <h3 class="vacio-titulo"><%= t("home.carrito.carrito_vacio")%></h3>
+        <p class="vacio-descripcion">Agrega algunos productos deliciosos para empezar tu pedido</p>
+        <%= link_to "Explorar productos", products_path, class: "btn-explorar" %>
+      </div>
+    <% else %>
+      <div class="carrito-content">
+        <!-- Items del carrito -->
+        <div class="carrito-items-section">
+          <div class="items-header">
+            <h3 class="items-titulo">Productos seleccionados</h3>
+            <div class="items-contador">
+              <span id="contador-productos"><%= @carrito.carrito_items.sum(:cantidad) %></span>
+              <%= @carrito.carrito_items.sum(:cantidad) == 1 ? "item" : "items" %>
+            </div>
+          </div>
+          
+          <%= turbo_frame_tag "carrito", class: "carrito-items-list" do %>
+            <%= render partial: "carritos/item",
+                       collection: @carrito.carrito_items,
+                       as: :item %>
+          <% end %>
+        </div>
+
+        <!-- Sidebar con totales y acciones -->
+        <div class="carrito-sidebar">
+          <!-- Cupón -->
+          <div class="cupon-section">
+            <%= turbo_frame_tag "carrito-cupon" do %>
+              <%= render "carritos/cupon", carrito: @carrito %>
+            <% end %>
+          </div>
+
+          <!-- Totales -->
+          <div class="totales-section">
+            <div class="totales-card">
+              <h3 class="totales-titulo">Resumen del pedido</h3>
+              
+              <div id="totales-carrito" class="totales-detalle">
+                <div class="total-item">
+                  <span class="total-label">Subtotal:</span>
+                  <span class="total-value"><%= number_to_currency(@carrito.subtotal, unit: "COP $", separator: ",", delimiter: ".") %></span>
+                </div>
+                
+                <% if @carrito.descuento > 0 %>
+                  <div class="total-item descuento">
+                    <span class="total-label">Descuento:</span>
+                    <span class="total-value">-<%= number_to_currency(@carrito.descuento, unit: "COP $", separator: ",", delimiter: ".") %></span>
+                  </div>
+                <% end %>
+                
+                <div class="total-item total-final">
+                  <span class="total-label">Total:</span>
+                  <span class="total-value"><%= number_to_currency(@carrito.total, unit: "COP $", separator: ",", delimiter: ".") %></span>
+                </div>
+              </div>
+
+              <!-- Botón de compra -->
+              <div class="checkout-section">
+                <%= button_to t("home.show-vista.generar_orden"),
+                              orders_path,
+                              method: :post,
+                              class: "btn-checkout" %>
+                <p class="checkout-info">
+                  <span class="info-icon">🔒</span>
+                  Pago seguro y protegido
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Información adicional -->
+          <div class="info-adicional">
+            <div class="info-item">
+              <span class="info-icon">🚚</span>
+              <div class="info-content">
+                <h4>Entrega rápida</h4>
+                <p>Recibe tu pedido en 30-45 minutos</p>
+              </div>
+            </div>
+            <div class="info-item">
+              <span class="info-icon">💳</span>
+              <div class="info-content">
+                <h4>Pago seguro</h4>
+                <p>Múltiples métodos de pago disponibles</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
 </section>

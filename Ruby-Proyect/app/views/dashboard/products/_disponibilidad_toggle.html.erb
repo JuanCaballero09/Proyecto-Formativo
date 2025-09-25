@@ -1,0 +1,7 @@
+<div id="estado-<%= product.id %>">
+  <%= button_to '', toggle_disponibilidad_dashboard_product_path(product),
+    method: :patch,
+    data: { turbo_stream: true },
+    class: (product.disponible ? 'btn-on' : 'btn-off')
+  %>
+</div>

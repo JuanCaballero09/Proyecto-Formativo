@@ -1,74 +1,174 @@
-<section class="home">
-
-  <section class="custom-carousel">
-    <div class="carousel-track" id="carouselTrack">
-      <% if Banner.any? %>
-        <% Banner.order(:id).each do |banner| %>
-          <% if banner.imagen.attached? %>
-            <div class="carousel-slide">
-              <%= image_tag banner.imagen, class: "carousel-image", alt: "Banner" %>
-            </div>
+<section class="dashboard-home-modern">
+  <!-- Hero Section con Carousel Mejorado -->
+  <section class="hero-carousel">
+    <div class="carousel-container">
+      <div class="carousel-track" id="carouselTrack">
+        <% if Banner.any? %>
+          <% Banner.order(:id).each_with_index do |banner, index| %>
+            <% if banner.imagen.attached? %>
+              <div class="carousel-slide <%= 'active' if index == 0 %>">
+                <%= image_tag banner.imagen, class: "carousel-image", alt: "Banner #{index + 1}" %>
+                <div class="carousel-overlay">
+                  <div class="carousel-content">
+                    <h1 class="hero-title">Bienvenido a Bitevia</h1>
+                    <p class="hero-subtitle">Descubre los sabores más deliciosos</p>
+                    <%= link_to "Ver Menú", grupos_path, class: "hero-btn" %>
+                  </div>
+                </div>
+              </div>
+            <% end %>
           <% end %>
+        <% else %>
+          <div class="carousel-slide active">
+            <%= image_tag "LogoLogoText.svg", class: "carousel-image", alt: "Banner por defecto" %>
+            <div class="carousel-overlay">
+              <div class="carousel-content">
+                <h1 class="hero-title">Bitevia</h1>
+                <p class="hero-subtitle">Tu restaurante de confianza</p>
+                <%= link_to "Explorar", grupos_path, class: "hero-btn" %>
+              </div>
+            </div>
+          </div>
         <% end %>
-      <% else %>
-        <div class="carousel-slide">
-          <%= image_tag "LogoLogoText.svg", class: "carousel-image", alt: "Banner por defecto" %>
-        </div>
-      <% end %>
+      </div>
+      
+      <!-- Indicadores del carousel -->
+      <div class="carousel-indicators">
+        <% banner_count = Banner.any? ? Banner.count : 1 %>
+        <% banner_count.times do |i| %>
+          <button class="indicator <%= 'active' if i == 0 %>" data-slide="<%= i %>"></button>
+        <% end %>
+      </div>
+      
+      <!-- Controles del carousel -->
+      <button class="carousel-control prev" id="prevBtn">‹</button>
+      <button class="carousel-control next" id="nextBtn">›</button>
     </div>
   </section>
 
-  <h2><%= t("home.section.promociones_del_dia")%></h2>
-  <div class="promociones">
-    <% 2.times do %>
-      <div class="promo">
-        <%= image_tag 'LogoLogoAPP.svg', alt: 'comida', width: 200 %>
-        <div>
-          <h3><%= t("home.section.combo_pollo")%> - $19.900</h3>
-          <button>Pedir Ahora</button>
+  <!-- Sección de Combos Premium -->
+  <section class="combos-premium">
+    <div class="container">
+      <div class="section-header">
+        <div class="header-content">
+          <span class="section-badge">🎉 Ofertas Especiales</span>
+          <h2 class="section-title">Nuestros Combos Exclusivos</h2>
+          <p class="section-subtitle">Ahorra más con nuestras deliciosas combinaciones</p>
+        </div>
+        <% if @combos.any? %>
+          <%= link_to "Ver Todos", "/combos", class: "view-all-btn" %>
+        <% end %>
+      </div>
+
+      <div class="combos-grid">
+        <% if @combos.any? %>
+          <% @combos.each_with_index do |combo, index| %>
+            <div class="combo-card-premium" data-aos="fade-up" data-aos-delay="<%= index * 100 %>">
+              <div class="combo-image-container">
+                <%= image_tag(combo.imagen.attached? ? combo.imagen : 'LogoLogoAPP.svg', 
+                             alt: combo.nombre, 
+                             class: "combo-image") %>
+                <div class="combo-badge">
+                  <span class="discount">-15%</span>
+                </div>
+              </div>
+              
+              <div class="combo-content">
+                <h3 class="combo-name"><%= combo.nombre %></h3>
+                <p class="combo-description">
+                  <%= combo.descripcion.present? ? truncate(combo.descripcion, length: 60) : "Deliciosa combinación de sabores únicos" %>
+                </p>
+                
+                <% if combo.is_a?(Combo) && combo.combo_items.any? %>
+                  <div class="combo-items-preview">
+                    <span class="items-count">🍽️ <%= combo.combo_items.sum(:cantidad) %> productos incluidos</span>
+                  </div>
+                <% end %>
+                
+                <div class="combo-footer">
+                  <div class="combo-price">
+                    <span class="price-label">Solo</span>
+                    <span class="price-value"><%= number_to_currency(combo.precio, unit: "COP $", separator: ",", delimiter: ".", precision: 0) %></span>
+                  </div>
+                  
+                  <%= button_to "🛒 Pedir Ahora", carrito_items_path(product_id: combo.id), 
+                               method: :post, 
+                               class: "combo-btn-premium",
+                               data: { turbo_frame: "_top" } %>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        <% else %>
+          <div class="no-combos-premium">
+            <div class="no-combos-icon">🎁</div>
+            <h3>Próximamente: Combos Especiales</h3>
+            <p>Estamos preparando increíbles ofertas para ti</p>
+            <%= link_to "Explorar Menú", grupos_path, class: "explore-menu-btn" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sección de Información Premium -->
+  <section class="info-premium">
+    <div class="container">
+      <div class="info-grid">
+        <!-- Contacto Premium -->
+        <div class="contact-premium">
+          <div class="contact-header">
+            <h2>📞 Contáctanos</h2>
+            <p>Estamos aquí para servirte</p>
+          </div>
+          
+          <div class="contact-items">
+            <article class="contact-item">
+              <div class="contact-icon email">
+                📧
+              </div>
+              <div class="contact-info">
+                <h4>Email</h4>
+                <a href="mailto:biteviasoftware@gmail.com">biteviasoftware@gmail.com</a>
+              </div>
+            </article>
+            
+            <article class="contact-item">
+              <div class="contact-icon whatsapp">
+                📱
+              </div>
+              <div class="contact-info">
+                <h4>WhatsApp</h4>
+                <a href="https://wa.me/573024681298">+57 302 468 1298</a>
+              </div>
+            </article>
+            
+            <article class="contact-item">
+              <div class="contact-icon location">
+                📍
+              </div>
+              <div class="contact-info">
+                <h4>Ubicación</h4>
+                <p>Calle 30 #3e-164, Barranquilla, Atlántico</p>
+              </div>
+            </article>
+          </div>
+        </div>
+
+        <!-- Mapa Premium -->
+        <div class="map-premium">
+          <div class="map-header">
+            <h3>🗺️ Encuéntranos</h3>
+            <p>Ven a visitarnos</p>
+          </div>
+          <div class="map-container">
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3917.2743398504213!2d-74.7857876249557!3d10.942637289216423!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8ef5d390bce185a1%3A0x7b668739ec70f4b4!2sSENA%20CENTRO%20INDUSTRIAL%20Y%20DE%20AVIACION!5e0!3m2!1ses!2sco!4v1750989006175!5m2!1ses!2sco" 
+                    width="100%" height="300" style="border:0;border-radius: 15px;" 
+                    allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+            </iframe>
+          </div>
         </div>
       </div>
-      <div class="promo">
-        <%= image_tag 'LogoLogoAPP.svg', alt: 'comida', width: 200 %>
-        <div>
-          <h3>2x1 <%= t("home.section.hamburguesas")%></h3>
-          <button>Pedir Ahora</button>
-        </div>
-      </div>
-    <% end %>
-  </div>
-
-  <div class="home-info">
-    <div class="contacto">
-      <h2><%= t("home.section.contactanos")%></h2>
-      <article class="contacto-item">
-        <a href="#">
-          <div class="icono-circulo">
-            <%= image_tag "icons/envelope-solid.svg", alt: "correo" %>
-          </div>
-          <p>biteviasoftware@gmail.com</p>
-        </a>
-      </article>
-      <article class="contacto-item">
-        <a href="#">
-          <div class="icono-circulo">
-            <%= image_tag "icons/whatsapp-brands.svg", alt: "correo" %>
-          </div>
-          <p>+57 3024681298</p>
-        </a>
-      </article>
-      <article class="contacto-item">
-        <a href="#">
-          <div class="icono-circulo">
-            <%= image_tag "icons/location-dot-solid.svg", alt: "correo" %>
-          </div>
-          <p>Calle 30 ##3e-164, Cra. 3e #27c112, Barranquilla, Atlántico</p>
-        </a>
-      </article>
     </div>
-
-    <div class="map">
-      <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3917.2743398504213!2d-74.7857876249557!3d10.942637289216423!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8ef5d390bce185a1%3A0x7b668739ec70f4b4!2sSENA%20CENTRO%20INDUSTRIAL%20Y%20DE%20AVIACION!5e0!3m2!1ses!2sco!4v1750989006175!5m2!1ses!2sco" width="100%" height="450" style="border:0;border-radius: 5px;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-    </div>
-  </div>
+  </section>
 </section>

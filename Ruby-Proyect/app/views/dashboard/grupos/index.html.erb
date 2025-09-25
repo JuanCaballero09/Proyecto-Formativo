@@ -12,7 +12,7 @@
   <% if @grupos.any? %>
     <% @grupos.each do |grupo| %>
       <div class="dashboard-grupo" data-nombre="<%= I18n.transliterate(grupo.nombre.downcase) %>">
-        <div class="grupo-imagen">
+        <div class="grupo-imagen" style="height: fit-content; padding: 10px;">
           <% if grupo.imagen.attached? %>
             <%= image_tag url_for(grupo.imagen), alt: grupo.nombre %>
           <% else %>

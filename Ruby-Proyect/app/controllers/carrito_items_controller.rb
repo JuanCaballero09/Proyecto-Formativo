@@ -45,17 +45,6 @@ class CarritoItemsController < ApplicationController
     end
   end
 
-  def incrementar
-    @item = CarritoItem.find(params[:id])
-    @carrito = @item.carrito
-    @item.increment!(:cantidad)
-
-    respond_to do |format|
-      format.turbo_stream { render :update }
-      format.html { redirect_to carrito_path }
-    end
-  end
-
   def destroy
     @item = CarritoItem.find(params[:id])
     @carrito = @item.carrito # << esto debe ir antes del destroy

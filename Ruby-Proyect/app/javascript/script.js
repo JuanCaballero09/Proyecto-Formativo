@@ -140,10 +140,15 @@ document.addEventListener("turbo:load", () => {
 // ========================================
 
 document.addEventListener("turbo:load", () => {
-  const statusBox = document.getElementById("stateBox");
-  if (!statusBox) return;
+  const statusAnimation = document.getElementById("status-animation");
+  if (!statusAnimation) return;
 
-  const statusUrl = statusBox.dataset.statusUrl;
+  const statusUrl = statusAnimation.dataset.statusUrl;
+  
+  // Elementos de los mensajes
+  const loadingMessage = document.getElementById("loading-message");
+  const successMessage = document.getElementById("success-message");
+  const errorMessage = document.getElementById("error-message");
 
   let interval = setInterval(checkStatus, 2000);
 
@@ -151,33 +156,52 @@ document.addEventListener("turbo:load", () => {
     fetch(statusUrl)
       .then(res => res.json())
       .then(data => {
-        console.log("Estado recibido:", data); // <-- agrega esto
+        console.log("Estado recibido:", data);
+        
         if (data.status === "approved") {
-          statusBox.className = "state success";
-          document.getElementById("loader").style.display = "none";
-          document.getElementById("success").style.display = "flex";
-          //document.getElementById("cancel-btn").style.display = "none";
+          // Cambiar animación a success
+          statusAnimation.className = "status-animation success";
+          
+          // Cambiar mensajes
+          loadingMessage.classList.remove("active");
+          successMessage.classList.add("active");
+          
           clearInterval(interval);
-        } else if (data.status === "declined") {
-          statusBox.className = "state error";
-          document.getElementById("loader").style.display = "none";
-          document.getElementById("declined").style.display = "flex";
-          //document.getElementById("cancel-btn").style.display = "none";
-          clearInterval(interval);
-        } else if (data.status === "cancelled") {
-          statusBox.className = "state error"
-          document.getElementById("loader").style.display = "none";
-          document.getElementById("declined").style.display = "flex";
-          //document.getElementById("cancel-btn").style.display = "none";
+          
+        } else if (data.status === "declined" || data.status === "cancelled") {
+          // Cambiar animación a error
+          statusAnimation.className = "status-animation error";
+          
+          // Cambiar mensajes
+          loadingMessage.classList.remove("active");
+          errorMessage.classList.add("active");
+          
           clearInterval(interval);
         }
+      })
+      .catch(error => {
+        console.error("Error checking payment status:", error);
+        // En caso de error, mostrar mensaje de error después de un tiempo
+        setTimeout(() => {
+          statusAnimation.className = "status-animation error";
+          loadingMessage.classList.remove("active");
+          errorMessage.classList.add("active");
+          clearInterval(interval);
+        }, 10000); // 10 segundos de timeout
       });
   }
 
-  const btn = document.getElementById("reintentar");
-  let intervalShow = setInterval(() => {
-    btn.style.display = "inline-block";
-    clearInterval(intervalShow);
+  // Mostrar botón de reintentar después de 8 segundos si sigue en loading
+  setTimeout(() => {
+    if (statusAnimation.classList.contains("loading")) {
+      const retryButton = errorMessage.querySelector(".status-btn.primary");
+      if (retryButton) {
+        loadingMessage.classList.remove("active");
+        errorMessage.classList.add("active");
+        statusAnimation.className = "status-animation error";
+        clearInterval(interval);
+      }
+    }
   }, 8000);
 });
 
