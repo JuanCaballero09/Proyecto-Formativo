@@ -84,6 +84,7 @@ en:
       crecimiento: "Evolution"
       producto_mas_vendido: "best-selling products"
       producto_menos_vendido: "least sold products"
+      evolucion_ventas: "Sales trends"
 
     carrito: # textos en vista carrito
       tu_carrito: "Your Cart"

@@ -115,7 +115,7 @@ document.addEventListener("turbo:load", function () {
 
    // === Producto más vendido (line) ===
   new Chart(document.getElementById("chartTopOrders"), {
-    type: "line",
+    type: "bar",
     data: {
       labels: window.TopOrders.labels,
       datasets: [{
@@ -147,28 +147,49 @@ document.addEventListener("turbo:load", function () {
     }
   });
 
-  // === Producto menos vendido (line) ===
-  new Chart(document.getElementById("charleastproducts"), {
+   // === Ventas dia, semana, mes === //
+   new Chart(document.getElementById("chartSales"), {
     type: "line",
     data: {
-      labels: window.LeastOrder.labels,
-      datasets: [{
-        label: "Productos menos vendidos",
-        data:  window.LeastOrder.data,
-        backgroundColor: [base, claro, oscuro],
-        borderColor: "#fff",
-        borderWidth: 2
-      }],
-     options: {
-      responsive: true,
+      labels: window.Sales.labels,
+      datasets: [
+        {
+          label: "Dia",
+          data: window.Sales.byDay,
+          backgroundColor: [base, claro, oscuro],
+          borderColor: "#fff",
+          borderWidth: 2
+        },
+        {
+          label: "Semana",
+          data: window.Sales.byWeek,
+          backgroundColor: [base, claro, oscuro],
+          borderColor: "#fff",
+          borderWidth: 2
+        },
+        {
+          label: "Mes ",
+          data: window.Sales.byMonth,
+          backgroundColor: [base, claro, oscuro],
+          borderColor: "#fff",
+          borderWidth: 2
+        }
+      ]
+    },
+    options: {
+      responsive: true, 
       maintainAspectRatio: false,
       plugins: {
         legend: {
           position: "bottom",
           labels: {
             color: oscuro,
-            padding: 10
+            padding: 10,
           }
+        },
+        title: {
+          display: true,
+          Text: "Ventas"
         }
       },
       layout: {
@@ -176,8 +197,12 @@ document.addEventListener("turbo:load", function () {
           top: 10,
           bottom: 10
         }
+      },
+      scales: {
+        y: {
+          beginAtZero: true
+        }
       }
     }
-    }
-  });
+   });
 });

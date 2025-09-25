@@ -93,6 +93,7 @@ es:
       crecimiento: "Crecimiento"
       producto_mas_vendido: "Productos más vendidos"
       producto_menos_vendido: "Productos menos vendidos"
+      evolucion_ventas: "Evolución de ventas"
 
     carrito: # textos en vista carrito
       tu_carrito: "Tu Carrito"
