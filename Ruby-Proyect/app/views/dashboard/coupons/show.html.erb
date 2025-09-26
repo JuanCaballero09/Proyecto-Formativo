@@ -1,23 +1,23 @@
 <div class="coupons-container" style="margin: 2rem auto;">
-  <div class="coupons-title" style="font-size: 1.7rem;">Detalle del Cupón</div>
+  <div class="coupons-title" style="font-size: 1.7rem;"><%= t("home.cupones.detalle_cupon")%></div>
   <div class="coupon-detail-card">
-    <h2>Cupón</h2>
-    <p><strong>Código:</strong> <%= @coupon.codigo %></p>
-    <p><strong>Tipo de descuento:</strong><span id="coupon-tipo"> <%= @coupon.tipo_descuento %></span></p>
-    <p><strong>Valor:</strong> <span id="coupon-valor"><%= @coupon.valor %></span></p>
-    <p><strong>Expira en:</strong> <%= @coupon.expira_en&.strftime('%d/%m/%Y %H:%M') || 'Sin fecha' %></p>
+    <h2><%= t("home.cupones.cupon")%></h2>
+    <p><strong><%= t("home.cupones.codigo")%></strong> <%= @coupon.codigo %></p>
+    <p><strong><%= t("home.cupones.tipo_descuento")%></strong><span id="coupon-tipo"> <%= @coupon.tipo_descuento %></span></p>
+    <p><strong><%= t("home.cupones.tipo_descuento")%></strong> <span id="coupon-valor"><%= @coupon.valor %></span></p>
+    <p><strong><%= t("home.cupones.expira_en")%></strong> <%= @coupon.expira_en&.strftime('%d/%m/%Y %H:%M') || 'Sin fecha' %></p>
     <p>
-      <strong>Estado:</strong>
+      <strong><%= t("home.cupones.estado")%></strong>
       <% if @coupon.activo %>
-        <span class="status-active">Activo</span>
+        <span class="status-active"><%= t("home.cupones.activo")%></span>
       <% else %>
-        <span class="status-inactive">Inactivo</span>
+        <span class="status-inactive"><%= t("home.cupones.inactivo")%></span>
       <% end %>
     </p>
     <div class="coupon-detail-actions">
-      <%= link_to 'Editar', edit_dashboard_coupon_path(@coupon), class: 'btn btn-warning' %>
-      <%= link_to 'Volver', dashboard_coupons_path, class: 'btn btn-info' %>
-      <%= button_to 'Eliminar', dashboard_coupon_path(@coupon), method: :delete, data: { confirm: '¿Estás seguro?' }, class: 'btn btn-danger' %>
+      <%= link_to t("home.cupones.editar"), edit_dashboard_coupon_path(@coupon), class: 'btn btn-warning' %>
+      <%= link_to t("home.cupones.volver"), dashboard_coupons_path, class: 'btn btn-info' %>
+      <%= button_to t("home.cupones.eliminar"), dashboard_coupon_path(@coupon), method: :delete, data: { confirm: '¿Estás seguro?' }, class: 'btn btn-danger' %>
     </div>
   </div>
 </div>

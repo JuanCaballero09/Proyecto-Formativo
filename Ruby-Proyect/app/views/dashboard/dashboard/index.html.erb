@@ -41,12 +41,21 @@
       <canvas id="chartTorta"></canvas>
     </div>
 
+     <!-- Gráfico en barras -->
+    <div class= "card chart normal">
+      <h3><%= t("home.graficas.producto_mas_vendido")%></h3>
+      <canvas id="chartTopOrders"></canvas>
+    </div>
+
     <!-- Gráfico de líneas -->
-    <div class="card chart big">
+    <div class="card chart normal">
       <h3><%= t("home.graficas.crecimiento")%></h3>
       <canvas id="chartLineas"></canvas>
     </div>
-
+    <div class="card chart big">
+      <h3><%= t("home.graficas.evolucion_ventas")%></h3>
+      <canvas id="chartSales"></canvas>
+    </div>
   </div>
 </section>
 
@@ -62,4 +71,18 @@
     labels: <%= raw @grupos_growth.keys.to_json %>,
     data: <%= raw @grupos_growth.values.to_json %>
   };
+
+  // Producto más comprado
+  window.TopOrders = {
+    labels: <%= raw @top_products.keys.to_json %>,
+    data: <%= raw @top_products.values.to_json %>
+  }
+
+   // ventas por dia, semena y mes
+   window.Sales = {
+    labels: <%= raw @sales_by_day.keys.map { |d| d.strftime ("%d %b")}.to_json %>,
+    byDay: <%= raw @sales_by_day.values.to_json %>,
+    byWeek: <%= raw @sales_by_week.values.to_json %>,
+    byMonth: <%= raw @sales_by_month.values.to_json %>
+   }
 </script>

@@ -1,15 +1,15 @@
 <section>
-  <h2>Usuarios</h2>
+  <h2><%= t("home.usuarios.usuarios")%></h2>
 
   <div style="display: flex; justify-content: space-between; align-items: center; flex-direction: row; margin-bottom: 20px;">
     <p style="opacity: 0;">a</p>
     <%= form_with url: dashboard_users_path, method: :get, local: true, html: {class: "buscador"} do %>
-        <%= search_field_tag :query, params[:query], placeholder: "Buscar usuario...", autocomplete: "off", id: "buscador-usuarios" %>
+        <%= search_field_tag :query, params[:query], placeholder: t("home.usuarios.buscar_usuario"), autocomplete: "off", id: "buscador-usuarios" %>
     <% end %>
   </div>
 
   <div id="sin-resultados-usuarios" style="display: none; text-align: center; margin-top: 20px;">
-      <p>No se encontraron usuarios que coincidan con la búsqueda.</p>
+      <p><%= t("home.usuarios.mensaje_no_usuario")%></p>
   </div>
 
   <%= render partial: 'user', collection: @users %>
