@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:first_flutter/service/ApiService.dart';
+import 'package:first_flutter/models/categoria.dart';
 import 'package:meta/meta.dart';
 
 //paso
@@ -13,14 +14,18 @@ class CategoriasBloc extends Bloc<CategoriasEvent, CategoriasState> {
     on<LoadCategoriasEvent>((event, emit) async {
       emit(CategoriasLoadingState());
       try {
-        final categorias = await apiService.getCategorias();
-        if (categorias != null) {
+        final categoriasData = await apiService.getCategorias();
+        if (categoriasData != null) {
+          // Convertir los datos JSON a objetos Categoria
+          final categorias = categoriasData
+              .map<Categoria>((json) => Categoria.fromJson(json))
+              .toList();
           emit(CategoriasLoadedState(categorias));
         } else {
-          emit(categoriasErrorState('No se pudieron cargar las categorías'));
+          emit(CategoriasErrorState('No se pudieron cargar las categorías'));
         }
       } catch (e) {
-        emit(categoriasErrorState('Error: ${e.toString()}'));
+        emit(CategoriasErrorState('Error: ${e.toString()}'));
       }
     });
   }
