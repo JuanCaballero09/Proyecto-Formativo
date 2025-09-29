@@ -20,6 +20,7 @@ class CategoriasBloc extends Bloc<CategoriasEvent, CategoriasState> {
           final categorias = categoriasData
               .map<Categoria>((json) => Categoria.fromJson(json))
               .toList();
+          
           emit(CategoriasLoadedState(categorias));
         } else {
           emit(CategoriasErrorState('No se pudieron cargar las categorías'));

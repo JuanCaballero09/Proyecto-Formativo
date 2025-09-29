@@ -190,27 +190,7 @@ class _MenuPageState extends State<MenuPage> {
               // Imagen de fondo
               ClipRRect(
                 borderRadius: BorderRadius.circular(16),
-                child: categoria.imagen != null && categoria.imagen!.isNotEmpty
-                    ? (categoria.imagen!.startsWith('http')
-                        ? Image.network(
-                            categoria.imagen!,
-                            height: double.infinity,
-                            width: double.infinity,
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) {
-                              return _buildPlaceholderImage();
-                            },
-                          )
-                        : Image.asset(
-                            categoria.imagen!,
-                            height: double.infinity,
-                            width: double.infinity,
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) {
-                              return _buildPlaceholderImage();
-                            },
-                          ))
-                    : _buildPlaceholderImage(),
+                child: _buildCategoryImage(categoria),
               ),
               // Overlay con gradiente
               Container(
@@ -282,6 +262,100 @@ class _MenuPageState extends State<MenuPage> {
         ),
       ),
     );
+  }
+
+  Widget _buildCategoryImage(Categoria categoria) {
+    // Mapeo de imágenes predeterminadas por nombre de categoría
+    final Map<String, String> imagenesDefault = {
+      // Nombres exactos de tu API
+      'hamburguesas': 'assets/Hamburguesa sencilla.jpg',
+      'salchipapas': 'assets/imagen1.jpeg',
+      'pizzas': 'assets/Pizza Hawiana.jpg',
+      
+      // Variaciones por si acaso
+      'hamburguesa': 'assets/Hamburguesa sencilla.jpg',
+      'burger': 'assets/Hamburguesa sencilla.jpg',
+      'burgers': 'assets/Hamburguesa sencilla.jpg',
+      'salchipapa': 'assets/imagen1.jpeg',
+      'pizza': 'assets/Pizza Hawiana.jpg',
+      'tacos': 'assets/Tacos de Pollo.jpg',
+      'taco': 'assets/Tacos de Pollo.jpg',
+      'ensaladas': 'assets/Ensalada Cesar.jpg',
+      'ensalada': 'assets/Ensalada Cesar.jpg',
+      'salads': 'assets/Ensalada Cesar.jpg',
+      'salad': 'assets/Ensalada Cesar.jpg',
+    };
+    
+    String? imagePath = categoria.imagen;
+    
+    // Si no hay imagen de la API, usar imagen predeterminada basada en el nombre
+    if (imagePath == null || imagePath.isEmpty) {
+      final nombreLower = categoria.name.toLowerCase();
+      imagePath = imagenesDefault[nombreLower];
+      
+      if (imagePath == null) {
+        return _buildPlaceholderImage();
+      }
+    }
+
+    // Si es una URL de internet (http/https)
+    if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+      return Image.network(
+        imagePath,
+        height: double.infinity,
+        width: double.infinity,
+        fit: BoxFit.cover,
+        loadingBuilder: (context, child, loadingProgress) {
+          if (loadingProgress == null) return child;
+          return Container(
+            color: Colors.grey[300],
+            child: const Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
+        },
+        errorBuilder: (context, error, stackTrace) {
+          return _buildPlaceholderImage();
+        },
+      );
+    } 
+    // Si es un asset local
+    else if (imagePath.startsWith('assets/')) {
+      return Image.asset(
+        imagePath,
+        height: double.infinity,
+        width: double.infinity,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) {
+          return _buildPlaceholderImage();
+        },
+      );
+    }
+    // Si es una ruta relativa, intentar como asset
+    else {
+      final assetPath = imagePath.startsWith('/') ? 'assets$imagePath' : 'assets/$imagePath';
+      return Image.asset(
+        assetPath,
+        height: double.infinity,
+        width: double.infinity,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) {
+          // Como último recurso, intentar como imagen de red sin protocolo
+          if (imagePath != null && !imagePath.contains('://')) {
+            return Image.network(
+              'https://$imagePath',
+              height: double.infinity,
+              width: double.infinity,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) {
+                return _buildPlaceholderImage();
+              },
+            );
+          }
+          return _buildPlaceholderImage();
+        },
+      );
+    }
   }
 
   Widget _buildPlaceholderImage() {

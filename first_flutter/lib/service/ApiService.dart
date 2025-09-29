@@ -229,22 +229,22 @@ class ApiService {
   Future<List<dynamic>?> getCategorias () async{
     final url = Uri.parse('${baseUrl}/categorias');
 
-    final response = await http.get(url);
-    print(response.body);
+    try {
+      final response = await http.get(url);
 
-    if(response.statusCode == 200){
-      final List<dynamic> decoded = jsonDecode(response.body);
-
-      print('✅ cargado exitosamente');
-
-      return decoded;
-    }else{
-      print('❌ Error: ${response.statusCode}');
-
+      if(response.statusCode == 200){
+        final List<dynamic> decoded = jsonDecode(response.body);
+        return decoded;
+      } else {
+        // ignore: avoid_print
+        print('❌ Error HTTP: ${response.statusCode}');
+        return null;
+      }
+    } catch (e) {
+      // ignore: avoid_print
+      print('❌ Error en getCategorias: $e');
       return null;
-
     }
-
   }
 
 

@@ -12,11 +12,26 @@ class Categoria {
   });
 
   factory Categoria.fromJson(Map<String, dynamic> json) {
+    // Buscar el campo de imagen en múltiples posibles nombres
+    String? imagenEncontrada;
+    final posiblesCamposImagen = [
+      'imagen_url',    // Tu API usa este campo
+      'imagen', 'image', 'img', 'picture', 'photo', 'url', 'src', 
+      'thumbnail', 'avatar', 'icon', 'logo', 'path'
+    ];
+    
+    for (String campo in posiblesCamposImagen) {
+      if (json[campo] != null && json[campo].toString().isNotEmpty) {
+        imagenEncontrada = json[campo].toString();
+        break;
+      }
+    }
+    
     return Categoria(
-      id: json['id'] ?? 0,
-      name: json['name'] ?? json['nombre'] ?? '',
-      imagen: json['imagen'] ?? json['image'],
-      descripcion: json['descripcion'] ?? json['description'],
+      id: json['id'] ?? json['ID'] ?? 0,
+      name: json['nombre'] ?? json['name'] ?? json['titulo'] ?? json['title'] ?? '',
+      imagen: imagenEncontrada,
+      descripcion: json['descripcion'] ?? json['description'] ?? json['desc'],
     );
   }
 
