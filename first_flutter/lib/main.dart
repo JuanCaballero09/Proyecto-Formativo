@@ -10,40 +10,31 @@ import 'bloc/cart_bloc.dart';
 import 'bloc/language_bloc.dart';
 import 'bloc/language_event.dart';
 import 'bloc/language_state.dart';
+import 'bloc/categorias_bloc.dart';
 import 'repository/product_repository.dart';
-import 'repository/http_product_repository.dart';
-import 'repository/mocki_product_repository.dart';
 import 'repository/api_product_repository.dart'; // Nuevo repositorio
 import 'pages/splash_page.dart';
 import 'package:first_flutter/pages/inter_page.dart';
 import 'l10n/app_localizations.dart';
 import 'bloc/auth_bloc.dart';
 import 'pages/perfil_wrapper.dart';
-import 'utils/api_config.dart'; // Configuración de API
-
+import 'service/ApiService.dart';
 
 void main() {
   // Configuración de repositorio de productos
-  // Opción 1: Para usar la nueva API REST (recomendado)
   final ProductRepository repository = ApiProductRepository();
   
-  // Opción 2: Para usar datos de MockAPI (comentar línea anterior y descomentar estas)
-  // const String apiUrl = 'https://64e8e7e299cf45b15fdffb7e.mockapi.io/api/v1/products';
-  // final ProductRepository repository = HttpProductRepository(apiUrl: apiUrl);
-  
-  // Opción 3: Para usar datos locales (comentar línea ApiProductRepository y descomentar esta)
-  // final ProductRepository repository = MockiProductRepository();
+  // Crear instancia del ApiService para categorías
+  final ApiService apiService = ApiService();
 
-  // Configurar URL base personalizada si es necesario
-  // ApiConfig.setBaseUrl('https://tu-api-personalizada.com/api/v1');
-
-  runApp(MyApp(repository: repository));
+  runApp(MyApp(repository: repository, apiService: apiService));
 }
 
 class MyApp extends StatelessWidget {
   final ProductRepository repository;
+  final ApiService apiService;
 
-  const MyApp({super.key, required this.repository});
+  const MyApp({super.key, required this.repository, required this.apiService});
 
   @override
   Widget build(BuildContext context) {
@@ -53,6 +44,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (_) => CartBloc()),
         BlocProvider(create: (_) => LanguageBloc()..add(const LoadLanguage())),
         BlocProvider<AuthBloc>(create: (_) => AuthBloc()),
+        BlocProvider(create: (_) => CategoriasBloc(apiService)),
       ],
       child: BlocBuilder<LanguageBloc, LanguageState>(
         builder: (context, languageState) {
@@ -133,7 +125,6 @@ class MyApp extends StatelessWidget {
               '/': (context) => SplashPage(key: UniqueKey()),
               '/menu': (context) => const MenuPage(),
               '/carrito': (context) => CarritoPage(key: UniqueKey()),
-              // '/welcome': (context) => const WelcomePage(),
               "wrapper": (context) => const PerfilWrapper(),
                '/login': (context) => const  LoginPage(),
               '/register': (context) => const RegisterPage(),

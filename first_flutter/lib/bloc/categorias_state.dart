@@ -8,16 +8,13 @@ class CategoriasInitial extends CategoriasState {}
 class CategoriasLoadingState extends CategoriasState{}
 
 class CategoriasLoadedState extends CategoriasState{
-  final List<dynamic> categorias;
+  final List<Categoria> categorias;
 
   CategoriasLoadedState(this.categorias);
 }
 
-class categoriasErrorState extends CategoriasState{
+class CategoriasErrorState extends CategoriasState{
   final String error;
 
-  categoriasErrorState(this.error);
-  
-  
-
+  CategoriasErrorState(this.error);
 } 
