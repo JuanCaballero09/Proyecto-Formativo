@@ -247,5 +247,49 @@ class ApiService {
     }
   }
 
+  /// Busca productos y categorías por query
+  /// [query] - Texto de búsqueda
+  /// Retorna un mapa con 'productos' y 'grupos' que coinciden con la búsqueda
+  Future<Map<String, dynamic>> searchProducts(String query) async {
+    if (query.trim().isEmpty) {
+      return {'productos': [], 'grupos': []};
+    }
+
+    try {
+      final url = Uri.parse('$baseUrl/buscar?q=${Uri.encodeComponent(query)}');
+      final headers = await _getAuthHeaders();
+
+      // ignore: avoid_print
+      print("🔍 Buscando: '$query' en: $url");
+
+      final response = await http
+          .get(url, headers: headers)
+          .timeout(const Duration(seconds: 10));
+
+      _handleHttpResponse(response, 'búsqueda de productos');
+
+      final data = jsonDecode(response.body);
+
+      // La respuesta debe tener la estructura: { productos: [], grupos: [] }
+      final Map<String, dynamic> searchResults = {
+        'productos': data['productos'] ?? [],
+        'grupos': data['grupos'] ?? [],
+        'total': (data['productos']?.length ?? 0) + (data['grupos']?.length ?? 0),
+      };
+
+      // ignore: avoid_print
+      print("✅ Búsqueda completada: ${searchResults['total']} resultados");
+      return searchResults;
+
+    } on NetworkException {
+      rethrow;
+    } on DataException {
+      rethrow;
+    } catch (e) {
+      // ignore: avoid_print
+      print("❌ Error inesperado en búsqueda: $e");
+      throw NetworkException('Error de conexión al buscar productos');
+    }
+  }
 
 }

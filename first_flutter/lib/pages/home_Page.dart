@@ -6,6 +6,11 @@ import '../l10n/app_localizations.dart';
 import '../bloc/language_bloc.dart';
 import '../bloc/language_event.dart';
 import '../bloc/language_state.dart';
+import '../bloc/search_bloc.dart';
+import '../bloc/search_event.dart';
+import '../bloc/search_state.dart';
+import '../widgets/search_results_list.dart';
+import '../models/search_result.dart';
 import 'notificacion_Page.dart';
 import 'location_Page.dart';
 
@@ -30,11 +35,15 @@ class _HomePageState extends State<HomePage>
   bool _isPageViewReady = false;
   bool _isSearchVisible = false;
   final TextEditingController _searchController = TextEditingController();
+  Timer? _debounceTimer;
 
   @override
   void initState() {
     super.initState();
     _pageController = PageController(initialPage: 0);
+
+    // Escuchar cambios en el campo de búsqueda
+    _searchController.addListener(_onSearchChanged);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
@@ -42,6 +51,22 @@ class _HomePageState extends State<HomePage>
           _isPageViewReady = true;
         });
         _startTimer();
+      }
+    });
+  }
+
+  /// Maneja cambios en el campo de búsqueda con debouncing
+  void _onSearchChanged() {
+    // Cancelar el temporizador anterior si existe
+    _debounceTimer?.cancel();
+    
+    // Crear nuevo temporizador para ejecutar la búsqueda después de 500ms
+    _debounceTimer = Timer(const Duration(milliseconds: 500), () {
+      final query = _searchController.text.trim();
+      if (query.isNotEmpty) {
+        context.read<SearchBloc>().add(SearchQueryChanged(query));
+      } else {
+        context.read<SearchBloc>().add(const ClearSearch());
       }
     });
   }
@@ -66,8 +91,10 @@ class _HomePageState extends State<HomePage>
   @override
   void dispose() {
     _timer?.cancel();
+    _debounceTimer?.cancel();
     _pageController.dispose();
     _scrollController.dispose();
+    _searchController.removeListener(_onSearchChanged);
     _searchController.dispose();
     super.dispose();
   }
@@ -170,21 +197,86 @@ class _HomePageState extends State<HomePage>
                         color: Colors.grey.withOpacity(0.3),
                         spreadRadius: 2,
                         blurRadius: 5,
-                        offset: Offset(0, 3),
+                        offset: const Offset(0, 3),
                       ),
                     ],
                   ),
                   child: TextField(
                     controller: _searchController,
+                    autofocus: true,
                     decoration: InputDecoration(
                       hintText: AppLocalizations.of(context)!.searchProducts,
-                      prefixIcon: const Icon(Icons.search),
+                      prefixIcon: const Icon(
+                        Icons.search,
+                        color: Color.fromRGBO(237, 88, 33, 1),
+                      ),
+                      suffixIcon: _searchController.text.isNotEmpty
+                          ? IconButton(
+                              icon: const Icon(Icons.clear),
+                              onPressed: () {
+                                _searchController.clear();
+                                context.read<SearchBloc>().add(const ClearSearch());
+                              },
+                            )
+                          : null,
                       border: InputBorder.none,
-                      contentPadding: const
-                          EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 14),
                     ),
                   ),
                 ),
+              ),
+
+            // Resultados de búsqueda
+            if (_isSearchVisible)
+              BlocBuilder<SearchBloc, SearchState>(
+                builder: (context, state) {
+                  if (state is SearchLoading) {
+                    return const SearchLoadingWidget();
+                  } else if (state is SearchLoaded) {
+                    if (state.results.isEmpty) {
+                      return NoSearchResults(query: state.query);
+                    }
+                    return SearchResultsList(
+                      results: state.results,
+                      onClear: () {
+                        _searchController.clear();
+                        context.read<SearchBloc>().add(const ClearSearch());
+                        setState(() {
+                          _isSearchVisible = false;
+                        });
+                      },
+                      onResultTap: (result) {
+                        _handleSearchResultTap(context, result);
+                      },
+                    );
+                  } else if (state is SearchError) {
+                    return Container(
+                      color: Colors.white,
+                      padding: const EdgeInsets.all(20.0),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(
+                            Icons.error_outline,
+                            size: 64,
+                            color: Colors.red,
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            state.message,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              color: Colors.red,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+                  return const SizedBox.shrink();
+                },
               ),
 
             // Título Promociones
@@ -395,5 +487,36 @@ class _HomePageState extends State<HomePage>
         );
       },
     );
+  }
+
+  /// Maneja el tap en un resultado de búsqueda
+  void _handleSearchResultTap(BuildContext context, SearchResult result) {
+    // Cerrar el campo de búsqueda
+    setState(() {
+      _isSearchVisible = false;
+    });
+    _searchController.clear();
+    context.read<SearchBloc>().add(const ClearSearch());
+
+    // Navegar según el tipo de resultado
+    if (result.type == 'product') {
+      // TODO: Navegar a la página de detalle del producto
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Abriendo producto: ${result.name}'),
+          duration: const Duration(seconds: 2),
+        ),
+      );
+      // Navigator.pushNamed(context, '/product-detail', arguments: result.id);
+    } else if (result.type == 'category') {
+      // TODO: Navegar a la página de categoría
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Abriendo categoría: ${result.name}'),
+          duration: const Duration(seconds: 2),
+        ),
+      );
+      // Navigator.pushNamed(context, '/category', arguments: result.id);
+    }
   }
 }
