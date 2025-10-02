@@ -266,6 +266,10 @@ class ApiService {
           .get(url, headers: headers)
           .timeout(const Duration(seconds: 10));
 
+      // ignore: avoid_print
+      print("📊 Status Code: ${response.statusCode}");
+      print("📦 Response body: ${response.body}");
+
       _handleHttpResponse(response, 'búsqueda de productos');
 
       final data = jsonDecode(response.body);

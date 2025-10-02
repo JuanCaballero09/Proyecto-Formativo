@@ -68,6 +68,7 @@ Rails.application.routes.draw do
     namespace :v1 do
       post "login",  to: "auth#login"
       post "logout", to: "auth#logout"
+      get "buscar", to: "busqueda#index"
       resources :grupos, path: "categorias", only: [ :index, :show ] do
         resources :products, path: "productos", only: [ :index, :show ], module: :grupos
       end
