@@ -21,8 +21,8 @@
       <div class="carrito-vacio">
         <div class="vacio-icon">🛒</div>
         <h3 class="vacio-titulo"><%= t("home.carrito.carrito_vacio")%></h3>
-        <p class="vacio-descripcion">Agrega algunos productos deliciosos para empezar tu pedido</p>
-        <%= link_to "Explorar productos", products_path, class: "btn-explorar" %>
+        <p class="vacio-descripcion"><%= t("home.carrito.agrega_producto")%></p>
+        <%= link_to t("home.carrito.explorar_productos"), products_path, class: "btn-explorar" %>
       </div>
     <% else %>
       <div class="carrito-content">
@@ -74,7 +74,7 @@
                   <span class="total-label">Total:</span>
                   <span class="total-value"><%= number_to_currency(@carrito.total, unit: "COP $", separator: ",", delimiter: ".") %></span>
                 </div>
-              </div>
+              </div>  
 
               <!-- Botón de compra -->
               <div class="checkout-section">

@@ -41,20 +41,25 @@ es:
       panel_de_administracion: "Panel de administración"
       iniciar_sesion: "Iniciar sesión"
       cerrar_sesion: "Cerrar sesión"
-      buscar_productos: "Buscar productos..." 
+      buscar_productos: "Buscar productos..."
+      restaurante: "Tu restaurante de confianza"
+      explorar: "Explorar"
+
 
       # Contenido en el section del home
     section: 
-      promociones_del_dia: "🔥 Promociones del dia 🔥"
+      ofertas: "Ofertas Especiales"
+      combos_exclusivos: "Nuestros Combos Exclusivos"
+      ahorra: "Ahorra más con nuestras deliciosas combinaciones"
+      proxima: "Próximamente: Combos Especiales"
+      estamos_preparados: "Estamos preparando increíbles ofertas para ti"
+      explorar_menu: "Explorar Menú"
       contactanos: "Contáctanos"
-      combo_pollo: "Combo pollo"
-      hamburguesas: "Hamburguesas"
-      agregar_carrito: "Agregar al carrito"
-      grupo: "Grupo:"
-      descripcion: "Descripción:"
-      mostrar_productos: "Mostrar productos"
-      mostrar_grupos: "Mostrar Grupos"
-      mostrar_categorias: "Mostrar Categorias"
+      servir: "Estamos aquí para servirte"
+      ubicacion: "Ubicación"
+      encuentranos: "Encuéntranos"
+      visitar: "Ven a visitarnos"
+
 
       # footer del home
     footer:
@@ -103,6 +108,10 @@ es:
       finalizar_compra: "Finalizar Compra"
       eliminar_todo: "Eliminar todo"
       precio_unidad: "Precio unidad:"
+      explorar_productos: "Explorar productos"
+      agrega_producto: "Agrega algunos productos deliciosos para empezar tu pedido"
+      
+
       
     order:
       irpago: "Ir al pago"
@@ -184,5 +193,23 @@ es:
       nombree: "Nombre:"
       emaill: "Email:"
 
+    categoria:
+      nuestras_categorias: "Nuestras Categorías"
+      descubre: "Descubre nuestra deliciosa variedad de productos organizados por categorías"
+      productos: "Productos"
+      combos_especiales: "COMBOS ESPECIALES"
+      combos_promociones: "Combos y Promociones"
+      descubre_ofertas: "Descubre nuestras ofertas especiales y combos únicos con los mejores precios"
+      volver_categoria: "volver a categorías"
+      sin_producto: "No hay productos disponibles por ahora."
+      sin_grupo: "No hay grupos disponibles por ahora."
+      sin_categoria: "Pronto tendremos nuevas categorías para ti"
+      explorar_producto_categoria: "Explora todos los productos de esta categoría"
+      products_disponibles: "Productos disponibles"
+      no_disponible: "Producto no disponible"
+      comentario_uno: "Muy rica y jugosa"
+      comentario_dos: "Me encantó la combinación"
+
+  
 
 

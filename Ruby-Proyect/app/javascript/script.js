@@ -118,18 +118,21 @@ document.addEventListener("turbo:load", () => {
 
     let precioFinal, currency; 
 
-    if (locale ===   "en"){
+    if (locale.startsWith("en")){
       precioFinal = precio / cambioDinero;
-      currency = "USD";
+      currency = "USD"
     } else {
       precioFinal = precio;
       currency = "COP";
     }
 
-    el.innerText = new Intl.NumberFormat(locale, {
-      style: "currency",
-      currency: currency
+    const numero = new Intl.NumberFormat(locale, {
+      style: "decimal",
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
     }).format(precioFinal);
+
+    el.innerText = `${numero} ${currency}`;
   });
 }); 
 
