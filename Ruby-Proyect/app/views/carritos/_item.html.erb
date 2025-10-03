@@ -7,7 +7,7 @@
     <div class="item-header">
       <h4 class="item-nombre"><%= item.product.nombre %></h4>
       <div class="item-precio-unitario">
-        <%= number_to_currency(item.precio, unit: "COP $", separator: ",", delimiter: ".") %>
+        <strong class="precio" data-precio="<%= item.precio %>" data-locale="<%= I18n.locale %>"></strong>
       </div>
     </div>
 
@@ -23,7 +23,7 @@
     <div class="item-total">
       <span class="total-label">Total:</span>
       <span class="total-precio">
-        <%= number_to_currency(item.precio * item.cantidad, unit: "COP $", separator: ",", delimiter: ".") %>
+        <strong class="precio" data-precio="<%= item.precio * item.cantidad %>" data-locale="<%= I18n.locale %>"></strong>
       </span>
     </div>
     
