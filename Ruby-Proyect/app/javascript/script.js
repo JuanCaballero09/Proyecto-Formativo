@@ -105,37 +105,68 @@ document.addEventListener("turbo:load", function() {
 // ========================================
 // 💵 Converción COP a USD
 // ========================================
+ document.addEventListener("turbo:load", () => {
+  const cambioDinero = 4000;
 
-document.addEventListener("turbo:load", () => {
-  const priceChange = document.querySelectorAll(".precio");
-  if (!priceChange) return;
+  function formatear(precio, locale, currency) {
+    let formateado;
+    
+    if (currency === "USD") {
+      formateado = new Intl.NumberFormat('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      }).format(precio);
+      
+      formateado = `USD ${formateado}`;
+    } else {
+      formateado = new Intl.NumberFormat('es-CO', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+        useGrouping: true
+      }).format(precio);
+    
+      formateado = formateado.replace(".", ",");
+      formateado = `COP $${formateado}`;
+    }
 
-  const cambioDinero = 4000; 
+    return formateado;
+  }
 
-  priceChange.forEach(el =>{
+  // precio unitario
+  document.querySelectorAll(".precio-unitario").forEach(el => {
     const precio = parseFloat(el.dataset.precio);
-    const locale = el.dataset.locale
+    const locale = el.dataset.locale;
+    let precioFinal, currency;
 
-    let precioFinal, currency; 
-
-    if (locale.startsWith("en")){
+    if (locale === "en") {
       precioFinal = precio / cambioDinero;
-      currency = "USD"
+      currency = "USD";
     } else {
       precioFinal = precio;
       currency = "COP";
     }
 
-    const numero = new Intl.NumberFormat(locale, {
-      style: "decimal",
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    }).format(precioFinal);
-
-    el.innerText = `${numero} ${currency}`;
+    el.innerText = formatear(precioFinal, locale, currency);
   });
-}); 
 
+  // precio total de un producto
+  document.querySelectorAll(".precio-total").forEach(el => {
+    const precio = parseFloat(el.dataset.precio);
+    const cantidad = parseInt(el.dataset.cantidad, 10) || 1;
+    const locale = el.dataset.locale;
+    let subtotal = precio * cantidad;
+    let currency;
+
+    if (locale === "en") {
+      subtotal = subtotal / cambioDinero;
+      currency = "USD";
+    } else {
+      currency = "COP";
+    }
+
+    el.innerText = formatear(subtotal, locale, currency);
+  });
+});
 
 
 // ========================================
