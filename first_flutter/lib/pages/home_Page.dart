@@ -123,28 +123,8 @@ class _HomePageState extends State<HomePage>
                         );
                       },
                     ),
-                    // Botón de idioma
-                    BlocBuilder<LanguageBloc, LanguageState>(
-                      builder: (context, state) {
-                        if (state is LanguageLoaded) {
-                          return IconButton(
-                            icon: Text(
-                              state.locale.languageCode == 'es' ? '🇪🇸' : '🇺🇸',
-                              style: TextStyle(fontSize: 20),
-                            ),
-                            onPressed: () {
-                              _showLanguageDialog(context, state.locale.languageCode);
-                            },
-                          );
-                        }
-                        return IconButton(
-                          icon: Text('🇪🇸', style: TextStyle(fontSize: 20)),
-                          onPressed: () {
-                            _showLanguageDialog(context, 'es');
-                          },
-                        );
-                      },
-                    ),
+                   
+                
                   ],
                 ),
               ],
