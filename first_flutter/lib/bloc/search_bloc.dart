@@ -20,19 +20,28 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     Emitter<SearchState> emit,
   ) async {
     final query = event.query.trim();
+    
+    print("🔍 BLOC: SearchQueryChanged - query='$query'");
 
     // Si la búsqueda está vacía, volver al estado inicial
     if (query.isEmpty) {
+      print("🔍 BLOC: Query vacío, emitiendo SearchInitial");
       emit(const SearchInitial());
       return;
     }
 
     // Mostrar estado de carga
+    print("🔍 BLOC: Emitiendo SearchLoading");
     emit(const SearchLoading());
 
     try {
       // Realizar búsqueda en el servicio API
+      print("🔍 BLOC: Llamando a apiService.searchProducts");
       final searchData = await apiService.searchProducts(query);
+      
+      print("🔍 BLOC: Datos recibidos: ${searchData.keys}");
+      print("🔍 BLOC: Productos: ${searchData['productos']?.length ?? 0}");
+      print("🔍 BLOC: Grupos: ${searchData['grupos']?.length ?? 0}");
       
       // Convertir los resultados a objetos SearchResult
       final List<SearchResult> results = [];
@@ -51,10 +60,14 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
         }
       }
 
+      print("🔍 BLOC: Total SearchResults creados: ${results.length}");
+      
       // Emitir estado con resultados
+      print("🔍 BLOC: Emitiendo SearchLoaded con ${results.length} resultados");
       emit(SearchLoaded(results, query));
     } catch (e) {
       // Emitir estado de error
+      print("❌ BLOC: Error - $e");
       emit(SearchError('Error al buscar: ${e.toString()}'));
     }
   }
