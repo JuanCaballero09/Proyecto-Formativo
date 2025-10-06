@@ -258,11 +258,6 @@ class ApiService {
     try {
       final url = Uri.parse('$baseUrl/buscar?q=${Uri.encodeComponent(query)}');
       
-      // ignore: avoid_print
-      print('DEBUG URL: $url');
-      // ignore: avoid_print
-      print('DEBUG baseUrl: $baseUrl');
-      
       // No enviar token de autenticación para búsqueda (endpoint público)
       final headers = {
         'Accept': 'application/json',
@@ -273,9 +268,6 @@ class ApiService {
           .get(url, headers: headers)
           .timeout(const Duration(seconds: 10));
 
-      // ignore: avoid_print
-      print('DEBUG Status: ${response.statusCode}');
-
       _handleHttpResponse(response, 'búsqueda de productos');
 
       final data = jsonDecode(response.body);
@@ -285,10 +277,12 @@ class ApiService {
         'grupos': data['grupos'] ?? [],
       };
 
+    } on NetworkException {
+      rethrow;
+    } on DataException {
+      rethrow;
     } catch (e) {
-      // ignore: avoid_print
-      print('DEBUG Error completo: $e');
-      throw NetworkException('Error de conexión al buscar productos: $e');
+      throw NetworkException('Error de conexión al buscar productos');
     }
   }
 }
