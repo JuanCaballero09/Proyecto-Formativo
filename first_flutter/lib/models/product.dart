@@ -20,6 +20,10 @@ class Product extends Equatable {
   });
 
   factory Product.fromJson(Map<String, dynamic> json) {
+    // Debug: Ver qué datos vienen del JSON
+    print('=== DEBUG: Product.fromJson ===');
+    print('JSON recibido: $json');
+    
     List<String> ingredientsList = [];
     
     // Check for ingredients in both languages and formats
@@ -71,7 +75,7 @@ class Product extends Equatable {
       }
     }
     
-    return Product(
+    final producto = Product(
       id: productId,
       name: json['name'] ?? json['nombre'] ?? '',
       category: category,
@@ -80,6 +84,11 @@ class Product extends Equatable {
       image: json['image'] ?? json['imagen'] ?? json['imagen_url'] ?? '',
       ingredients: ingredientsList,
     );
+    
+    print('Producto creado: ID=${producto.id}, Nombre=${producto.name}, Categoría=${producto.category}');
+    print('================================');
+    
+    return producto;
   }
 
   @override

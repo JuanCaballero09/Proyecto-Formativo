@@ -158,12 +158,21 @@ class _MenuPageState extends State<MenuPage> {
   Widget _buildCategoryCardFromAPI(Categoria categoria) {
     return GestureDetector(
       onTap: () {
+        // Debug: Ver qué categoría se está seleccionando
+        print('=== DEBUG: Categoría seleccionada en MenuPage ===');
+        print('ID: ${categoria.id}');
+        print('Nombre original: ${categoria.name}');
+        print('Nombre en mayúsculas: ${categoria.name.toUpperCase()}');
+        print('Imagen: ${categoria.imagen}');
+        print('=================================================');
+        
         Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => CategoryProductsPage(
               categoryName: categoria.name.toUpperCase(),
               categoryImage: categoria.imagen ?? "assets/imagen1.jpeg",
+              categoryId: categoria.id, // SOLUCIÓN: Pasar el ID directamente
             ),
           ),
         );

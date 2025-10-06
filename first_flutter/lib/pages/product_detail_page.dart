@@ -10,10 +10,20 @@ import '../models/cart_model.dart';
 class ProductDetailPage extends StatelessWidget {
   final Product product;
 
-  const ProductDetailPage({super.key, required this.product});
+  const ProductDetailPage({Key? key, required this.product}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    // Debug: Verificar qué producto recibió la página de detalle
+    print('=== DEBUG: ProductDetailPage recibió ===');
+    print('ID: ${product.id}');
+    print('Nombre: ${product.name}');
+    print('Categoría: ${product.category}');
+    print('Precio: ${product.price}');
+    print('Descripción: ${product.description}');
+    print('Ingredientes: ${product.ingredients}');
+    print('==========================================');
+    
     return Scaffold(
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.productDetails),
