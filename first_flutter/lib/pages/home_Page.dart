@@ -2,12 +2,15 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter/gestures.dart';
 import '../l10n/app_localizations.dart';
 import '../bloc/language_bloc.dart';
 import '../bloc/language_event.dart';
 import '../bloc/language_state.dart';
 import 'notificacion_Page.dart';
 import 'location_Page.dart';
+import 'package:flutter/rendering.dart';
+
 
 class HomePage extends StatefulWidget {
   @override
@@ -180,60 +183,74 @@ class _HomePageState extends State<HomePage>
               ),
             ),
 
-            // Carrusel
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 16),
-              child: Column(
-                children: [
-                  AspectRatio(
-                    aspectRatio: 16 / 9,
-                    child: _isPageViewReady
-                        ? PageView.builder(
-                            controller: _pageController,
-                            physics: BouncingScrollPhysics(),
-                            onPageChanged: (index) {
-                              setState(() {
-                                _currentIndex = index;
-                              });
-                            },
-                            itemCount: imaglist.length,
-                            itemBuilder: (context, index) {
-                              return GestureDetector(
-                                onPanDown: (_) {
-                                  _timer?.cancel();
-                                },
-                                onPanEnd: (_) {
-                                  _startTimer();
-                                },
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(12),
-                                  child: Image.asset(
-                                    imaglist[index],
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                              );
-                            },
-                          )
-                        : Center(child: CircularProgressIndicator()),
+         // Carrusel
+// Carrusel
+Container(
+  padding: const EdgeInsets.symmetric(horizontal: 16),
+  child: Column(
+    children: [
+      AspectRatio(
+        aspectRatio: 16 / 9,
+        child: _isPageViewReady
+            ? ScrollConfiguration(
+                behavior: const ScrollBehavior().copyWith(
+                  dragDevices: {
+                    PointerDeviceKind.touch,
+                    PointerDeviceKind.mouse,
+                  },
+                ),
+                child: NotificationListener<UserScrollNotification>(
+                  onNotification: (notification) {
+                    if (notification.direction == ScrollDirection.idle) {
+                
+                      _startTimer();
+                    } else {
+         
+                      _timer?.cancel();
+                    }
+                    return false;
+                  },
+                  child: PageView.builder(
+                    controller: _pageController,
+                    physics: const BouncingScrollPhysics(),
+                    onPageChanged: (index) {
+                      setState(() {
+                        _currentIndex = index;
+                      });
+                    },
+                    itemCount: imaglist.length,
+                    itemBuilder: (context, index) {
+                      return ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Image.asset(
+                          imaglist[index],
+                          fit: BoxFit.cover,
+                        ),
+                      );
+                    },
                   ),
-                  const SizedBox(height: 8),
-                  Center(
-                    child: SmoothPageIndicator(
-                      controller: _pageController,
-                      count: imaglist.length,
-                      effect: WormEffect(
-                        dotHeight: 8,
-                        dotWidth: 8,
-                        spacing: 8,
-                        activeDotColor: Colors.orange,
-                        dotColor: Colors.grey,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+                ),
+              )
+            : const Center(child: CircularProgressIndicator()),
+      ),
+      const SizedBox(height: 8),
+      Center(
+        child: SmoothPageIndicator(
+          controller: _pageController,
+          count: imaglist.length,
+          effect: const WormEffect(
+            dotHeight: 8,
+            dotWidth: 8,
+            spacing: 8,
+            activeDotColor: Colors.orange,
+            dotColor: Colors.grey,
+          ),
+        ),
+      ),
+    ],
+  ),
+),
+
 
             // Novedades
             Padding(
