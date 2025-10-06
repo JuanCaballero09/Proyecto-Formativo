@@ -25,7 +25,7 @@ class DomicilioPageState extends State<DomicilioPage> {
         "id": "002", 
         "estado": AppLocalizations.of(context)!.preparing, 
         "tiempo": "25 min",
-        "direccion": "Carrera 89 #12-34", 
+        "direccion": "Carrera 89 #13-34", 
         "total": "42000",
         "productos": ["Hamburguesa BBQ", "Papas Fritas", "Ensalada César"],
         "repartidor": null,
