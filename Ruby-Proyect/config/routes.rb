@@ -63,7 +63,7 @@ Rails.application.routes.draw do
     end
   end
 
-  # API routes
+  # API routes (outside locale scope)
   namespace :api do
     namespace :v1 do
       post "login",  to: "auth#login"

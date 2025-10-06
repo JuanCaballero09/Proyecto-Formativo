@@ -257,43 +257,34 @@ class ApiService {
 
     try {
       final url = Uri.parse('$baseUrl/buscar?q=${Uri.encodeComponent(query)}');
-      final headers = await _getAuthHeaders();
-
+      
       // ignore: avoid_print
-      print("🔍 Buscando: '$query' en: $url");
+      print('🔍 URL de búsqueda: $url');
+      
+      // No enviar token de autenticación para búsqueda (endpoint público)
+      final headers = {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      };
 
       final response = await http
           .get(url, headers: headers)
           .timeout(const Duration(seconds: 10));
 
       // ignore: avoid_print
-      print("📊 Status Code: ${response.statusCode}");
-      
-      // ⚠️ SOLUCIÓN TEMPORAL: El backend NO soporta JSON
-      // Si recibimos HTML (406 o content-type no es JSON), usar datos mock
-      if (response.statusCode == 406 || response.statusCode >= 400) {
-        // ignore: avoid_print
-        print("⚠️  Backend no soporta JSON (Status ${response.statusCode}). Usando datos mock.");
-        return _getMockSearchResults(query);
-      }
-
+      print('📊 Status: ${response.statusCode}');
       // ignore: avoid_print
-      print("📦 Response body: ${response.body}");
+      print('📦 Body: ${response.body}');
 
       _handleHttpResponse(response, 'búsqueda de productos');
 
       final data = jsonDecode(response.body);
 
       // La respuesta debe tener la estructura: { productos: [], grupos: [] }
-      final Map<String, dynamic> searchResults = {
+      return {
         'productos': data['productos'] ?? [],
         'grupos': data['grupos'] ?? [],
-        'total': (data['productos']?.length ?? 0) + (data['grupos']?.length ?? 0),
       };
-
-      // ignore: avoid_print
-      print("✅ Búsqueda completada: ${searchResults['total']} resultados");
-      return searchResults;
 
     } on NetworkException {
       rethrow;
@@ -301,62 +292,8 @@ class ApiService {
       rethrow;
     } catch (e) {
       // ignore: avoid_print
-      print("❌ Error inesperado en búsqueda: $e");
+      print('❌ Error en búsqueda: $e');
       throw NetworkException('Error de conexión al buscar productos');
     }
   }
-
-  /// 🔧 MÉTODO TEMPORAL: Datos mock para búsqueda
-  /// TODO: Eliminar cuando el backend soporte JSON
-  Map<String, dynamic> _getMockSearchResults(String query) {
-    final q = query.toLowerCase();
-    
-    print("🔍 MOCK: Iniciando búsqueda mock para '$q'");
-    
-    // Datos mock de productos
-    final allProducts = [
-      {'id': 1, 'nombre': 'Pizza Margarita', 'descripcion': 'Tomate, mozzarella y albahaca fresca', 'precio': 15.99, 'imagen_url': 'assets/Pizza margarita.jpg'},
-      {'id': 2, 'nombre': 'Pizza Hawaiana', 'descripcion': 'Jamón, piña y queso mozzarella', 'precio': 17.99, 'imagen_url': 'assets/Pizza Hawiana.jpg'},
-      {'id': 3, 'nombre': 'Pizza Pepperoni', 'descripcion': 'Pepperoni y queso mozzarella', 'precio': 16.99, 'imagen_url': 'assets/Pizza pepperoni.jpg'},
-      {'id': 4, 'nombre': 'Hamburguesa Sencilla', 'descripcion': 'Carne, lechuga, tomate y queso', 'precio': 12.99, 'imagen_url': 'assets/Hamburguesa sencilla.jpg'},
-      {'id': 5, 'nombre': 'Hamburguesa Doble Queso', 'descripcion': 'Doble carne y doble queso', 'precio': 15.99, 'imagen_url': 'assets/Hamburgesa Doble Queso.jpeg'},
-      {'id': 6, 'nombre': 'Hamburguesa BBQ', 'descripcion': 'Carne, salsa BBQ, cebolla y queso', 'precio': 14.99, 'imagen_url': 'assets/Hamburguesa BBQ.jpeg'},
-      {'id': 7, 'nombre': 'Tacos al Pastor', 'descripcion': '3 tacos con carne al pastor', 'precio': 10.99, 'imagen_url': 'assets/Tacos al Pastor.jpg'},
-      {'id': 8, 'nombre': 'Tacos de Pollo', 'descripcion': '3 tacos con pollo marinado', 'precio': 9.99, 'imagen_url': 'assets/Tacos de Pollo.jpg'},
-      {'id': 9, 'nombre': 'Tacos Veganos', 'descripcion': '3 tacos vegetarianos', 'precio': 9.99, 'imagen_url': 'assets/Tacos Veganos.jpg'},
-      {'id': 10, 'nombre': 'Ensalada César', 'descripcion': 'Lechuga romana, pollo, crutones y aderezo César', 'precio': 11.99, 'imagen_url': 'assets/Ensalada Cesar.jpg'},
-      {'id': 11, 'nombre': 'Ensalada de Atún', 'descripcion': 'Atún, lechuga, tomate y cebolla', 'precio': 10.99, 'imagen_url': 'assets/Ensalada de Atun.jpg'},
-      {'id': 12, 'nombre': 'Ensalada Mediterránea', 'descripcion': 'Lechuga, tomate, pepino, aceitunas y queso feta', 'precio': 12.99, 'imagen_url': 'assets/Ensalada Mediterranea.jpg'},
-    ];
-
-    // Datos mock de categorías
-    final allGroups = [
-      {'id': 1, 'nombre': 'PIZZAS', 'imagen_url': 'assets/Pizza Hawiana.jpg'},
-      {'id': 2, 'nombre': 'HAMBURGUESAS', 'imagen_url': 'assets/Hamburguesa sencilla.jpg'},
-      {'id': 3, 'nombre': 'TACOS', 'imagen_url': 'assets/Tacos de Pollo.jpg'},
-      {'id': 4, 'nombre': 'ENSALADAS', 'imagen_url': 'assets/Ensalada Cesar.jpg'},
-    ];
-
-    // Filtrar productos que coincidan con la búsqueda
-    final matchingProducts = allProducts.where((p) {
-      final nombre = (p['nombre'] as String).toLowerCase();
-      final desc = (p['descripcion'] as String).toLowerCase();
-      return nombre.contains(q) || desc.contains(q);
-    }).toList();
-
-    // Filtrar grupos que coincidan con la búsqueda
-    final matchingGroups = allGroups.where((g) {
-      final nombre = (g['nombre'] as String).toLowerCase();
-      return nombre.contains(q);
-    }).toList();
-
-    print("🔍 MOCK: Encontrados ${matchingProducts.length} productos y ${matchingGroups.length} grupos");
-
-    return {
-      'productos': matchingProducts,
-      'grupos': matchingGroups,
-      'total': matchingProducts.length + matchingGroups.length,
-    };
-  }
-
 }
