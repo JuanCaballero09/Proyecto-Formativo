@@ -11,8 +11,11 @@ import '../bloc/search_event.dart';
 import '../bloc/search_state.dart';
 import '../widgets/search_results_list.dart';
 import '../models/search_result.dart';
+import '../models/product.dart';
 import 'notificacion_Page.dart';
 import 'location_Page.dart';
+import 'product_detail_page.dart';
+import 'category_products_page.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -500,23 +503,68 @@ class _HomePageState extends State<HomePage>
 
     // Navegar según el tipo de resultado
     if (result.type == 'product') {
-      // TODO: Navegar a la página de detalle del producto
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Abriendo producto: ${result.name}'),
-          duration: const Duration(seconds: 2),
-        ),
-      );
-      // Navigator.pushNamed(context, '/product-detail', arguments: result.id);
+      // Verificar que tengamos los datos completos del producto
+      if (result.rawData != null) {
+        try {
+          // Crear objeto Product desde los datos crudos
+          final product = Product.fromJson(result.rawData!);
+          
+          // Navegar a la página de detalle del producto
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ProductDetailPage(product: product),
+            ),
+          );
+        } catch (e) {
+          print('Error al crear producto desde búsqueda: $e');
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Error al abrir el producto'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Datos del producto no disponibles'),
+            backgroundColor: Colors.orange,
+          ),
+        );
+      }
     } else if (result.type == 'category') {
-      // TODO: Navegar a la página de categoría
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Abriendo categoría: ${result.name}'),
-          duration: const Duration(seconds: 2),
-        ),
-      );
-      // Navigator.pushNamed(context, '/category', arguments: result.id);
+      // Navegar a la página de productos de la categoría
+      if (result.id.isNotEmpty) {
+        try {
+          final categoryId = int.parse(result.id);
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => CategoryProductsPage(
+                categoryId: categoryId,
+                categoryName: result.name,
+                categoryImage: result.image ?? '', // Usar imagen del resultado o vacío
+              ),
+            ),
+          );
+        } catch (e) {
+          print('Error al parsear categoryId: $e');
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Error al abrir la categoría'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('ID de categoría no válido'),
+            backgroundColor: Colors.orange,
+          ),
+        );
+      }
     }
   }
 }

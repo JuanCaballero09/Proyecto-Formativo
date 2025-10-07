@@ -7,6 +7,7 @@ class SearchResult {
   final String? image;
   final double? price;
   final String? description;
+  final Map<String, dynamic>? rawData; // Guardar los datos completos del JSON
 
   SearchResult({
     required this.id,
@@ -15,6 +16,7 @@ class SearchResult {
     this.image,
     this.price,
     this.description,
+    this.rawData,
   });
 
   /// Crea un SearchResult desde JSON de producto
@@ -26,6 +28,7 @@ class SearchResult {
       image: json['imagen_url'] ?? json['image'],
       price: _parsePrice(json['precio'] ?? json['price']),
       description: json['descripcion'] ?? json['description'],
+      rawData: json, // Guardar JSON completo
     );
   }
 
@@ -38,6 +41,7 @@ class SearchResult {
       image: json['imagen_url'] ?? json['image'],
       price: null,
       description: json['descripcion'] ?? json['description'],
+      rawData: json, // Guardar JSON completo
     );
   }
 
@@ -61,6 +65,7 @@ class SearchResult {
       'image': image,
       'price': price,
       'description': description,
+      'rawData': rawData,
     };
   }
 
