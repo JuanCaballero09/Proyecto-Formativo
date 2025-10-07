@@ -28,12 +28,12 @@
         <%= render "devise/shared/error_messages", resource: resource %>
 
         <div class="field">
-          <%= f.label :nombre %>
+          <%= f.label :nombre %><br>
           <%= f.text_field :nombre %>
         </div>
 
         <div class="field">
-          <%= f.label :apellido %>
+          <%= f.label :apellido %><br>
           <%= f.text_field :apellido %>
         </div>
 
@@ -44,7 +44,7 @@
 
         <div class="field">
           <%= f.label :email %>
-          <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
+          <%= f.email_field :email, autofocus: false, autocomplete: "email" %>
         </div>
 
         <div class="field" id="psswrd">
@@ -52,21 +52,51 @@
           <% if @minimum_password_length %>
           <em>(minimo <%= @minimum_password_length %> caracteres)</em>
           <% end %>
-          <%= f.password_field :password, autocomplete: "new-password" %>
+          <%= f.password_field :password, autocomplete: "new-password", id: "password-field"  %>
         </div>
 
         <div class="field">
           <%= f.label :password_confirmation %><br />
-          <%= f.password_field :password_confirmation, autocomplete: "new-password" %>
+          <%= f.password_field :password_confirmation, autocomplete: "new-password", id: "password-field2" %>
         </div>
+        
+        <input type="checkbox" class="password-toggle" onclick="togglePassword()" aria-label="Mostrar contraseña">
+        <span id="eye-icon"> Mostrar contraseña</span>
+        <div style="margin-bottom: 20px"></div>
 
         <div class="actions">
           <%= f.submit "Registrar"%>
         </div>
       <% end %>
-
+      
+      <hr>
       <p>¿Ya tienes cuanta? <br> <%= link_to "Inicia sesion", new_session_path(resource_name) %></p>
     </div>
   </div>
   
 </section>
+
+<script>
+  // ========================================
+  // 👁️ Mostrar o ocultar contraseña
+  // ========================================
+  function togglePassword() {
+    const passwordField = document.getElementById('password-field');
+    const passwordField2 = document.getElementById('password-field2');
+    const eyeIcon = document.getElementById('eye-icon');
+    const toggleButton = document.querySelector('.password-toggle');
+    
+    if (passwordField.type === 'password') {
+      passwordField.type = 'text';
+      passwordField2.type = 'text';
+      eyeIcon.textContent = ' Ocultar contraseña';
+      toggleButton.setAttribute('aria-label', 'Ocultar contraseña');
+
+    } else {
+      passwordField.type = 'password';
+      passwordField2.type = 'password';
+      eyeIcon.textContent = ' Mostrar contraseña';
+      toggleButton.setAttribute('aria-label', 'Mostrar contraseña');
+    }
+  }
+</script>

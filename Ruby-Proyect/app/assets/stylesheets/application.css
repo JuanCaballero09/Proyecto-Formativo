@@ -131,8 +131,9 @@ input:focus{outline: none;}
     background-color: var(--base);
     color: white;
     border: none;
+    font-size: 18px;
     font-weight: bold;
-    margin: 0 auto 15px auto;
+    margin: 0 auto 05px auto;
     padding: 7px 10px ;
     border-radius: 5px;
     cursor: pointer;
