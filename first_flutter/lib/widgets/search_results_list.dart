@@ -71,87 +71,200 @@ class SearchResultsList extends StatelessWidget {
 
   /// Construye cada item de resultado
   Widget _buildResultItem(BuildContext context, SearchResult result) {
-    return ListTile(
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      leading: _buildLeadingImage(result),
-      title: Text(
-        result.name,
-        style: const TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: 15,
+    final isProduct = result.type == 'product';
+    
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: isProduct 
+            ? Colors.white 
+            : const Color.fromRGBO(237, 88, 33, 0.05),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: isProduct 
+              ? Colors.grey[200]! 
+              : const Color.fromRGBO(237, 88, 33, 0.2),
+          width: 1,
         ),
-        maxLines: 2,
-        overflow: TextOverflow.ellipsis,
       ),
-      subtitle: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (result.description != null && result.description!.isNotEmpty)
-            Padding(
-              padding: const EdgeInsets.only(top: 4.0),
+      child: ListTile(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        leading: _buildLeadingImage(result),
+        title: Row(
+          children: [
+            // Badge de tipo
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              decoration: BoxDecoration(
+                color: isProduct
+                    ? const Color.fromRGBO(237, 88, 33, 1)
+                    : Colors.blue[600],
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    isProduct ? Icons.restaurant : Icons.category,
+                    size: 12,
+                    color: Colors.white,
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    isProduct ? 'Producto' : 'Categoría',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+            // Nombre del producto/categoría
+            Expanded(
               child: Text(
-                result.description!,
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey[600],
+                result.name,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 15,
                 ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
             ),
-          Padding(
-            padding: const EdgeInsets.only(top: 4.0),
-            child: Text(
-              result.type == 'product' && result.price != null
-                  ? '\$${result.price!.toStringAsFixed(2)}'
-                  : AppLocalizations.of(context)!.categories,
-              style: TextStyle(
-                color: result.type == 'product'
-                    ? const Color.fromRGBO(237, 88, 33, 1)
-                    : Colors.grey[600],
-                fontWeight: result.type == 'product'
-                    ? FontWeight.bold
-                    : FontWeight.normal,
-                fontSize: 14,
+          ],
+        ),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 4),
+            if (result.description != null && result.description!.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 4.0),
+                child: Text(
+                  result.description!,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey[600],
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
-            ),
+            // Precio o indicador de categoría
+            if (isProduct && result.price != null)
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: const Color.fromRGBO(237, 88, 33, 0.1),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Text(
+                  '\$${result.price!.toStringAsFixed(0)}',
+                  style: const TextStyle(
+                    color: Color.fromRGBO(237, 88, 33, 1),
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
+              )
+            else if (!isProduct)
+              Row(
+                children: [
+                  Icon(
+                    Icons.arrow_forward,
+                    size: 14,
+                    color: Colors.blue[600],
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    'Ver productos de esta categoría',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.blue[600],
+                      fontStyle: FontStyle.italic,
+                    ),
+                  ),
+                ],
+              ),
+          ],
+        ),
+        trailing: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: isProduct
+                ? const Color.fromRGBO(237, 88, 33, 0.1)
+                : Colors.blue[50],
+            shape: BoxShape.circle,
           ),
-        ],
+          child: Icon(
+            Icons.arrow_forward_ios,
+            size: 16,
+            color: isProduct
+                ? const Color.fromRGBO(237, 88, 33, 1)
+                : Colors.blue[600],
+          ),
+        ),
+        onTap: () => onResultTap(result),
       ),
-      trailing: Icon(
-        Icons.arrow_forward_ios,
-        size: 16,
-        color: Colors.grey[400],
-      ),
-      onTap: () => onResultTap(result),
     );
   }
 
   /// Construye la imagen/ícono del resultado
   Widget _buildLeadingImage(SearchResult result) {
+    final isProduct = result.type == 'product';
+    
     if (result.image != null && result.image!.isNotEmpty) {
-      return ClipRRect(
-        borderRadius: BorderRadius.circular(8),
-        child: Image.network(
-          result.image!,
-          width: 60,
-          height: 60,
-          fit: BoxFit.cover,
-          errorBuilder: (context, error, stackTrace) {
-            return _buildDefaultIcon(result.type);
-          },
-          loadingBuilder: (context, child, loadingProgress) {
-            if (loadingProgress == null) return child;
-            return Container(
+      return Stack(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: Image.network(
+              result.image!,
               width: 60,
               height: 60,
-              color: Colors.grey[200],
-              child: const Center(
-                child: CircularProgressIndicator(strokeWidth: 2),
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) {
+                return _buildDefaultIcon(result.type);
+              },
+              loadingBuilder: (context, child, loadingProgress) {
+                if (loadingProgress == null) return child;
+                return Container(
+                  width: 60,
+                  height: 60,
+                  color: Colors.grey[200],
+                  child: const Center(
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  ),
+                );
+              },
+            ),
+          ),
+          // Badge pequeño en la esquina para indicar el tipo
+          Positioned(
+            bottom: 0,
+            right: 0,
+            child: Container(
+              padding: const EdgeInsets.all(4),
+              decoration: BoxDecoration(
+                color: isProduct
+                    ? const Color.fromRGBO(237, 88, 33, 1)
+                    : Colors.blue[600],
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(8),
+                  bottomRight: Radius.circular(8),
+                ),
               ),
-            );
-          },
-        ),
+              child: Icon(
+                isProduct ? Icons.restaurant : Icons.category,
+                size: 12,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ],
       );
     }
     return _buildDefaultIcon(result.type);
@@ -159,17 +272,39 @@ class SearchResultsList extends StatelessWidget {
 
   /// Construye el ícono por defecto según el tipo
   Widget _buildDefaultIcon(String type) {
+    final isProduct = type == 'product';
+    
     return Container(
       width: 60,
       height: 60,
       decoration: BoxDecoration(
-        color: const Color.fromRGBO(237, 88, 33, 0.1),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: isProduct
+              ? [
+                  const Color.fromRGBO(237, 88, 33, 0.2),
+                  const Color.fromRGBO(237, 88, 33, 0.1),
+                ]
+              : [
+                  Colors.blue[200]!,
+                  Colors.blue[100]!,
+                ],
+        ),
         borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+          color: isProduct
+              ? const Color.fromRGBO(237, 88, 33, 0.3)
+              : Colors.blue[300]!,
+          width: 2,
+        ),
       ),
       child: Icon(
-        type == 'product' ? Icons.restaurant_menu : Icons.category,
-        color: const Color.fromRGBO(237, 88, 33, 1),
-        size: 30,
+        isProduct ? Icons.restaurant_menu : Icons.category,
+        color: isProduct
+            ? const Color.fromRGBO(237, 88, 33, 1)
+            : Colors.blue[700],
+        size: 32,
       ),
     );
   }
