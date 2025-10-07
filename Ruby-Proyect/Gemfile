@@ -1,5 +1,7 @@
 source "https://rubygems.org"
 
+# QR Code generator
+gem "rqrcode"
 # Gema de Traduccion
 gem "devise-i18n"
 # Peticiones HTTP
