@@ -18,15 +18,18 @@ module Api
             terms.all? { |t| normalizado.include?(t) }
           end.sort_by(&:id)
 
-          # Buscar productos que coincidan
+          # Buscar productos que coincidan (en nombre del producto o nombre del grupo)
           @productos = Product.all.select do |p|
-            normalizado = I18n.transliterate(p.nombre.downcase.strip)
-            terms.all? { |t| normalizado.include?(t) }
+            normalizado_producto = I18n.transliterate(p.nombre.downcase.strip)
+            normalizado_grupo = p.grupo ? I18n.transliterate(p.grupo.nombre.downcase.strip) : ""
+            
+            # Buscar en el nombre del producto O en el nombre del grupo
+            terms.all? { |t| normalizado_producto.include?(t) || normalizado_grupo.include?(t) }
           end.sort_by(&:id)
 
           render json: {
             productos: @productos.as_json(
-              only: [:id, :nombre, :descripcion, :precio],
+              only: [:id, :nombre, :descripcion, :precio, :grupo_id],
               methods: [:imagen_url]
             ),
             grupos: @grupos.as_json(

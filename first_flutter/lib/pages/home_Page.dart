@@ -11,8 +11,12 @@ import '../bloc/search_event.dart';
 import '../bloc/search_state.dart';
 import '../widgets/search_results_list.dart';
 import '../models/search_result.dart';
+import '../models/product.dart';
+import '../service/ApiService.dart';
 import 'notificacion_Page.dart';
 import 'location_Page.dart';
+import 'product_detail_page.dart';
+import 'category_products_page.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -490,7 +494,7 @@ class _HomePageState extends State<HomePage>
   }
 
   /// Maneja el tap en un resultado de búsqueda
-  void _handleSearchResultTap(BuildContext context, SearchResult result) {
+  void _handleSearchResultTap(BuildContext context, SearchResult result) async {
     // Cerrar el campo de búsqueda
     setState(() {
       _isSearchVisible = false;
@@ -498,25 +502,145 @@ class _HomePageState extends State<HomePage>
     _searchController.clear();
     context.read<SearchBloc>().add(const ClearSearch());
 
+    // Debug: Ver qué resultado se seleccionó
+    print('=== RESULTADO SELECCIONADO ===');
+    print('Tipo: ${result.type}');
+    print('ID: ${result.id}');
+    print('Nombre: ${result.name}');
+    print('rawData: ${result.rawData}');
+    print('==============================');
+
     // Navegar según el tipo de resultado
     if (result.type == 'product') {
-      // TODO: Navegar a la página de detalle del producto
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Abriendo producto: ${result.name}'),
-          duration: const Duration(seconds: 2),
-        ),
-      );
-      // Navigator.pushNamed(context, '/product-detail', arguments: result.id);
+      // Verificar que tengamos los datos completos del producto
+      if (result.rawData != null) {
+        // Mostrar loading
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  ),
+                ),
+                SizedBox(width: 16),
+                Text('Cargando producto...'),
+              ],
+            ),
+            duration: Duration(seconds: 2),
+            backgroundColor: Color.fromRGBO(237, 88, 33, 1),
+          ),
+        );
+
+        try {
+          // Intentar crear el producto desde rawData primero
+          final product = Product.fromJson(result.rawData!);
+          
+          print('=== PRODUCTO CREADO DESDE BÚSQUEDA ===');
+          print('ID: ${product.id}');
+          print('Nombre: ${product.name}');
+          print('Precio: ${product.price}');
+          print('Descripción: ${product.description}');
+          print('Ingredientes: ${product.ingredients}');
+          print('=====================================');
+          
+          // Navegar a la página de detalle del producto
+          if (mounted) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ProductDetailPage(product: product),
+              ),
+            );
+          }
+        } catch (e) {
+          print('❌ Error al crear producto desde búsqueda: $e');
+          
+          // Si falla, intentar obtener el producto desde el API
+          try {
+            final apiService = ApiService();
+            
+            // Extraer grupo_id del rawData
+            final grupoId = result.rawData?['grupo_id'];
+            final productId = int.parse(result.id);
+            
+            print('Intentando obtener producto desde API...');
+            print('Grupo ID: $grupoId, Product ID: $productId');
+            
+            if (grupoId != null) {
+              final product = await apiService.getProductByCategoryAndId(
+                grupoId is int ? grupoId : int.parse(grupoId.toString()),
+                productId,
+              );
+              
+              if (mounted) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ProductDetailPage(product: product),
+                  ),
+                );
+              }
+            } else {
+              throw Exception('No se pudo determinar la categoría del producto');
+            }
+          } catch (apiError) {
+            print('❌ Error al obtener producto desde API: $apiError');
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Error al cargar el producto: $apiError'),
+                  backgroundColor: Colors.red,
+                  duration: Duration(seconds: 3),
+                ),
+              );
+            }
+          }
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Datos del producto no disponibles'),
+            backgroundColor: Colors.orange,
+          ),
+        );
+      }
     } else if (result.type == 'category') {
-      // TODO: Navegar a la página de categoría
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Abriendo categoría: ${result.name}'),
-          duration: const Duration(seconds: 2),
-        ),
-      );
-      // Navigator.pushNamed(context, '/category', arguments: result.id);
+      // Navegar a la página de productos de la categoría
+      if (result.id.isNotEmpty) {
+        try {
+          final categoryId = int.parse(result.id);
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => CategoryProductsPage(
+                categoryId: categoryId,
+                categoryName: result.name,
+                categoryImage: result.image ?? '', // Usar imagen del resultado o vacío
+              ),
+            ),
+          );
+        } catch (e) {
+          print('Error al parsear categoryId: $e');
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Error al abrir la categoría'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('ID de categoría no válido'),
+            backgroundColor: Colors.orange,
+          ),
+        );
+      }
     }
   }
 }

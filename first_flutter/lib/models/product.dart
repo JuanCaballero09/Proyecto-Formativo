@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import '../utils/api_config.dart';
 
 class Product extends Equatable {
   final int id;
@@ -75,17 +76,27 @@ class Product extends Equatable {
       }
     }
     
+    // Handle image URL - agregar base URL si es una ruta relativa
+    String imageUrl = json['image'] ?? json['imagen'] ?? json['imagen_url'] ?? '';
+    if (imageUrl.isNotEmpty && !imageUrl.startsWith('http')) {
+      // Es una ruta relativa, agregar base URL
+      // Remover /api/v1 del baseUrl para obtener solo el dominio
+      final baseUrlWithoutApi = ApiConfig.baseUrl.replaceAll('/api/v1', '');
+      imageUrl = '$baseUrlWithoutApi$imageUrl';
+    }
+    
     final producto = Product(
       id: productId,
       name: json['name'] ?? json['nombre'] ?? '',
       category: category,
       price: productPrice,
       description: json['description'] ?? json['descripcion'] ?? '',
-      image: json['image'] ?? json['imagen'] ?? json['imagen_url'] ?? '',
+      image: imageUrl,
       ingredients: ingredientsList,
     );
     
     print('Producto creado: ID=${producto.id}, Nombre=${producto.name}, Categoría=${producto.category}');
+    print('Imagen URL: ${producto.image}');
     print('================================');
     
     return producto;
