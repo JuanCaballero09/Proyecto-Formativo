@@ -110,6 +110,20 @@ es:
       precio_unidad: "Precio unidad:"
       explorar_productos: "Explorar productos"
       agrega_producto: "Agrega algunos productos deliciosos para empezar tu pedido"
+      agregar_carrito: "Agregar al carrito"
+      productos_carritos: "productos en tu carrito"
+      cupon_descuento: "Cupón de descuento"
+      codigo_cupon: "ingresa tu codigo de cupón"
+      quitar_cupon: "Quitar cupón"
+      aplicar: "Aplicar"
+      resumen_pedido: "Resumen del pedido"
+      descuento: "Descuento"
+      pago_protegido: "Pago seguro y protegido"
+      entrega: "Entrega rápida"
+      recibe: "Recibe tu pedido en 30-45 minutos"
+      pagooo: "Pago seguro"
+      multiple_metodo: "Múltiples métodos de pago disponibles"
+      producto_selecionado: "Productos seleccionados"
       
 
       
@@ -122,7 +136,14 @@ es:
       cantidad: "Cantidad:"
       precio_unitario: "Precio unitario"
       total: "Total"
-
+      detalles: "Detalles de la Orden"      
+      informacion_orden: "Información de la Orden"     
+      tootal_paga: "Total Pagar"   
+      pagar: "PROCEDER AL PAGO"    
+      regresar: "Regresar"
+      codigo: "Código:"
+      
+      
 
     show-vista:
       precio: "Precio"
@@ -137,6 +158,14 @@ es:
       nombre-titular: "Nombre del titular:"
       correo-electronico: "Correo electrónico:" 
       pagar: "Pagar"
+      resumen: "Resumen de la Orden"
+      info_pago: "Información de Pago"
+      pagar_orden: "Pagar Orden"
+      nombre_completo: "Nombre completo"
+      completa: "Completa tu información de pago"
+      pago_seguro: "Pago seguro protegido por SSL"
+            
+
 
     cupones:
       cupones: "Cupones"
@@ -180,7 +209,7 @@ es:
       ver_detalles: "Ver Detalles"
       producto: "Producto"
       volver_listado: "Volver al listado"
-      cantidadd: "Cantidad"
+      cantidadd: "Cantidad:"
       pantalla_completa: "pantalla completa"
       salir: "Salir"
 
@@ -209,6 +238,8 @@ es:
       no_disponible: "Producto no disponible"
       comentario_uno: "Muy rica y jugosa"
       comentario_dos: "Me encantó la combinación"
+
+
 
   
 

@@ -117,16 +117,13 @@ document.addEventListener("turbo:load", function() {
         maximumFractionDigits: 2
       }).format(precio);
       
-      formateado = `USD ${formateado}`;
+      formateado = `${formateado} USD`;
     } else {
-      formateado = new Intl.NumberFormat('es-CO', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-        useGrouping: true
-      }).format(precio);
+      const partes = precio.toFixed(2).split('.');
+      const miles = partes[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+      const decimales = partes[1];
     
-      formateado = formateado.replace(".", ",");
-      formateado = `COP $${formateado}`;
+      formateado = `${miles},${decimales} COP`;
     }
 
     return formateado;
@@ -164,9 +161,36 @@ document.addEventListener("turbo:load", function() {
       currency = "COP";
     }
 
-    el.innerText = formatear(subtotal, locale, currency);
+    el.innerText = formatear(subtotal,locale, currency);
   });
-});
+
+  // precio total del carrito
+  const totalCarrito = document.getElementById("precio-total");
+  if (!totalCarrito) return; 
+
+  const locale = totalCarrito.dataset.locale || "es";
+  
+  function formatearMoneda(valor, idioma) {
+    if (locale === "en") {
+      return new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD",
+        minimumFractionDigits: 2
+      }).format(valor / cambioDinero);
+    } else {
+      return new Intl.NumberFormat("es-CO", {
+        style: "currency",
+        currency: "COP",
+        minimumFractionDigits: 2
+      }).format(valor);
+    }
+  }
+
+  const precioCarrito = parseFloat(totalCarrito.dataset.precio);
+  totalCarrito.textContent = formatearMoneda(precioCarrito, locale);
+
+}); 
+
 
 
 // ========================================
