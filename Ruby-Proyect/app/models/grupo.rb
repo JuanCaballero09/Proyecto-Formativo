@@ -7,6 +7,15 @@ class Grupo < ApplicationRecord
 
   has_one_attached :imagen
 
+  # Método para obtener la URL de la imagen
+  def imagen_url
+    if imagen.attached?
+      Rails.application.routes.url_helpers.rails_blob_path(imagen, only_path: true)
+    else
+      nil
+    end
+  end
+
   private
 
   def asignar_id_menor
