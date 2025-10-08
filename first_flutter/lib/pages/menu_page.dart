@@ -161,17 +161,17 @@ class _MenuPageState extends State<MenuPage> {
         // Debug: Ver qué categoría se está seleccionando
         print('=== DEBUG: Categoría seleccionada en MenuPage ===');
         print('ID: ${categoria.id}');
-        print('Nombre original: ${categoria.name}');
-        print('Nombre en mayúsculas: ${categoria.name.toUpperCase()}');
-        print('Imagen: ${categoria.imagen}');
+        print('Nombre original: ${categoria.nombre}');
+        print('Nombre en mayúsculas: ${categoria.nombre.toUpperCase()}');
+        print('Imagen: ${categoria.imagenUrl}');
         print('=================================================');
         
         Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => CategoryProductsPage(
-              categoryName: categoria.name.toUpperCase(),
-              categoryImage: categoria.imagen ?? "assets/imagen1.jpeg",
+              categoryName: categoria.nombre.toUpperCase(),
+              categoryImage: categoria.imagenUrl ?? categoria.getDefaultImage(),
               categoryId: categoria.id, // SOLUCIÓN: Pasar el ID directamente
             ),
           ),
@@ -228,7 +228,7 @@ class _MenuPageState extends State<MenuPage> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        categoria.name.toUpperCase(),
+                        categoria.nombre.toUpperCase(),
                         textAlign: TextAlign.center,
                         style: const TextStyle(
                           color: Colors.white,
@@ -274,38 +274,10 @@ class _MenuPageState extends State<MenuPage> {
   }
 
   Widget _buildCategoryImage(Categoria categoria) {
-    // Mapeo de imágenes predeterminadas por nombre de categoría
-    final Map<String, String> imagenesDefault = {
-      // Nombres exactos de tu API
-      'hamburguesas': 'assets/Hamburguesa sencilla.jpg',
-      'salchipapas': 'assets/imagen1.jpeg',
-      'pizzas': 'assets/Pizza Hawiana.jpg',
-      
-      // Variaciones por si acaso
-      'hamburguesa': 'assets/Hamburguesa sencilla.jpg',
-      'burger': 'assets/Hamburguesa sencilla.jpg',
-      'burgers': 'assets/Hamburguesa sencilla.jpg',
-      'salchipapa': 'assets/imagen1.jpeg',
-      'pizza': 'assets/Pizza Hawiana.jpg',
-      'tacos': 'assets/Tacos de Pollo.jpg',
-      'taco': 'assets/Tacos de Pollo.jpg',
-      'ensaladas': 'assets/Ensalada Cesar.jpg',
-      'ensalada': 'assets/Ensalada Cesar.jpg',
-      'salads': 'assets/Ensalada Cesar.jpg',
-      'salad': 'assets/Ensalada Cesar.jpg',
-    };
+    // Obtener la ruta de la imagen
+    String imagePath = categoria.imagenUrl ?? categoria.getDefaultImage();
     
-    String? imagePath = categoria.imagen;
-    
-    // Si no hay imagen de la API, usar imagen predeterminada basada en el nombre
-    if (imagePath == null || imagePath.isEmpty) {
-      final nombreLower = categoria.name.toLowerCase();
-      imagePath = imagenesDefault[nombreLower];
-      
-      if (imagePath == null) {
-        return _buildPlaceholderImage();
-      }
-    }
+    print('📸 Cargando imagen para ${categoria.nombre}: $imagePath');
 
     // Si es una URL de internet (http/https)
     if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
@@ -324,47 +296,40 @@ class _MenuPageState extends State<MenuPage> {
           );
         },
         errorBuilder: (context, error, stackTrace) {
-          return _buildPlaceholderImage();
+          print('❌ Error cargando imagen de red: $error');
+          return _buildAssetImageFallback(categoria);
         },
       );
     } 
     // Si es un asset local
-    else if (imagePath.startsWith('assets/')) {
+    else {
       return Image.asset(
         imagePath,
         height: double.infinity,
         width: double.infinity,
         fit: BoxFit.cover,
         errorBuilder: (context, error, stackTrace) {
+          print('❌ Error cargando asset $imagePath: $error');
           return _buildPlaceholderImage();
         },
       );
     }
-    // Si es una ruta relativa, intentar como asset
-    else {
-      final assetPath = imagePath.startsWith('/') ? 'assets$imagePath' : 'assets/$imagePath';
-      return Image.asset(
-        assetPath,
-        height: double.infinity,
-        width: double.infinity,
-        fit: BoxFit.cover,
-        errorBuilder: (context, error, stackTrace) {
-          // Como último recurso, intentar como imagen de red sin protocolo
-          if (imagePath != null && !imagePath.contains('://')) {
-            return Image.network(
-              'https://$imagePath',
-              height: double.infinity,
-              width: double.infinity,
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) {
-                return _buildPlaceholderImage();
-              },
-            );
-          }
-          return _buildPlaceholderImage();
-        },
-      );
-    }
+  }
+
+  Widget _buildAssetImageFallback(Categoria categoria) {
+    final defaultImage = categoria.getDefaultImage();
+    print('🔄 Intentando con imagen por defecto: $defaultImage');
+    
+    return Image.asset(
+      defaultImage,
+      height: double.infinity,
+      width: double.infinity,
+      fit: BoxFit.cover,
+      errorBuilder: (context, error, stackTrace) {
+        print('❌ Error cargando imagen por defecto: $error');
+        return _buildPlaceholderImage();
+      },
+    );
   }
 
   Widget _buildPlaceholderImage() {

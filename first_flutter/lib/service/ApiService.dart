@@ -118,16 +118,18 @@ class ApiService {
   }
 
   /// Obtiene un producto específico de una categoría
-  /// [categoryId] - ID de la categoría (1, 2 o 3)
-  /// [productId] - ID del producto (1, 2 o 3)
+  /// [categoryId] - ID de la categoría (grupo)
+  /// [productId] - ID del producto
   /// Retorna el producto solicitado
   Future<Product> getProductByCategoryAndId(int categoryId, int productId) async {
     if (categoryId < 1 || categoryId > 3) {
       throw DataException('ID de categoría inválido. Debe ser 1, 2 o 3');
     }
 
-    if (productId < 1 || productId > 3) {
-      throw DataException('ID de producto inválido. Debe ser 1, 2 o 3');
+    // Eliminar la validación restrictiva del productId
+    // Los productos pueden tener cualquier ID válido
+    if (productId < 1) {
+      throw DataException('ID de producto inválido. Debe ser mayor a 0');
     }
 
     try {

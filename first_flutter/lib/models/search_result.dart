@@ -21,11 +21,21 @@ class SearchResult {
 
   /// Crea un SearchResult desde JSON de producto
   factory SearchResult.fromProductJson(Map<String, dynamic> json) {
+    // Extraer la URL de la imagen de forma segura
+    String? imageUrl;
+    final imageField = json['imagen_url'] ?? json['image'];
+    if (imageField is String) {
+      imageUrl = imageField;
+    } else if (imageField is Map) {
+      // Si es un objeto, intentar extraer la URL
+      imageUrl = imageField['url']?.toString();
+    }
+    
     return SearchResult(
       id: json['id']?.toString() ?? '',
       name: json['nombre'] ?? json['name'] ?? 'Sin nombre',
       type: 'product',
-      image: json['imagen_url'] ?? json['image'],
+      image: imageUrl,
       price: _parsePrice(json['precio'] ?? json['price']),
       description: json['descripcion'] ?? json['description'],
       rawData: json, // Guardar JSON completo
@@ -34,11 +44,21 @@ class SearchResult {
 
   /// Crea un SearchResult desde JSON de categoría
   factory SearchResult.fromCategoryJson(Map<String, dynamic> json) {
+    // Extraer la URL de la imagen de forma segura
+    String? imageUrl;
+    final imageField = json['imagen_url'] ?? json['image'];
+    if (imageField is String) {
+      imageUrl = imageField;
+    } else if (imageField is Map) {
+      // Si es un objeto, intentar extraer la URL
+      imageUrl = imageField['url']?.toString();
+    }
+    
     return SearchResult(
       id: json['id']?.toString() ?? '',
       name: json['nombre'] ?? json['name'] ?? 'Sin nombre',
       type: 'category',
-      image: json['imagen_url'] ?? json['image'],
+      image: imageUrl,
       price: null,
       description: json['descripcion'] ?? json['description'],
       rawData: json, // Guardar JSON completo

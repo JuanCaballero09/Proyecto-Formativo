@@ -31,13 +31,23 @@ class Product extends Equatable {
     final ingredientsField = json['ingredientes'] ?? json['ingredients'];
     if (ingredientsField != null) {
       if (ingredientsField is String) {
+        // Si es un String, dividir por comas
         ingredientsList = ingredientsField
             .split(',')
             .map((e) => e.trim())
             .where((e) => e.isNotEmpty)
             .toList();
       } else if (ingredientsField is List) {
-        ingredientsList = List<String>.from(ingredientsField);
+        // Si es una lista, puede contener Strings o Maps
+        ingredientsList = ingredientsField.map((item) {
+          if (item is String) {
+            return item;
+          } else if (item is Map) {
+            // Si es un Map, extraer el campo 'nombre'
+            return (item['nombre'] ?? item['name'] ?? '').toString();
+          }
+          return item.toString();
+        }).where((e) => e.isNotEmpty).toList();
       }
     }
     
