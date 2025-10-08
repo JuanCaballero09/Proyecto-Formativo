@@ -30,7 +30,7 @@ module Api
           render json: {
             productos: @productos.as_json(
               only: [:id, :nombre, :descripcion, :precio, :grupo_id],
-              methods: [:imagen_url]
+              methods: [:imagen_url, :ingredientes]
             ),
             grupos: @grupos.as_json(
               only: [:id, :nombre, :descripcion],
