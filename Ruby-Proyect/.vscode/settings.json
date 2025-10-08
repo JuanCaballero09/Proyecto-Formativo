@@ -1,0 +1,60 @@
+{
+  // ==========================================
+  // Configuraciones Anti-Caché para VS Code
+  // ==========================================
+  
+  // Desactivar caché de archivos de VS Code
+  "files.watcherExclude": {
+    "**/.git/objects/**": true,
+    "**/.git/subtree-cache/**": true,
+    "**/node_modules/*/**": true,
+    "**/tmp/**": true,
+    "**/log/**": true,
+    "**/storage/**": true,
+    "**/.bundle/**": true,
+    "**/vendor/bundle/**": true
+  },
+  
+  // Configuración de búsqueda
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/bower_components": true,
+    "**/*.code-search": true,
+    "**/tmp": true,
+    "**/log": true,
+    "**/storage": true,
+    "**/.bundle": true,
+    "**/vendor/bundle": true
+  },
+  
+  // Desactivar seguimiento de symlinks
+  "search.followSymlinks": false,
+  
+  // Usar archivos .gitignore
+  "search.useIgnoreFiles": true,
+  
+  // Configuración Ruby LSP
+  "ruby.intellisense": "rubyLocate",
+  "ruby.useBundler": true,
+  "ruby.useLanguageServer": true,
+  
+  // Configuración de formateo
+  "editor.formatOnSave": false,
+  
+  // Excluir del explorador de archivos
+  "files.exclude": {
+    "**/.git": true,
+    "**/.DS_Store": true,
+    "**/tmp/cache": true
+  },
+  
+  // Auto-guardar
+  "files.autoSave": "afterDelay",
+  "files.autoSaveDelay": 1000,
+  
+  // Configuración de terminal
+  "terminal.integrated.env.linux": {
+    "RAILS_ENV": "development",
+    "DISABLE_SPRING": "1"
+  }
+}

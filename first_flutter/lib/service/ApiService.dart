@@ -118,16 +118,18 @@ class ApiService {
   }
 
   /// Obtiene un producto específico de una categoría
-  /// [categoryId] - ID de la categoría (1, 2 o 3)
-  /// [productId] - ID del producto (1, 2 o 3)
+  /// [categoryId] - ID de la categoría (grupo)
+  /// [productId] - ID del producto
   /// Retorna el producto solicitado
   Future<Product> getProductByCategoryAndId(int categoryId, int productId) async {
     if (categoryId < 1 || categoryId > 3) {
       throw DataException('ID de categoría inválido. Debe ser 1, 2 o 3');
     }
 
-    if (productId < 1 || productId > 3) {
-      throw DataException('ID de producto inválido. Debe ser 1, 2 o 3');
+    // Eliminar la validación restrictiva del productId
+    // Los productos pueden tener cualquier ID válido
+    if (productId < 1) {
+      throw DataException('ID de producto inválido. Debe ser mayor a 0');
     }
 
     try {
@@ -247,5 +249,42 @@ class ApiService {
     }
   }
 
+  /// Busca productos y categorías por query
+  /// [query] - Texto de búsqueda
+  /// Retorna un mapa con 'productos' y 'grupos' que coinciden con la búsqueda
+  Future<Map<String, dynamic>> searchProducts(String query) async {
+    if (query.trim().isEmpty) {
+      return {'productos': [], 'grupos': []};
+    }
 
+    try {
+      final url = Uri.parse('$baseUrl/buscar?q=${Uri.encodeComponent(query)}');
+      
+      // No enviar token de autenticación para búsqueda (endpoint público)
+      final headers = {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      };
+
+      final response = await http
+          .get(url, headers: headers)
+          .timeout(const Duration(seconds: 10));
+
+      _handleHttpResponse(response, 'búsqueda de productos');
+
+      final data = jsonDecode(response.body);
+
+      return {
+        'productos': data['productos'] ?? [],
+        'grupos': data['grupos'] ?? [],
+      };
+
+    } on NetworkException {
+      rethrow;
+    } on DataException {
+      rethrow;
+    } catch (e) {
+      throw NetworkException('Error de conexión al buscar productos');
+    }
+  }
 }

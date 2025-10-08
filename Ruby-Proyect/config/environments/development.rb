@@ -19,13 +19,9 @@ Rails.application.configure do
 
   # Enable/disable Action Controller caching. By default Action Controller caching is disabled.
   # Run rails dev:cache to toggle Action Controller caching.
-  if Rails.root.join("tmp/caching-dev.txt").exist?
-    config.action_controller.perform_caching = true
-    config.action_controller.enable_fragment_cache_logging = true
-    config.public_file_server.headers = { "cache-control" => "public, max-age=#{2.days.to_i}" }
-  else
-    config.action_controller.perform_caching = false
-  end
+  # DESACTIVADO PERMANENTEMENTE PARA DESARROLLO - Siempre ver cambios inmediatos
+  config.action_controller.perform_caching = false
+  config.action_controller.enable_fragment_cache_logging = false
 
 
   config.action_mailer.delivery_method = :smtp
@@ -43,7 +39,8 @@ config.action_mailer.default_url_options = { host: "localhost", port: 3000 } # m
 
 
   # Change to :null_store to avoid any caching.
-  config.cache_store = :memory_store
+  # Configurado a :null_store para NO cachear nada en desarrollo
+  config.cache_store = :null_store
 
   # Store uploaded files on the local file system (see config/storage.yml for options).
   config.active_storage.service = :local

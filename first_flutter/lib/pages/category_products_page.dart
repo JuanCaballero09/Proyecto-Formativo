@@ -12,11 +12,13 @@ import 'product_detail_page.dart';
 class CategoryProductsPage extends StatefulWidget {
   final String categoryName;
   final String categoryImage;
+  final int? categoryId; // Nuevo: ID opcional de la categoría
 
   const CategoryProductsPage({
     super.key,
     required this.categoryName,
     required this.categoryImage,
+    this.categoryId, // Agregar este parámetro
   });
 
   @override
@@ -27,7 +29,21 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
   @override
   void initState() {
     super.initState();
-    context.read<ProductBloc>().add(LoadProductsByCategory(widget.categoryName));
+    // Debug: Ver qué categoría se está cargando
+    print('=== DEBUG: CategoryProductsPage.initState ===');
+    print('Categoría solicitada: ${widget.categoryName}');
+    print('ID de categoría: ${widget.categoryId}');
+    print('Imagen de categoría: ${widget.categoryImage}');
+    print('==========================================');
+    
+    // Usar el ID si está disponible, sino usar el nombre
+    if (widget.categoryId != null) {
+      print('✓ Usando ID de categoría: ${widget.categoryId}');
+      context.read<ProductBloc>().add(LoadProductsByCategoryId(widget.categoryId!));
+    } else {
+      print('⚠️ ID no disponible, usando nombre: ${widget.categoryName}');
+      context.read<ProductBloc>().add(LoadProductsByCategory(widget.categoryName));
+    }
   }
 
   @override
@@ -144,10 +160,22 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
                           child: InkWell(
                             borderRadius: BorderRadius.circular(16),
                             onTap: () {
+                              // Debug: Verificar qué producto se está pasando
+                              print('=== DEBUG: Producto seleccionado ===');
+                              print('ID: ${product.id}');
+                              print('Nombre: ${product.name}');
+                              print('Categoría: ${product.category}');
+                              print('Precio: ${product.price}');
+                              print('Index en la lista: $index');
+                              print('====================================');
+                              
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => ProductDetailPage(product: product),
+                                  builder: (context) => ProductDetailPage(
+                                    key: ValueKey('product_${product.id}'), // Forzar reconstrucción
+                                    product: product,
+                                  ),
                                 ),
                               );
                             },

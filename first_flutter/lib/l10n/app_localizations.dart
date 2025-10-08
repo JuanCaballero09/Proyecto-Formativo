@@ -338,6 +338,30 @@ abstract class AppLocalizations {
   /// **'Search products...'**
   String get searchProducts;
 
+  /// No description provided for @searchResults.
+  ///
+  /// In en, this message translates to:
+  /// **'Search results'**
+  String get searchResults;
+
+  /// No description provided for @searching.
+  ///
+  /// In en, this message translates to:
+  /// **'Searching...'**
+  String get searching;
+
+  /// No description provided for @clearSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear search'**
+  String get clearSearch;
+
+  /// No description provided for @productsAndCategories.
+  ///
+  /// In en, this message translates to:
+  /// **'Products and categories'**
+  String get productsAndCategories;
+
   /// No description provided for @productCategories.
   ///
   /// In en, this message translates to:

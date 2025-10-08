@@ -158,12 +158,21 @@ class _MenuPageState extends State<MenuPage> {
   Widget _buildCategoryCardFromAPI(Categoria categoria) {
     return GestureDetector(
       onTap: () {
+        // Debug: Ver qué categoría se está seleccionando
+        print('=== DEBUG: Categoría seleccionada en MenuPage ===');
+        print('ID: ${categoria.id}');
+        print('Nombre original: ${categoria.nombre}');
+        print('Nombre en mayúsculas: ${categoria.nombre.toUpperCase()}');
+        print('Imagen: ${categoria.imagenUrl}');
+        print('=================================================');
+        
         Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => CategoryProductsPage(
-              categoryName: categoria.name.toUpperCase(),
-              categoryImage: categoria.imagen ?? "assets/imagen1.jpeg",
+              categoryName: categoria.nombre.toUpperCase(),
+              categoryImage: categoria.imagenUrl ?? categoria.getDefaultImage(),
+              categoryId: categoria.id, // SOLUCIÓN: Pasar el ID directamente
             ),
           ),
         );
@@ -219,7 +228,7 @@ class _MenuPageState extends State<MenuPage> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        categoria.name.toUpperCase(),
+                        categoria.nombre.toUpperCase(),
                         textAlign: TextAlign.center,
                         style: const TextStyle(
                           color: Colors.white,
@@ -265,106 +274,74 @@ class _MenuPageState extends State<MenuPage> {
   }
 
   Widget _buildCategoryImage(Categoria categoria) {
-    // Mapeo de imágenes predeterminadas por nombre de categoría
-    final Map<String, String> imagenesDefault = {
-      // Nombres exactos de tu API
-      'hamburguesas': 'assets/Hamburguesa sencilla.jpg',
-      'salchipapas': 'assets/imagen1.jpeg',
-      'pizzas': 'assets/Pizza Hawiana.jpg',
-      
-      // Variaciones por si acaso
-      'hamburguesa': 'assets/Hamburguesa sencilla.jpg',
-      'burger': 'assets/Hamburguesa sencilla.jpg',
-      'burgers': 'assets/Hamburguesa sencilla.jpg',
-      'salchipapa': 'assets/imagen1.jpeg',
-      'pizza': 'assets/Pizza Hawiana.jpg',
-      'tacos': 'assets/Tacos de Pollo.jpg',
-      'taco': 'assets/Tacos de Pollo.jpg',
-      'ensaladas': 'assets/Ensalada Cesar.jpg',
-      'ensalada': 'assets/Ensalada Cesar.jpg',
-      'salads': 'assets/Ensalada Cesar.jpg',
-      'salad': 'assets/Ensalada Cesar.jpg',
-    };
+    // Extraer el emoji del nombre de la categoría
+    String emoji = '🍽️'; // Emoji por defecto
     
-    String? imagePath = categoria.imagen;
-    
-    // Si no hay imagen de la API, usar imagen predeterminada basada en el nombre
-    if (imagePath == null || imagePath.isEmpty) {
-      final nombreLower = categoria.name.toLowerCase();
-      imagePath = imagenesDefault[nombreLower];
-      
-      if (imagePath == null) {
-        return _buildPlaceholderImage();
+    if (categoria.nombre.isNotEmpty) {
+      // Buscar el primer emoji en el nombre
+      final runes = categoria.nombre.runes.toList();
+      for (var rune in runes) {
+        final char = String.fromCharCode(rune);
+        // Verificar si es un emoji (código Unicode > 127)
+        if (rune > 127) {
+          emoji = char;
+          break;
+        }
       }
     }
+    
+    // Definir colores de gradiente según la categoría
+    List<Color> gradientColors = _getGradientColors(categoria.nombre);
+    
+    print('📸 Mostrando emoji para ${categoria.nombre}: $emoji');
 
-    // Si es una URL de internet (http/https)
-    if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
-      return Image.network(
-        imagePath,
-        height: double.infinity,
-        width: double.infinity,
-        fit: BoxFit.cover,
-        loadingBuilder: (context, child, loadingProgress) {
-          if (loadingProgress == null) return child;
-          return Container(
-            color: Colors.grey[300],
-            child: const Center(
-              child: CircularProgressIndicator(),
-            ),
-          );
-        },
-        errorBuilder: (context, error, stackTrace) {
-          return _buildPlaceholderImage();
-        },
-      );
-    } 
-    // Si es un asset local
-    else if (imagePath.startsWith('assets/')) {
-      return Image.asset(
-        imagePath,
-        height: double.infinity,
-        width: double.infinity,
-        fit: BoxFit.cover,
-        errorBuilder: (context, error, stackTrace) {
-          return _buildPlaceholderImage();
-        },
-      );
-    }
-    // Si es una ruta relativa, intentar como asset
-    else {
-      final assetPath = imagePath.startsWith('/') ? 'assets$imagePath' : 'assets/$imagePath';
-      return Image.asset(
-        assetPath,
-        height: double.infinity,
-        width: double.infinity,
-        fit: BoxFit.cover,
-        errorBuilder: (context, error, stackTrace) {
-          // Como último recurso, intentar como imagen de red sin protocolo
-          if (imagePath != null && !imagePath.contains('://')) {
-            return Image.network(
-              'https://$imagePath',
-              height: double.infinity,
-              width: double.infinity,
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) {
-                return _buildPlaceholderImage();
-              },
-            );
-          }
-          return _buildPlaceholderImage();
-        },
-      );
-    }
-  }
-
-  Widget _buildPlaceholderImage() {
     return Container(
-      color: Colors.grey[300],
-      child: const Center(
-        child: Icon(Icons.restaurant, size: 50, color: Colors.grey),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: gradientColors,
+        ),
+      ),
+      child: Center(
+        child: Text(
+          emoji,
+          style: const TextStyle(
+            fontSize: 100,
+            shadows: [
+              Shadow(
+                offset: Offset(2, 2),
+                blurRadius: 4,
+                color: Colors.black26,
+              ),
+            ],
+          ),
+        ),
       ),
     );
+  }
+
+  List<Color> _getGradientColors(String nombre) {
+    final nombreLower = nombre.toLowerCase();
+    
+    if (nombreLower.contains('hamburguesa') || nombreLower.contains('burger')) {
+      return [Colors.orange[300]!, Colors.orange[600]!];
+    } else if (nombreLower.contains('pizza')) {
+      return [Colors.red[300]!, Colors.red[600]!];
+    } else if (nombreLower.contains('salchipapa') || nombreLower.contains('papas')) {
+      return [Colors.amber[400]!, Colors.amber[700]!];
+    } else if (nombreLower.contains('bebida') || nombreLower.contains('drink')) {
+      return [Colors.blue[300]!, Colors.blue[600]!];
+    } else if (nombreLower.contains('postre') || nombreLower.contains('dessert')) {
+      return [Colors.pink[300]!, Colors.pink[600]!];
+    } else if (nombreLower.contains('taco')) {
+      return [Colors.green[300]!, Colors.green[600]!];
+    } else if (nombreLower.contains('ensalada') || nombreLower.contains('salad')) {
+      return [Colors.lightGreen[300]!, Colors.lightGreen[600]!];
+    }
+    
+    // Color por defecto
+    return [Colors.grey[400]!, Colors.grey[700]!];
   }
 
   Widget _buildCategoryCard(Map<String, String> categoria) {

@@ -129,6 +129,18 @@ class AppLocalizationsEs extends AppLocalizations {
   String get searchProducts => 'Buscar productos...';
 
   @override
+  String get searchResults => 'Resultados de búsqueda';
+
+  @override
+  String get searching => 'Buscando...';
+
+  @override
+  String get clearSearch => 'Limpiar búsqueda';
+
+  @override
+  String get productsAndCategories => 'Productos y categorías';
+
+  @override
   String get productCategories => 'Categorías de Productos';
 
   @override
