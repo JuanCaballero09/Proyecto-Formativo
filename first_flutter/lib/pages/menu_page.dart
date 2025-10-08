@@ -274,71 +274,74 @@ class _MenuPageState extends State<MenuPage> {
   }
 
   Widget _buildCategoryImage(Categoria categoria) {
-    // Obtener la ruta de la imagen
-    String imagePath = categoria.imagenUrl ?? categoria.getDefaultImage();
+    // Extraer el emoji del nombre de la categoría
+    String emoji = '🍽️'; // Emoji por defecto
     
-    print('📸 Cargando imagen para ${categoria.nombre}: $imagePath');
-
-    // Si es una URL de internet (http/https)
-    if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
-      return Image.network(
-        imagePath,
-        height: double.infinity,
-        width: double.infinity,
-        fit: BoxFit.cover,
-        loadingBuilder: (context, child, loadingProgress) {
-          if (loadingProgress == null) return child;
-          return Container(
-            color: Colors.grey[300],
-            child: const Center(
-              child: CircularProgressIndicator(),
-            ),
-          );
-        },
-        errorBuilder: (context, error, stackTrace) {
-          print('❌ Error cargando imagen de red: $error');
-          return _buildAssetImageFallback(categoria);
-        },
-      );
-    } 
-    // Si es un asset local
-    else {
-      return Image.asset(
-        imagePath,
-        height: double.infinity,
-        width: double.infinity,
-        fit: BoxFit.cover,
-        errorBuilder: (context, error, stackTrace) {
-          print('❌ Error cargando asset $imagePath: $error');
-          return _buildPlaceholderImage();
-        },
-      );
+    if (categoria.nombre.isNotEmpty) {
+      // Buscar el primer emoji en el nombre
+      final runes = categoria.nombre.runes.toList();
+      for (var rune in runes) {
+        final char = String.fromCharCode(rune);
+        // Verificar si es un emoji (código Unicode > 127)
+        if (rune > 127) {
+          emoji = char;
+          break;
+        }
+      }
     }
-  }
-
-  Widget _buildAssetImageFallback(Categoria categoria) {
-    final defaultImage = categoria.getDefaultImage();
-    print('🔄 Intentando con imagen por defecto: $defaultImage');
     
-    return Image.asset(
-      defaultImage,
-      height: double.infinity,
-      width: double.infinity,
-      fit: BoxFit.cover,
-      errorBuilder: (context, error, stackTrace) {
-        print('❌ Error cargando imagen por defecto: $error');
-        return _buildPlaceholderImage();
-      },
-    );
-  }
+    // Definir colores de gradiente según la categoría
+    List<Color> gradientColors = _getGradientColors(categoria.nombre);
+    
+    print('📸 Mostrando emoji para ${categoria.nombre}: $emoji');
 
-  Widget _buildPlaceholderImage() {
     return Container(
-      color: Colors.grey[300],
-      child: const Center(
-        child: Icon(Icons.restaurant, size: 50, color: Colors.grey),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: gradientColors,
+        ),
+      ),
+      child: Center(
+        child: Text(
+          emoji,
+          style: const TextStyle(
+            fontSize: 100,
+            shadows: [
+              Shadow(
+                offset: Offset(2, 2),
+                blurRadius: 4,
+                color: Colors.black26,
+              ),
+            ],
+          ),
+        ),
       ),
     );
+  }
+
+  List<Color> _getGradientColors(String nombre) {
+    final nombreLower = nombre.toLowerCase();
+    
+    if (nombreLower.contains('hamburguesa') || nombreLower.contains('burger')) {
+      return [Colors.orange[300]!, Colors.orange[600]!];
+    } else if (nombreLower.contains('pizza')) {
+      return [Colors.red[300]!, Colors.red[600]!];
+    } else if (nombreLower.contains('salchipapa') || nombreLower.contains('papas')) {
+      return [Colors.amber[400]!, Colors.amber[700]!];
+    } else if (nombreLower.contains('bebida') || nombreLower.contains('drink')) {
+      return [Colors.blue[300]!, Colors.blue[600]!];
+    } else if (nombreLower.contains('postre') || nombreLower.contains('dessert')) {
+      return [Colors.pink[300]!, Colors.pink[600]!];
+    } else if (nombreLower.contains('taco')) {
+      return [Colors.green[300]!, Colors.green[600]!];
+    } else if (nombreLower.contains('ensalada') || nombreLower.contains('salad')) {
+      return [Colors.lightGreen[300]!, Colors.lightGreen[600]!];
+    }
+    
+    // Color por defecto
+    return [Colors.grey[400]!, Colors.grey[700]!];
   }
 
   Widget _buildCategoryCard(Map<String, String> categoria) {
