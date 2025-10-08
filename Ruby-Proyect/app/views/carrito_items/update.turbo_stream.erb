@@ -37,7 +37,17 @@
     <div id="totales-carrito" class="totales-detalle">
       <div class="total-item">
         <span class="total-label">Subtotal:</span>
-        <span class="total-value"><%= number_to_currency(@carrito.subtotal, unit: "COP $", separator: ",", delimiter: ".") %></span>
+        <span class="total-value">
+          <strong class="precio-total"
+            data-precio="<%= @carrito.subtotal %>"
+            data-locale="<%= I18n.locale %>">
+              <% if I18n.locale == :en %>
+                <%= number_to_currency(@carrito.subtotal/ 4000, unit: "USD", format: "%n %u", precision: 2) %>
+              <% else %>
+                <%= number_to_currency(@carrito.subtotal, unit: "COP", format: "%n %u", precision: 2) %>
+              <% end %>
+            </strong>
+        </span>
       </div>
       
       <% if @carrito.descuento > 0 %>
@@ -49,7 +59,17 @@
       
       <div class="total-item total-final">
         <span class="total-label">Total:</span>
-        <span class="total-value"><%= number_to_currency(@carrito.total, unit: "COP $", separator: ",", delimiter: ".") %></span>
+        <span class="total-value">
+          <strong class="precio-total"
+            data-precio="<%= @carrito.total %>"
+            data-locale="<%= I18n.locale %>">
+              <% if I18n.locale == :en %>
+                <%= number_to_currency(@carrito.total/ 4000, unit: "USD", format: "%n %u", precision: 2) %>
+              <% else %>
+                <%= number_to_currency(@carrito.total, unit: "COP", format: "%n %u", precision: 2) %>
+              <% end %>
+          </strong>
+        </span>
       </div>
     </div>
   </template>

@@ -1,28 +1,26 @@
 <div class="simple-payment-container">
   <div class="simple-payment-header">
-    <h1>Pagar Orden <%= @order.code %></h1>
-    <p>Completa tu información de pago</p>
+    <h1><%= t("home.order-pago.pagar_orden")%> <%= @order.code %></h1>
+    <p><%= t("home.order-pago.completa")%></p>
   </div>
 
   <div class="simple-payment-grid">
     <!-- Order Summary -->
     <div class="simple-order-summary">
-      <h3>Resumen de la Orden</h3>
+      <h3><%= t("home.order-pago.resumen")%></h3>
       
       <div class="simple-order-items">
         <% @order.order_items.each do |item| %>
           <div class="simple-order-item">
             <span class="item-name"><%= item.product.nombre %></span>
-            <span class="item-details">
-              Cantidad: <%= item.quantity %> x 
-              <span class="precio" data-precio="<%= item.product.precio %>" data-locale="<%= I18n.locale %>">
-                <%= number_to_currency(item.product.precio, unit: "COP ", separator: ",", delimiter: ".") %>
+            <span class="item-details"> 
+              <%= t("home.ordenes.cantidadd")%> <%= item.quantity %> x 
+              <span class="precio" >
+                <strong class= "precio-unitario" data-precio="<%= item.product.precio %>" data-locale="<%= I18n.locale %>"></strong> 
               </span>
             </span>
             <span class="item-total">
-              <span class="precio" data-precio="<%= item.quantity * item.product.precio %>" data-locale="<%= I18n.locale %>">
-                <%= number_to_currency(item.quantity * item.product.precio, unit: "COP ", separator: ",", delimiter: ".") %>
-              </span>
+              <strong class= "precio-unitario" data-precio="<%= item.quantity * item.product.precio %>" data-locale="<%= I18n.locale %>"></strong> 
             </span>
           </div>
         <% end %>
@@ -43,10 +41,18 @@
         <% end %>
         
         <div class="total-line">
-          <span>Total a Pagar:</span>
+          <span><%= t("home.carrito.total_pagar")%></span>
           <span class="total-amount">
-            <span class="precio" data-precio="<%= @order.total %>" data-locale="<%= I18n.locale %>">
-              <%= number_to_currency(@order.total, unit: "", separator: ",", delimiter: ".") %> COP
+            <span class="precio">
+              <strong class="precio-total"
+                data-precio="<%= @order.total %>"
+                data-locale="<%= I18n.locale %>"> 
+                <% if I18n.locale == :en %>
+                  <%= number_to_currency(@order.total/ 4000, unit: "USD", format: "%n %u", precision: 2) %>
+                <% else %>
+                  <%= number_to_currency(@order.total, unit: "COP", format: "%n %u", precision: 2) %>
+                <% end %>
+              </strong>
             </span>
           </span>
         </div>
@@ -55,7 +61,7 @@
 
     <!-- Payment Form -->
     <div class="simple-payment-form">
-      <h3>Información de Pago</h3>
+      <h3><%= t("home.order-pago.info_pago")%></h3>
       
       <%= form_with model: [@order, @payment], local: true, html: { id: "payment-form", class: "simple-form" } do |f| %>
         <div class="form-field">
@@ -93,7 +99,7 @@
 
           <div class="form-field">
             <%= f.label :card_holder, t("home.order-pago.nombre-titular"), class: "field-label" %>
-            <%= f.text_field :card_holder, required: true, class: "field-input", placeholder: "Nombre completo" %>
+            <%= f.text_field :card_holder, required: true, class: "field-input", placeholder: t("home.order-pago.nombre_completo") %>
             <span id="error-holder" class="error-msg"></span>
           </div>
         </div>
@@ -129,7 +135,7 @@
 
         <div class="submit-section">
           <%= f.submit t("home.order-pago.pagar"), id: "pay-btn", class: "pay-button", disabled: true %>
-          <p class="security-note">🔒 Pago seguro protegido por SSL</p>
+          <p class="security-note">🔒 <%= t("home.order-pago.pago_seguro")%></p>
         </div>
       <% end %>
     </div>

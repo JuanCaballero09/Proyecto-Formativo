@@ -105,20 +105,37 @@ document.addEventListener("turbo:load", function() {
 // ========================================
 // 💵 Converción COP a USD
 // ========================================
+ document.addEventListener("turbo:load", () => {
+  const cambioDinero = 4000;
 
-document.addEventListener("turbo:load", () => {
-  const priceChange = document.querySelectorAll(".precio");
-  if (!priceChange) return;
+  function formatear(precio, locale, currency) {
+    let formateado;
+    
+    if (currency === "USD") {
+      formateado = new Intl.NumberFormat('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      }).format(precio);
+      
+      formateado = `${formateado} USD`;
+    } else {
+      const partes = precio.toFixed(2).split('.');
+      const miles = partes[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+      const decimales = partes[1];
+    
+      formateado = `${miles},${decimales} COP`;
+    }
 
-  const cambioDinero = 4000; 
+    return formateado;
+  }
 
-  priceChange.forEach(el =>{
+  // precio unitario
+  document.querySelectorAll(".precio-unitario").forEach(el => {
     const precio = parseFloat(el.dataset.precio);
-    const locale = el.dataset.locale
+    const locale = el.dataset.locale;
+    let precioFinal, currency;
 
-    let precioFinal, currency; 
-
-    if (locale ===   "en"){
+    if (locale === "en") {
       precioFinal = precio / cambioDinero;
       currency = "USD";
     } else {
@@ -126,11 +143,52 @@ document.addEventListener("turbo:load", () => {
       currency = "COP";
     }
 
-    el.innerText = new Intl.NumberFormat(locale, {
-      style: "currency",
-      currency: currency
-    }).format(precioFinal);
+    el.innerText = formatear(precioFinal, locale, currency);
   });
+
+  // precio total de un producto
+  document.querySelectorAll(".precio-total").forEach(el => {
+    const precio = parseFloat(el.dataset.precio);
+    const cantidad = parseInt(el.dataset.cantidad, 10) || 1;
+    const locale = el.dataset.locale;
+    let subtotal = precio * cantidad;
+    let currency;
+
+    if (locale === "en") {
+      subtotal = subtotal / cambioDinero;
+      currency = "USD";
+    } else {
+      currency = "COP";
+    }
+
+    el.innerText = formatear(subtotal,locale, currency);
+  });
+
+  // precio total del carrito
+  const totalCarrito = document.getElementById("precio-total");
+  if (!totalCarrito) return; 
+
+  const locale = totalCarrito.dataset.locale || "es";
+  
+  function formatearMoneda(valor, idioma) {
+    if (locale === "en") {
+      return new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD",
+        minimumFractionDigits: 2
+      }).format(valor / cambioDinero);
+    } else {
+      return new Intl.NumberFormat("es-CO", {
+        style: "currency",
+        currency: "COP",
+        minimumFractionDigits: 2
+      }).format(valor);
+    }
+  }
+
+  const precioCarrito = parseFloat(totalCarrito.dataset.precio);
+  totalCarrito.textContent = formatearMoneda(precioCarrito, locale);
+
 }); 
 
 

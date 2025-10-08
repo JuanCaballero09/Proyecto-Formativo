@@ -1,13 +1,23 @@
 <div id="carrito-cupon" class="cupon-container">
-  <h4 class="cupon-titulo">💎 Cupón de descuento</h4>
+  <h4 class="cupon-titulo">💎 <%= t("home.carrito.cupon_descuento") %></h4>
   
   <% if carrito&.coupon.present? %>
     <div class="cupon-aplicado">
       <div class="cupon-info">
         <span class="cupon-codigo">🎫 <%= carrito.coupon.codigo %></span>
-        <span class="cupon-descuento">-<%= number_to_currency(carrito.descuento, unit: "COP $", separator: ",", delimiter: ".") %></span>
+        <span class="cupon-descuento">
+          -<strong class="precio-total"
+            data-precio="<%= @carrito.descuento %>"
+            data-locale="<%= I18n.locale %>">
+              <% if I18n.locale == :en %>
+                <%= number_to_currency(@carrito.descuento/ 4000, unit: "USD", format: "%n %u", precision: 2) %>
+                  <% else %>
+                    <%= number_to_currency(@carrito.descuento, unit: "COP", separator: ",", delimiter: ".", format: "%n %u", precision: 2) %>
+                  <% end %>
+          </strong>
+        </span>
       </div>
-      <%= button_to "Quitar cupón",
+      <%= button_to t("home.carrito.quitar_cupon"),
                     quitar_cupon_carrito_path,
                     method: :delete,
                     form: { data: { turbo_stream: true } },
@@ -21,8 +31,8 @@
                     local: true,
                     class: "form-cupon-modern" do |f| %>
         <div class="input-group">
-          <%= f.text_field :codigo, placeholder: "Ingresa tu código de cupón", class: "cupon-input" %>
-          <%= f.submit "Aplicar", class: "btn-aplicar-cupon" %>
+          <%= f.text_field :codigo, placeholder: t("home.carrito.codigo_cupon"), class: "cupon-input" %>
+          <%= f.submit t("home.carrito.aplicar"), class: "btn-aplicar-cupon" %>
         </div>
       <% end %>
     </div>
