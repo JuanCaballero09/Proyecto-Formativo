@@ -4,6 +4,7 @@ import '../l10n/app_localizations.dart';
 import '../bloc/categorias_bloc.dart';
 import '../models/categoria.dart';
 import 'category_products_page.dart';
+import 'package:flutter/cupertino.dart';
 
 class MenuPage extends StatefulWidget {
   const MenuPage({super.key});
@@ -168,7 +169,7 @@ class _MenuPageState extends State<MenuPage> {
         
         Navigator.push(
           context,
-          MaterialPageRoute(
+          CupertinoPageRoute(
             builder: (context) => CategoryProductsPage(
               categoryName: categoria.nombre.toUpperCase(),
               categoryImage: categoria.imagenUrl ?? categoria.getDefaultImage(),
