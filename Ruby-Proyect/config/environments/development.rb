@@ -22,20 +22,20 @@ Rails.application.configure do
   # DESACTIVADO PERMANENTEMENTE PARA DESARROLLO - Siempre ver cambios inmediatos
   config.action_controller.perform_caching = false
   config.action_controller.enable_fragment_cache_logging = false
+  config.action_mailer.perform_deliveries = true
+  config.action_mailer.asset_host = "http://localhost:3000"
 
 
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = {
-    address: "smtp.sendgrid.net", # server encar gado de hacer el mandado de correos
+    address: "smtp.gmail.com", # server encargado de hacer el mandado de correos
     port: 587, # puerto en donde van a salir
-    domain: "localhost",
-    user_name: "apikey",    # nombre de la api
-    password: ENV["SENDGRID_API_KEY"],  # contraseña
+    domain: "gmail.com",
+    user_name: "biteviasoftware@gmail.com",
+    password: "jtptsglztobbzfjz",  # contraseña
     authentication: :plain,  # Metodo de seguridad
     enable_starttls_auto: true
   }
-
-config.action_mailer.default_url_options = { host: "localhost", port: 3000 } # medio de que se muestre por la local
 
 
   # Change to :null_store to avoid any caching.
@@ -46,7 +46,7 @@ config.action_mailer.default_url_options = { host: "localhost", port: 3000 } # m
   config.active_storage.service = :local
 
   # Don't care if the mailer can't send.
-  config.action_mailer.raise_delivery_errors = false
+  config.action_mailer.raise_delivery_errors = true
 
   # Make template changes take effect immediately.
   config.action_mailer.perform_caching = false
