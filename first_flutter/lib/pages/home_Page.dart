@@ -564,16 +564,16 @@ class _HomePageState extends State<HomePage>
           try {
             final apiService = ApiService();
             
-            // Extraer grupo_id del rawData
-            final grupoId = result.rawData?['grupo_id'];
+            // Extraer categoria_id del rawData (transformado desde grupo_id)
+            final categoriaId = result.rawData?['categoria_id'];
             final productId = int.parse(result.id);
             
             print('Intentando obtener producto desde API...');
-            print('Grupo ID: $grupoId, Product ID: $productId');
+            print('Categoria ID: $categoriaId, Product ID: $productId');
             
-            if (grupoId != null) {
+            if (categoriaId != null) {
               final product = await apiService.getProductByCategoryAndId(
-                grupoId is int ? grupoId : int.parse(grupoId.toString()),
+                categoriaId is int ? categoriaId : int.parse(categoriaId.toString()),
                 productId,
               );
               
