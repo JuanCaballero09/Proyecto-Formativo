@@ -7930,16 +7930,6 @@ a:focus, button:focus, input:focus, select:focus, textarea:focus {
   letter-spacing: 1px;
 }
 
-.session-form {
-  background-color: #fff;
-  border-radius: 10px;
-  padding: 40px;
-  width: 100%;
-  max-width: 400px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
-  text-align: center;
-}
-
 .session-form h2 {
   color: #aa350a;
   margin-bottom: 20px;
