@@ -82,10 +82,10 @@ class Product extends Equatable {
           category = 'pizzas';
           break;
         case 4:
-          category = 'postres';
+          category = 'bebidas';
           break;
         case 5:
-          category = 'bebidas';
+          category = 'postres';
           break;
         default:
           category = 'General';
