@@ -71,9 +71,6 @@ class ApiService {
   /// [categoryId] - ID de la categoría (1, 2 o 3)
   /// Retorna una lista de productos de la categoría solicitada
   Future<List<Product>> getProductsByCategory(int categoryId) async {
-    if (categoryId < 1 || categoryId > 3) {
-      throw DataException('ID de categoría inválido. Debe ser 1, 2 o 3');
-    }
 
     try {
       final url = Uri.parse(ApiConfig.getProductsByCategoryUrl(categoryId));

@@ -25,6 +25,26 @@
         <%= link_to t("home.carrito.explorar_productos"), products_path, class: "btn-explorar" %>
       </div>
     <% else %>
+      <!-- Información del cliente para invitados - Aparece arriba -->
+      <% unless current_user %>
+        <div class="guest-info-top">
+          <div class="guest-info-section">
+            <h4><i class="user-icon">👤</i> Información del cliente</h4>
+            <div class="guest-fields">
+              <div class="field-row">
+                <input type="text" name="guest_nombre" placeholder="Nombre" class="guest-input" required minlength="3" form="checkout-form">
+                <input type="text" name="guest_apellido" placeholder="Apellido" class="guest-input" required minlength="3" form="checkout-form">
+              </div>
+              <div class="field-row">
+                <input type="email" name="guest_email" placeholder="Correo electrónico" class="guest-input" required form="checkout-form">
+                <input type="tel" name="guest_telefono" placeholder="Teléfono" class="guest-input" required minlength="8" maxlength="10" form="checkout-form">
+              </div>
+            </div>
+            <small class="guest-help">💡 Estos datos son necesarios para contactarte sobre tu pedido</small>
+          </div>
+        </div>
+      <% end %>
+
       <div class="carrito-content">
         <!-- Items del carrito -->
         <div class="carrito-items-section">
@@ -45,12 +65,14 @@
 
         <!-- Sidebar con totales y acciones -->
         <div class="carrito-sidebar">
-          <!-- Cupón -->
-          <div class="cupon-section">
-            <%= turbo_frame_tag "carrito-cupon" do %>
-              <%= render "carritos/cupon", carrito: @carrito %>
-            <% end %>
-          </div>
+          <!-- Cupón - Solo para usuarios autenticados -->
+          <% if current_user %>
+            <div class="cupon-section">
+              <%= turbo_frame_tag "carrito-cupon" do %>
+                <%= render "carritos/cupon", carrito: @carrito %>
+              <% end %>
+            </div>
+          <% end %>
 
           <!-- Totales -->
           <div class="totales-section">
@@ -109,10 +131,22 @@
 
               <!-- Botón de compra -->
               <div class="checkout-section">
-                <%= button_to t("home.show-vista.generar_orden"),
-                              orders_path,
-                              method: :post,
-                              class: "btn-checkout" %>
+                <!-- Campo de dirección -->
+                <div class="direccion-section">
+                  <h4><i class="address-icon">📍</i> <%= t("home.order.direccion_entrega", default: "Dirección de entrega") %></h4>
+                  <%= form_with url: orders_path, method: :post, local: true, class: "checkout-form", id: "checkout-form" do |f| %>
+                    <%= f.text_area :direccion, 
+                                        placeholder: "Ej: Calle 123 #45-67, Apto 101, Barrio Centro, Barranquilla", 
+                                        class: "direccion-input",
+                                        required: true,
+                                        rows: 3,
+                                        id: "direccion-input" %>
+                    <small class="direccion-help">Por favor incluye dirección completa, puntos de referencia y notas especiales</small>
+                    
+                    <%= f.submit t("home.show-vista.ir_a_pagar"), class: "btn-checkout", id: "btn-generar-orden" %>
+                  <% end %>
+                </div>
+                
                 <p class="checkout-info">
                   <span class="info-icon">🔒</span>
                   <%= t("home.carrito.pago_protegido")%>
@@ -120,23 +154,23 @@
               </div>
             </div>
           </div>
+        </div>
+      </div>
 
-          <!-- Información adicional -->
-          <div class="info-adicional">
-            <div class="info-item">
-              <span class="info-icon">🚚</span>
-              <div class="info-content">
-                <h4><%= t("home.carrito.entrega")%></h4>
-                <p><%= t("home.carrito.recibe")%></p>
-              </div>
-            </div>
-            <div class="info-item">
-              <span class="info-icon">💳</span>
-              <div class="info-content">
-                <h4><%= t("home.carrito.pagooo")%></h4>
-                <p><%= t("home.carrito.multiple_metodo")%></p>
-              </div>
-            </div>
+      <!-- Información adicional - Movida abajo -->
+      <div class="info-adicional-bottom">
+        <div class="info-item">
+          <span class="info-icon">🚚</span>
+          <div class="info-content">
+            <h4><%= t("home.carrito.entrega")%></h4>
+            <p><%= t("home.carrito.recibe")%></p>
+          </div>
+        </div>
+        <div class="info-item">
+          <span class="info-icon">💳</span>
+          <div class="info-content">
+            <h4><%= t("home.carrito.pagooo")%></h4>
+            <p><%= t("home.carrito.multiple_metodo")%></p>
           </div>
         </div>
       </div>

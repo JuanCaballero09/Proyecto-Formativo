@@ -1,7 +1,6 @@
 class OrdersController < ApplicationController
   layout "application_min"
 
-  before_action :authenticate_user!  # exige login
   before_action :set_order, only: [ :show ]
 
   def create
@@ -10,8 +9,39 @@ class OrdersController < ApplicationController
       redirect_to carrito_path, alert: "Tu carrito está vacío" and return
     end
 
+    # Validar que se envió la dirección
+    if params[:direccion].blank?
+      redirect_to carrito_path, alert: "Debes proporcionar una dirección de entrega" and return
+    end
+
     ActiveRecord::Base.transaction do
-      @order = current_user.orders.build(status: :pendiente, total: 0)
+      if current_user
+        # Usuario logueado
+        @order = current_user.orders.build(
+          status: :pendiente,
+          total: 0,
+          direccion: params[:direccion]
+        )
+      else
+        # Usuario invitado - validar datos requeridos
+        required_guest_fields = [ :guest_nombre, :guest_apellido, :guest_telefono, :guest_email ]
+        missing_fields = required_guest_fields.select { |field| params[field].blank? }
+
+        if missing_fields.any?
+          redirect_to carrito_path, alert: "Debes completar todos los campos requeridos" and return
+        end
+
+        @order = Order.new(
+          status: :pendiente,
+          total: 0,
+          direccion: params[:direccion],
+          guest_nombre: params[:guest_nombre],
+          guest_apellido: params[:guest_apellido],
+          guest_telefono: params[:guest_telefono],
+          guest_email: params[:guest_email]
+        )
+      end
+
       @order.carrito = carrito if carrito.respond_to?(:id)
       @order.coupon  = carrito.coupon
       @order.save!
@@ -40,11 +70,12 @@ class OrdersController < ApplicationController
       session[:carrito_id] = nil
     end
 
-    redirect_to order_path(@order)
+    # Redirigir al payment en lugar del show de la orden
+    redirect_to new_order_payments_path(@order.code)
   rescue ActiveRecord::Rollback => e
     redirect_to carrito_path, alert: "No se pudo generar la orden: #{e.message}"
   rescue ActiveRecord::RecordInvalid => e
-    redirect_to carrito_path, alert: "No se pudo generar la orden: #{e.message}"
+    redirect_to carrito_path, alert: "No se pudo generar la orden: #{e.record.errors.full_messages.join(', ')}"
   end
 
   def show

@@ -39,7 +39,7 @@
 
         <div class="field">
           <%= f.label :telefono %>
-          <%= f.text_field :telefono %>
+          <%= f.text_field :telefono, maxlength: 10 %>
         </div>
 
         <div class="field">
@@ -80,6 +80,14 @@
   // ========================================
   // 👁️ Mostrar o ocultar contraseña
   // ========================================
+
+  document.addEventListener('DOMContentLoaded', function() {
+    const toggleButton = document.querySelector('.password-toggle');
+    if (toggleButton) {
+      toggleButton.checked = false;
+    }
+  });
+
   function togglePassword() {
     const passwordField = document.getElementById('password-field');
     const passwordField2 = document.getElementById('password-field2');

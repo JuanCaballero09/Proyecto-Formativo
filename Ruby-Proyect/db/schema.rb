@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_24_050905) do
+ActiveRecord::Schema[8.0].define(version: 2025_10_11_171916) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -133,13 +133,18 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_24_050905) do
 
   create_table "orders", force: :cascade do |t|
     t.string "code"
-    t.bigint "user_id", null: false
+    t.bigint "user_id"
     t.integer "status"
     t.decimal "total"
     t.bigint "carrito_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "coupon_id"
+    t.text "direccion"
+    t.string "guest_nombre"
+    t.string "guest_apellido"
+    t.string "guest_telefono"
+    t.string "guest_email"
     t.index ["carrito_id"], name: "index_orders_on_carrito_id"
     t.index ["code"], name: "index_orders_on_code", unique: true
     t.index ["coupon_id"], name: "index_orders_on_coupon_id"

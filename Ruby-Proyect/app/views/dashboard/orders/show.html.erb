@@ -1,9 +1,14 @@
 <section class="order-details" style="min-height: auto; gap: 15px;">
-    <h1>Orden <%= @order.code %></h1>
+    <div style="display: flex; align-items: center; gap: 10px; justify-content: center;">
+        <h1 style="margin: 0;">Orden <span id="order-code"><%= @order.code %></span></h1>
+        <button class="copy-button" onclick="copyOrderCode()" title="Copiar código" style="background: var(--base); border-radius: 4px;">
+            <%= image_tag "icons/copy-solid-full.svg", class: "copy-icon", style: "width: 16px; height: 16px;" %>
+        </button>
+    </div>
 
-    <p><strong><%= t("home.order.cliente")%></strong> <%= @order.user.nombre %> <%= @order.user.apellido %></p>
+    <p><strong><%= t("home.order.cliente")%></strong> <%= @order.customer_name %></p>
     <p class="<%= "status-#{@order.status}" %>"><strong><%= t("home.order.estado")%></strong> <span><%= @order.status.humanize %></span></p>
-
+    <p><strong><%= t("home.order.dirección")%>:</strong> <%= @order.direccion %></p>
     <div class="qr-code-container">
         <h3>Código QR de la Orden</h3>
         <div class="qr-code">
@@ -28,7 +33,8 @@
         <tbody>
             <% @order.order_items.each do |oi| %>
             <tr>
-                <td><%= image_tag oi.product.imagen, alt: oi.product.nombre %></td>
+                <td><%= image_tag(oi.product.imagen.attached? ? oi.product.imagen : "LogoLogoText2.svg", 
+                                 alt: oi.product.nombre) %></td>
                 <td><%= oi.product.nombre %></td>
                 <td><%= oi.quantity %></td>
                 <td><%= number_to_currency(oi.price, unit: "COP ", separator: ",", delimiter: ".") %></td>
@@ -51,3 +57,71 @@
     <%= link_to t("home.ordenes.volver_listado"), dashboard_orders_path, class: "btn-eliminar", style: "margin: 10px auto;" %>
 
 </section>
+<script>
+function copyOrderCode() {
+    const codigo = document.getElementById('order-code').innerText;
+    navigator.clipboard.writeText(codigo).then(() => {
+        // Usar el sistema de alertas premium
+        if (window.createFlashAlert) {
+            window.createFlashAlert(`Código copiado: ${codigo}`, 'success', 3000);
+        } else {
+            alert("Código copiado: " + codigo);
+        }
+    }).catch(err => {
+        console.error("Error al copiar: ", err);
+        if (window.createFlashAlert) {
+            window.createFlashAlert('Error al copiar el código', 'error', 3000);
+        } else {
+            alert("Error al copiar el código");
+        }
+    });
+}
+
+function toggleComboDetails(index) {
+    const details = document.getElementById(`combo-details-${index}`);
+    const button = details.previousElementSibling.querySelector('.toggle-combo');
+    const arrow = button.querySelector('.toggle-arrow');
+    const text = button.querySelector('.toggle-text');
+    
+    if (details.style.display === 'none') {
+        details.style.display = 'block';
+        arrow.style.transform = 'rotate(180deg)';
+        text.textContent = 'Ocultar componentes';
+        
+        // Animación de aparición
+        details.style.opacity = '0';
+        details.style.transform = 'translateY(-10px)';
+        setTimeout(() => {
+            details.style.transition = 'all 0.3s ease';
+            details.style.opacity = '1';
+            details.style.transform = 'translateY(0)';
+        }, 10);
+    } else {
+        details.style.transition = 'all 0.3s ease';
+        details.style.opacity = '0';
+        details.style.transform = 'translateY(-10px)';
+        
+        setTimeout(() => {
+            details.style.display = 'none';
+            arrow.style.transform = 'rotate(0deg)';
+            text.textContent = 'Ver componentes';
+        }, 300);
+    }
+}
+
+// Inicializar efectos al cargar la página
+document.addEventListener('DOMContentLoaded', function() {
+    // Animación de entrada para las tarjetas de productos
+    const productItems = document.querySelectorAll('.product-item');
+    productItems.forEach((item, index) => {
+        item.style.opacity = '0';
+        item.style.transform = 'translateY(20px)';
+        
+        setTimeout(() => {
+            item.style.transition = 'all 0.5s ease';
+            item.style.opacity = '1';
+            item.style.transform = 'translateY(0)';
+        }, index * 100);
+    });
+});
+</script>

@@ -130,12 +130,14 @@ en:
       pagar: "PROCEED TO PAYMENT"
       regresar: "Return"
       codigo: "Code:"
+      direccion_entrega: "Delivery address"
 
     show-vista:
       precio: "Price"
       opiniones: "Reviews"
       categoria: "category"
       generar_orden: "Create order"
+      ir_a_pagar: "Go to payment"
 
     order-pago:
       numero-tarjeta: "Card number:"

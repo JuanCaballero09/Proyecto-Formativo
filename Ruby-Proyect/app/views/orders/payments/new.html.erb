@@ -12,13 +12,15 @@
       <div class="simple-order-items">
         <% @order.order_items.each do |item| %>
           <div class="simple-order-item">
-            <span class="item-name"><%= item.product.nombre %></span>
-            <span class="item-details"> 
-              <%= t("home.ordenes.cantidadd")%> <%= item.quantity %> x 
-              <span class="precio" >
-                <strong class= "precio-unitario" data-precio="<%= item.product.precio %>" data-locale="<%= I18n.locale %>"></strong> 
+            <div class="item-info">
+              <span class="item-name"><%= item.product.nombre %></span>
+              <span class="item-details"> 
+                <%= t("home.ordenes.cantidadd")%> <%= item.quantity %> x 
+                <span class="precio" >
+                  <strong class= "precio-unitario" data-precio="<%= item.product.precio %>" data-locale="<%= I18n.locale %>"></strong> 
+                </span>
               </span>
-            </span>
+            </div>
             <span class="item-total">
               <strong class= "precio-unitario" data-precio="<%= item.quantity * item.product.precio %>" data-locale="<%= I18n.locale %>"></strong> 
             </span>
@@ -66,7 +68,14 @@
       <%= form_with model: [@order, @payment], local: true, html: { id: "payment-form", class: "simple-form" } do |f| %>
         <div class="form-field">
           <%= f.label :card_number, t("home.order-pago.numero-tarjeta"), class: "field-label" %>
-          <%= f.text_field :card_number, maxlength: 16, required: true, class: "field-input", placeholder: "1234 5678 9012 3456" %>
+          <%= f.text_field :card_number, 
+              maxlength: 19, 
+              required: true, 
+              class: "field-input", 
+              placeholder: "1234 5678 9012 3456",
+              inputmode: "numeric",
+              pattern: "[0-9\s]*",
+              autocomplete: "cc-number" %>
           <span id="error-card" class="error-msg"></span>
         </div>
 
@@ -93,20 +102,35 @@
         <div class="form-row">
           <div class="form-field">
             <%= f.label :cvc, "CVC", class: "field-label" %>
-            <%= f.text_field :cvc, maxlength: 4, required: true, class: "field-input", placeholder: "123" %>
+            <%= f.text_field :cvc, 
+                maxlength: 4, 
+                required: true, 
+                class: "field-input", 
+                placeholder: "123",
+                inputmode: "numeric",
+                pattern: "[0-9]*",
+                autocomplete: "cc-csc" %>
             <span id="error-cvc" class="error-msg"></span>
           </div>
 
           <div class="form-field">
             <%= f.label :card_holder, t("home.order-pago.nombre-titular"), class: "field-label" %>
-            <%= f.text_field :card_holder, required: true, class: "field-input", placeholder: t("home.order-pago.nombre_completo") %>
+            <%= f.text_field :card_holder, 
+                required: true, 
+                class: "field-input", 
+                placeholder: t("home.order-pago.nombre_completo"),
+                value: @order.customer_name %>
             <span id="error-holder" class="error-msg"></span>
           </div>
         </div>
 
         <div class="form-field">
           <%= f.label :email, t("home.order-pago.correo-electronico"), class: "field-label" %>
-          <%= f.email_field :email, required: true, class: "field-input", placeholder: "tu@email.com" %>
+          <%= f.email_field :email, 
+              required: true, 
+              class: "field-input", 
+              placeholder: "tu@email.com",
+              value: @order.customer_email %>
           <span id="error-email" class="error-msg"></span>
         </div>
 
@@ -141,3 +165,70 @@
     </div>
   </div>
 </div>
+
+<script>
+document.addEventListener('turbo:load', function() {
+  // Función para permitir solo números
+  function onlyNumbers(event) {
+    const char = String.fromCharCode(event.which);
+    // Permitir: backspace, delete, tab, escape, enter
+    if ([8, 9, 27, 13, 46].indexOf(event.keyCode) !== -1 ||
+        // Permitir Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X
+        (event.keyCode === 65 && event.ctrlKey === true) ||
+        (event.keyCode === 67 && event.ctrlKey === true) ||
+        (event.keyCode === 86 && event.ctrlKey === true) ||
+        (event.keyCode === 88 && event.ctrlKey === true)) {
+      return;
+    }
+    // Asegurar que es un número (0-9)
+    if (!/[0-9]/.test(char)) {
+      event.preventDefault();
+    }
+  }
+
+  // Aplicar validación solo a número de tarjeta y CVC
+  const cardNumberInput = document.querySelector('input[name*="card_number"]');
+  const cvcInput = document.querySelector('input[name*="cvc"]');
+
+  if (cardNumberInput) {
+    cardNumberInput.addEventListener('keydown', onlyNumbers);
+    // Prevenir pegar texto no numérico
+    cardNumberInput.addEventListener('paste', function(event) {
+      setTimeout(() => {
+        this.value = this.value.replace(/[^0-9]/g, '');
+      }, 10);
+    });
+  }
+
+  if (cvcInput) {
+    cvcInput.addEventListener('keydown', onlyNumbers);
+    // Prevenir pegar texto no numérico
+    cvcInput.addEventListener('paste', function(event) {
+      setTimeout(() => {
+        this.value = this.value.replace(/[^0-9]/g, '');
+      }, 10);
+    });
+  }
+
+  // Ajustar altura del resumen de orden al formulario de pago
+  function matchHeights() {
+    const paymentForm = document.querySelector('.simple-payment-form');
+    const orderSummary = document.querySelector('.simple-order-summary');
+    
+    if (paymentForm && orderSummary && window.innerWidth > 768) {
+      // Solo en desktop
+      const paymentHeight = paymentForm.offsetHeight;
+      orderSummary.style.setProperty('--target-height', paymentHeight + 'px');
+      orderSummary.classList.add('height-matched');
+    } else if (orderSummary) {
+      // En móvil, quitar restricciones de altura
+      orderSummary.classList.remove('height-matched');
+      orderSummary.style.removeProperty('--target-height');
+    }
+  }
+
+  // Ejecutar al cargar y al redimensionar
+  matchHeights();
+  window.addEventListener('resize', matchHeights);
+});
+</script>
