@@ -19,7 +19,7 @@ class Order < ApplicationRecord
 
   validates :code, presence: true, uniqueness: true
   validates :total, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
-  validates :direccion, presence: true, length: { minimum: 10, maximum: 500 }
+  validates :direccion, presence: true, length: { minimum: 5, maximum: 500 }
 
   # Validaciones para invitados
   validates :guest_nombre, presence: true, if: :guest_order?
