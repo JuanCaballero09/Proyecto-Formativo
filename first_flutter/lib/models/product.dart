@@ -68,10 +68,10 @@ class Product extends Equatable {
       productPrice = (priceField as num).toDouble();
     }
     
-    // Map grupo_id to category names
+    // Map categoria_id to category names (transformado desde grupo_id)
     String category = json['category'] ?? json['categoria'] ?? 'General';
-    if (category == 'General' && json['grupo_id'] != null) {
-      switch (json['grupo_id']) {
+    if (category == 'General' && json['categoria_id'] != null) {
+      switch (json['categoria_id']) {
         case 1:
           category = 'hamburguesas';
           break;
@@ -80,6 +80,12 @@ class Product extends Equatable {
           break;
         case 3:
           category = 'pizzas';
+          break;
+        case 4:
+          category = 'bebidas';
+          break;
+        case 5:
+          category = 'postres';
           break;
         default:
           category = 'General';
