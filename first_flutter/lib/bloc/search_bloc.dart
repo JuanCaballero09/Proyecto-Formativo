@@ -44,9 +44,9 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
         }
       }
 
-      // Agregar categorías/grupos a los resultados
-      if (searchData['grupos'] != null) {
-        for (var category in searchData['grupos']) {
+      // Agregar categorías a los resultados (transformado desde 'grupos')
+      if (searchData['categorias'] != null) {
+        for (var category in searchData['categorias']) {
           results.add(SearchResult.fromCategoryJson(category));
         }
       }

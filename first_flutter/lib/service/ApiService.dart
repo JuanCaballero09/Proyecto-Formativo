@@ -31,6 +31,36 @@ class ApiService {
     };
   }
 
+  /// 🔄 Función auxiliar para transformar JSON: grupo → categoria
+  /// Transforma grupo_id → categoria_id y grupo → categoria
+  Map<String, dynamic> _transformJsonToCategoria(Map<String, dynamic> json) {
+    final transformed = Map<String, dynamic>.from(json);
+    
+    // Transformar grupo_id → categoria_id
+    if (json.containsKey('grupo_id')) {
+      transformed['categoria_id'] = json['grupo_id'];
+      transformed.remove('grupo_id');
+    }
+    
+    // Transformar grupo → categoria
+    if (json.containsKey('grupo')) {
+      transformed['categoria'] = json['grupo'];
+      transformed.remove('grupo');
+    }
+    
+    return transformed;
+  }
+
+  /// 🔄 Transformar lista de productos/categorías
+  List<dynamic> _transformList(List<dynamic> items) {
+    return items.map((item) {
+      if (item is Map<String, dynamic>) {
+        return _transformJsonToCategoria(item);
+      }
+      return item;
+    }).toList();
+  }
+
   /// Maneja las respuestas HTTP y convierte errores a excepciones personalizadas
   void _handleHttpResponse(http.Response response, String operation) {
     if (response.statusCode >= 200 && response.statusCode < 300) {
@@ -71,6 +101,9 @@ class ApiService {
   /// [categoryId] - ID de la categoría (1, 2 o 3)
   /// Retorna una lista de productos de la categoría solicitada
   Future<List<Product>> getProductsByCategory(int categoryId) async {
+    if (categoryId < 1) {
+      throw DataException('ID de categoría inválido. Debe ser mayor a 0');
+    }
 
     try {
       final url = Uri.parse(ApiConfig.getProductsByCategoryUrl(categoryId));
@@ -97,7 +130,9 @@ class ApiService {
         throw DataException('Formato de respuesta inválido para productos');
       }
 
-      final products = productsJson.map((json) => Product.fromJson(json)).toList();
+      // 🔄 TRANSFORMAR: grupo_id → categoria_id
+      final transformedList = _transformList(productsJson);
+      final products = transformedList.map((json) => Product.fromJson(json)).toList();
       
       // ignore: avoid_print
       print("✅ ${products.length} productos obtenidos de categoría $categoryId");
@@ -119,8 +154,8 @@ class ApiService {
   /// [productId] - ID del producto
   /// Retorna el producto solicitado
   Future<Product> getProductByCategoryAndId(int categoryId, int productId) async {
-    if (categoryId < 1 || categoryId > 3) {
-      throw DataException('ID de categoría inválido. Debe ser 1, 2 o 3');
+    if (categoryId < 1) {
+      throw DataException('ID de categoría inválido. Debe ser mayor a 0');
     }
 
     // Eliminar la validación restrictiva del productId
@@ -154,7 +189,9 @@ class ApiService {
         throw DataException('Formato de respuesta inválido para producto');
       }
 
-      final product = Product.fromJson(productJson);
+      // 🔄 TRANSFORMAR: grupo_id → categoria_id
+      final transformedJson = _transformJsonToCategoria(productJson);
+      final product = Product.fromJson(transformedJson);
       
       // ignore: avoid_print
       print("✅ Producto obtenido: ${product.name}");
@@ -226,6 +263,7 @@ class ApiService {
   }
 
   Future<List<dynamic>?> getCategorias () async{
+    // Backend usa path "categorias" para el recurso grupos
     final url = Uri.parse('${baseUrl}/categorias');
 
     try {
@@ -233,7 +271,9 @@ class ApiService {
 
       if(response.statusCode == 200){
         final List<dynamic> decoded = jsonDecode(response.body);
-        return decoded;
+        
+        // 🔄 TRANSFORMAR: grupo → categoria
+        return _transformList(decoded);
       } else {
         // ignore: avoid_print
         print('❌ Error HTTP: ${response.statusCode}');
@@ -248,10 +288,10 @@ class ApiService {
 
   /// Busca productos y categorías por query
   /// [query] - Texto de búsqueda
-  /// Retorna un mapa con 'productos' y 'grupos' que coinciden con la búsqueda
+  /// Retorna un mapa con 'productos' y 'categorias' que coinciden con la búsqueda
   Future<Map<String, dynamic>> searchProducts(String query) async {
     if (query.trim().isEmpty) {
-      return {'productos': [], 'grupos': []};
+      return {'productos': [], 'categorias': []};
     }
 
     try {
@@ -271,9 +311,11 @@ class ApiService {
 
       final data = jsonDecode(response.body);
 
+      // 🔄 TRANSFORMAR: grupos → categorias y grupo_id → categoria_id
       return {
-        'productos': data['productos'] ?? [],
-        'grupos': data['grupos'] ?? [],
+        'productos': _transformList(data['productos'] ?? []),
+        'categorias': _transformList(data['grupos'] ?? data['categorias'] ?? []),
+        'total': data['total'] ?? 0,
       };
 
     } on NetworkException {
