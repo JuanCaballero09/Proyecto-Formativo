@@ -1,5 +1,37 @@
-<p>Welcome <%= @email %>!</p>
+<div style="max-width: 500px; margin: 40px auto; background-color: #ffffff; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); overflow: hidden; font-family: Arial, sans-serif;">
 
-<p>You can confirm your account email through the link below:</p>
+  <!-- Encabezado -->
+  <div style="background-color: #ca562b; color: #ffffff; text-align: center; padding: 20px;">
+    <h1 style="margin: 0; font-size: 22px;">Confirma tu cuenta</h1>
+  </div>
 
-<p><%= link_to 'Confirm my account', confirmation_url(@resource, confirmation_token: @token) %></p>
+  <!-- Contenido -->
+  <div style="padding: 30px; text-align: center; color: #333333;">
+    <p style="font-size: 16px; line-height: 1.5; margin-bottom: 16px;">
+      Hola <strong style="color: #ca562b;"><%= @email %></strong>,
+    </p>
+
+    <p style="font-size: 16px; line-height: 1.5; margin-bottom: 16px;">
+      Gracias por registrarte. Solo falta un paso más para activar tu cuenta.
+    </p>
+
+    <p style="font-size: 16px; line-height: 1.5; margin-bottom: 24px;">
+      Haz clic en el siguiente botón para confirmar tu correo electrónico:
+    </p>
+
+    <p style="margin-top: 20px;">
+      <%= link_to 'Confirmar mi cuenta',
+          confirmation_url(@resource, confirmation_token: @token),
+          style: "display: inline-block; padding: 12px 24px; background-color: #ca562b; color: #ffffff; text-decoration: none; border-radius: 6px; font-weight: bold; transition: background-color 0.2s ease-in-out;" %>
+    </p>
+
+    <p style="margin-top: 30px; font-size: 14px; color: #777777;">
+      Si no te registraste, puedes ignorar este mensaje.
+    </p>
+  </div>
+
+  <!-- Pie -->
+  <div style="text-align: center; font-size: 13px; color: #888888; padding: 20px; border-top: 1px solid #f0f0f0;">
+    © <%= Time.current.year %> Bitevia Software. Todos los derechos reservados.
+  </div>
+</div>

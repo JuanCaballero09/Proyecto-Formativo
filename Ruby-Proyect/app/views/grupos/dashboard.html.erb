@@ -24,8 +24,8 @@
             <div class="carousel-overlay">
               <div class="carousel-content">
                 <h1 class="hero-title">Bitevia</h1>
-                <p class="hero-subtitle">Tu restaurante de confianza</p>
-                <%= link_to "Explorar", grupos_path, class: "hero-btn" %>
+                <p class="hero-subtitle"><%= t("home.navbar.restaurante")%></p>
+                <%= link_to t("home.navbar.explorar"), grupos_path, class: "hero-btn" %>
               </div>
             </div>
           </div>
@@ -51,9 +51,9 @@
     <div class="container">
       <div class="section-header">
         <div class="header-content">
-          <span class="section-badge">🎉 Ofertas Especiales</span>
-          <h2 class="section-title">Nuestros Combos Exclusivos</h2>
-          <p class="section-subtitle">Ahorra más con nuestras deliciosas combinaciones</p>
+          <span class="section-badge">🎉 <%= t("home.section.ofertas")%></span>
+          <h2 class="section-title"><%= t("home.section.combos_exclusivos")%></h2>
+          <p class="section-subtitle"><%= t("home.section.ahorra")%></p>
         </div>
         <% if @combos.any? %>
           <%= link_to "Ver Todos", "/combos", class: "view-all-btn" %>
@@ -102,9 +102,9 @@
         <% else %>
           <div class="no-combos-premium">
             <div class="no-combos-icon">🎁</div>
-            <h3>Próximamente: Combos Especiales</h3>
-            <p>Estamos preparando increíbles ofertas para ti</p>
-            <%= link_to "Explorar Menú", grupos_path, class: "explore-menu-btn" %>
+            <h3><%= t("home.section.proxima")%></h3>
+            <p><%= t("home.section.estamos_preparados")%></p>
+            <%= link_to t("home.section.explorar_menu"), grupos_path, class: "explore-menu-btn" %>
           </div>
         <% end %>
       </div>
@@ -118,8 +118,8 @@
         <!-- Contacto Premium -->
         <div class="contact-premium">
           <div class="contact-header">
-            <h2>📞 Contáctanos</h2>
-            <p>Estamos aquí para servirte</p>
+            <h2>📞 <%= t("home.section.contactanos")%></h2>
+            <p><%= t("home.section.servir")%></p>
           </div>
           
           <div class="contact-items">
@@ -148,7 +148,7 @@
                 📍
               </div>
               <div class="contact-info">
-                <h4>Ubicación</h4>
+                <h4><%= t("home.section.ubicacion")%></h4>
                 <p>Calle 30 #3e-164, Barranquilla, Atlántico</p>
               </div>
             </article>
@@ -158,8 +158,8 @@
         <!-- Mapa Premium -->
         <div class="map-premium">
           <div class="map-header">
-            <h3>🗺️ Encuéntranos</h3>
-            <p>Ven a visitarnos</p>
+            <h3>🗺️ <%= t("home.section.encuentranos")%></h3>
+            <p><%= t("home.section.visitar")%></p>
           </div>
           <div class="map-container">
             <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3917.2743398504213!2d-74.7857876249557!3d10.942637289216423!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8ef5d390bce185a1%3A0x7b668739ec70f4b4!2sSENA%20CENTRO%20INDUSTRIAL%20Y%20DE%20AVIACION!5e0!3m2!1ses!2sco!4v1750989006175!5m2!1ses!2sco" 

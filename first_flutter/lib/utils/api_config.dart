@@ -58,17 +58,18 @@ class ApiConfig {
   /// Endpoints específicos
   static const String loginEndpoint = '/login';
   static const String logoutEndpoint = '/logout';
+  // Backend usa path "categorias" para el recurso grupos
   static const String categoriesEndpoint = '/categorias';
   
   /// Construye la URL completa para productos por categoría
-  /// [categoryId] - ID de la categoría (1, 2 o 3)
+  /// [categoryId] - ID de la categoría
   static String getProductsByCategoryUrl(int categoryId) {
     return '$currentBaseUrl$categoriesEndpoint/$categoryId/productos/';
   }
 
   /// Construye la URL completa para un producto específico
-  /// [categoryId] - ID de la categoría (1, 2 o 3)
-  /// [productId] - ID del producto (1, 2 o 3)
+  /// [categoryId] - ID de la categoría
+  /// [productId] - ID del producto
   static String getProductByIdUrl(int categoryId, int productId) {
     return '$currentBaseUrl$categoriesEndpoint/$categoryId/productos/$productId';
   }

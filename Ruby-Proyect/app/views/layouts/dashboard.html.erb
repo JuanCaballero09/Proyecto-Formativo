@@ -39,14 +39,7 @@
         <%= link_to t("home.dashboard.dash"), dashboard_root_path %>
         <%= link_to t("home.usuarios.usuarios"), dashboard_users_path %>
         <%= link_to t("home.ordenes.ordenes"), dashboard_orders_path %>
-        
-        <details>
-          <summary><%= t("home.dashboard.banner")%></summary>
-            <div class="details-content">
-              <%= link_to t("home.dashboard.ver_banners"), dashboard_banners_path%>
-              <%= link_to t("home.dashboard.crear_banner"), new_dashboard_banner_path%>
-            </div>
-        </details>
+        <%= link_to t("home.dashboard.banners"), dashboard_banners_path%>
 
         <details>
           <summary><%= t("home.dashboard.cuponn")%></summary>

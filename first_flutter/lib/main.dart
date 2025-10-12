@@ -11,6 +11,7 @@ import 'bloc/language_bloc.dart';
 import 'bloc/language_event.dart';
 import 'bloc/language_state.dart';
 import 'bloc/categorias_bloc.dart';
+import 'bloc/search_bloc.dart';
 import 'repository/product_repository.dart';
 import 'repository/api_product_repository.dart'; // Nuevo repositorio
 import 'pages/splash_page.dart';
@@ -45,6 +46,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (_) => LanguageBloc()..add(const LoadLanguage())),
         BlocProvider<AuthBloc>(create: (_) => AuthBloc()),
         BlocProvider(create: (_) => CategoriasBloc(apiService)),
+        BlocProvider(create: (_) => SearchBloc(apiService)),
       ],
       child: BlocBuilder<LanguageBloc, LanguageState>(
         builder: (context, languageState) {

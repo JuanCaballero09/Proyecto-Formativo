@@ -7,7 +7,7 @@
       <h2 class="grupo-titulo-page"><%= @grupo.nombre %></h2>
       <%= link_to grupos_path, class: "btn-volver-grupos" do %>
         <span class="btn-icon">←</span>
-        <span class="btn-text">Volver a categorías</span>
+        <span class="btn-text"><%= t("home.categoria.volver_categoria")%></span>
       <% end %>
     </div>
     
@@ -41,6 +41,6 @@
 <% else %>
   <div class="sin-productos">
     <%= image_tag "ProductoNoDisponible.png", alt: "Producto No Disponible" %>
-    <h2>No hay productos disponibles por ahora.</h2>
+    <h2><%= t("home.categoria.sin_producto")%></h2>
   </div>
 <% end %>

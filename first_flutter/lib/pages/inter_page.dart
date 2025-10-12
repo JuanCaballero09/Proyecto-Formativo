@@ -1,4 +1,5 @@
 import 'package:first_flutter/bloc/cart_bloc.dart';
+import 'package:first_flutter/pages/menuNavigator_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../l10n/app_localizations.dart';
@@ -33,7 +34,7 @@ class _ProductPageState extends State<ProductPage> {
 
   @override
   Widget build(BuildContext context) {
-    final pages = [HomePage(), MenuPage(), CarritoPage(), PerfilPage(), DomicilioPage()];
+    final pages = [HomePage(), MenuNavigator(), CarritoPage(), PerfilPage(), DomicilioPage()];
 
     return Scaffold(
       body: pages[_selectedIndex],

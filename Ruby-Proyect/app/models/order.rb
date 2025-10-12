@@ -39,6 +39,56 @@ class Order < ApplicationRecord
     broadcast_remove_to "employee_orders"
   }
 
+  def generar_qr_code
+    require "rqrcode"
+
+    # Versión simplificada del QR con información básica
+    qr_data = {
+      codigo: self.code,
+      total: "COP $#{self.total}",
+      estado: self.status,
+      fecha: self.created_at.strftime("%d/%m/%Y %H:%M")
+    }
+
+    qr = RQRCode::QRCode.new(qr_data.to_json)
+    qr.as_svg(
+      offset: 0,
+      color: "000",
+      shape_rendering: "crispEdges",
+      module_size: 6,
+      standalone: true
+    )
+  end
+
+  def simple_qr_code
+    require "rqrcode"
+
+    qr = RQRCode::QRCode.new(self.code)
+    qr.as_svg(
+      offset: 0,
+      color: "000",
+      shape_rendering: "crispEdges",
+      module_size: 6,
+      standalone: true
+    )
+  end
+
+  def qr_code_with_link
+    require "rqrcode"
+
+    # QR con URL directa a la orden usando ngrok
+    qr_url = "https://whole-tahr-stunning.ngrok-free.app/orders/#{self.code}"
+
+    qr = RQRCode::QRCode.new(qr_url)
+    qr.as_svg(
+      offset: 0,
+      color: "000",
+      shape_rendering: "crispEdges",
+      module_size: 6,
+      standalone: true
+    )
+  end
+
   # Use código en la URL en vez de id
   def to_param
     code
@@ -77,6 +127,13 @@ class Order < ApplicationRecord
 
 
   private
+
+  def order_url_for_qr
+    # Construir URL manualmente para evitar problemas de contexto
+    host = Rails.application.config.action_mailer.default_url_options[:host] rescue "localhost"
+    port = Rails.application.config.action_mailer.default_url_options[:port] rescue 3000
+    "http://#{host}:#{port}/orders/#{self.code}"
+  end
 
   def update_total
     update_column(:total, calculate_total)

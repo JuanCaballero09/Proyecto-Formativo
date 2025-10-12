@@ -47,31 +47,51 @@
       <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f|%>
         <div class="field">
           <%= f.label :email %><br />
-          <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
+          <%= f.email_field :email, autofocus: false, autocomplete: "email" %>
         </div>
 
         <div class="field">
           <%= f.label :password %><br />
-          <%= f.password_field :password, autocomplete: "current-password" %>
+          <div class="password-container">
+            <%= f.password_field :password, autocomplete: "current-password", id: "password-field" %>
+          </div>
+          <input type="checkbox" class="password-toggle" onclick="togglePassword()" aria-label="Mostrar contraseña">
+          <span id="eye-icon"> Mostrar contraseña</span>
+          <div style="margin-bottom: 20px"></div>
         </div>
 
-        <p><%= link_to "Recuperar contraseña", new_password_path(resource_name) %></p>
+        <div class="actions">
+          <%= f.submit "Iniciar Sesión" %>
+        </div>
+      <% end %>
 
-        <% if devise_mapping.rememberable? %>
-          <div class="field">
-            <%= f.check_box :remember_me %>
-            <%= f.label :remember_me %>
-          </div>
-        <% end %>
-
-          <div class="actions">
-            <%= f.submit "Iniciar Sesión" %>
-          </div>
-        <% end %>
-
-        <p>¿No tienes una cuenta? <br> <%= link_to "Registrarse", new_registration_path(resource_name) %></p>
+      <p style="margin: 10px;"><%= link_to "Registrarse", new_registration_path(resource_name) %></p>
+      <hr>
+      <p>¿No te ha llegado el correo de confirmación? <br> <%= link_to "Reenviar confirmación", new_confirmation_path(resource_name), style: "font-weight: 500;"%></p>
+      <p>¿Olvidaste tu contraseña? <br> <%= link_to "Recuperar contraseña", new_password_path(resource_name), style: "font-weight: 500;"%></p>
     </div>
 
   </div>
 
 </section>
+
+<script>
+  // ========================================
+  // 👁️ Mostrar o ocultar contraseña
+  // ========================================
+  function togglePassword() {
+    const passwordField = document.getElementById('password-field');
+    const eyeIcon = document.getElementById('eye-icon');
+    const toggleButton = document.querySelector('.password-toggle');
+    
+    if (passwordField.type === 'password') {
+      passwordField.type = 'text';
+      eyeIcon.textContent = ' Ocultar contraseña';
+      toggleButton.setAttribute('aria-label', 'Ocultar contraseña');
+    } else {
+      passwordField.type = 'password';
+      eyeIcon.textContent = ' Mostrar contraseña';
+      toggleButton.setAttribute('aria-label', 'Mostrar contraseña');
+    }
+  }
+</script>

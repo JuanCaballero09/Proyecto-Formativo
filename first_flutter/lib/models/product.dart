@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import '../utils/api_config.dart';
 
 class Product extends Equatable {
   final int id;
@@ -20,19 +21,33 @@ class Product extends Equatable {
   });
 
   factory Product.fromJson(Map<String, dynamic> json) {
+    // Debug: Ver qué datos vienen del JSON
+    print('=== DEBUG: Product.fromJson ===');
+    print('JSON recibido: $json');
+    
     List<String> ingredientsList = [];
     
     // Check for ingredients in both languages and formats
     final ingredientsField = json['ingredientes'] ?? json['ingredients'];
     if (ingredientsField != null) {
       if (ingredientsField is String) {
+        // Si es un String, dividir por comas
         ingredientsList = ingredientsField
             .split(',')
             .map((e) => e.trim())
             .where((e) => e.isNotEmpty)
             .toList();
       } else if (ingredientsField is List) {
-        ingredientsList = List<String>.from(ingredientsField);
+        // Si es una lista, puede contener Strings o Maps
+        ingredientsList = ingredientsField.map((item) {
+          if (item is String) {
+            return item;
+          } else if (item is Map) {
+            // Si es un Map, extraer el campo 'nombre'
+            return (item['nombre'] ?? item['name'] ?? '').toString();
+          }
+          return item.toString();
+        }).where((e) => e.isNotEmpty).toList();
       }
     }
     
@@ -53,10 +68,10 @@ class Product extends Equatable {
       productPrice = (priceField as num).toDouble();
     }
     
-    // Map grupo_id to category names
+    // Map categoria_id to category names (transformado desde grupo_id)
     String category = json['category'] ?? json['categoria'] ?? 'General';
-    if (category == 'General' && json['grupo_id'] != null) {
-      switch (json['grupo_id']) {
+    if (category == 'General' && json['categoria_id'] != null) {
+      switch (json['categoria_id']) {
         case 1:
           category = 'hamburguesas';
           break;
@@ -66,20 +81,41 @@ class Product extends Equatable {
         case 3:
           category = 'pizzas';
           break;
+        case 4:
+          category = 'bebidas';
+          break;
+        case 5:
+          category = 'postres';
+          break;
         default:
           category = 'General';
       }
     }
     
-    return Product(
+    // Handle image URL - agregar base URL si es una ruta relativa
+    String imageUrl = json['image'] ?? json['imagen'] ?? json['imagen_url'] ?? '';
+    if (imageUrl.isNotEmpty && !imageUrl.startsWith('http')) {
+      // Es una ruta relativa, agregar base URL
+      // Remover /api/v1 del baseUrl para obtener solo el dominio
+      final baseUrlWithoutApi = ApiConfig.baseUrl.replaceAll('/api/v1', '');
+      imageUrl = '$baseUrlWithoutApi$imageUrl';
+    }
+    
+    final producto = Product(
       id: productId,
       name: json['name'] ?? json['nombre'] ?? '',
       category: category,
       price: productPrice,
       description: json['description'] ?? json['descripcion'] ?? '',
-      image: json['image'] ?? json['imagen'] ?? json['imagen_url'] ?? '',
+      image: imageUrl,
       ingredients: ingredientsList,
     );
+    
+    print('Producto creado: ID=${producto.id}, Nombre=${producto.name}, Categoría=${producto.category}');
+    print('Imagen URL: ${producto.image}');
+    print('================================');
+    
+    return producto;
   }
 
   @override

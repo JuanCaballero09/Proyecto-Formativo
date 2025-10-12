@@ -1,6 +1,5 @@
 import 'package:first_flutter/bloc/auth_event.dart';
 import 'package:first_flutter/l10n/app_localizations.dart';
-import 'package:first_flutter/pages/register_page.dart';
 import 'package:first_flutter/service/ApiService.dart';
 import 'package:first_flutter/widgets/language_selector.dart';
 import 'package:flutter/material.dart';

@@ -4,6 +4,14 @@
     <p><strong><%= t("home.order.cliente")%></strong> <%= @order.user.nombre %> <%= @order.user.apellido %></p>
     <p class="<%= "status-#{@order.status}" %>"><strong><%= t("home.order.estado")%></strong> <span><%= @order.status.humanize %></span></p>
 
+    <div class="qr-code-container">
+        <h3>Código QR de la Orden</h3>
+        <div class="qr-code">
+        <%= @order.qr_code_with_link.html_safe %>
+        </div>
+        <p class="qr-info">Escanea para acceder a los detalles de la orden</p>
+    </div>
+
     <h2>Productos</h2>
     
     <div class="order-tabla-container">

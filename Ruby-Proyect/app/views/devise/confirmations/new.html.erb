@@ -30,7 +30,7 @@
 
         <div class="field">
           <%= f.label :email %><br />
-          <%= f.email_field :email, autofocus: true, autocomplete: "email", value: (resource.pending_reconfirmation? ? resource.unconfirmed_email : resource.email) %>
+          <%= f.email_field :email, autofocus: true, autocomplete: "email", value: (resource.pending_reconfirmation? ? resource.unconfirmed_email : resource.email), style: "margin-bottom: 30px;" %>
         </div>
 
         <div class="actions">
@@ -38,6 +38,7 @@
         </div>
       <% end %>
 
+      <hr>
       <%= render "devise/shared/links" %>
     </div>
 

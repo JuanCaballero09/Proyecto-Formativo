@@ -5,23 +5,23 @@
       <div class="back-button-container">
         <%= link_to root_path, class: "back-button-premium" do %>
           <i class="back-icon">←</i>
-          <span>Regresar</span>
+          <span><%= t("home.order.regresar")%></span>
         <% end %>
       </div>
       
       <div class="order-title-section">
         <h1 class="order-title">
           <i class="order-icon">📋</i>
-          Detalles de la Orden
+          <%= t("home.order.detalles")%>
         </h1>
         
         <div class="order-code-container">
-          <span class="code-label">Código:</span>
+          <span class="code-label"><%= t("home.order.codigo")%></span>
           <span class="order-code" id="order-code"><%= @order.code %></span>
           <button class="copy-button" onclick="copyOrderCode()" title="Copiar código">
             <%= image_tag "icons/copy-solid-full.svg", class: "copy-icon" %>
           </button>
-        </div>
+        </div>        
       </div>
     </div>
   </div>
@@ -33,7 +33,7 @@
       <div class="order-info-section">
         <h2 class="info-section-title">
           <i class="info-section-icon">ℹ️</i>
-          Información de la Orden
+          <%= t("home.order.informacion_orden")%>
         </h2>
         
         <div class="info-cards-vertical">
@@ -73,12 +73,12 @@
           <div class="total-header">
             <h3 class="total-title">
               <i class="total-icon">💰</i>
-              <%= t("home.order.total_pagar") %>
+              <%= t("home.order.tootal_paga") %>
             </h3>
           </div>
           
           <div class="total-amount">
-            <%= number_to_currency(@order.total, unit: "COP ", separator: ",", delimiter: ".") %>
+             <strong class="precio-unitario" data-precio="<%= @order.total %>" data-locale="<%= I18n.locale %>">$</strong>
           </div>
           
           <% if @order.coupon.present? %>
@@ -94,7 +94,7 @@
       <div class="payment-section">
         <%= link_to new_order_payments_path(@order), class: "payment-button" do %>
           <i class="payment-icon">💳</i>
-          <span>Proceder al Pago</span>
+          <span><%= t("home.order.pagar")%></span>
           <i class="payment-arrow">→</i>
         <% end %>
       </div>
@@ -108,7 +108,7 @@
             <i class="section-icon">🍽️</i>
             <%= t("home.order.or_producto") %>
           </h2>
-          <span class="items-count"><%= @order.order_items.count %> producto<%= @order.order_items.count != 1 ? 's' : '' %></span>
+          <span class="items-count"><%= @order.order_items.count %> <%= t("home.ordenes.producto")%> <%= @order.order_items.count != 1 ? 's' : '' %></span>
         </div>
         
         <div class="products-container">
@@ -147,14 +147,23 @@
                       <div class="unit-price">
                         <span class="price-label">Precio unitario:</span>
                         <span class="price-value">
-                          <%= number_to_currency(order_item.price, unit: "COP ", separator: ",", delimiter: ".") %>
+                        <strong class="precio-unitario" data-precio="<%= order_item.price %>" data-locale="<%= I18n.locale %>">$</strong>
                         </span>
                       </div>
                       
                       <div class="total-price">
                         <span class="price-label">Subtotal:</span>
                         <span class="price-value total">
-                          <%= number_to_currency(order_item.price * order_item.quantity, unit: "COP ", separator: ",", delimiter: ".") %>
+                          <% total_item = order_item.price * order_item.quantity %>
+                          <strong class="precio-total"
+                            data-precio="<%= total_item %>"
+                            data-locale="<%= I18n.locale %>">
+                            <% if I18n.locale == :en %>
+                              <%= number_to_currency(total_item / 4000, unit: "USD", format: "%n %u", precision: 2) %>
+                            <% else %>
+                              <%= number_to_currency(total_item, unit: "COP", format: "%n %u", precision: 2) %>
+                            <% end %>
+                          </strong>
                         </span>
                       </div>
                     </div>

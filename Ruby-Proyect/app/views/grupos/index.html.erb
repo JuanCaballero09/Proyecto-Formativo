@@ -6,8 +6,8 @@
   <section class="grupos-index-modern">
     <!-- Header con título mejorado -->
     <div class="grupos-header">
-      <h1 class="grupos-titulo">Nuestras Categorías</h1>
-      <p class="grupos-subtitulo">Descubre nuestra deliciosa variedad de productos organizados por categorías</p>
+      <h1 class="grupos-titulo"><%= t("home.categoria.nuestras_categorias")%></h1>
+      <p class="grupos-subtitulo"><%= t("home.categoria.descubre")%></p>
     </div>
 
     <div class="grupos-grid-container">
@@ -27,13 +27,13 @@
               <div class="grupo-overlay">
                 <div class="combo-badge">
                   <span class="combo-icon">🎉</span>
-                  <span class="combo-text">COMBOS ESPECIALES</span>
+                  <span class="combo-text"><%= t("home.categoria.combos_especiales")%></span>
                 </div>
               </div>
             </div>
             <div class="grupo-info">
-              <h3>Combos y Promociones</h3>
-              <p>Descubre nuestras ofertas especiales y combos únicos con los mejores precios</p>
+              <h3><%= t("home.categoria.combos_promociones")%></h3>
+              <p><%=t("home.categoria.descubre_ofertas")%></p>
               <div class="combo-stats">
                 <span class="combo-count"><%= combos_disponibles.count %> combos disponibles</span>
               </div>
@@ -59,7 +59,7 @@
                 <div class="grupo-overlay">
                   <div class="productos-count">
                     <span class="count-number"><%= productos_disponibles.count %></span>
-                    <span class="count-text">productos</span>
+                    <span class="count-text"><%= t("home.categoria.productos")%></span>
                   </div>
                 </div>
               </div>
@@ -67,7 +67,7 @@
                 <h3><%= grupo.nombre %></h3>
                 <p><%= grupo.descripcion.present? ? truncate(grupo.descripcion, length: 80) : "Explora nuestra selección de #{grupo.nombre.downcase}" %></p>
                 <div class="grupo-meta">
-                  <span class="producto-count"><%= productos_disponibles.count %> productos disponibles</span>
+                  <span class="producto-count"><%= productos_disponibles.count %> <%= t("home.categoria.products_disponibles")%></span>
                 </div>
               </div>
             <% end %>
@@ -78,8 +78,8 @@
   </section>
 <% else %>
   <div class="sin-productos">
-    <%= image_tag "ProductoNoDisponible.png", alt: "Producto No Disponible" %>
-    <h2>No hay grupos disponibles por ahora.</h2>
-    <p>Pronto tendremos nuevas categorías para ti</p>
+    <%= image_tag "ProductoNoDisponible.png", alt: t("home.categoria.no_disponible") %>
+    <h2><%= t("home.categoria.sin_grupo")%></h2>
+    <p><%= t("home.categoria.sin_categoria")%></p>
   </div>
 <% end %>

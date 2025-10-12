@@ -1,5 +1,7 @@
 source "https://rubygems.org"
 
+# QR Code generator
+gem "rqrcode"
 # Gema de Traduccion
 gem "devise-i18n"
 # Peticiones HTTP
@@ -58,18 +60,20 @@ group :development, :test do
 
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
+
+  # dotenv para desarrollo y test (mover aquí, eliminar de los otros grupos)
+  gem "dotenv-rails"
 end
 
 group :development do
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem "web-console"
-  gem "dotenv-rails"
 end
 
 group :test do
   # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
   gem "capybara"
   gem "selenium-webdriver"
-  gem "dotenv-rails"
 end
 
+gem "premailer-rails", "~> 1.12"

@@ -50,14 +50,19 @@ class ApiProductRepository implements ProductRepository {
   @override
   Future<List<Product>> getProductsByCategory(String categoryName) async {
     try {
+      // Debug: Ver qué nombre de categoría llega
+      print("🔍 DEBUG: getProductsByCategory recibió: '$categoryName'");
+      
       // Mapear nombres de categorías a IDs
       final int categoryId = _getCategoryIdFromName(categoryName);
+      
+      print("🔍 DEBUG: Categoría '$categoryName' mapeada a ID: $categoryId");
       
       // Obtener productos usando el ID de categoría
       final products = await _apiService.getProductsByCategory(categoryId);
       
       // ignore: avoid_print
-      print("✅ Productos obtenidos para categoría '$categoryName': ${products.length}");
+      print("✅ Productos obtenidos para categoría '$categoryName' (ID: $categoryId): ${products.length}");
       return products;
 
     } catch (e) {
@@ -130,19 +135,25 @@ class ApiProductRepository implements ProductRepository {
   int _getCategoryIdFromName(String categoryName) {
     final String normalizedName = categoryName.toLowerCase().trim();
     
+    // Debug: Ver el mapeo
+    print("🔍 DEBUG: Normalizando '$categoryName' → '$normalizedName'");
+    
     // Mapeo de nombres de categorías a IDs según la API
     switch (normalizedName) {
       case 'hamburguesas':
       case 'burgers':
       case 'hamburgesas': // Por si hay variaciones en el nombre
+        print("✅ DEBUG: Mapeado a Hamburguesas (ID: 1)");
         return 1;
       
       case 'salchipapas':
       case 'salchipapa':
+        print("✅ DEBUG: Mapeado a Salchipapas (ID: 2)");
         return 2;
       
       case 'pizzas':
       case 'pizza':
+        print("✅ DEBUG: Mapeado a Pizzas (ID: 3)");
         return 3;
       
       // Categorías adicionales que pueden existir en la UI
@@ -150,6 +161,7 @@ class ApiProductRepository implements ProductRepository {
       case 'taco':
         // Por ahora mapear tacos a hamburguesas (ID 1)
         // TODO: Actualizar cuando exista endpoint específico para tacos
+        print("⚠️ DEBUG: Tacos no tiene categoría propia, mapeando a Hamburguesas (ID: 1)");
         return 1;
       
       case 'ensaladas':
@@ -157,11 +169,13 @@ class ApiProductRepository implements ProductRepository {
       case 'ensalada':
         // Por ahora mapear ensaladas a salchipapas (ID 2)
         // TODO: Actualizar cuando exista endpoint específico para ensaladas
+        print("⚠️ DEBUG: Ensaladas no tiene categoría propia, mapeando a Salchipapas (ID: 2)");
         return 2;
       
       default:
         // ignore: avoid_print
-        print("⚠️ Categoría desconocida: '$categoryName', usando categoría por defecto (1)");
+        print("❌ DEBUG: Categoría desconocida: '$categoryName' (normalizado: '$normalizedName')");
+        print("⚠️ DEBUG: Usando categoría por defecto Hamburguesas (ID: 1)");
         return 1; // Categoria por defecto: hamburguesas
     }
   }

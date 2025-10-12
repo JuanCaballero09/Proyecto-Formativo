@@ -1,5 +1,35 @@
 <div id="totales-carrito" class="totales-carrito" style="margin-top: 2em;">
-  <p><strong>Subtotal:</strong> <%= number_to_currency(@carrito.subtotal, unit: "COP $", separator: ",", delimiter: ".") %></p>
-  <p><strong>Descuento:</strong> <%= number_to_currency(@carrito.descuento, unit: "COP $", separator: ",", delimiter: ".") %></p>
-  <p><strong>Total:</strong> <%= number_to_currency(@carrito.total, unit: "COP $", separator: ",", delimiter: ".") %></p>
+  <p><strong>Subtotal:</strong> 
+    <strong class="precio-total"
+      data-precio="<%= @carrito.subtotal %>"
+      data-locale="<%= I18n.locale %>">
+      <% if I18n.locale == :en %>
+        <%= number_to_currency(@carrito.subtotal/ 4000, unit: "USD", format: "%n %u", precision: 2) %>
+      <% else %>
+        <%= number_to_currency(@carrito.subtotal, unit: "COP", separator: ",", delimiter: ".", format: "%n %u", precision: 2) %>
+      <% end %>
+    </strong>
+  </p>
+  <p><strong>Descuento:</strong> 
+    -<strong class="precio-unitario" 
+      data-precio= "<%= @carrito.descuento %>"
+      data-locale="<%= I18n.locale %>">
+      <% if I18n.locale == :en %>
+        <%= number_to_currency(@carrito.descuento/4000, unit: "USD",  format:"%n %u", precision: 2)%>
+      <% else %>
+        <%= number_to_currency(@carrito.descuento, unit:"COP", separator: ",", delimiter: ".", format:"%n %u", precision: 2)%>
+      <% end %>  
+    </strong>
+  </p>
+  <p><strong>Total:</strong> 
+    <strong class="precio-total"
+      data-precio="<%= @carrito.total %>"
+      data-locale="<%= I18n.locale %>">
+      <% if I18n.locale == :en %>
+        <%= number_to_currency(@carrito.total/ 4000, unit: "USD", format: "%n %u", precision: 2) %>
+      <% else %>
+        <%= number_to_currency(@carrito.total, unit: "COP", separator: ",", delimiter: ".", format: "%n %u", precision: 2) %>
+      <% end %>
+    </strong>
+  </p>
 </div>
