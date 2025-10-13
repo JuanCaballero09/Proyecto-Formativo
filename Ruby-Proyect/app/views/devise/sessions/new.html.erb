@@ -79,6 +79,14 @@
   // ========================================
   // 👁️ Mostrar o ocultar contraseña
   // ========================================
+
+  document.addEventListener('DOMContentLoaded', function() {
+    const toggleButton = document.querySelector('.password-toggle');
+    if (toggleButton) {
+      toggleButton.checked = false;
+    }
+  });
+
   function togglePassword() {
     const passwordField = document.getElementById('password-field');
     const eyeIcon = document.getElementById('eye-icon');

@@ -1,6 +1,8 @@
 <div id="carrito-item-<%= item.id %>" class="carrito-item-modern">
   <div class="item-imagen">
-    <%= image_tag item.product.imagen, alt: item.product.nombre, class: "producto-imagen" %>
+    <%= image_tag(item.product.imagen.attached? ? item.product.imagen : "LogoLogoText2.svg", 
+                 alt: item.product.nombre, 
+                 class: "producto-imagen") %>
   </div>
 
   <div class="item-info">

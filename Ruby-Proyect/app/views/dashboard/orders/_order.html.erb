@@ -3,7 +3,7 @@
         <h2><%= order.code %></h2>
         <p style="font-size: 20px; margin: 0;"><%= order.created_at.strftime("%d/%m/%Y %H:%M") %></p>
         <p class="<%= "status-#{order.status}" %>" style="font-size: 20px; margin: 10px;"><span><%= order.status.humanize %></span></p>
-        <p style="font-size: 20px; margin: 8px;"><strong>Cliente:</strong> <%= order.user.nombre %> <%= order.user.apellido %></p>
+        <p style="font-size: 20px; margin: 8px;"><strong>Cliente:</strong> <%= order.customer_name %></p>
 
         <strong style="margin-bottom: 10px; font-size: 23px;">Producto:</strong>
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 20px;">

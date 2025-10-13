@@ -42,7 +42,7 @@
               <i class="info-icon">👤</i>
               <h3><%= t("home.order.cliente") %></h3>
             </div>
-            <p class="customer-name"><%= @order.user.nombre %> <%= @order.user.apellido %></p>
+            <p class="customer-name"><%= @order.customer_name %></p>
           </div>
           
           <div class="info-card status-info">
@@ -54,6 +54,17 @@
               <%= @order.status %>
             </span>
           </div>
+          
+          <div class="info-card status-info">
+            <div class="info-header">
+              <i class="info-icon">🏠</i>
+              <h3><%= t("home.order.direccion") %></h3>
+            </div>
+            <span class="order-status status-<%= @order.direccion.downcase.gsub(' ', '-') %>">
+              <%= @order.direccion %>
+            </span>
+          </div>
+          
           
           <% if @order.coupon.present? %>
             <div class="info-card coupon-info">

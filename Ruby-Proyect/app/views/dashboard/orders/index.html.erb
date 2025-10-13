@@ -43,7 +43,7 @@
           <% @orders.each do |order| %>
             <tr class="orders-tr" data-code="<%= order.code.downcase %>">
               <td class="orders-td" data-label="ID"><%= order.id %></td>
-              <td class="orders-td" data-label="Cliente"><%= order.user.nombre %> (<%= order.user.email %>)</td>
+              <td class="orders-td" data-label="Cliente"><%= order.customer_name %> (<%= order.customer_email %>)</td>
               <td class="orders-td orders-td--status <%= "status-#{order.status}" %>" data-label="Estado">
                 <p><%= order.status.humanize %></p>
               </td>

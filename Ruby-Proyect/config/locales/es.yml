@@ -142,6 +142,7 @@ es:
       pagar: "PROCEDER AL PAGO"    
       regresar: "Regresar"
       codigo: "Código:"
+      direccion_entrega: "Dirección de entrega"
       
       
 
@@ -150,6 +151,7 @@ es:
       opiniones: "Opiniones"
       categoria: "Categoria"
       generar_orden: "Generar orden"
+      ir_a_pagar: "Ir a pagar"
 
     order-pago:
       numero-tarjeta: "Número de tarjeta"

@@ -1,5 +1,5 @@
 class Order < ApplicationRecord
-  belongs_to :user
+  belongs_to :user, optional: true  # Hacer opcional para invitados
   belongs_to :carrito, optional: true
   belongs_to :coupon, optional: true
   has_many :order_items, dependent: :destroy
@@ -19,6 +19,13 @@ class Order < ApplicationRecord
 
   validates :code, presence: true, uniqueness: true
   validates :total, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
+  validates :direccion, presence: true, length: { minimum: 5, maximum: 500 }
+
+  # Validaciones para invitados
+  validates :guest_nombre, presence: true, if: :guest_order?
+  validates :guest_apellido, presence: true, if: :guest_order?
+  validates :guest_telefono, presence: true, if: :guest_order?
+  validates :guest_email, presence: true, format: { with: URI::MailTo::EMAIL_REGEXP }, if: :guest_order?
 
   before_validation :generate_unique_code, on: :create
 
@@ -92,6 +99,31 @@ class Order < ApplicationRecord
   # Use código en la URL en vez de id
   def to_param
     code
+  end
+
+  # Métodos para manejar información del cliente
+  def customer_name
+    if user.present?
+      "#{user.nombre} #{user.apellido}"
+    else
+      "#{guest_nombre} #{guest_apellido}"
+    end
+  end
+
+  def customer_email
+    user&.email || guest_email
+  end
+
+  def customer_phone
+    user&.telefono || guest_telefono
+  end
+
+  def guest_order?
+    user_id.nil?
+  end
+
+  def registered_order?
+    user_id.present?
   end
 
   # Calcula subtotal sin descuento

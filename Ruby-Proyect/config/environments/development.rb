@@ -19,40 +19,41 @@ Rails.application.configure do
 
   # Enable/disable Action Controller caching. By default Action Controller caching is disabled.
   # Run rails dev:cache to toggle Action Controller caching.
-  # DESACTIVADO PERMANENTEMENTE PARA DESARROLLO - Siempre ver cambios inmediatos
-  config.action_controller.perform_caching = false
-  config.action_controller.enable_fragment_cache_logging = false
-  config.action_mailer.perform_deliveries = true
-  config.action_mailer.asset_host = "http://localhost:3000"
+  if Rails.root.join("tmp/caching-dev.txt").exist?
+    config.action_controller.perform_caching = true
+    config.action_controller.enable_fragment_cache_logging = true
+    config.public_file_server.headers = { "cache-control" => "public, max-age=#{2.days.to_i}" }
+  else
+    config.action_controller.perform_caching = false
+  end
 
 
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = {
-    address: "smtp.gmail.com", # server encargado de hacer el mandado de correos
+    address: "smtp.sendgrid.net", # server encar gado de hacer el mandado de correos
     port: 587, # puerto en donde van a salir
-    domain: "gmail.com",
-    user_name: "biteviasoftware@gmail.com",
-    password: "jtptsglztobbzfjz",  # contraseña
+    domain: "localhost",
+    user_name: "apikey",    # nombre de la api
+    password: ENV["SENDGRID_API_KEY"],  # contraseña
     authentication: :plain,  # Metodo de seguridad
     enable_starttls_auto: true
   }
 
+  # Set localhost to be used by links generated in mailer templates.
+  config.action_mailer.default_url_options = { host: "localhost", port: 3000 }
+
 
   # Change to :null_store to avoid any caching.
-  # Configurado a :null_store para NO cachear nada en desarrollo
-  config.cache_store = :null_store
+  config.cache_store = :memory_store
 
   # Store uploaded files on the local file system (see config/storage.yml for options).
   config.active_storage.service = :local
 
   # Don't care if the mailer can't send.
-  config.action_mailer.raise_delivery_errors = true
+  config.action_mailer.raise_delivery_errors = false
 
   # Make template changes take effect immediately.
   config.action_mailer.perform_caching = false
-
-  # Set localhost to be used by links generated in mailer templates.
-  config.action_mailer.default_url_options = { host: "localhost", port: 3000 }
 
   # Print deprecation notices to the Rails logger.
   config.active_support.deprecation = :log
