@@ -7,16 +7,13 @@ import 'package:flutter/gestures.dart';
 import 'package:intl/intl.dart';
 
 import '../l10n/app_localizations.dart';
-import '../bloc/language_bloc.dart';
-import '../bloc/language_event.dart';
-import '../bloc/language_state.dart';
-import 'notificacion_Page.dart';
-import 'location_Page.dart';
-import '../bloc/product_bloc.dart';
-import '../bloc/product_event.dart';
+import 'notificacion_page.dart';
+import 'location_page.dart';
+import '../bloc/product/product_bloc.dart';
+import '../bloc/product/product_event.dart';
 import '../bloc/base_state.dart';
 import '../models/product.dart';
-import '../bloc/cart_bloc.dart';
+import '../bloc/cart/cart_bloc.dart';
 import '../models/cart_model.dart';
 import 'product_detail_page.dart';
 
@@ -139,7 +136,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                     IconButton(
                       icon: const Icon(Icons.location_on_outlined, color: Colors.black),
                       onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (c) => MapaOSMPage()));
+                        Navigator.push(context, MaterialPageRoute(builder: (c) => DeliveryLocationPage()));
                       },
                     ),
                   ],

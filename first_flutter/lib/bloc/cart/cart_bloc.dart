@@ -1,5 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../models/cart_model.dart';
+import '../../models/cart_model.dart';
 
 abstract class CartEvent {}
 

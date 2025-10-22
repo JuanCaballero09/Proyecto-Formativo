@@ -3,9 +3,8 @@ import 'package:intl/intl.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../l10n/app_localizations.dart';
 import '../models/product.dart';
-import '../bloc/cart_bloc.dart';
+import '../bloc/cart/cart_bloc.dart';
 import '../models/cart_model.dart';
-//import 'pedido_Page.dart';
 
 class ProductDetailPage extends StatelessWidget {
   final Product product;

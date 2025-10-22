@@ -1,23 +1,22 @@
-import 'package:first_flutter/bloc/cart_bloc.dart';
-import 'package:first_flutter/pages/menuNavigator_page.dart';
+import 'package:first_flutter/bloc/cart/cart_bloc.dart';
+import 'package:first_flutter/pages/menu_navigator_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../l10n/app_localizations.dart';
-import 'menu_page.dart';
-import 'home_Page.dart';
-import 'carrito_Page.dart';
-import 'perfil_Page.dart';
-import 'domicilio_Page.dart';
+import 'home_page.dart';
+import 'carrito_page.dart';
+import 'perfil_page.dart';
+import 'domicilio_page.dart';
 
-class ProductPage extends StatefulWidget {
+class ProductCatalogPage extends StatefulWidget {
   final int initialIndex;
-  const ProductPage({super.key, this.initialIndex = 0});
+  const ProductCatalogPage({super.key, this.initialIndex = 0});
 
   @override
-  State<ProductPage> createState() => _ProductPageState();
+  State<ProductCatalogPage> createState() => _ProductCatalogPageState();
 }
 
-class _ProductPageState extends State<ProductPage> {
+class _ProductCatalogPageState extends State<ProductCatalogPage> {
   late int _selectedIndex;
 
   @override

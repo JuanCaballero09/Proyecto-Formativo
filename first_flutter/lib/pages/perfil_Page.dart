@@ -1,11 +1,11 @@
-import 'package:first_flutter/bloc/auth_event.dart';
+import 'package:first_flutter/bloc/auth/auth_event.dart';
 import 'package:first_flutter/l10n/app_localizations.dart';
-import 'package:first_flutter/service/ApiService.dart';
+import 'package:first_flutter/service/api_service.dart';
 import 'package:first_flutter/widgets/language_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../bloc/auth_bloc.dart';
-import '../bloc/auth_state.dart';
+import '../bloc/auth/auth_bloc.dart';
+import '../bloc/auth/auth_state.dart';
 
 // 🔹 Color naranja global
 const kOrange = Color(0xFFFF9800);

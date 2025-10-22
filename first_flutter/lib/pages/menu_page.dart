@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../l10n/app_localizations.dart';
-import '../bloc/categorias_bloc.dart';
+import '../bloc/categorias/categorias_bloc.dart';
 import '../models/categoria.dart';
 import 'category_products_page.dart';
 import 'package:flutter/cupertino.dart';

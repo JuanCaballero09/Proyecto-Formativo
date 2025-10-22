@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../bloc/language_bloc.dart';
-import '../bloc/language_event.dart';
-import '../bloc/language_state.dart';
+import '../bloc/language/language_bloc.dart';
+import '../bloc/language/language_event.dart';
+import '../bloc/language/language_state.dart';
 
 class LanguageSelector extends StatelessWidget {
   const LanguageSelector({Key? key}) : super(key: key);
