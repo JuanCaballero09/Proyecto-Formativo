@@ -1,24 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+
 import '../l10n/app_localizations.dart';
 import '../bloc/product_bloc.dart';
 import '../bloc/product_event.dart';
 import '../bloc/base_state.dart';
 import '../widgets/status_widgets.dart';
 import '../models/product.dart';
+import 'LogoLoading_page.dart';
 import 'product_detail_page.dart';
 
 class CategoryProductsPage extends StatefulWidget {
   final String categoryName;
   final String categoryImage;
-  final int? categoryId; // Nuevo: ID opcional de la categoría
+  final int? categoryId;
 
   const CategoryProductsPage({
     super.key,
     required this.categoryName,
     required this.categoryImage,
-    this.categoryId, // Agregar este parámetro
+    this.categoryId,
   });
 
   @override
@@ -29,19 +31,9 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
   @override
   void initState() {
     super.initState();
-    // Debug: Ver qué categoría se está cargando
-    print('=== DEBUG: CategoryProductsPage.initState ===');
-    print('Categoría solicitada: ${widget.categoryName}');
-    print('ID de categoría: ${widget.categoryId}');
-    print('Imagen de categoría: ${widget.categoryImage}');
-    print('==========================================');
-    
-    // Usar el ID si está disponible, sino usar el nombre
     if (widget.categoryId != null) {
-      print('✓ Usando ID de categoría: ${widget.categoryId}');
       context.read<ProductBloc>().add(LoadProductsByCategoryId(widget.categoryId!));
     } else {
-      print('⚠️ ID no disponible, usando nombre: ${widget.categoryName}');
       context.read<ProductBloc>().add(LoadProductsByCategory(widget.categoryName));
     }
   }
@@ -68,25 +60,32 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
       ),
       body: BlocBuilder<ProductBloc, BaseState>(
         builder: (context, state) {
-          if (state is InitialState) {
-            return LoadingWidget(
-              message: AppLocalizations.of(context)!.loadingProducts
+          // Aquí reemplazamos la carga con el logo animado
+          if (state is InitialState || state is LoadingState) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  LogoloadingPage(size: 80),  // Tamaño ajustable
+                  const SizedBox(height: 16),
+                  Text(
+                    state is LoadingState
+                        ? (state.message ?? AppLocalizations.of(context)!.loadingProducts)
+                        : AppLocalizations.of(context)!.loadingProducts,
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                ],
+              ),
             );
-          } 
-          
-          if (state is LoadingState) {
-            return LoadingWidget(
-              message: state.message ?? AppLocalizations.of(context)!.loadingProducts
-            );
-          } 
-          
+          }
+
           if (state is ErrorState) {
             return ErrorDisplayWidget(
               message: state.message,
               onRetry: state.onRetry,
             );
-          } 
-          
+          }
+
           if (state is SuccessState<List<Product>>) {
             final products = state.data;
             if (products.isEmpty) {
@@ -98,7 +97,6 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
 
             return Column(
               children: [
-                // Header con imagen de la categoría
                 Container(
                   height: 150,
                   width: double.infinity,
@@ -138,7 +136,6 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
                     ),
                   ),
                 ),
-                // Lista de productos
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.all(16.0),
@@ -160,20 +157,11 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
                           child: InkWell(
                             borderRadius: BorderRadius.circular(16),
                             onTap: () {
-                              // Debug: Verificar qué producto se está pasando
-                              print('=== DEBUG: Producto seleccionado ===');
-                              print('ID: ${product.id}');
-                              print('Nombre: ${product.name}');
-                              print('Categoría: ${product.category}');
-                              print('Precio: ${product.price}');
-                              print('Index en la lista: $index');
-                              print('====================================');
-                              
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => ProductDetailPage(
-                                    key: ValueKey('product_${product.id}'), // Forzar reconstrucción
+                                    key: ValueKey('product_${product.id}'),
                                     product: product,
                                   ),
                                 ),
@@ -182,7 +170,6 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
-                                // Imagen del producto
                                 Expanded(
                                   flex: 3,
                                   child: ClipRRect(
@@ -202,7 +189,6 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
                                     ),
                                   ),
                                 ),
-                                // Información del producto
                                 Expanded(
                                   flex: 2,
                                   child: Padding(
@@ -211,7 +197,6 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
-                                        // Nombre del producto
                                         Text(
                                           product.name,
                                           style: const TextStyle(
@@ -222,7 +207,6 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
                                           overflow: TextOverflow.ellipsis,
                                         ),
                                         const SizedBox(height: 4),
-                                        // Descripción del producto
                                         if (product.description.isNotEmpty)
                                           Text(
                                             product.description,
@@ -234,7 +218,6 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
                                             overflow: TextOverflow.ellipsis,
                                           ),
                                         const SizedBox(height: 4),
-                                        // Ingredientes (si hay)
                                         if (product.ingredients.isNotEmpty)
                                           Text(
                                             'Ingredientes: ${product.ingredients.take(3).join(", ")}${product.ingredients.length > 3 ? "..." : ""}',
@@ -247,11 +230,9 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
                                             overflow: TextOverflow.ellipsis,
                                           ),
                                         const SizedBox(height: 4),
-                                        // Precio y categoría
                                         Row(
                                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                           children: [
-                                            // Precio
                                             Text(
                                               '\$${NumberFormat('#,###', 'es_CO').format(product.price)} COP',
                                               style: TextStyle(
@@ -260,7 +241,6 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
                                                 fontSize: 13,
                                               ),
                                             ),
-                                            // Categoría
                                             Container(
                                               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                                               decoration: BoxDecoration(
@@ -292,8 +272,7 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
               ],
             );
           }
-          
-          // Estado desconocido
+
           return Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
