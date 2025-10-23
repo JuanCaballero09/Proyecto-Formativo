@@ -7,6 +7,7 @@ import 'package:flutter/gestures.dart';
 import 'package:intl/intl.dart';
 
 import '../l10n/app_localizations.dart';
+import 'LogoLoading_page.dart';
 import 'notificacion_page.dart';
 import 'location_page.dart';
 import '../bloc/product/product_bloc.dart';
@@ -182,7 +183,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                       child: BlocBuilder<ProductBloc, BaseState>(
                         builder: (context, state) {
                           if (state is InitialState || state is LoadingState) {
-                            return const Center(child: CircularProgressIndicator());
+                            return const Center(child: LogoloadingPage(size: 60));
                           } else if (state is ErrorState) {
                             return Center(
                               child: Column(
@@ -319,7 +320,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                       );
                     },
                   )
-                : const Center(child: CircularProgressIndicator()),
+                : const Center(child: LogoloadingPage(size: 60)),
           ),
           const SizedBox(height: 8),
           SmoothPageIndicator(

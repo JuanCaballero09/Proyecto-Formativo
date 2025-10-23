@@ -7,6 +7,7 @@ import '../bloc/product/product_event.dart';
 import '../bloc/base_state.dart';
 import '../widgets/status_widgets.dart';
 import '../models/product.dart';
+import 'LogoLoading_page.dart';
 import 'product_detail_page.dart';
 
 class CategoryProductsPage extends StatefulWidget {
@@ -68,15 +69,22 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
       ),
       body: BlocBuilder<ProductBloc, BaseState>(
         builder: (context, state) {
-          if (state is InitialState) {
-            return LoadingWidget(
-              message: AppLocalizations.of(context)!.loadingProducts
-            );
-          } 
-          
-          if (state is LoadingState) {
-            return LoadingWidget(
-              message: state.message ?? AppLocalizations.of(context)!.loadingProducts
+          // Aquí reemplazamos la carga con el logo animado
+          if (state is InitialState || state is LoadingState) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  LogoloadingPage(size: 80),  // Tamaño ajustable
+                  const SizedBox(height: 16),
+                  Text(
+                    state is LoadingState
+                        ? (state.message ?? AppLocalizations.of(context)!.loadingProducts)
+                        : AppLocalizations.of(context)!.loadingProducts,
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                ],
+              ),
             );
           } 
           

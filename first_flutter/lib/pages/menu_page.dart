@@ -5,6 +5,7 @@ import '../bloc/categorias/categorias_bloc.dart';
 import '../models/categoria.dart';
 import 'category_products_page.dart';
 import 'package:flutter/cupertino.dart';
+import 'LogoLoading_page.dart';
 
 class MenuPage extends StatefulWidget {
   const MenuPage({super.key});
@@ -74,7 +75,7 @@ class _MenuPageState extends State<MenuPage> {
                   return const Center(
                     child: Padding(
                       padding: EdgeInsets.all(50.0),
-                      child: CircularProgressIndicator(),
+                      child: LogoloadingPage(),
                     ),
                   );
                 } else if (state is CategoriasLoadedState) {
