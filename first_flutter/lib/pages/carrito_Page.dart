@@ -1,11 +1,9 @@
-//import 'package:first_flutter/models/product.dart';
-import 'package:first_flutter/pages/inter_page.dart';
-//import 'package:first_flutter/pages/menu_page.dart';
+import 'package:first_flutter/pages/product_catalog_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import '../l10n/app_localizations.dart';
-import '../bloc/cart_bloc.dart';
+import '../bloc/cart/cart_bloc.dart';
 
 class CarritoPage extends StatefulWidget {
   const CarritoPage({super.key});
@@ -69,7 +67,7 @@ class CarritoPageState extends State<CarritoPage> {
   Navigator.pushReplacement(
     context,
     MaterialPageRoute(
-      builder: (context) => ProductPage(initialIndex: 1), // 👈 abrir directo el Menú
+      builder: (context) => ProductCatalogPage(initialIndex: 1), // 👈 abrir directo el Menú
     ),
   );
 },

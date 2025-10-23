@@ -1,5 +1,5 @@
 import 'package:bloc/bloc.dart';
-import 'package:first_flutter/service/ApiService.dart';
+import 'package:first_flutter/service/api_service.dart';
 import 'package:first_flutter/models/categoria.dart';
 import 'package:meta/meta.dart';
 

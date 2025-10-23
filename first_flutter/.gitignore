@@ -12,6 +12,12 @@
 .swiftpm/
 migrate_working_dir/
 
+# Archivos temporales y de prueba
+test_*.dart
+verificar_*.dart
+*_input.txt
+temp_*.dart
+
 # IntelliJ related
 *.iml
 *.ipr

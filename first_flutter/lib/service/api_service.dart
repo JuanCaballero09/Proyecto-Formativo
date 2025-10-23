@@ -1,10 +1,9 @@
-// ignore: file_names
 import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import '../models/product.dart';
 import '../core/errors/exceptions.dart';
-import '../utils/api_config.dart';
+import '../core/config/api_config.dart';
 
 /// Servicio centralizado para el consumo de APIs
 /// Maneja autenticación, productos y categorías

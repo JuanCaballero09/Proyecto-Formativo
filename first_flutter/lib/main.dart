@@ -1,25 +1,25 @@
-import 'package:first_flutter/pages/carrito_Page.dart';
+import 'package:first_flutter/pages/carrito_page.dart';
 import 'package:first_flutter/pages/login_page.dart';
 import 'package:first_flutter/pages/menu_page.dart';
 import 'package:first_flutter/pages/register_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'bloc/product_bloc.dart';
-import 'bloc/cart_bloc.dart';
-import 'bloc/language_bloc.dart';
-import 'bloc/language_event.dart';
-import 'bloc/language_state.dart';
-import 'bloc/categorias_bloc.dart';
-import 'bloc/search_bloc.dart';
+import 'bloc/product/product_bloc.dart';
+import 'bloc/cart/cart_bloc.dart';
+import 'bloc/language/language_bloc.dart';
+import 'bloc/language/language_event.dart';
+import 'bloc/language/language_state.dart';
+import 'bloc/categorias/categorias_bloc.dart';
+import 'bloc/search/search_bloc.dart';
 import 'repository/product_repository.dart';
-import 'repository/api_product_repository.dart'; // Nuevo repositorio
+import 'repository/api_product_repository.dart';
 import 'pages/splash_page.dart';
-import 'package:first_flutter/pages/inter_page.dart';
+import 'package:first_flutter/pages/product_catalog_page.dart';
 import 'l10n/app_localizations.dart';
-import 'bloc/auth_bloc.dart';
+import 'bloc/auth/auth_bloc.dart';
 import 'pages/perfil_wrapper.dart';
-import 'service/ApiService.dart';
+import 'service/api_service.dart';
 
 void main() {
   // Configuración de repositorio de productos
@@ -130,7 +130,7 @@ class MyApp extends StatelessWidget {
               "wrapper": (context) => const PerfilWrapper(),
                '/login': (context) => const  LoginPage(),
               '/register': (context) => const RegisterPage(),
-              '/home': (context) => const ProductPage(),
+              '/home': (context) => const ProductCatalogPage(),
             },
           );
         },

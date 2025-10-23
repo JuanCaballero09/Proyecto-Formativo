@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import '../models/search_result.dart';
+import '../../models/search_result.dart';
 
 /// Estados para el SearchBloc
 abstract class SearchState extends Equatable {

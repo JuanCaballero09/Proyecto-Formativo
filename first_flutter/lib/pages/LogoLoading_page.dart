@@ -45,4 +45,3 @@ class _LogoloadingPageState extends State<LogoloadingPage> with SingleTickerProv
     );
   }
 }
-

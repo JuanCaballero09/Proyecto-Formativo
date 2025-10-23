@@ -1,11 +1,11 @@
 import 'package:first_flutter/pages/register_page.dart';
-import 'package:first_flutter/service/ApiService.dart';
+import 'package:first_flutter/service/api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../bloc/auth_bloc.dart';
-import '../bloc/auth_event.dart';
-import 'inter_page.dart';
+import '../bloc/auth/auth_bloc.dart';
+import '../bloc/auth/auth_event.dart';
+import 'product_catalog_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -106,7 +106,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
       context.read<AuthBloc>().add(LoginRequested(user, pass));
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const ProductPage()),
+        MaterialPageRoute(builder: (_) => const ProductCatalogPage()),
       );
     });
     } else {

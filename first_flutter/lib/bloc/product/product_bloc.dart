@@ -1,10 +1,10 @@
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../core/errors/exceptions.dart';
-import '../repository/api_product_repository.dart';
-import 'base_state.dart';
+import '../../core/errors/exceptions.dart';
+import '../../repository/api_product_repository.dart';
+import '../base_state.dart';
 import 'product_event.dart';
-import '../repository/product_repository.dart';
+import '../../repository/product_repository.dart';
 
 /// BLoC que maneja el estado de los productos
 /// Soporta tanto repositorios locales como de API

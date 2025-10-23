@@ -1,5 +1,5 @@
 import '../models/product.dart';
-import '../service/ApiService.dart';
+import '../service/api_service.dart';
 import 'product_repository.dart';
 
 /// Repositorio para el consumo de productos desde la API REST

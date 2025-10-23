@@ -1,8 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'search_event.dart';
 import 'search_state.dart';
-import '../service/ApiService.dart';
-import '../models/search_result.dart';
+import '../../service/api_service.dart';
+import '../../models/search_result.dart';
 
 /// BLoC para manejar la búsqueda de productos y categorías
 class SearchBloc extends Bloc<SearchEvent, SearchState> {

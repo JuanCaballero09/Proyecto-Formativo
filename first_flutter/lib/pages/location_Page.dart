@@ -5,13 +5,13 @@ import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import '../l10n/app_localizations.dart';
 
-/// Página que muestra un mapa interactivo para seleccionar ubicaciones
-class MapaOSMPage extends StatefulWidget {
+/// Página que muestra un mapa interactivo para seleccionar ubicaciones de entrega
+class DeliveryLocationPage extends StatefulWidget {
   @override
-  State<MapaOSMPage> createState() => _MapaOSMPageState();
+  State<DeliveryLocationPage> createState() => _DeliveryLocationPageState();
 }
 
-class _MapaOSMPageState extends State<MapaOSMPage> {
+class _DeliveryLocationPageState extends State<DeliveryLocationPage> {
   // Controlador del mapa para manejar zoom y posición
   final MapController _mapController = MapController();
   
