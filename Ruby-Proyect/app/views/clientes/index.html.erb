@@ -1,0 +1,93 @@
+<section class= "perfil-cliente">
+    <div class="encabezado-perfil-cliente">
+        <div class= "info-cliente">
+            <%= image_tag('icons/user-solid.svg', class: "icono-usuario-perfil" )  %>
+            <h2><%= t("home.order.cliente")%> <%= current_user.nombre %> <%= current_user.apellido %> </h2>
+        </div>
+        
+        <div class = "acciones-cliente">
+            <label for="btn-modal" class="boton-modal"><%= t("home.clientes.editar_datos")%></label>
+            <%= button_to t("home.clientes.eliminar_cuenta"), registration_path(:user), class: "boton-modal" , method: :delete, data: { confirm: "¿Seguro que deseas eliminar tu cuenta?" } %>
+        </div>
+           
+        <% content_for :modals do %> 
+            <input type="checkbox" id="btn-modal">
+            <div class="modal-contenido">
+                <div class="contenido-modal-body">
+                    <h3><%= t("home.clientes.editar_datos")%></h3>
+                    <label for="btn-modal" class="cerrar-modal">X</label>
+
+                    <%= form_with(model: current_user, url: cliente_path(current_user), method: :patch, local: true) do |f| %>
+                        <label><%= t("home.clientes.nombre_cliente")%></label>
+                        <%= f.text_field :nombre %>
+
+                        <label><%= t("home.clientes.apellido_cliente")%></label>
+                        <%= f.text_field :apellido %>
+
+                        <label><%= t("home.clientes.telefono_cliente")%></label>
+                        <%= f.text_field :telefono %>
+
+                        <label><%= t("home.user.email")%></label>
+                        <%= f.email_field :email %>
+
+                        <label><%= t("home.clientes.contraseña_actual")%></label>
+                        <%= f.password_field :current_password %>
+
+                        <label><%= t("home.clientes.nueva_contraseña")%></label>
+                        <%= f.password_field :password %>
+
+                        <%= f.submit t("home.clientes.guardar_cambios") %>
+
+                    <% end %>
+                </div>
+            </div>
+
+        <% end %>
+    </div>
+
+        <div class= "datos-personales-cliente">
+            <h3><%= t("home.clientes.datos_personales")%></h3>
+            <p><strong><%= t("home.clientes.nombre_cliente")%></strong> <%= current_user.nombre%></p>
+            <p><strong><%= t("home.clientes.apellido_cliente")%></strong> <%= current_user.apellido%></p>
+            <p><strong><%= t("home.clientes.telefono_cliente")%></strong> <%= current_user.telefono%></p>
+            <p><strong><%= t("home.clientes.email_cliente")%></strong> <%= current_user.email%></p>
+        </div>
+
+    <div class="historial-pedidos">
+        <h3><%= t("home.clientes.historial_pedidos")%></h3>
+        <p><%= t("home.clientes.total_pedidos")%> <strong><%= @orders.count %></strong></p>
+
+    <% if @orders.any? %>
+        <table class="tabla-pedidos">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th><%= t("home.ordenes.fecha")%></th>
+                    <th><%= t("home.clientes.estado")%></th>
+                    <th>TOTAL</th>
+                    <th><%= t("home.clientes.detalles")%></th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <% @orders.each do |order| %>
+                    <tr>
+                        <td><%= order.id %></td>
+                            <td><%= order.created_at.strftime("%d/%m/%Y") %></td>
+                            <td><%= order.status.capitalize %></td>
+                            <td>
+                                <p class="precio-unitario" data-precio="<%= order.total %>" data-locale="<%= I18n.locale %>"style="color: #212529; font-size: 18px;">$</p>
+                            </td>
+                            <td>
+                           <%= link_to "Ver", order_path(order), class: "btn-eliminar", data: { order_id: order.id }, remote: true %>
+                        </td>
+                    </tr>
+                <% end %>
+            </tbody>
+        </table>
+        <% else %>
+            <p>No has realizado ningún pedido todavía.</p>
+            <%= link_to t("home.carrito.explorar_productos"), products_path, class: "btn-explorar" %>
+    <% end %>
+</section>
+

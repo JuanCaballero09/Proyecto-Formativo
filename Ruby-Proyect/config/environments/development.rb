@@ -27,14 +27,14 @@ Rails.application.configure do
     config.action_controller.perform_caching = false
   end
 
-
+  config.action_mailer.perform_deliveries = true
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = {
-    address: "smtp.sendgrid.net", # server encar gado de hacer el mandado de correos
+    address: "smtp.gmail.com", # server encargado de hacer el mandado de correos
     port: 587, # puerto en donde van a salir
-    domain: "localhost",
-    user_name: "apikey",    # nombre de la api
-    password: ENV["SENDGRID_API_KEY"],  # contraseña
+    domain: "gmail.com",
+    user_name: Rails.application.credentials.dig(:gmail, :correo_gmail),   
+    password: Rails.application.credentials.dig(:gmail, :password),  # contraseña
     authentication: :plain,  # Metodo de seguridad
     enable_starttls_auto: true
   }
@@ -50,7 +50,7 @@ Rails.application.configure do
   config.active_storage.service = :local
 
   # Don't care if the mailer can't send.
-  config.action_mailer.raise_delivery_errors = false
+  config.action_mailer.raise_delivery_errors = true
 
   # Make template changes take effect immediately.
   config.action_mailer.perform_caching = false

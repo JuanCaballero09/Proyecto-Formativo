@@ -8207,6 +8207,260 @@ a:focus, button:focus, input:focus, select:focus, textarea:focus {
     font-style: italic;
 }
 
+/* ===========================================
+   ESTILOS vista usuarios
+   =========================================== */
+
+/*Estilos modal vista cliente */
+.perfil-cliente {
+    padding: 20px 50px; 
+    background-color: #f7f7f7;
+  
+}
+
+.encabezado-perfil-cliente {
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: 15px;
+    align-items: center;
+    border-bottom: 2px solid #ddd;
+    margin-bottom: 20px;
+    display: flex;
+    gap: 10px;
+    
+}
+
+/* Contenedor de botones */
+.acciones-cliente {
+  display: flex;
+  align-items: center;
+  gap: 10px; 
+}
+
+.info-cliente {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #cd572b;
+}
+
+.encabezado-perfil-cliente img{
+    width: 60px;
+    height: 60px;
+}
+
+/* Botón "Editar datos" */
+#editar-perfil-cliente {
+    background-color: #ac3f17;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#editar-perfil-cliente:hover {
+    background-color: #eb5f2d;
+}
+
+/* Datos personales */
+.datos-personales-cliente h3 {
+    color: #333;
+    margin-bottom: 15px;
+    border-left: 5px solid #ac3f17;
+    padding-left: 10px;
+}
+
+.datos-grid {
+    display: flex;
+    gap: 50px; 
+    margin-bottom: 20px;
+    padding: 0 20px; 
+}
+
+.datos-columna {
+    flex: 1;
+    min-width: 40%;
+}
+
+.datos-personales-cliente p {
+    margin: 8px 0;
+    line-height: 1.4;
+    padding-bottom: 5px;
+    border-bottom: 1px dashed #ccc;
+}
+
+.historial-pedidos {
+  text-align: center;
+  margin: 30px auto;
+  max-width: 1600px;
+  background: #f9f9f9;
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.1);
+}
+
+.historial-pedidos h3 {
+  font-size: 1.6rem;
+  margin-bottom: 10px;
+  color: #ed5821;
+}
+
+.total-pedidos {
+  font-size: 1rem;
+  color: #555;
+}
+
+/* Tabla de historial de pedidos */
+.tabla-pedidos {
+  width: 100%;
+  margin-top: 15px;
+  background-color: white;
+}
+
+.tabla-pedidos th, .tabla-pedidos td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: center;
+}
+.tabla-pedidos th {
+  background-color: #ed5821;
+  color: white;
+}
+
+.btn-detalle {
+  background-color: #007bff;
+  color: white;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+#btn-modal {
+  display: none;
+}
+
+/* Modal de contenido del perfil */
+.modal-contenido {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  
+  align-items: center;
+  z-index: 99999;
+  margin: auto;
+}
+
+#btn-modal:checked ~ .modal-contenido {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Cuerpo del modal */
+.contenido-modal-body {
+  width: 400px;
+  background: #fff;
+  box-shadow: 1px 7px 25px rgba(0, 0, 0, 0.02);
+  border-radius: 10px;
+  height: auto;
+  max-height: 95vh;
+  overflow-y: auto;
+  overflow: hidden;
+  position: relative;
+  transform: none;
+  margin: auto;
+}
+
+#btn-modal:checked ~ .modal-contenido .modal-contenido-body {
+   transform: translateY(0%)
+}
+
+/* Encabezado */
+.contenido-modal-body h3 {
+  padding: 10px;
+  background-color: #cf5f35;
+  color: #fff;
+  margin: 0;
+  text-align: center;
+}
+
+.contenido-modal-body form {
+  display: grid;
+  grid-template-columns: 1fr 1fr; 
+  gap: 15px 20px; 
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.contenido-modal-body label {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 5px;
+}
+
+.contenido-modal-body input[type="text"],
+.contenido-modal-body input[type="email"],
+.contenido-modal-body input[type="password"] {
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.contenido-modal-body input[type="submit"] {
+  background: linear-gradient(45deg, var(--base), var(--base-oscuro));
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 25px;
+    font-size: 0.9em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.contenido-modal-body input[type="submit"]:hover {
+  background-color: #b44f2c;
+}
+
+
+/* Botón cerrar */
+.cerrar-modal{ 
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  color: white;
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+/* Botón que abre el modal */
+.boton-modal {
+  background: linear-gradient(45deg, var(--base), var(--base-oscuro));
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 25px;
+    font-size: 0.9em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+#btn-modal:not(:checked) ~ .modal-contenido {
+  display: none;
+}
+
 /* Responsive para guest checkout */
 @media (max-width: 768px) {
     .field-row {

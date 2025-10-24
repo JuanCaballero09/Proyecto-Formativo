@@ -2,12 +2,6 @@
   <!-- Header de la orden -->
   <div class="order-header">
     <div class="order-header-content">
-      <div class="back-button-container">
-        <%= link_to root_path, class: "back-button-premium" do %>
-          <i class="back-icon">←</i>
-          <span><%= t("home.order.regresar")%></span>
-        <% end %>
-      </div>
       
       <div class="order-title-section">
         <h1 class="order-title">
@@ -58,7 +52,7 @@
           <div class="info-card status-info">
             <div class="info-header">
               <i class="info-icon">🏠</i>
-              <h3><%= t("home.order.direccion") %></h3>
+              <h3><%= t("home.clientes.direccion_cliente") %></h3>
             </div>
             <span class="order-status status-<%= @order.direccion.downcase.gsub(' ', '-') %>">
               <%= @order.direccion %>
@@ -103,10 +97,9 @@
 
       <!-- Botón de pago -->
       <div class="payment-section">
-        <%= link_to new_order_payments_path(@order), class: "payment-button" do %>
-          <i class="payment-icon">💳</i>
+        <%= link_to clientes_path, class:"payment-button" do %>
+           <i class="back-icon">←</i>
           <span><%= t("home.order.pagar")%></span>
-          <i class="payment-arrow">→</i>
         <% end %>
       </div>
     </div>
@@ -150,13 +143,13 @@
                   
                   <div class="quantity-price-info">
                     <div class="quantity-container">
-                      <span class="quantity-label">Cantidad:</span>
+                      <span class="quantity-label"><%= t("home.order.cantidad")%></span>
                       <span class="quantity-value"><%= order_item.quantity %></span>
                     </div>
                     
                     <div class="price-container">
                       <div class="unit-price">
-                        <span class="price-label">Precio unitario:</span>
+                        <span class="price-label"><%= t("home.order.precio_unitario")%></span>
                         <span class="price-value">
                         <strong class="precio-unitario" data-precio="<%= order_item.price %>" data-locale="<%= I18n.locale %>">$</strong>
                         </span>
@@ -188,10 +181,10 @@
                   <div class="combo-header">
                     <h4 class="combo-title">
                       <i class="combo-icon">📦</i>
-                      Componentes del combo:
+                      <%= t("home.clientes.componente_combo")%>
                     </h4>
                     <button class="toggle-combo" onclick="toggleComboDetails(<%= index %>)">
-                      <span class="toggle-text">Ver componentes</span>
+                      <span class="toggle-text"><%= t("home.clientes.ver_componentes")%></span>
                       <i class="toggle-arrow">▼</i>
                     </button>
                   </div>

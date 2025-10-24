@@ -1,6 +1,8 @@
 Rails.application.routes.draw do
   scope "(:locale)", locale: /es|en/ do
     devise_for :users, controllers: { registrations: "users/registrations" }
+    delete '/users/delete_account', to: 'users/registrations#destroy', as: :delete_account
+
 
     root to: "grupos#dashboard"
 
@@ -11,6 +13,8 @@ Rails.application.routes.draw do
     end
 
     resources :products, path: "productos", only: [:index] # rubocop:disable Layout/SpaceInsideArrayLiteralBrackets
+
+    resources :clientes, only: [ :index, :update, :show ] # ruta vista perfil usuarios
 
     # Ruta especial para combos
     get "/combos", to: "products#combos", as: "combos"

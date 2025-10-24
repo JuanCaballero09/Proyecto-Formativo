@@ -37,7 +37,7 @@ es:
     navbar:
       inicio: "Inicio"
       menu: "Menú"
-      categorias: "Categorias"
+      categorias: "Categorías"
       panel_de_administracion: "Panel de administración"
       iniciar_sesion: "Iniciar sesión"
       cerrar_sesion: "Cerrar sesión"
@@ -48,12 +48,12 @@ es:
 
       # Contenido en el section del home
     section: 
-      ofertas: "Ofertas Especiales"
+      ofertas: "Ofertas especiales"
       combos_exclusivos: "Nuestros Combos Exclusivos"
       ahorra: "Ahorra más con nuestras deliciosas combinaciones"
       proxima: "Próximamente: Combos Especiales"
       estamos_preparados: "Estamos preparando increíbles ofertas para ti"
-      explorar_menu: "Explorar Menú"
+      explorar_menu: "Explorar menú"
       contactanos: "Contáctanos"
       servir: "Estamos aquí para servirte"
       ubicacion: "Ubicación"
@@ -70,7 +70,7 @@ es:
       dash: "Dashboard"
       banner: "Banners"
       ver_banners: "Ver Banners"
-      crear_banner: "Crear Banners"
+      crear_banner: "Crear Banner"
       cuponn: "Cupones"
       ver_cupones: "Ver Cupones"
       crear_Cupon: "Crear Cupón"
@@ -81,18 +81,18 @@ es:
       ver_grupos: "Ver Grupos"
       crear_grupo: "Crear Grupo"
       ingredientes: "Ingredientes"
-      ver_ingredientes: "Ver Ingredientes"
-      crear_ingrediente: "Crear Ingrediente"
+      ver_ingredientes: "Ver ingredientes"
+      crear_ingrediente: "Crear ingrediente"
       volver_al_inicio: "Volver al inicio"  
 
       # Titulos de las tarjetas de las graficas
 
     graficas:
-      total_producto: "Total productos"
+      total_producto: "Total de productos"
       productos_disponibles: "Productos disponibles"
-      Total_grupos: "Total grupos"
-      ultimo_producto: "Ultimo producto"
-      ultimo_grupo: "Ultimo grupo"
+      Total_grupos: "Total de grupos"
+      ultimo_producto: "Último producto"
+      ultimo_grupo: "Último grupo"
       producto_por_grupo: "Productos por grupos"
       distribuccion: "Distribución"
       crecimiento: "Crecimiento"
@@ -134,12 +134,12 @@ es:
       imagen: "Imagen"
       or_producto: "Producto"
       cantidad: "Cantidad:"
-      precio_unitario: "Precio unitario"
+      precio_unitario: "Precio unitario:"
       total: "Total"
-      detalles: "Detalles de la Orden"      
-      informacion_orden: "Información de la Orden"     
-      tootal_paga: "Total Pagar"   
-      pagar: "PROCEDER AL PAGO"    
+      detalles: "Detalles de la Compra"      
+      informacion_orden: "Información de la orden"     
+      tootal_paga: "Total de la cuenta"   
+      pagar: "Volver"    
       regresar: "Regresar"
       codigo: "Código:"
       direccion_entrega: "Dirección de entrega"
@@ -160,7 +160,7 @@ es:
       nombre-titular: "Nombre del titular:"
       correo-electronico: "Correo electrónico:" 
       pagar: "Pagar"
-      resumen: "Resumen de la Orden"
+      resumen: "Resumen de la orden"
       info_pago: "Información de Pago"
       pagar_orden: "Pagar Orden"
       nombre_completo: "Nombre completo"
@@ -199,7 +199,7 @@ es:
       
     ordenes:
       ordenes: "Órdenes"
-      ordenes_empleados: "Órdenes Empleados"
+      ordenes_empleados: "Órdenes de Empleados"
       lista_ordenes: "Listado de Órdenes"
       id: "ID"
       clientee: "Cliente"
@@ -208,7 +208,7 @@ es:
       fecha: "FECHA"
       acciones: "ACCIONES"
       buscar_orden: "Buscar por código de orden..."
-      ver_detalles: "Ver Detalles"
+      ver_detalles: "Ver detalles"
       producto: "Producto"
       volver_listado: "Volver al listado"
       cantidadd: "Cantidad:"
@@ -241,6 +241,32 @@ es:
       comentario_uno: "Muy rica y jugosa"
       comentario_dos: "Me encantó la combinación"
 
+    clientes:
+      editar_datos: "Editar datos"
+      contraseña_actual: "Contraseña actual"
+      nueva_contraseña: "Nueva contraseña (opcional)"
+      guardar_cambios: "Guardar cambios"
+      eliminar_cuenta: "Eliminar cuenta"
+      historial_pedidos: "Historial de pedidos"
+      total_pedidos: "Total de pedidos:"
+      detalles: "DETALLES"
+      estado: "ESTADO"
+      datos_personales: "Datos personales"
+      nombre_cliente: "Nombre:"
+      apellido_cliente: "Apellido:"
+      telefono_cliente: "Telefono:"
+      email_cliente: "Email:"
+      direccion_cliente: "Dirección"
+      componente_combo: "Componentes del combo:"
+      ver_componentes: "Ver componentes"
+
+
+      
+
+
+
+
+      
 
 
   
