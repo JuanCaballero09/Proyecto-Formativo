@@ -33,8 +33,8 @@ Rails.application.configure do
     address: "smtp.gmail.com", # server encargado de hacer el mandado de correos
     port: 587, # puerto en donde van a salir
     domain: "gmail.com",
-    user_name: "biteviasoftware@gmail.com",   
-    password: ENV["GOOGLE_PASSWORD"],  # contraseña
+    user_name: Rails.application.credentials.dig(:gmail, :correo_gmail),   
+    password: Rails.application.credentials.dig(:gmail, :password),  # contraseña
     authentication: :plain,  # Metodo de seguridad
     enable_starttls_auto: true
   }

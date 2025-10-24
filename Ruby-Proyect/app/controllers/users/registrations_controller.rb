@@ -9,8 +9,13 @@ class Users::RegistrationsController < Devise::RegistrationsController
         end
     end
   end
-  protected
 
+  def destroy 
+    current_user.destroy
+    Devise.sign_out_all_scopes ? sign_out : sign_out(resource_name)
+    redirect_to root_path, notice: "Tu cuenta ha sido eliminada correctamente"
+  end
+  protected
 
   def after_inactive_sign_up_path_for(resource)
       new_user_session_path
