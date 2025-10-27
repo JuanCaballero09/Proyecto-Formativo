@@ -71,7 +71,7 @@
                 <span id="contador-carrito"><%= total %></span>
               <% end %>
               
-              <%= link_to image_tag("icons/user-solid.svg", alt: "Perfil"), edit_user_registration_path%>
+              <%= link_to image_tag("icons/user-solid.svg", alt: "Perfil"), clientes_path %>
 
               <div class="btn-user">
                 <%= button_to t("home.navbar.cerrar_sesion"), destroy_user_session_path, method: :delete, data: { turbo_confirm: "¿Estás seguro que quieres cerrar sesión?" } %>
@@ -125,6 +125,7 @@
         <p>v3.8.5</p>
         <p>© 2025 Bitevia Software. <%= t("home.footer.derechos_reservados")%></p>
       </footer>
+              <%= yield :modals %>
 
             <!-- Contenedor de alertas -->
       <div id="alert-container">
@@ -194,6 +195,6 @@
         };
       });
       </script>
-
+      <%= yield :modals %>
     </body>    
   </html>
