@@ -10,6 +10,10 @@ import '../l10n/app_localizations.dart';
 import '../bloc/search/search_bloc.dart';
 import '../bloc/search/search_event.dart';
 import '../bloc/search/search_state.dart';
+import '../models/search_result.dart';
+import '../models/product.dart';
+import '../models/categoria.dart';
+import '../bloc/categorias/categorias_bloc.dart';
 import 'LogoLoading_page.dart';
 import 'notificacion_page.dart';
 import 'location_page.dart';
@@ -176,10 +180,74 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                                 itemBuilder: (context, index) {
                                   final result = state.results[index];
                                   return ListTile(
-                                    title: Text(result.name),
-                                    subtitle: Text(result.description ?? ''),
+                                    leading: result.image != null
+                                        ? ClipRRect(
+                                            borderRadius: BorderRadius.circular(8),
+                                            child: Image.network(
+                                              result.image!,
+                                              width: 50,
+                                              height: 50,
+                                              fit: BoxFit.cover,
+                                              errorBuilder: (_, __, ___) => Container(
+                                                width: 50,
+                                                height: 50,
+                                                decoration: BoxDecoration(
+                                                  color: Colors.grey[200],
+                                                  borderRadius: BorderRadius.circular(8),
+                                                ),
+                                                child: const Icon(Icons.fastfood, color: Colors.grey),
+                                              ),
+                                            ),
+                                          )
+                                        : Container(
+                                            width: 50,
+                                            height: 50,
+                                            decoration: BoxDecoration(
+                                              color: Colors.grey[200],
+                                              borderRadius: BorderRadius.circular(8),
+                                            ),
+                                            child: const Icon(Icons.fastfood, color: Colors.grey),
+                                          ),
+                                    title: Text(
+                                      result.name,
+                                      style: const TextStyle(fontWeight: FontWeight.bold),
+                                    ),
+                                    subtitle: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        if (result.type == 'product') ...[
+                                          Text(
+                                            result.price != null
+                                                ? '\$${NumberFormat('#,###', 'es_CO').format(result.price)}'
+                                                : 'Precio no disponible',
+                                            style: const TextStyle(
+                                              color: Colors.green,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ],
+                                        Text(
+                                          'Categoría: ${result.type == 'category' ? 'Menú principal' : _getCategoryName(result)}',
+                                          style: TextStyle(color: Colors.grey[600]),
+                                        ),
+                                        if (result.description?.isNotEmpty ?? false)
+                                          Text(
+                                            result.description!,
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                      ],
+                                    ),
                                     onTap: () {
-                                      // Implementar navegación al producto
+                                      if (result.type == 'product' && result.rawData != null) {
+                                        final product = Product.fromJson(result.rawData!);
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (_) => ProductDetailPage(product: product),
+                                          ),
+                                        );
+                                      }
                                     },
                                   );
                                 },
@@ -327,6 +395,25 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
       child: Text(title, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black)),
     );
+  }
+
+  String _getCategoryName(SearchResult result) {
+    if (result.rawData == null) return 'Sin categoría';
+    
+    final categoryId = result.rawData!['categoria_id'] ?? result.rawData!['category_id'];
+    if (categoryId == null) return 'Sin categoría';
+
+    // Obtener el estado actual del BLoC de categorías
+    final categoriasState = context.read<CategoriasBloc>().state;
+    if (categoriasState is CategoriasLoadedState) {
+      final categoria = categoriasState.categorias.firstWhere(
+        (cat) => cat.id.toString() == categoryId.toString(),
+        orElse: () => Categoria(id: -1, nombre: 'Sin categoría'),
+      );
+      return categoria.nombre;
+    }
+
+    return 'Sin categoría';
   }
 
   Widget _buildPromotionsCarousel() {
