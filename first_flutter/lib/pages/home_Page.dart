@@ -7,6 +7,9 @@ import 'package:flutter/gestures.dart';
 import 'package:intl/intl.dart';
 
 import '../l10n/app_localizations.dart';
+import '../bloc/search/search_bloc.dart';
+import '../bloc/search/search_event.dart';
+import '../bloc/search/search_state.dart';
 import 'LogoLoading_page.dart';
 import 'notificacion_page.dart';
 import 'location_page.dart';
@@ -153,9 +156,39 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (_isSearchVisible)
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                child: _buildSearchBar(context),
+              Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                    child: _buildSearchBar(context),
+                  ),
+                  BlocBuilder<SearchBloc, SearchState>(
+                    builder: (context, state) {
+                      if (state is SearchLoading) {
+                        return const Center(child: CircularProgressIndicator());
+                      } else if (state is SearchLoaded) {
+                        return state.results.isEmpty
+                            ? const Center(child: Text('No se encontraron resultados'))
+                            : ListView.builder(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: state.results.length,
+                                itemBuilder: (context, index) {
+                                  final result = state.results[index];
+                                  return ListTile(
+                                    title: Text(result.name),
+                                    subtitle: Text(result.description ?? ''),
+                                    onTap: () {
+                                      // Implementar navegación al producto
+                                    },
+                                  );
+                                },
+                              );
+                      }
+                      return const SizedBox.shrink();
+                    },
+                  ),
+                ],
               ),
 
             // Promociones
@@ -282,8 +315,8 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
           border: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
         ),
-        onChanged: (q) {
-          // opcional: disparar búsqueda si implementas endpoint search en ProductBloc
+        onChanged: (query) {
+          context.read<SearchBloc>().add(SearchQueryChanged(query));
         },
       ),
     );
