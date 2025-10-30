@@ -17,6 +17,11 @@ class Payment < ApplicationRecord
     when "approved"
       order.update(status: :pagado)
       Rails.logger.info "✅ Order #{order.code} marcada como PAGADA"
+
+      # Enviar correo de confirmación de pago
+      OrdersMailer.payment_confirmation(order).deliver_now
+      Rails.logger.info "📧 Correo de confirmación enviado para Order #{order.code} a #{order.customer_email}"
+
     when "declined"
       order.update(status: :pendiente) if order.pendiente?
       Rails.logger.info "⚠️ Order #{order.code} sigue en PENDIENTE"
