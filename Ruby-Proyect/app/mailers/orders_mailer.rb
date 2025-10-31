@@ -4,7 +4,7 @@ class OrdersMailer < ApplicationMailer
 
   def payment_confirmation(order)
     @order = order
-    @payment = order.payments.approved.last
+    @payment = order.payments.where(status: :approved).last
     @customer_email = order.customer_email
     @customer_name = order.customer_name
 
