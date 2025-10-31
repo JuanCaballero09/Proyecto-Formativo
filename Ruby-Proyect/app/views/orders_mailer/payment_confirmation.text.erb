@@ -1,0 +1,50 @@
+¡PAGO CONFIRMADO!
+==========================================
+
+<%= t('mailers.orders_mailer.payment_confirmation.greeting', customer_name: @customer_name) %>
+
+<%= t('mailers.orders_mailer.payment_confirmation.confirmed_message') %>
+
+<%= t('mailers.orders_mailer.payment_confirmation.order_details').upcase %>
+==========================================
+<%= t('mailers.orders_mailer.payment_confirmation.order_number') %>: <%= @order.code %>
+<%= t('mailers.orders_mailer.payment_confirmation.date_time') %>: <%= @order.created_at.strftime("%d/%m/%Y - %H:%M") %>
+Estado: <%= @order.status.humanize %>
+<%= t('mailers.orders_mailer.payment_confirmation.payment_method') %>: <%= @payment&.payment_method == "CARD" ? t('mailers.orders_mailer.payment_confirmation.payment_methods.card') : @payment&.payment_method || t('mailers.orders_mailer.payment_confirmation.payment_methods.not_specified') %>
+<% if @order.direccion.present? %><%= t('mailers.orders_mailer.payment_confirmation.delivery_address') %>: <%= @order.direccion %><% end %>
+
+<%= t('mailers.orders_mailer.payment_confirmation.purchased_products').upcase %>
+==========================================
+<% @order.order_items.each do |item| %>
+<%= item.product.nombre %>
+<%= t('mailers.orders_mailer.payment_confirmation.quantity') %>: <%= item.quantity %> x $<%= number_with_delimiter(item.price, delimiter: ".") %>
+Subtotal: $<%= number_with_delimiter((item.quantity * item.price), delimiter: ".") %>
+------------------------------------------
+<% end %>
+
+<%= t('mailers.orders_mailer.payment_confirmation.total_paid').upcase %>: $<%= number_with_delimiter(@order.total, delimiter: ".") %> COP
+
+<%= t('mailers.orders_mailer.payment_confirmation.payment_info').upcase %>
+==========================================
+<% if @payment.present? %>
+<%= t('mailers.orders_mailer.payment_confirmation.transaction_id') %>: <%= @payment.transaction_id %>
+<%= t('mailers.orders_mailer.payment_confirmation.amount') %>: $<%= number_with_delimiter(@payment.amount, delimiter: ".") %> COP
+Estado: <%= t('mailers.orders_mailer.payment_confirmation.status_approved') %>
+<% end %>
+
+<%= t('mailers.orders_mailer.payment_confirmation.what_next').upcase %>
+==========================================
+<%= t('mailers.orders_mailer.payment_confirmation.next_step_1') %>
+<%= t('mailers.orders_mailer.payment_confirmation.next_step_2') %>
+<%= t('mailers.orders_mailer.payment_confirmation.next_step_3') %>
+<%= t('mailers.orders_mailer.payment_confirmation.next_step_4') %>
+
+<%= t('mailers.orders_mailer.payment_confirmation.thank_you') %>
+
+------------------------------------------
+BitevíaSoftware
+Email: biteviasoftware@gmail.com
+
+<%= t('mailers.orders_mailer.payment_confirmation.company_info') %>
+
+<%= t('mailers.orders_mailer.payment_confirmation.auto_receipt') %>

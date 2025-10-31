@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Confirmación de Pago - <%= @order.code %></title>
+  <style>
+    /* Estilo mejorado tipo recibo, usando paleta del sitio */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; 
+      background: #f7f5f3; 
+      color: #333; 
+      padding: 20px;
+    }
+
+    .email-container { 
+      max-width: 800px; 
+      margin: 0 auto; 
+      background: #fff; 
+      border: 1px solid #eee; 
+      border-radius: 8px; 
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+
+    /* Encabezado tipo recibo: línea superior con color principal */
+    .receipt-top { 
+      height: 12px; 
+      background: linear-gradient(90deg, #ED5821, #FF936B, #ED5821); 
+    }
+
+    .receipt-body { 
+      padding: 32px 40px; 
+    }
+
+    .brand { 
+      text-align: center; 
+      margin-bottom: 24px; 
+      padding-bottom: 16px;
+      border-bottom: 2px solid #f0ebe9;
+    }
+    .brand .title { 
+      font-weight: 800; 
+      color: #802400; 
+      font-size: 24px; 
+      margin-bottom: 4px;
+    }
+    .brand .subtitle { 
+      color: #9D2E06; 
+      font-size: 14px; 
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .meta { 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: flex-start;
+      gap: 20px; 
+      margin: 20px 0 24px; 
+      background: #fdf9f7;
+      padding: 20px;
+      border-radius: 8px;
+      border-left: 4px solid #ED5821;
+      justify-content: center;
+      text-align: center;
+    }
+    .meta .left, .meta .right { 
+      font-size: 14px; 
+      color: #555; 
+    }
+    .meta .code { 
+      font-family: monospace; 
+      color: #222; 
+      font-weight: 700; 
+      font-size: 16px;
+      background: #fff;
+      padding: 4px 8px;
+      border-radius: 4px;
+      border: 1px solid #e6e2df;
+    }
+    .meta .customer-info {
+      margin-top: 8px;
+      color: #666;
+      font-size: 13px;
+    }
+    .meta .date-info {
+      text-align: right;
+    }
+
+    .confirmation-msg {
+      background: #e8f5e8;
+      border: 1px solid #d4edda;
+      color: #155724;
+      padding: 16px 20px;
+      border-radius: 8px;
+      margin-bottom: 24px;
+      text-align: center;
+      font-weight: 600;
+    }
+
+    table.items { 
+      width: 100%; 
+      border-collapse: collapse; 
+      font-size: 15px; 
+      margin-bottom: 20px;
+      background: #fff;
+    }
+    table.items thead th { 
+      text-align: left; 
+      font-size: 13px; 
+      color: #666; 
+      padding: 12px 8px 10px;
+      border-bottom: 2px solid #ED5821;
+      background: #fdf9f7;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+    table.items tbody td { 
+      padding: 14px 8px; 
+      border-bottom: 1px solid #f0ebe9; 
+      vertical-align: top; 
+    }
+    table.items tbody tr:hover {
+      background: #fdf9f7;
+    }
+    table.items .qty { 
+      width: 80px; 
+      color: #666; 
+      text-align: center;
+      font-weight: 600;
+    }
+    table.items .price { 
+      text-align: right; 
+      width: 140px; 
+      font-weight: 700; 
+      color: #ED5821; 
+      font-size: 16px;
+    }
+    table.items .product-name {
+      font-weight: 600;
+      color: #333;
+    }
+
+    .total-section {
+      background: linear-gradient(135deg, #ED5821, #9D2E06);
+      color: white;
+      padding: 24px;
+      margin: 24px 0;
+      border-radius: 8px;
+      text-align: center;
+    }
+    .total-section .label { 
+      font-size: 16px;
+      margin-bottom: 8px;
+      opacity: 0.9;
+    }
+    .total-section .amount { 
+      font-size: 32px; 
+      font-weight: 800; 
+      text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .payment-info { 
+      background: #fdf9f7;
+      border: 1px solid #e6e2df;
+      border-radius: 8px;
+      padding: 20px;
+      margin: 20px 0;
+    }
+    .payment-info strong {
+      color: #802400;
+      font-size: 16px;
+      display: block;
+      margin-bottom: 12px;
+    }
+    .payment-info .detail {
+      margin: 6px 0;
+      font-size: 14px;
+      color: #555;
+    }
+    .payment-info .detail span {
+      font-weight: 600;
+      color: #333;
+    }
+
+    .next-steps {
+      margin-top: 20px;
+      padding: 16px;
+      background: #f8f9fa;
+      border-radius: 6px;
+      border-left: 4px solid #FF936B;
+    }
+    .next-steps p {
+      color: #666;
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+
+    .contact-section {
+      text-align: center;
+      margin-top: 24px;
+      padding-top: 20px;
+      border-top: 2px solid #f0ebe9;
+    }
+    .contact-link { 
+      display: inline-block;
+      background: linear-gradient(135deg, #ED5821, #FF936B);
+      color: white; 
+      text-decoration: none; 
+      font-weight: 700;
+      padding: 12px 24px;
+      border-radius: 25px;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-size: 14px;
+    }
+    .contact-link:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(237, 88, 33, 0.3);
+    }
+
+    .footer { 
+      border-top: 1px solid #f0ebe9; 
+      padding: 20px 40px; 
+      font-size: 12px; 
+      color: #666; 
+      text-align: center;
+      background: #fdf9f7;
+    }
+    .footer .company {
+      font-weight: 700;
+      color: #802400;
+      margin-bottom: 8px;
+    }
+
+    @media (max-width:600px){ 
+      .email-container { margin: 10px; }
+      .receipt-body { padding: 20px 16px; }
+      .brand .title { font-size: 20px; }
+      .meta { flex-direction: column; gap: 12px; }
+      .meta .date-info { text-align: left; }
+      table.items { font-size: 13px; }
+      .total-section .amount { font-size: 24px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="email-container">
+    <div class="receipt-top"></div>
+    <div class="receipt-body">
+      <!-- Encabezado de la empresa centrado -->
+      <div class="brand">
+        <div class="title">BitevíaSoftware</div>
+        <div class="subtitle">Comprobante de Pago</div>
+      </div>
+
+      <!-- Información meta: orden y fecha -->
+      <div class="meta">
+        <div class="left">
+          <div class="code"><%= @order.code %></div>
+          <div class="customer-info">
+            <strong><%= @order.customer_name %></strong><br>
+            <%= @order.customer_email %>
+            <% if @order.direccion.present? %>
+              <br><small>📍 <%= @order.direccion %></small>
+            <% end %>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mensaje de confirmación -->
+      <div class="confirmation-msg">
+        ✅ <%= t('mailers.orders_mailer.payment_confirmation.confirmed_message') %>
+      </div>
+
+      <!-- Tabla de productos -->
+      <table class="items">
+        <thead>
+          <tr>
+            <th><%= t('mailers.orders_mailer.payment_confirmation.purchased_products') %></th>
+            <th class="qty"><%= t('mailers.orders_mailer.payment_confirmation.quantity') %></th>
+            <th class="price">Precio</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @order.order_items.each do |item| %>
+            <tr>
+              <td class="product-name"><%= item.product.nombre %></td>
+              <td class="qty"><%= item.quantity %></td>
+              <td class="price">$<%= number_with_delimiter((item.quantity * item.price), delimiter: ".") %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+
+      <!-- Total destacado -->
+      <div class="total-section">
+        <div class="label"><%= t('mailers.orders_mailer.payment_confirmation.total_paid') %></div>
+        <div class="amount" style="color: white !important;">$<%= number_with_delimiter(@order.total, delimiter: ".") %> COP</div>
+      </div>
+
+      <!-- Información del pago -->
+      <div class="payment-info">
+        <strong>💳 <%= t('mailers.orders_mailer.payment_confirmation.payment_info') %></strong>
+        <% if @payment.present? %>
+          <div class="detail">
+            <strong>ID:</strong> <span><%= @payment.transaction_id %></span>
+          </div>
+          <div class="detail">
+            <strong><%= t('mailers.orders_mailer.payment_confirmation.amount') %>:</strong> 
+            <span>$<%= number_with_delimiter(@payment.amount, delimiter: ".") %> COP</span>
+          </div>
+          <div class="detail">
+            <strong><%= t('mailers.orders_mailer.payment_confirmation.payment_method') %>:</strong> 
+            <span><%= @payment&.payment_method == "CARD" ? t('mailers.orders_mailer.payment_confirmation.payment_methods.card') : @payment&.payment_method || t('mailers.orders_mailer.payment_confirmation.payment_methods.not_specified') %></span>
+          </div>
+          <div class="detail">
+            <strong>Estado:</strong> 
+            <span style="color: #28a745; font-weight: 700;"><%= t('mailers.orders_mailer.payment_confirmation.status_approved') %></span>
+          </div>
+        <% end %>
+      </div>
+
+      <!-- Próximos pasos -->
+      <div class="next-steps">
+        <p><strong><%= t('mailers.orders_mailer.payment_confirmation.what_next') %></strong></p>
+        <p>• <%= t('mailers.orders_mailer.payment_confirmation.next_step_1') %></p>
+        <p>• <%= t('mailers.orders_mailer.payment_confirmation.next_step_2') %></p>
+        <p>• <%= t('mailers.orders_mailer.payment_confirmation.next_step_3') %></p>
+        <p>• <%= t('mailers.orders_mailer.payment_confirmation.next_step_4') %></p>
+      </div>
+
+      <!-- Sección de contacto -->
+      <div class="contact-section">
+        <a href="mailto:biteviasoftware@gmail.com" class="contact-link">
+          <%= t('mailers.orders_mailer.payment_confirmation.contact_button') %>
+        </a>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      <div class="company">BitevíaSoftware</div>
+      <p><%= t('mailers.orders_mailer.payment_confirmation.thank_you') %></p>
+      <p><%= t('mailers.orders_mailer.payment_confirmation.auto_receipt') %></p>
+      <p style="margin-top: 8px;">
+        <small><%= t('mailers.orders_mailer.payment_confirmation.company_info') %></small>
+      </p>
+    </div>
+  </div>
+</body>
+</html>

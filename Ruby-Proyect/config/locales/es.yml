@@ -258,6 +258,39 @@ es:
       email_cliente: "Email:"
       direccion_cliente: "Dirección"
       componente_combo: "Componentes del combo:"
+
+  # Mailer translations
+  mailers:
+    orders_mailer:
+      payment_confirmation:
+        subject: "Confirmación de pago - Pedido %{order_code}"
+        greeting: "Hola %{customer_name},"
+        confirmed_message: "¡Excelente noticia! Hemos confirmado el pago de tu pedido y ya está siendo procesado por nuestro equipo."
+        order_details: "Detalles del Pedido"
+        order_number: "Número de Pedido"
+        date_time: "Fecha y Hora"
+        order_status: "Estado del Pedido"
+        payment_method: "Método de Pago"
+        delivery_address: "Dirección de Entrega"
+        purchased_products: "Productos Comprados"
+        quantity: "Cantidad"
+        total_paid: "Total Pagado"
+        payment_info: "Información del Pago"
+        transaction_id: "Transacción ID"
+        amount: "Monto"
+        status_approved: "APROBADO"
+        what_next: "¿Qué sigue ahora?"
+        next_step_1: "1. Nuestro equipo comenzará a preparar tu pedido"
+        next_step_2: "2. Te notificaremos cuando esté listo para envío"
+        next_step_3: "3. Recibirás información de seguimiento"
+        next_step_4: "4. ¡Disfruta tu comida!"
+        contact_button: "¿Tienes preguntas? Contáctanos"
+        thank_you: "¡Gracias por confiar en nosotros!"
+        auto_receipt: "Este es un comprobante automático de tu compra."
+        company_info: "Si tienes alguna pregunta sobre tu pedido, no dudes en contactarnos."
+        payment_methods:
+          card: "Tarjeta de Crédito/Débito"
+          not_specified: "No especificado"
       ver_componentes: "Ver componentes"
 
 
