@@ -20,7 +20,6 @@ import 'location_page.dart';
 import '../bloc/product/product_bloc.dart';
 import '../bloc/product/product_event.dart';
 import '../bloc/base_state.dart';
-import '../models/product.dart';
 import '../bloc/cart/cart_bloc.dart';
 import '../models/cart_model.dart';
 import 'product_detail_page.dart';
@@ -62,6 +61,9 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
         // PEDIR productos al ProductBloc (viene del backend)
         // Asegúrate de que ProductBloc esté provisto por un ancestor (ej. MultiBlocProvider)
         context.read<ProductBloc>().add(FetchProducts());
+        
+        // CARGAR categorías desde el backend
+        context.read<CategoriasBloc>().add(LoadCategoriasEvent());
       }
     });
   }
@@ -375,16 +377,32 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
         borderRadius: BorderRadius.circular(30),
         boxShadow: [BoxShadow(color: Colors.grey.withOpacity(0.3), spreadRadius: 2, blurRadius: 5, offset: const Offset(0, 3))],
       ),
-      child: TextField(
-        controller: _searchController,
-        decoration: InputDecoration(
-          hintText: AppLocalizations.of(context)!.searchProducts,
-          prefixIcon: const Icon(Icons.search),
-          border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-        ),
-        onChanged: (query) {
-          context.read<SearchBloc>().add(SearchQueryChanged(query));
+      child: ValueListenableBuilder<TextEditingValue>(
+        valueListenable: _searchController,
+        builder: (context, value, child) {
+          return TextField(
+            controller: _searchController,
+            decoration: InputDecoration(
+              hintText: AppLocalizations.of(context)!.searchProducts,
+              prefixIcon: const Icon(Icons.search),
+              suffixIcon: value.text.isNotEmpty
+                  ? IconButton(
+                      icon: const Icon(Icons.clear),
+                      onPressed: () {
+                        _searchController.clear();
+                        context.read<SearchBloc>().add(const ClearSearch());
+                      },
+                    )
+                  : null,
+              border: InputBorder.none,
+              contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+            ),
+            onChanged: (query) {
+              // Siempre enviar el evento SearchQueryChanged
+              // El SearchBloc se encargará de manejar el caso de query vacío
+              context.read<SearchBloc>().add(SearchQueryChanged(query));
+            },
+          );
         },
       ),
     );
@@ -398,17 +416,27 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   }
 
   String _getCategoryName(SearchResult result) {
-    if (result.rawData == null) return 'Sin categoría';
+    if (result.rawData == null) {
+      return 'Sin categoría';
+    }
     
-    final categoryId = result.rawData!['categoria_id'] ?? result.rawData!['category_id'];
-    if (categoryId == null) return 'Sin categoría';
+    // Buscar categoria_id, grupo_id o category_id
+    final categoryId = result.rawData!['categoria_id'] ?? 
+                      result.rawData!['grupo_id'] ?? 
+                      result.rawData!['category_id'];
+    
+    if (categoryId == null) {
+      return 'Sin categoría';
+    }
 
     // Obtener el estado actual del BLoC de categorías
     final categoriasState = context.read<CategoriasBloc>().state;
     if (categoriasState is CategoriasLoadedState) {
       final categoria = categoriasState.categorias.firstWhere(
         (cat) => cat.id.toString() == categoryId.toString(),
-        orElse: () => Categoria(id: -1, nombre: 'Sin categoría'),
+        orElse: () {
+          return Categoria(id: -1, nombre: 'Sin categoría');
+        },
       );
       return categoria.nombre;
     }

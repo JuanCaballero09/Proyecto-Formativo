@@ -1,5 +1,7 @@
 /// Modelo para representar un resultado de búsqueda
 /// Puede ser un producto o una categoría
+import '../core/config/api_config.dart';
+
 class SearchResult {
   final String id;
   final String name;
@@ -31,6 +33,12 @@ class SearchResult {
       imageUrl = imageField['url']?.toString();
     }
     
+    // Si la imagen es una ruta relativa, agregar la base URL
+    if (imageUrl != null && imageUrl.isNotEmpty && !imageUrl.startsWith('http')) {
+      final baseUrlWithoutApi = ApiConfig.baseUrl.replaceAll('/api/v1', '');
+      imageUrl = '$baseUrlWithoutApi$imageUrl';
+    }
+    
     return SearchResult(
       id: json['id']?.toString() ?? '',
       name: json['nombre'] ?? json['name'] ?? 'Sin nombre',
@@ -52,6 +60,12 @@ class SearchResult {
     } else if (imageField is Map) {
       // Si es un objeto, intentar extraer la URL
       imageUrl = imageField['url']?.toString();
+    }
+    
+    // Si la imagen es una ruta relativa, agregar la base URL
+    if (imageUrl != null && imageUrl.isNotEmpty && !imageUrl.startsWith('http')) {
+      final baseUrlWithoutApi = ApiConfig.baseUrl.replaceAll('/api/v1', '');
+      imageUrl = '$baseUrlWithoutApi$imageUrl';
     }
     
     return SearchResult(
