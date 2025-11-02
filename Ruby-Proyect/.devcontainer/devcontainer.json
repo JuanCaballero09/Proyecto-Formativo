@@ -6,11 +6,7 @@
 	"service": "app",
 	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
 
-	// Features to add to the dev container. More info: https://containers.dev/features.
-	// "features": {},
-
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	// This can be used to network with other containers or the host.
 	"forwardPorts": [3000, 5432],
 
 	// Use 'postCreateCommand' to run commands after the container is created.
@@ -18,12 +14,16 @@
 
 	// Use 'postStartCommand' to run commands after the container starts
 	"postStartCommand": "bash .devcontainer/startup.sh",
+	
+	// Disable GPU support for better compatibility on Windows
+	"hostRequirements": {
+		"gpu": false
+	},
 
 	// Configure tool-specific properties.
 	"customizations": {
 		"vscode": {
 			"settings": {
-				// Desactivar caché del servidor de lenguaje Ruby
 				"ruby.intellisense": "rubyLocate",
 				"ruby.useBundler": true,
 				"ruby.useLanguageServer": true,
@@ -32,13 +32,11 @@
 						"useBundler": true
 					}
 				},
-				// Configuraciones de archivos para no cachear
 				"files.watcherExclude": {
 					"**/tmp/**": true,
 					"**/log/**": true,
 					"**/storage/**": true
 				},
-				// Desactivar caché de búsqueda
 				"search.followSymlinks": false,
 				"search.useIgnoreFiles": true
 			},
@@ -47,7 +45,12 @@
 				"KoichiSasada.vscode-rdbg"
 			]
 		}
-	}
+	},
+	
+	// Deshabilitar características que pueden causar problemas en Windows
+	"features": {},
+	"overrideCommand": false,
+	"updateRemoteUserUID": true
 
 	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
 	// "remoteUser": "root"
