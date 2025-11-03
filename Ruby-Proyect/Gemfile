@@ -1,5 +1,8 @@
 source "https://rubygems.org"
 
+# PDF generation from HTML templates
+gem "wicked_pdf"
+gem "wkhtmltopdf-binary"
 # QR Code generator
 gem "rqrcode"
 # Gema de Traduccion
