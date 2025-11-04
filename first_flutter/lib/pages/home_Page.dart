@@ -7,13 +7,19 @@ import 'package:flutter/gestures.dart';
 import 'package:intl/intl.dart';
 
 import '../l10n/app_localizations.dart';
+import '../bloc/search/search_bloc.dart';
+import '../bloc/search/search_event.dart';
+import '../bloc/search/search_state.dart';
+import '../models/search_result.dart';
+import '../models/product.dart';
+import '../models/categoria.dart';
+import '../bloc/categorias/categorias_bloc.dart';
 import 'LogoLoading_page.dart';
 import 'notificacion_page.dart';
 import 'location_page.dart';
 import '../bloc/product/product_bloc.dart';
 import '../bloc/product/product_event.dart';
 import '../bloc/base_state.dart';
-import '../models/product.dart';
 import '../bloc/cart/cart_bloc.dart';
 import '../models/cart_model.dart';
 import 'product_detail_page.dart';
@@ -55,6 +61,9 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
         // PEDIR productos al ProductBloc (viene del backend)
         // Asegúrate de que ProductBloc esté provisto por un ancestor (ej. MultiBlocProvider)
         context.read<ProductBloc>().add(FetchProducts());
+        
+        // CARGAR categorías desde el backend
+        context.read<CategoriasBloc>().add(LoadCategoriasEvent());
       }
     });
   }
@@ -153,9 +162,103 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (_isSearchVisible)
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                child: _buildSearchBar(context),
+              Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                    child: _buildSearchBar(context),
+                  ),
+                  BlocBuilder<SearchBloc, SearchState>(
+                    builder: (context, state) {
+                      if (state is SearchLoading) {
+                        return const Center(child: CircularProgressIndicator());
+                      } else if (state is SearchLoaded) {
+                        return state.results.isEmpty
+                            ? const Center(child: Text('No se encontraron resultados'))
+                            : ListView.builder(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: state.results.length,
+                                itemBuilder: (context, index) {
+                                  final result = state.results[index];
+                                  return ListTile(
+                                    leading: result.image != null
+                                        ? ClipRRect(
+                                            borderRadius: BorderRadius.circular(8),
+                                            child: Image.network(
+                                              result.image!,
+                                              width: 50,
+                                              height: 50,
+                                              fit: BoxFit.cover,
+                                              errorBuilder: (_, __, ___) => Container(
+                                                width: 50,
+                                                height: 50,
+                                                decoration: BoxDecoration(
+                                                  color: Colors.grey[200],
+                                                  borderRadius: BorderRadius.circular(8),
+                                                ),
+                                                child: const Icon(Icons.fastfood, color: Colors.grey),
+                                              ),
+                                            ),
+                                          )
+                                        : Container(
+                                            width: 50,
+                                            height: 50,
+                                            decoration: BoxDecoration(
+                                              color: Colors.grey[200],
+                                              borderRadius: BorderRadius.circular(8),
+                                            ),
+                                            child: const Icon(Icons.fastfood, color: Colors.grey),
+                                          ),
+                                    title: Text(
+                                      result.name,
+                                      style: const TextStyle(fontWeight: FontWeight.bold),
+                                    ),
+                                    subtitle: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        if (result.type == 'product') ...[
+                                          Text(
+                                            result.price != null
+                                                ? '\$${NumberFormat('#,###', 'es_CO').format(result.price)}'
+                                                : 'Precio no disponible',
+                                            style: const TextStyle(
+                                              color: Colors.green,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ],
+                                        Text(
+                                          'Categoría: ${result.type == 'category' ? 'Menú principal' : _getCategoryName(result)}',
+                                          style: TextStyle(color: Colors.grey[600]),
+                                        ),
+                                        if (result.description?.isNotEmpty ?? false)
+                                          Text(
+                                            result.description!,
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                      ],
+                                    ),
+                                    onTap: () {
+                                      if (result.type == 'product' && result.rawData != null) {
+                                        final product = Product.fromJson(result.rawData!);
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (_) => ProductDetailPage(product: product),
+                                          ),
+                                        );
+                                      }
+                                    },
+                                  );
+                                },
+                              );
+                      }
+                      return const SizedBox.shrink();
+                    },
+                  ),
+                ],
               ),
 
             // Promociones
@@ -274,16 +377,32 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
         borderRadius: BorderRadius.circular(30),
         boxShadow: [BoxShadow(color: Colors.grey.withOpacity(0.3), spreadRadius: 2, blurRadius: 5, offset: const Offset(0, 3))],
       ),
-      child: TextField(
-        controller: _searchController,
-        decoration: InputDecoration(
-          hintText: AppLocalizations.of(context)!.searchProducts,
-          prefixIcon: const Icon(Icons.search),
-          border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-        ),
-        onChanged: (q) {
-          // opcional: disparar búsqueda si implementas endpoint search en ProductBloc
+      child: ValueListenableBuilder<TextEditingValue>(
+        valueListenable: _searchController,
+        builder: (context, value, child) {
+          return TextField(
+            controller: _searchController,
+            decoration: InputDecoration(
+              hintText: AppLocalizations.of(context)!.searchProducts,
+              prefixIcon: const Icon(Icons.search),
+              suffixIcon: value.text.isNotEmpty
+                  ? IconButton(
+                      icon: const Icon(Icons.clear),
+                      onPressed: () {
+                        _searchController.clear();
+                        context.read<SearchBloc>().add(const ClearSearch());
+                      },
+                    )
+                  : null,
+              border: InputBorder.none,
+              contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+            ),
+            onChanged: (query) {
+              // Siempre enviar el evento SearchQueryChanged
+              // El SearchBloc se encargará de manejar el caso de query vacío
+              context.read<SearchBloc>().add(SearchQueryChanged(query));
+            },
+          );
         },
       ),
     );
@@ -294,6 +413,35 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
       child: Text(title, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black)),
     );
+  }
+
+  String _getCategoryName(SearchResult result) {
+    if (result.rawData == null) {
+      return 'Sin categoría';
+    }
+    
+    // Buscar categoria_id, grupo_id o category_id
+    final categoryId = result.rawData!['categoria_id'] ?? 
+                      result.rawData!['grupo_id'] ?? 
+                      result.rawData!['category_id'];
+    
+    if (categoryId == null) {
+      return 'Sin categoría';
+    }
+
+    // Obtener el estado actual del BLoC de categorías
+    final categoriasState = context.read<CategoriasBloc>().state;
+    if (categoriasState is CategoriasLoadedState) {
+      final categoria = categoriasState.categorias.firstWhere(
+        (cat) => cat.id.toString() == categoryId.toString(),
+        orElse: () {
+          return Categoria(id: -1, nombre: 'Sin categoría');
+        },
+      );
+      return categoria.nombre;
+    }
+
+    return 'Sin categoría';
   }
 
   Widget _buildPromotionsCarousel() {

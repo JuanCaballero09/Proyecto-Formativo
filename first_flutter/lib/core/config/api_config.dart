@@ -1,7 +1,13 @@
 /// Configuración centralizada para las URLs de la API
 /// Permite cambiar fácilmente entre diferentes entornos
 class ApiConfig {
+  /// ⚠️ IMPORTANTE: Configuración de URL según plataforma
+  /// - Web/iOS Simulator: usa "http://localhost:3000/api/v1"
+  /// - Android Emulator: usa "http://10.0.2.2:3000/api/v1"
+  /// - Dispositivo físico: usa "http://TU_IP:3000/api/v1" (ej: "http://192.168.1.10:3000/api/v1")
+  
   /// URL base por defecto para desarrollo local
+  /// 🔧 CAMBIA ESTA URL según tu plataforma (ver comentario arriba)
   static const String _defaultBaseUrl = "http://localhost:3000/api/v1";
   
   /// URL base para producción (cambiar según necesidades)
@@ -43,8 +49,8 @@ class ApiConfig {
   }
 
   /// Configuración de timeouts para las peticiones HTTP
-  static const Duration connectionTimeout = Duration(seconds: 30);
-  static const Duration receiveTimeout = Duration(seconds: 30);
+  static const Duration connectionTimeout = Duration(seconds: 10);
+  static const Duration receiveTimeout = Duration(seconds: 10);
 
   /// Headers comunes para todas las peticiones
   static const Map<String, String> defaultHeaders = {

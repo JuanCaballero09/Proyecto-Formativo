@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'search_event.dart';
 import 'search_state.dart';
 import '../../service/api_service.dart';
@@ -9,7 +10,11 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
   final ApiService apiService;
 
   SearchBloc(this.apiService) : super(const SearchInitial()) {
-    on<SearchQueryChanged>(_onSearchQueryChanged);
+    // Usar restartable para cancelar búsquedas anteriores cuando llega una nueva
+    on<SearchQueryChanged>(
+      _onSearchQueryChanged,
+      transformer: restartable(),
+    );
     on<ClearSearch>(_onClearSearch);
     on<LoadSearchHistory>(_onLoadSearchHistory);
   }

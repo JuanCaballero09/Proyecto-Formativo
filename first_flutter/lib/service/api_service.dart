@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:async';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import '../models/product.dart';
@@ -111,7 +112,9 @@ class ApiService {
       // ignore: avoid_print
       print("🔍 Obteniendo productos de categoría $categoryId desde: $url");
 
-      final response = await http.get(url, headers: headers);
+      final response = await http
+          .get(url, headers: headers)
+          .timeout(ApiConfig.receiveTimeout);
       
       _handleHttpResponse(response, 'obtener productos por categoría');
 
@@ -137,6 +140,10 @@ class ApiService {
       print("✅ ${products.length} productos obtenidos de categoría $categoryId");
       return products;
 
+    } on TimeoutException {
+      // ignore: avoid_print
+      print("⏱️ Timeout al obtener productos de categoría $categoryId");
+      throw NetworkException('La petición tardó demasiado. Verifica tu conexión y que el servidor esté funcionando.');
     } on NetworkException {
       rethrow;
     } on DataException {
@@ -170,7 +177,9 @@ class ApiService {
       // ignore: avoid_print
       print("🔍 Obteniendo producto $productId de categoría $categoryId desde: $url");
 
-      final response = await http.get(url, headers: headers);
+      final response = await http
+          .get(url, headers: headers)
+          .timeout(ApiConfig.receiveTimeout);
       
       _handleHttpResponse(response, 'obtener producto específico');
 
@@ -196,6 +205,10 @@ class ApiService {
       print("✅ Producto obtenido: ${product.name}");
       return product;
 
+    } on TimeoutException {
+      // ignore: avoid_print
+      print("⏱️ Timeout al obtener producto $productId de categoría $categoryId");
+      throw NetworkException('La petición tardó demasiado. Verifica tu conexión y que el servidor esté funcionando.');
     } on NetworkException {
       rethrow;
     } on DataException {
@@ -210,14 +223,16 @@ class ApiService {
   Future<bool> login(String email, String password) async {
     final url = Uri.parse(ApiConfig.loginUrl);
 
-    final response = await http.post(
-      url,
-      headers: ApiConfig.defaultHeaders,
-      body: jsonEncode({
-        'email': email, 
-        'password': password,
-        }),
-    );
+    final response = await http
+        .post(
+          url,
+          headers: ApiConfig.defaultHeaders,
+          body: jsonEncode({
+            'email': email, 
+            'password': password,
+          }),
+        )
+        .timeout(ApiConfig.connectionTimeout);
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
@@ -241,13 +256,15 @@ class ApiService {
     if (token == null) return false;
 
     final url = Uri.parse(ApiConfig.logoutUrl);
-    final response = await http.post(
-      url,
-      headers: {
-        'Authorization': token,
-        ...ApiConfig.defaultHeaders,
-      },
-    );
+    final response = await http
+        .post(
+          url,
+          headers: {
+            'Authorization': token,
+            ...ApiConfig.defaultHeaders,
+          },
+        )
+        .timeout(ApiConfig.connectionTimeout);
 
     if (response.statusCode == 200) {
       await storage.delete(key: 'token');
@@ -266,7 +283,9 @@ class ApiService {
     final url = Uri.parse('${baseUrl}/categorias');
 
     try {
-      final response = await http.get(url);
+      final response = await http
+          .get(url)
+          .timeout(ApiConfig.receiveTimeout);
 
       if(response.statusCode == 200){
         final List<dynamic> decoded = jsonDecode(response.body);
@@ -278,6 +297,10 @@ class ApiService {
         print('❌ Error HTTP: ${response.statusCode}');
         return null;
       }
+    } on TimeoutException {
+      // ignore: avoid_print
+      print('⏱️ Timeout al obtener categorías');
+      return null;
     } catch (e) {
       // ignore: avoid_print
       print('❌ Error en getCategorias: $e');
@@ -317,11 +340,17 @@ class ApiService {
         'total': data['total'] ?? 0,
       };
 
+    } on TimeoutException {
+      // ignore: avoid_print
+      print('⏱️ Timeout en búsqueda de productos');
+      throw NetworkException('La búsqueda tardó demasiado. Verifica tu conexión.');
     } on NetworkException {
       rethrow;
     } on DataException {
       rethrow;
     } catch (e) {
+      // ignore: avoid_print
+      print('❌ Error en búsqueda: $e');
       throw NetworkException('Error de conexión al buscar productos');
     }
   }
