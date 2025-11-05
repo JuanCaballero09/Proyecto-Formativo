@@ -23,6 +23,7 @@ import '../bloc/base_state.dart';
 import '../bloc/cart/cart_bloc.dart';
 import '../models/cart_model.dart';
 import 'product_detail_page.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -285,9 +286,15 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                     Positioned.fill(
                       child: BlocBuilder<ProductBloc, BaseState>(
                         builder: (context, state) {
-                          if (state is InitialState || state is LoadingState) {
-                            return const Center(child: LogoloadingPage(size: 60));
-                          } else if (state is ErrorState) {
+                        if (state is InitialState || state is LoadingState) {
+                         return Center(
+                            child: LoadingAnimationWidget.threeRotatingDots(
+                            color:  const Color.fromRGBO(237, 88, 33, 1),
+                            size: 40,
+                                 ),
+                         );
+                              }
+                        else if (state is ErrorState) {
                             return Center(
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
