@@ -10,6 +10,7 @@ import '../widgets/status_widgets.dart';
 import '../models/product.dart';
 import 'LogoLoading_page.dart';
 import 'product_detail_page.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 class CategoryProductsPage extends StatefulWidget {
   final String categoryName;
@@ -60,19 +61,22 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
       ),
       body: BlocBuilder<ProductBloc, BaseState>(
         builder: (context, state) {
-          // Aquí reemplazamos la carga con el logo animado
-          if (state is InitialState || state is LoadingState) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  LogoloadingPage(size: 80),  // Tamaño ajustable
-                  const SizedBox(height: 16),
-                  Text(
-                    state is LoadingState
-                        ? (state.message ?? AppLocalizations.of(context)!.loadingProducts)
-                        : AppLocalizations.of(context)!.loadingProducts,
-                    style: const TextStyle(fontSize: 16),
+        if (state is InitialState || state is LoadingState) {
+        return Center(
+         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // Loader de 3 puntos giratorios
+           LoadingAnimationWidget.threeRotatingDots(
+           color: const Color.fromRGBO(237, 88, 33, 1),
+            size: 40,
+        ),
+        const SizedBox(height: 16),
+        Text(
+          state is LoadingState
+              ? (state.message ?? AppLocalizations.of(context)!.loadingProducts)
+              : AppLocalizations.of(context)!.loadingProducts,
+          style: const TextStyle(fontSize: 16),
                   ),
                 ],
               ),
