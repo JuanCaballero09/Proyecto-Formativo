@@ -24,12 +24,22 @@ class ProductDetailPage extends StatelessWidget {
     print('==========================================');
     
     return Scaffold(
-      appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.productDetails),
-        backgroundColor: const Color.fromRGBO(237, 88, 33, 1),
-        foregroundColor: Colors.white,
-        elevation: 0,
-      ),
+appBar: AppBar(
+  title: Text(
+    AppLocalizations.of(context)!.productDetails,
+    style: const TextStyle(
+      color: Colors.white, // <-- color del texto
+      fontWeight: FontWeight.bold,
+    ),
+  ),
+  backgroundColor: const Color.fromRGBO(237, 88, 33, 1),
+  foregroundColor: Colors.white,
+  elevation: 0,
+  iconTheme: const IconThemeData(
+    color: Colors.white, // <-- color de la flecha ("lechita")
+  ),
+),
+
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(24.0),
