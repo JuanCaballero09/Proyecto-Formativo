@@ -162,6 +162,17 @@ class PerfilPage extends StatelessWidget {
                     }
                   },
                 ),
+                const SizedBox(height: 8),
+                // Versión de la app
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 24.0),
+                  child: Center(
+                    child: Text(
+                      'v4.1.9',
+                      style: TextStyle(color: Colors.black54, fontSize: 14),
+                    ),
+                  ),
+                ),
               ],
             ),
           );
