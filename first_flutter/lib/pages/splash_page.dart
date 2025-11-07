@@ -109,6 +109,18 @@ class _SplashPageState extends State<SplashPage>
             textAlign: TextAlign.center,
           ),
         ),
+        const SizedBox(height: 12),
+        Text(
+          'v4.1.9',
+          style: GoogleFonts.quicksand(
+            textStyle: const TextStyle(
+              color: Colors.white70,
+              fontSize: 12,
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+          textAlign: TextAlign.center,
+        ),
                 ]
                     ),
                   
