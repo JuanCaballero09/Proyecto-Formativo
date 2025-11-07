@@ -1,5 +1,6 @@
 // lib/pages/home_page.dart
 import 'dart:async';
+import 'package:first_flutter/widgets/floating_cart_button.dart';
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -23,6 +24,8 @@ import '../bloc/base_state.dart';
 import '../bloc/cart/cart_bloc.dart';
 import '../models/cart_model.dart';
 import 'product_detail_page.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
+
 
 class HomePage extends StatefulWidget {
   @override
@@ -37,8 +40,8 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   ];
 
   late PageController _pageController;
-  final ScrollController _scrollController = ScrollController(); // para el SingleChildScrollView
-  final ScrollController _popularScrollController = ScrollController(); // para la lista horizontal de populares
+  final ScrollController _scrollController = ScrollController();
+  final ScrollController _popularScrollController = ScrollController();
 
   int _currentIndex = 0;
   Timer? _timer;
@@ -58,11 +61,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
         });
         _startTimer();
 
-        // PEDIR productos al ProductBloc (viene del backend)
-        // Asegúrate de que ProductBloc esté provisto por un ancestor (ej. MultiBlocProvider)
         context.read<ProductBloc>().add(FetchProducts());
-        
-        // CARGAR categorías desde el backend
         context.read<CategoriasBloc>().add(LoadCategoriasEvent());
       }
     });
@@ -94,21 +93,26 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     _searchController.dispose();
     super.dispose();
   }
-
-  // Scroll con flechas: avanza o retrocede cierta cantidad
-  void _scrollPopular(int direction) {
-    // direction: -1 izquierda, +1 derecha
-    final double step = 172; // ancho tarjeta + margin (ajusta si tu card cambia)
-    final double target = _popularScrollController.offset + (step * direction);
-    _popularScrollController.animateTo(
-      target.clamp(
-        0.0,
-        _popularScrollController.position.maxScrollExtent,
+  Widget _buildSearchBar(BuildContext context) {
+  return TextField(
+    controller: _searchController,
+    onChanged: (query) {
+      context.read<SearchBloc>().add(SearchQueryChanged(query));
+    },
+    decoration: InputDecoration(
+      hintText: 'Buscar productos...',
+      prefixIcon: const Icon(Icons.search),
+      filled: true,
+      fillColor: Colors.grey[200],
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide.none,
       ),
-      duration: const Duration(milliseconds: 400),
-      curve: Curves.easeInOut,
-    );
-  }
+      contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 16),
+    ),
+  );
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -156,262 +160,243 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
           ),
         ),
       ),
-      body: SingleChildScrollView(
-        controller: _scrollController,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (_isSearchVisible)
-              Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                    child: _buildSearchBar(context),
-                  ),
-                  BlocBuilder<SearchBloc, SearchState>(
-                    builder: (context, state) {
-                      if (state is SearchLoading) {
-                        return const Center(child: CircularProgressIndicator());
-                      } else if (state is SearchLoaded) {
-                        return state.results.isEmpty
-                            ? const Center(child: Text('No se encontraron resultados'))
-                            : ListView.builder(
-                                shrinkWrap: true,
-                                physics: const NeverScrollableScrollPhysics(),
-                                itemCount: state.results.length,
-                                itemBuilder: (context, index) {
-                                  final result = state.results[index];
-                                  return ListTile(
-                                    leading: result.image != null
-                                        ? ClipRRect(
-                                            borderRadius: BorderRadius.circular(8),
-                                            child: Image.network(
-                                              result.image!,
-                                              width: 50,
-                                              height: 50,
-                                              fit: BoxFit.cover,
-                                              errorBuilder: (_, __, ___) => Container(
+     body: Stack(
+      children: [
+        SingleChildScrollView(
+          controller: _scrollController,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (_isSearchVisible)
+                Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                      child: _buildSearchBar(context),
+                    ),
+                    BlocBuilder<SearchBloc, SearchState>(
+                      builder: (context, state) {
+                        if (state is SearchLoading) {
+                          return const Center(child: CircularProgressIndicator());
+                        } else if (state is SearchLoaded) {
+                          return state.results.isEmpty
+                              ? const Center(child: Text('No se encontraron resultados'))
+                              : ListView.builder(
+                                  shrinkWrap: true,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  itemCount: state.results.length,
+                                  itemBuilder: (context, index) {
+                                    final result = state.results[index];
+                                    return ListTile(
+                                      leading: result.image != null
+                                          ? ClipRRect(
+                                              borderRadius: BorderRadius.circular(8),
+                                              child: Image.network(
+                                                result.image!,
                                                 width: 50,
                                                 height: 50,
-                                                decoration: BoxDecoration(
-                                                  color: Colors.grey[200],
-                                                  borderRadius: BorderRadius.circular(8),
+                                                fit: BoxFit.cover,
+                                                errorBuilder: (_, __, ___) => Container(
+                                                  width: 50,
+                                                  height: 50,
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.grey[200],
+                                                    borderRadius: BorderRadius.circular(8),
+                                                  ),
+                                                  child: const Icon(Icons.fastfood, color: Colors.grey),
                                                 ),
-                                                child: const Icon(Icons.fastfood, color: Colors.grey),
+                                              ),
+                                            )
+                                          : Container(
+                                              width: 50,
+                                              height: 50,
+                                              decoration: BoxDecoration(
+                                                color: Colors.grey[200],
+                                                borderRadius: BorderRadius.circular(8),
+                                              ),
+                                              child: const Icon(Icons.fastfood, color: Colors.grey),
+                                            ),
+                                      title: Text(
+                                        result.name,
+                                        style: const TextStyle(fontWeight: FontWeight.bold),
+                                      ),
+                                      subtitle: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          if (result.type == 'product') ...[
+                                            Text(
+                                              result.price != null
+                                                  ? '\$${NumberFormat('#,###', 'es_CO').format(result.price)}'
+                                                  : 'Precio no disponible',
+                                              style: const TextStyle(
+                                                color: Colors.green,
+                                                fontWeight: FontWeight.bold,
                                               ),
                                             ),
-                                          )
-                                        : Container(
-                                            width: 50,
-                                            height: 50,
-                                            decoration: BoxDecoration(
-                                              color: Colors.grey[200],
-                                              borderRadius: BorderRadius.circular(8),
-                                            ),
-                                            child: const Icon(Icons.fastfood, color: Colors.grey),
-                                          ),
-                                    title: Text(
-                                      result.name,
-                                      style: const TextStyle(fontWeight: FontWeight.bold),
-                                    ),
-                                    subtitle: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        if (result.type == 'product') ...[
+                                          ],
                                           Text(
-                                            result.price != null
-                                                ? '\$${NumberFormat('#,###', 'es_CO').format(result.price)}'
-                                                : 'Precio no disponible',
-                                            style: const TextStyle(
-                                              color: Colors.green,
-                                              fontWeight: FontWeight.bold,
-                                            ),
+                                            'Categoría: ${result.type == 'category' ? 'Menú principal' : _getCategoryName(result)}',
+                                            style: TextStyle(color: Colors.grey[600]),
                                           ),
+                                          if (result.description?.isNotEmpty ?? false)
+                                            Text(
+                                              result.description!,
+                                              maxLines: 2,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
                                         ],
-                                        Text(
-                                          'Categoría: ${result.type == 'category' ? 'Menú principal' : _getCategoryName(result)}',
-                                          style: TextStyle(color: Colors.grey[600]),
-                                        ),
-                                        if (result.description?.isNotEmpty ?? false)
-                                          Text(
-                                            result.description!,
-                                            maxLines: 2,
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                      ],
-                                    ),
-                                    onTap: () {
-                                      if (result.type == 'product' && result.rawData != null) {
-                                        final product = Product.fromJson(result.rawData!);
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (_) => ProductDetailPage(product: product),
-                                          ),
-                                        );
-                                      }
-                                    },
-                                  );
-                                },
-                              );
-                      }
-                      return const SizedBox.shrink();
-                    },
-                  ),
-                ],
-              ),
+                                      ),
+                                      onTap: () {
+                                        if (result.type == 'product' && result.rawData != null) {
+                                          final product = Product.fromJson(result.rawData!);
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (_) => ProductDetailPage(product: product),
+                                            ),
+                                          );
+                                        }
+                                      },
+                                    );
+                                  },
+                                );
+                        }
+                        return const SizedBox.shrink();
+                      },
+                    ),
+                  ],
+                ),
 
-            // Promociones
-            _buildSectionTitle(AppLocalizations.of(context)!.todaysOffers),
-            _buildPromotionsCarousel(),
+              // Promociones
+              _buildSectionTitle(AppLocalizations.of(context)!.todaysOffers),
+              _buildPromotionsCarousel(),
 
-            // Productos populares (viene del backend via ProductBloc)
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-              child: Text(
-                AppLocalizations.of(context)!.popularProducts,
-                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black),
-              ),
-            ),
-
-            // Area con flechas + lista horizontal
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              child: SizedBox(
-                height: 260,
-                child: Stack(
+              // 🧡 Productos populares
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Lista horizontal de productos (consumida desde ProductBloc)
-                    Positioned.fill(
-                      child: BlocBuilder<ProductBloc, BaseState>(
-                        builder: (context, state) {
-                          if (state is InitialState || state is LoadingState) {
-                            return const Center(child: LogoloadingPage(size: 60));
-                          } else if (state is ErrorState) {
-                            return Center(
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text('Error: ${state.message}', style: const TextStyle(color: Colors.red)),
-                                  const SizedBox(height: 8),
-                                  ElevatedButton(
-                                    onPressed: () => context.read<ProductBloc>().add(FetchProducts()),
-                                    child: const Text('Reintentar'),
-                                  ),
-                                ],
-                              ),
-                            );
-                          } else if (state is SuccessState<List<Product>>) {
-                            final products = state.data;
-                            if (products.isEmpty) {
-                              return Center(child: Text(AppLocalizations.of(context)!.noProductsFound));
-                            }
-
-                            // Tomar hasta 10 productos
-                            final displayList = products.length > 10 ? products.sublist(0, 10) : products;
-
-                            return ListView.builder(
-                              controller: _popularScrollController,
-                              scrollDirection: Axis.horizontal,
-                              padding: const EdgeInsets.symmetric(horizontal: 48.0, vertical: 8.0), // deja espacio para flechas
-                              itemCount: displayList.length,
-                              itemBuilder: (context, index) {
-                                final p = displayList[index];
-                                return _productCardFromModel(p);
-                              },
-                            );
-                          } else {
-                            return Center(child: Text(AppLocalizations.of(context)!.unknownState));
-                          }
-                        },
+                    Text(
+                      AppLocalizations.of(context)!.popularProducts,
+                      style: const TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
                       ),
                     ),
-                    // Flecha izquierda
-                    Positioned(
-                      left: 8,
-                      top: 0,
-                      bottom: 0,
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: FloatingActionButton(
-                          heroTag: 'leftPopular',
-                          mini: true,
-                          backgroundColor: Colors.white,
-                          onPressed: () => _scrollPopular(-1),
-                          child: const Icon(Icons.arrow_left, color: Colors.black),
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        const Icon(Icons.swipe, size: 18, color: Colors.grey),
+                        const SizedBox(width: 6),
+                        TweenAnimationBuilder<double>(
+                          tween: Tween(begin: 0.3, end: 1.0),
+                          duration: const Duration(seconds: 1),
+                          curve: Curves.easeInOut,
+                          builder: (context, value, child) =>
+                              Opacity(opacity: value, child: child),
+                          onEnd: () {
+                            (context as Element).markNeedsBuild();
+                          },
+                          child: const Text(
+                            'Desliza para ver más',
+                            style: TextStyle(
+                              color: Colors.grey,
+                              fontSize: 13,
+                              fontStyle: FontStyle.italic,
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                    // Flecha derecha
-                    Positioned(
-                      right: 8,
-                      top: 0,
-                      bottom: 0,
-                      child: Align(
-                        alignment: Alignment.centerRight,
-                        child: FloatingActionButton(
-                          heroTag: 'rightPopular',
-                          mini: true,
-                          backgroundColor: Colors.white,
-                          onPressed: () => _scrollPopular(1),
-                          child: const Icon(Icons.arrow_right, color: Colors.black),
-                        ),
-                      ),
+                      ],
                     ),
                   ],
                 ),
               ),
-            ),
 
-            const SizedBox(height: 16),
-          ],
+              // Lista horizontal de productos
+              SizedBox(
+                height: 270,
+                child: BlocBuilder<ProductBloc, BaseState>(
+                  builder: (context, state) {
+                    if (state is InitialState || state is LoadingState) {
+                      return Center(
+                        child: LoadingAnimationWidget.threeRotatingDots(
+                          color: const Color.fromRGBO(237, 88, 33, 1),
+                          size: 40,
+                        ),
+                      );
+                    } else if (state is ErrorState) {
+                      return Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text('Error: ${state.message}',
+                                style: const TextStyle(color: Colors.red)),
+                            const SizedBox(height: 8),
+                            ElevatedButton(
+                              onPressed: () =>
+                                  context.read<ProductBloc>().add(FetchProducts()),
+                              child: const Text('Reintentar'),
+                            ),
+                          ],
+                        ),
+                      );
+                    } else if (state is SuccessState<List<Product>>) {
+                      final products = state.data;
+                      if (products.isEmpty) {
+                        return Center(
+                            child: Text(AppLocalizations.of(context)!.noProductsFound));
+                      }
+
+                      final displayList =
+                          products.length > 10 ? products.sublist(0, 10) : products;
+
+                      // ✅ Scroll táctil y con mouse
+                      return ScrollConfiguration(
+                        behavior: ScrollConfiguration.of(context).copyWith(
+                          dragDevices: {
+                            PointerDeviceKind.touch,
+                            PointerDeviceKind.mouse,
+                          },
+                        ),
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          physics: const BouncingScrollPhysics(),
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                          itemCount: displayList.length,
+                          itemBuilder: (context, index) {
+                            final p = displayList[index];
+                            return _productCardFromModel(p);
+                          },
+                        ),
+                      );
+                    } else {
+                      return Center(
+                          child: Text(AppLocalizations.of(context)!.unknownState));
+                    }
+                  },
+                ),
+              ),
+
+              const SizedBox(height: 16),
+            ],
+          ),
         ),
-      ),
-    );
-  }
 
-  Widget _buildSearchBar(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(30),
-        boxShadow: [BoxShadow(color: Colors.grey.withOpacity(0.3), spreadRadius: 2, blurRadius: 5, offset: const Offset(0, 3))],
-      ),
-      child: ValueListenableBuilder<TextEditingValue>(
-        valueListenable: _searchController,
-        builder: (context, value, child) {
-          return TextField(
-            controller: _searchController,
-            decoration: InputDecoration(
-              hintText: AppLocalizations.of(context)!.searchProducts,
-              prefixIcon: const Icon(Icons.search),
-              suffixIcon: value.text.isNotEmpty
-                  ? IconButton(
-                      icon: const Icon(Icons.clear),
-                      onPressed: () {
-                        _searchController.clear();
-                        context.read<SearchBloc>().add(const ClearSearch());
-                      },
-                    )
-                  : null,
-              border: InputBorder.none,
-              contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-            ),
-            onChanged: (query) {
-              // Siempre enviar el evento SearchQueryChanged
-              // El SearchBloc se encargará de manejar el caso de query vacío
-              context.read<SearchBloc>().add(SearchQueryChanged(query));
-            },
-          );
-        },
-      ),
-    );
-  }
-
+        // 🛒 Carrito flotante
+        //const FloatingCartButton(),
+      ],
+    ),
+  );
+}
   Widget _buildSectionTitle(String title) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-      child: Text(title, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black)),
+      child: Text(
+        title,
+        style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black),
+      ),
     );
   }
 
@@ -419,28 +404,21 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     if (result.rawData == null) {
       return 'Sin categoría';
     }
-    
-    // Buscar categoria_id, grupo_id o category_id
-    final categoryId = result.rawData!['categoria_id'] ?? 
-                      result.rawData!['grupo_id'] ?? 
-                      result.rawData!['category_id'];
-    
+    final categoryId = result.rawData!['categoria_id'] ??
+        result.rawData!['grupo_id'] ??
+        result.rawData!['category_id'];
     if (categoryId == null) {
       return 'Sin categoría';
     }
 
-    // Obtener el estado actual del BLoC de categorías
     final categoriasState = context.read<CategoriasBloc>().state;
     if (categoriasState is CategoriasLoadedState) {
       final categoria = categoriasState.categorias.firstWhere(
         (cat) => cat.id.toString() == categoryId.toString(),
-        orElse: () {
-          return Categoria(id: -1, nombre: 'Sin categoría');
-        },
+        orElse: () => Categoria(id: -1, nombre: 'Sin categoría'),
       );
       return categoria.nombre;
     }
-
     return 'Sin categoría';
   }
 
@@ -474,7 +452,13 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
           SmoothPageIndicator(
             controller: _pageController,
             count: imaglist.length,
-            effect: const WormEffect(dotHeight: 8, dotWidth: 8, spacing: 8, activeDotColor: Colors.orange, dotColor: Colors.grey),
+            effect: const WormEffect(
+              dotHeight: 8,
+              dotWidth: 8,
+              spacing: 8,
+              activeDotColor: Colors.orange,
+              dotColor: Colors.grey,
+            ),
           ),
         ],
       ),
@@ -484,8 +468,10 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   Widget _productCardFromModel(Product product) {
     return GestureDetector(
       onTap: () {
-        // abrir detalle
-        Navigator.push(context, MaterialPageRoute(builder: (_) => ProductDetailPage(product: product)));
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => ProductDetailPage(product: product)),
+        );
       },
       child: Container(
         width: 160,
@@ -494,10 +480,8 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           elevation: 4,
           child: Column(
-            mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Imagen (si viene vacía, muestra placeholder automático)
               ClipRRect(
                 borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
                 child: product.image.isNotEmpty
@@ -506,42 +490,62 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                         height: 110,
                         width: double.infinity,
                         fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => const Icon(Icons.fastfood, size: 60),
+                        errorBuilder: (_, __, ___) =>
+                            const Icon(Icons.fastfood, size: 60),
                       )
                     : Container(
                         height: 110,
                         color: Colors.grey[200],
-                        child: const Center(child: Icon(Icons.fastfood, size: 60)),
+                        child: const Center(
+                            child: Icon(Icons.fastfood, size: 60)),
                       ),
               ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Text(product.name, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold), maxLines: 2, overflow: TextOverflow.ellipsis),
+                child: Text(
+                  product.name,
+                  style: const TextStyle(
+                      fontSize: 14, fontWeight: FontWeight.bold),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 8.0),
                 child: Text(
-                  // descripción corta: toma primeros 40 chars
-                  product.description.isNotEmpty ? (product.description.length > 40 ? '${product.description.substring(0, 40)}...' : product.description) : '',
-                  style: const TextStyle(fontSize: 12, color: Colors.grey),
+                  product.description.isNotEmpty
+                      ? (product.description.length > 40
+                          ? '${product.description.substring(0, 40)}...'
+                          : product.description)
+                      : '',
+                  style:
+                      const TextStyle(fontSize: 12, color: Colors.grey),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
               const Spacer(),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 6.0),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 8.0, vertical: 6.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('\$${NumberFormat('#,###', 'es_CO').format(product.price)}', style: const TextStyle(color: Colors.green, fontWeight: FontWeight.bold)),
+                    Text(
+                      '\$${NumberFormat('#,###', 'es_CO').format(product.price)}',
+                      style: const TextStyle(
+                          color: Colors.green,
+                          fontWeight: FontWeight.bold),
+                    ),
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                        backgroundColor: const Color.fromRGBO(237, 88, 33, 1),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 8),
+                        backgroundColor:
+                            const Color.fromRGBO(237, 88, 33, 1),
                       ),
                       onPressed: () {
-                        // agregar al carrito usando CartBloc
                         context.read<CartBloc>().add(AddToCart(CartItem(
                               id: product.id.toString(),
                               name: product.name,
@@ -550,10 +554,12 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                               image: product.image,
                               description: product.description,
                             )));
-
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Añadido al carrito')));
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Añadido al carrito')),
+                        );
                       },
-                      child: const Icon(Icons.add_shopping_cart, size: 18, color: Colors.white),
+                      child: const Icon(Icons.add_shopping_cart,
+                          size: 18, color: Colors.white),
                     )
                   ],
                 ),
@@ -565,4 +571,3 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     );
   }
 }
-

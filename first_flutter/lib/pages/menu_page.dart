@@ -6,7 +6,7 @@ import '../models/categoria.dart';
 import 'category_products_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'LogoLoading_page.dart';
-
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 class MenuPage extends StatefulWidget {
   const MenuPage({super.key});
 
@@ -41,6 +41,8 @@ class _MenuPageState extends State<MenuPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            const SizedBox(height: 30),
+            
             // Título principal
             Padding(
               padding: const EdgeInsets.all(16.0),
@@ -62,6 +64,7 @@ class _MenuPageState extends State<MenuPage> {
                 style: TextStyle(
                   fontSize: 16,
                   color: Colors.grey[600],
+                   height: 1.0, // reduce el alto de línea
                 ),
               ),
             ),
@@ -71,13 +74,16 @@ class _MenuPageState extends State<MenuPage> {
             // Grid de categorías usando BLoC
             BlocBuilder<CategoriasBloc, CategoriasState>(
               builder: (context, state) {
-                if (state is CategoriasLoadingState) {
-                  return const Center(
-                    child: Padding(
-                      padding: EdgeInsets.all(50.0),
-                      child: LogoloadingPage(),
-                    ),
-                  );
+                     if (state is CategoriasLoadingState) {
+                        return Center(
+                       child: Padding(
+                        padding: const EdgeInsets.all(50.0),
+                            child: LoadingAnimationWidget.threeRotatingDots(
+                            color:  const Color.fromRGBO(237, 88, 33, 1),
+                            size: 40,
+                                 ),
+                       )
+                         );
                 } else if (state is CategoriasLoadedState) {
                   return _buildCategoriasGrid(state.categorias);
                 } else if (state is CategoriasErrorState) {
