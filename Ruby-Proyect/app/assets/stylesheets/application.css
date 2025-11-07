@@ -8624,3 +8624,25 @@ a:focus, button:focus, input:focus, select:focus, textarea:focus {
         font-size: 0.8em;
     }
 }
+
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+}
+
+.pagination a ,
+.pagination span {
+    padding: 5px 5px;
+    color: #ae370c;
+    text-decoration: none;
+}
+
+.pagination a:hover {
+    color: #af370b;
+}
+
+.pagination .current {
+    color: #007bff;
+}
