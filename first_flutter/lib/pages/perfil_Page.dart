@@ -2,7 +2,6 @@ import 'package:first_flutter/bloc/auth/auth_event.dart';
 import 'package:first_flutter/l10n/app_localizations.dart';
 import 'package:first_flutter/service/api_service.dart';
 import 'package:first_flutter/widgets/language_selector.dart';
-import 'package:first_flutter/widgets/theme_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/auth/auth_bloc.dart';
@@ -54,8 +53,7 @@ class PerfilPage extends StatelessWidget {
                       const CircleAvatar(
                         radius: 30,
                         backgroundColor: Colors.black,
-                        child:
-                            Icon(Icons.person, color: Colors.white, size: 40),
+                        child: Icon(Icons.person, color: Colors.white, size: 40),
                       ),
                       const SizedBox(width: 12),
                       Expanded(
@@ -112,18 +110,16 @@ class PerfilPage extends StatelessWidget {
                       ),
                       const Spacer(),
                       const LanguageSelector(),
-                      const SizedBox(height: 8),
-                      const ThemeSelector(),
                     ],
                   ),
                 ),
 
                 // Lista de opciones
-                _buildDisabledTile(Icons.restaurant_menu,
-                    AppLocalizations.of(context)!.orders),
-                _buildDisabledTile(Icons.receipt_long, 'Datos de facturación'),
                 _buildDisabledTile(
-                    Icons.location_on, AppLocalizations.of(context)!.addresses),
+                    Icons.restaurant_menu, AppLocalizations.of(context)!.orders),
+                _buildDisabledTile(Icons.receipt_long, 'Datos de facturación'),
+                _buildDisabledTile(Icons.location_on,
+                    AppLocalizations.of(context)!.addresses),
                 _buildDisabledTile(
                     Icons.edit, AppLocalizations.of(context)!.editProfile),
                 _buildDisabledTile(Icons.privacy_tip,
@@ -161,17 +157,6 @@ class PerfilPage extends StatelessWidget {
                       );
                     }
                   },
-                ),
-                const SizedBox(height: 8),
-                // Versión de la app
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 24.0),
-                  child: Center(
-                    child: Text(
-                      'v4.1.9',
-                      style: TextStyle(color: Colors.black54, fontSize: 14),
-                    ),
-                  ),
                 ),
               ],
             ),
@@ -218,7 +203,7 @@ class PerfilPage extends StatelessWidget {
                           Navigator.pushNamed(context, "/login");
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color.fromRGBO(237, 88, 33, 1),
+                              backgroundColor: const Color.fromRGBO(237, 88, 33, 1), 
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
                           ),
