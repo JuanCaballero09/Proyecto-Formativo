@@ -1,6 +1,6 @@
 <% productos_disponibles = @grupo.products.where(disponible: true).order(id: :asc) %>
 
-<% if productos_disponibles.any? %>
+<% if @products.any? %>
 <br>
   <div class="grupo-productos-page">
     <div class="grupo-header">
@@ -12,7 +12,7 @@
     </div>
     
     <div class="productos-grid">
-      <% productos_disponibles.each do |producto| %>
+      <% @products.each do |producto| %>
         <div class="producto-card-page">
           <%= link_to grupo_product_path(@grupo, producto), class: "producto-link-page" do %>
             <div class="producto-imagen-container">
@@ -23,12 +23,12 @@
             <div class="producto-info-page">
               <h4 class="producto-nombre-page"><%= producto.nombre %></h4> 
               <p class="producto-precio-page">
-                <strong class="precio" data-precio="<%= producto.precio%>" data-locale="<%= I18n.locale %>">$</strong>
+                <p class="carta-precio"><strong class="precio-unitario" data-precio="<%= producto.precio %>" data-locale="<%= I18n.locale %>" style="font-size: 1.4em; color: var(--base); font-weight: bold;">$</strong></p>
               </p>
             </div>
           <% end %>
           <div class="producto-acciones-page">
-            <%= button_to t("home.section.agregar_carrito"), 
+            <%= button_to t("home.carrito.agregar_carrito"), 
                          carrito_items_path(product_id: producto.id), 
                          method: :post, 
                          class: "producto-btn-page",
@@ -38,9 +38,12 @@
       <% end %>
     </div>
   </div>
+  <%= paginate @products %>
 <% else %>
   <div class="sin-productos">
     <%= image_tag "ProductoNoDisponible.png", alt: "Producto No Disponible" %>
     <h2><%= t("home.categoria.sin_producto")%></h2>
   </div>
 <% end %>
+
+

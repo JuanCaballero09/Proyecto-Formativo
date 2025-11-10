@@ -9,8 +9,8 @@
   </div>
   <br>
 
-  <% if @ingredientes.any? %>
-    <% @ingredientes.each do |ingrediente| %>
+  <% if @ingredientes_paginado.any? %>
+    <% @ingredientes_paginado.each do |ingrediente| %>
       <div class="dashboard-ingrediente" data-nombre="<%= I18n.transliterate(ingrediente.nombre.downcase) %>">
         <div class="grupo-info-dashboard">
           <strong><%= ingrediente.nombre %></strong>
@@ -32,6 +32,7 @@
       No hay ingredientes registrados.
     </div>
   <% end %>
+  <%= paginate @ingredientes_paginado %>
 </section>
 
 <script>

@@ -51,14 +51,15 @@
 
   <!-- Sección de Productos por Grupo -->
   <% @productos_por_grupo&.each do |grupo, productos| %>
-    <% if productos.any? %>
+     <% productos_paginados = productos.select { |p| @products_paginado.include?(p) } %>
+    <% if productos_paginados.any? %>
       <div style="margin-bottom: 40px;">
         <h3 style="color: var(--base); border-bottom: 2px solid var(--base-oscuro); padding-bottom: 5px; margin-bottom: 10px;">
           <%= grupo&.nombre || "Sin Categoría" %>
         </h3>
 
         <div class="productss">
-          <% productos.each do |product| %>
+          <% productos_paginados.each do |product| %>
             <div class="product-card" data-nombre="<%= I18n.transliterate(product.nombre.downcase) %>">
               <h3><%= product.nombre %></h3>
               <%= image_tag(product.imagen.attached? ? product.imagen : "LogoLogoText2.svg") %>
@@ -83,4 +84,5 @@
       </div>
     <% end %>
   <% end %>
+  <%= paginate @products_paginado %>
 </section>

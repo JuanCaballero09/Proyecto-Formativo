@@ -17,11 +17,17 @@ class Dashboard::ProductsController < ApplicationController
                                        .sort_by { |grupo, _| grupo&.id || 0 }
     else
       @combos = Product.where(type: "Combo").order(:id)
-      @productos_por_grupo = Product.where(type: [ nil, "" ])
-                                   .includes(:grupo)
-                                   .group_by(&:grupo)
-                                   .sort_by { |grupo, _| grupo&.id || 0 }
+        @productos_por_grupo = Product.where(type: [ nil, "" ])
+                                    .includes(:grupo)
+                                    .group_by(&:grupo)
+                                    .sort_by { |grupo, _| grupo&.id || 0 }
+                                                            
     end
+    @products_paginado = Product.where(type: [nil, ""])
+                                      .includes(:grupo)
+                                      .order(:id)
+                                      .page(params[:page])
+                                      .per(10)
   end
 
   def new
