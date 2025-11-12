@@ -1,6 +1,7 @@
 // lib/pages/home_page.dart
 import 'dart:async';
-import 'package:first_flutter/widgets/floating_cart_button.dart';
+import 'package:first_flutter/pages/location_Page.dart';
+import 'package:first_flutter/pages/notificacion_Page.dart';
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -16,8 +17,6 @@ import '../models/product.dart';
 import '../models/categoria.dart';
 import '../bloc/categorias/categorias_bloc.dart';
 import 'LogoLoading_page.dart';
-import 'notificacion_page.dart';
-import 'location_page.dart';
 import '../bloc/product/product_bloc.dart';
 import '../bloc/product/product_event.dart';
 import '../bloc/base_state.dart';

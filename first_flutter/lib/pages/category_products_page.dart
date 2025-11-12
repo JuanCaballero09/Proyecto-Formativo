@@ -7,7 +7,6 @@ import '../bloc/product/product_event.dart';
 import '../bloc/base_state.dart';
 import '../widgets/status_widgets.dart';
 import '../models/product.dart';
-import 'LogoLoading_page.dart';
 import 'product_detail_page.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 

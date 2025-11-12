@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 //import '../l10n/app_localizations.dart';
 
 class SplashPage extends StatefulWidget {
@@ -78,9 +79,9 @@ class _SplashPageState extends State<SplashPage>
                     height: 160,
                   ),
                   SizedBox(height: 30),
-                  CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                    strokeWidth: 3,
+                  LoadingAnimationWidget.progressiveDots(
+                    color: Colors.white,
+                    size: 50,
                   ),
                   
                 
@@ -111,7 +112,7 @@ class _SplashPageState extends State<SplashPage>
         ),
         const SizedBox(height: 12),
         Text(
-          'v4.1.9',
+          'v4.3.3',
           style: GoogleFonts.quicksand(
             textStyle: const TextStyle(
               color: Colors.white70,
