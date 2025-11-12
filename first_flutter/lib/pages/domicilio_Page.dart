@@ -1,55 +1,157 @@
 import 'package:flutter/material.dart';
-import '../l10n/app_localizations.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
+import '../bloc/auth/auth_bloc.dart';
+import '../bloc/auth/auth_state.dart';
+import '../service/api_service.dart';
+import '../core/errors/exceptions.dart';
 
 class DomicilioPage extends StatefulWidget {
+  const DomicilioPage({super.key});
+
   @override
   DomicilioPageState createState() => DomicilioPageState();
 }
 
 class DomicilioPageState extends State<DomicilioPage> {
-  @override
-  Widget build(BuildContext context) {
-    final pedidos = [
-      {
-        "id": "001", 
-        "estado": AppLocalizations.of(context)!.onTheWay, 
-        "tiempo": "15 min",
-        "direccion": "Calle 123 #45-67",
-        "total": "35000",
-        "productos": ["Pizza Hawaiana", "Coca Cola"],
-        "repartidor": "Juan Pérez",
-        "telefono": "+57 300 123 4567",
-        "observaciones": "Entregar en la portería"
-      },
-      {
-        "id": "002", 
-        "estado": AppLocalizations.of(context)!.preparing, 
-        "tiempo": "25 min",
-        "direccion": "Carrera 89 #13-34", 
-        "total": "42000",
-        "productos": ["Hamburguesa BBQ", "Papas Fritas", "Ensalada César"],
-        "repartidor": null,
-        "telefono": null,
-        "observaciones": "Sin cebolla en la hamburguesa"
-      },
-    ];
+  final TextEditingController _emailController = TextEditingController();
+  List<Map<String, dynamic>> _orders = [];
+  bool _isLoading = false;
+  bool _isAuthenticated = false;
+  bool _isCheckingAuth = true;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Mis Domicilios'),
-        backgroundColor: const Color.fromRGBO(237, 88, 33, 1),
-        foregroundColor: Colors.white,
-      ),
-      body: pedidos.isEmpty 
-        ? _buildEmptyState()
-        : ListView.builder(
-            padding: const EdgeInsets.all(16),
-            itemCount: pedidos.length,
-            itemBuilder: (context, index) {
-              final pedido = pedidos[index];
-              return _buildCompactCard(pedido);
-            },
+  @override
+  void initState() {
+    super.initState();
+    _checkAuthAndLoadOrders();
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _checkAuthAndLoadOrders() async {
+    final authState = context.read<AuthBloc>().state;
+    setState(() {
+      _isAuthenticated = authState is Authenticated;
+      _isCheckingAuth = false;
+    });
+
+    if (_isAuthenticated) {
+      await _loadOrders();
+    }
+  }
+
+  Future<void> _loadOrders({String? guestEmail}) async {
+    setState(() => _isLoading = true);
+    try {
+      final api = ApiService();
+      final orders = await api.getOrders(guestEmail: guestEmail);
+      setState(() {
+        _orders = orders;
+        _isLoading = false;
+      });
+    } on DataException catch (e) {
+      _showError(e.message);
+      setState(() => _isLoading = false);
+    } on NetworkException catch (e) {
+      _showError(e.message);
+      setState(() => _isLoading = false);
+    } catch (e) {
+      _showError('Error al cargar \u00f3rdenes: $e');
+      setState(() => _isLoading = false);
+    }
+  }
+
+  void _showError(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message), backgroundColor: Colors.red),
+    );
+  }
+
+  void _showEmailDialog() {
+    _emailController.clear();
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Buscar mis \u00f3rdenes'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text(
+              'Ingresa el email que usaste al hacer tu pedido:',
+              style: TextStyle(fontSize: 14),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: _emailController,
+              keyboardType: TextInputType.emailAddress,
+              decoration: const InputDecoration(
+                labelText: 'Email',
+                hintText: 'correo@ejemplo.com',
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.email),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancelar'),
           ),
+          ElevatedButton(
+            onPressed: () {
+              final email = _emailController.text.trim();
+              if (email.isNotEmpty) {
+                Navigator.pop(context);
+                _loadOrders(guestEmail: email);
+              }
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color.fromRGBO(237, 88, 33, 1),
+            ),
+            child: const Text('Buscar', style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildGuestWelcome() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.person_outline, size: 80, color: Colors.grey[400]),
+            const SizedBox(height: 16),
+            const Text(
+              'Modo Invitado',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Como tu cuenta es invitado, debes buscar tus \u00f3rdenes usando el correo que usaste al hacer el pedido.',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+            ),
+            const SizedBox(height: 24),
+            ElevatedButton.icon(
+              onPressed: _showEmailDialog,
+              icon: const Icon(Icons.search, color: Colors.white),
+              label: const Text('Buscar mis \u00f3rdenes', style: TextStyle(color: Colors.white)),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color.fromRGBO(237, 88, 33, 1),
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -61,30 +163,37 @@ class DomicilioPageState extends State<DomicilioPage> {
           Icon(Icons.delivery_dining, size: 64, color: Colors.grey[400]),
           const SizedBox(height: 16),
           Text(
-            'No tienes domicilios activos',
+            'No tienes \u00f3rdenes',
             style: TextStyle(fontSize: 18, color: Colors.grey[600]),
           ),
+          if (!_isAuthenticated) ...[
+            const SizedBox(height: 16),
+            TextButton(
+              onPressed: _showEmailDialog,
+              child: const Text('Buscar con otro email'),
+            ),
+          ],
         ],
       ),
     );
   }
 
-  Widget _buildCompactCard(Map<String, dynamic> pedido) {
-    final isOnTheWay = pedido["estado"] == AppLocalizations.of(context)!.onTheWay;
-    final statusColor = isOnTheWay ? Colors.green : Colors.orange;
-    
+  Widget _buildOrderCard(Map<String, dynamic> order) {
+    final status = order['status'] ?? 'pendiente';
+    final statusColor = _getStatusColor(status);
+    final statusText = _getStatusText(status);
+
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: InkWell(
         borderRadius: BorderRadius.circular(12),
-        onTap: () => _showExpandedDetails(pedido),
+        onTap: () => _showOrderDetails(order),
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Row(
             children: [
-              // Icono de estado
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
@@ -92,15 +201,12 @@ class DomicilioPageState extends State<DomicilioPage> {
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
-                  isOnTheWay ? Icons.delivery_dining : Icons.restaurant,
+                  _getStatusIcon(status),
                   color: statusColor,
                   size: 24,
                 ),
               ),
-              
               const SizedBox(width: 12),
-              
-              // Información principal
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -109,14 +215,14 @@ class DomicilioPageState extends State<DomicilioPage> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          "${AppLocalizations.of(context)!.orderID} #${pedido["id"]}",
-                          style: TextStyle(
+                          '#${order['code'] ?? 'N/A'}',
+                          style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
                           ),
                         ),
                         Text(
-                          "\$${pedido["total"]} COP",
+                          '\$${NumberFormat('#,###', 'es_CO').format(order['total'] ?? 0)}',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             color: Colors.green[700],
@@ -125,22 +231,18 @@ class DomicilioPageState extends State<DomicilioPage> {
                         ),
                       ],
                     ),
-                    
                     const SizedBox(height: 4),
-                    
                     Text(
-                      pedido["estado"],
+                      statusText,
                       style: TextStyle(
                         color: statusColor,
                         fontWeight: FontWeight.w600,
                         fontSize: 13,
                       ),
                     ),
-                    
                     const SizedBox(height: 2),
-                    
                     Text(
-                      "${AppLocalizations.of(context)!.estimatedTime}: ${pedido["tiempo"]}",
+                      '${order['items']?.length ?? 0} producto(s)',
                       style: TextStyle(
                         color: Colors.grey[600],
                         fontSize: 12,
@@ -149,13 +251,7 @@ class DomicilioPageState extends State<DomicilioPage> {
                   ],
                 ),
               ),
-              
-              // Indicador de expandir
-              Icon(
-                Icons.keyboard_arrow_right,
-                color: Colors.grey[400],
-                size: 20,
-              ),
+              Icon(Icons.chevron_right, color: Colors.grey[400]),
             ],
           ),
         ),
@@ -163,236 +259,187 @@ class DomicilioPageState extends State<DomicilioPage> {
     );
   }
 
-  void _showExpandedDetails(Map<String, dynamic> pedido) {
-    showModalBottomSheet(
+  void _showOrderDetails(Map<String, dynamic> order) {
+    showDialog(
       context: context,
-      isScrollControlled: true,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) => DraggableScrollableSheet(
-        initialChildSize: 0.75,
-        maxChildSize: 0.9,
-        minChildSize: 0.5,
-        builder: (context, scrollController) => Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-          ),
+      builder: (context) => AlertDialog(
+        title: Text('Orden #${order['code']}'),
+        content: SingleChildScrollView(
           child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Handle del modal
-              Container(
-                margin: const EdgeInsets.only(top: 8),
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: Colors.grey[300],
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-              
-              // Contenido expandido
-              Expanded(
-                child: SingleChildScrollView(
-                  controller: scrollController,
-                  padding: const EdgeInsets.all(20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Header
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "${AppLocalizations.of(context)!.orderID} #${pedido["id"]}",
-                            style: TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                            decoration: BoxDecoration(
-                              color: pedido["estado"] == AppLocalizations.of(context)!.onTheWay 
-                                ? Colors.green.withOpacity(0.1)
-                                : Colors.orange.withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Text(
-                              pedido["estado"],
-                              style: TextStyle(
-                                color: pedido["estado"] == AppLocalizations.of(context)!.onTheWay 
-                                  ? Colors.green[700]
-                                  : Colors.orange[700],
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      
-                      const SizedBox(height: 24),
-                      
-                      // Información del pedido
-                      _buildDetailSection(
-                        "Información del Pedido",
-                        [
-                          _buildDetailRow(Icons.access_time, "Tiempo estimado", pedido["tiempo"]),
-                          _buildDetailRow(Icons.attach_money, "Total", "\$${pedido["total"]} COP"),
-                          _buildDetailRow(Icons.location_on, "Dirección", pedido["direccion"]),
-                        ],
-                      ),
-                      
-                      const SizedBox(height: 20),
-                      
-                      // Productos
-                      _buildDetailSection(
-                        "Productos",
-                        (pedido["productos"] as List).map((producto) => 
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 8),
-                            child: Row(
-                              children: [
-                                Icon(Icons.restaurant_menu, size: 16, color: Colors.grey[600]),
-                                const SizedBox(width: 8),
-                                Text(producto, style: TextStyle(fontSize: 14)),
-                              ],
-                            ),
-                          )
-                        ).toList(),
-                      ),
-                      
-                      const SizedBox(height: 20),
-                      
-                      // Repartidor (si está asignado)
-                      if (pedido["repartidor"] != null)
-                        _buildDetailSection(
-                          "Repartidor",
-                          [
-                            _buildDetailRow(Icons.person, "Nombre", pedido["repartidor"]),
-                            if (pedido["telefono"] != null)
-                              _buildDetailRow(Icons.phone, "Teléfono", pedido["telefono"]),
-                          ],
-                        ),
-                      
-                      const SizedBox(height: 20),
-                      
-                      // Observaciones
-                      if (pedido["observaciones"] != null)
-                        _buildDetailSection(
-                          "Observaciones",
-                          [
-                            Text(
-                              pedido["observaciones"],
-                              style: TextStyle(fontSize: 14, color: Colors.grey[700]),
-                            ),
-                          ],
-                        ),
-                      
-                      const SizedBox(height: 30),
-                      
-                      // Botones de acción
-                      Row(
-                        children: [
-                          if (pedido["estado"] == AppLocalizations.of(context)!.onTheWay) ...[
-                            Expanded(
-                              child: ElevatedButton.icon(
-                                onPressed: () => _trackOrder(pedido["id"]),
-                                icon: Icon(Icons.location_searching),
-                                label: Text("Rastrear"),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.blue[600],
-                                  foregroundColor: Colors.white,
-                                  padding: const EdgeInsets.symmetric(vertical: 12),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                          ],
-                          Expanded(
-                            child: ElevatedButton.icon(
-                              onPressed: () => _contactSupport(pedido["id"]),
-                              icon: Icon(Icons.support_agent),
-                              label: Text("Contactar"),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color.fromRGBO(237, 88, 33, 1),
-                                foregroundColor: Colors.white,
-                                padding: const EdgeInsets.symmetric(vertical: 12),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+              _buildDetailRow('Estado', _getStatusText(order['status'] ?? 'pendiente')),
+              _buildDetailRow('Total', '\$${NumberFormat('#,###', 'es_CO').format(order['total'] ?? 0)}'),
+              _buildDetailRow('Direcci\u00f3n', order['direccion'] ?? 'N/A'),
+              const Divider(),
+              const Text('Productos:', style: TextStyle(fontWeight: FontWeight.bold)),
+              const SizedBox(height: 8),
+              ...(order['items'] as List? ?? []).map((item) {
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 4),
+                  child: Text('• ${item['product_name']} x${item['quantity']}'),
+                );
+              }).toList(),
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildDetailSection(String title, List<Widget> children) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          title,
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: Colors.grey[800],
-          ),
-        ),
-        const SizedBox(height: 12),
-        ...children,
-      ],
-    );
-  }
-
-  Widget _buildDetailRow(IconData icon, String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: Row(
-        children: [
-          Icon(icon, size: 20, color: Colors.grey[600]),
-          const SizedBox(width: 12),
-          Expanded(
-            flex: 2,
-            child: Text(
-              label,
-              style: TextStyle(
-                fontWeight: FontWeight.w500,
-                color: Colors.grey[700],
-              ),
+        actions: [
+          if (order['status'] == 'pendiente' || order['status'] == 'pagado')
+            TextButton(
+              onPressed: () async {
+                Navigator.pop(context);
+                await _cancelOrder(order['code']);
+              },
+              child: const Text('Cancelar Orden', style: TextStyle(color: Colors.red)),
             ),
-          ),
-          Expanded(
-            flex: 3,
-            child: Text(
-              value,
-              style: TextStyle(fontSize: 14),
-            ),
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cerrar'),
           ),
         ],
       ),
     );
   }
 
-  void _trackOrder(String orderId) {
-    Navigator.pop(context);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text("Abriendo mapa para rastrear pedido #$orderId")),
+  Future<void> _cancelOrder(String code) async {
+    try {
+      final api = ApiService();
+      final email = _isAuthenticated ? null : _emailController.text.trim();
+      await api.cancelOrder(code, guestEmail: email);
+      _showError('Orden cancelada exitosamente');
+      await _loadOrders(guestEmail: email);
+    } on DataException catch (e) {
+      _showError(e.message);
+    } on NetworkException catch (e) {
+      _showError(e.message);
+    } catch (e) {
+      _showError('Error al cancelar: $e');
+    }
+  }
+
+  Widget _buildDetailRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 80,
+            child: Text(
+              '$label:',
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ),
+          Expanded(child: Text(value)),
+        ],
+      ),
     );
   }
 
-  void _contactSupport(String orderId) {
-    Navigator.pop(context);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text("Contactando soporte para pedido #$orderId")),
+  Color _getStatusColor(String status) {
+    switch (status) {
+      case 'pendiente':
+        return Colors.orange;
+      case 'pagado':
+        return Colors.blue;
+      case 'en_preparacion':
+        return Colors.purple;
+      case 'enviado':
+        return Colors.green;
+      case 'entregado':
+        return Colors.teal;
+      case 'cancelado':
+        return Colors.red;
+      default:
+        return Colors.grey;
+    }
+  }
+
+  IconData _getStatusIcon(String status) {
+    switch (status) {
+      case 'pendiente':
+        return Icons.schedule;
+      case 'pagado':
+        return Icons.payment;
+      case 'en_preparacion':
+        return Icons.restaurant;
+      case 'enviado':
+        return Icons.delivery_dining;
+      case 'entregado':
+        return Icons.check_circle;
+      case 'cancelado':
+        return Icons.cancel;
+      default:
+        return Icons.help_outline;
+    }
+  }
+
+  String _getStatusText(String status) {
+    switch (status) {
+      case 'pendiente':
+        return 'Pendiente';
+      case 'pagado':
+        return 'Pagado';
+      case 'en_preparacion':
+        return 'En Preparaci\u00f3n';
+      case 'enviado':
+        return 'Enviado';
+      case 'entregado':
+        return 'Entregado';
+      case 'cancelado':
+        return 'Cancelado';
+      default:
+        return 'Desconocido';
+    }
+  }
+
+  Widget _buildBody() {
+    if (_isCheckingAuth) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (!_isAuthenticated && _orders.isEmpty) {
+      return _buildGuestWelcome();
+    }
+
+    if (_isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (_orders.isEmpty) {
+      return _buildEmptyState();
+    }
+
+    return RefreshIndicator(
+      onRefresh: () => _loadOrders(
+        guestEmail: _isAuthenticated ? null : _emailController.text.trim(),
+      ),
+      child: ListView.builder(
+        padding: const EdgeInsets.all(16),
+        itemCount: _orders.length,
+        itemBuilder: (context, index) => _buildOrderCard(_orders[index]),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Mis Domicilios'),
+        backgroundColor: const Color.fromRGBO(237, 88, 33, 1),
+        foregroundColor: Colors.white,
+        actions: [
+          if (!_isAuthenticated && _orders.isNotEmpty)
+            IconButton(
+              icon: const Icon(Icons.refresh),
+              onPressed: _showEmailDialog,
+              tooltip: 'Buscar con otro email',
+            ),
+        ],
+      ),
+      body: _buildBody(),
     );
   }
 }

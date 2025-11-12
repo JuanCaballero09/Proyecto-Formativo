@@ -66,6 +66,7 @@ class ApiConfig {
   static const String logoutEndpoint = '/logout';
   // Backend usa path "categorias" para el recurso grupos
   static const String categoriesEndpoint = '/categorias';
+  static const String ordersEndpoint = '/orders';
   
   /// Construye la URL completa para productos por categoría
   /// [categoryId] - ID de la categoría
@@ -85,4 +86,17 @@ class ApiConfig {
 
   /// Obtiene la URL completa para logout
   static String get logoutUrl => '$currentBaseUrl$logoutEndpoint';
+
+  /// Obtiene la URL completa para órdenes
+  static String get ordersUrl => '$currentBaseUrl$ordersEndpoint';
+
+  /// Construye la URL para una orden específica
+  static String getOrderUrl(String code) {
+    return '$currentBaseUrl$ordersEndpoint/$code';
+  }
+
+  /// Construye la URL para cancelar una orden
+  static String getCancelOrderUrl(String code) {
+    return '$currentBaseUrl$ordersEndpoint/$code/cancel';
+  }
 }

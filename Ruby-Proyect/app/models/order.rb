@@ -126,6 +126,11 @@ class Order < ApplicationRecord
     user_id.present?
   end
 
+  # Verifica si la orden puede ser cancelada
+  def can_be_cancelled?
+    pendiente? || pagado?
+  end
+
   # Calcula subtotal sin descuento
   def subtotal
     order_items.sum("quantity * price")

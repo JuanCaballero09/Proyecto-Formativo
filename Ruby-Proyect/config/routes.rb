@@ -76,6 +76,11 @@ Rails.application.routes.draw do
       resources :grupos, path: "categorias", only: [ :index, :show ] do
         resources :products, path: "productos", only: [ :index, :show ], module: :grupos
       end
+      resources :orders, param: :code, only: [ :index, :show, :create ] do
+        member do
+          patch :cancel
+        end
+      end
     end
   end
 end

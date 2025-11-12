@@ -64,12 +64,12 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     await Future.delayed(const Duration(seconds: 1));
     
     final api = ApiService();
-    final success = await api.login(user, pass);
+    final userData = await api.login(user, pass);
     
     if (!mounted) return;
 
     // ✅ Mostrar popup en el centro
-    if (success) {
+    if (userData != null) {
     showDialog(
       context: context,
       barrierDismissible: false, // no se cierra tocando afuera
@@ -103,7 +103,13 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     // ⏳ Esperar 1.5 seg y navegar
     Future.delayed(const Duration(seconds: 2), () {
       Navigator.pop(context); // cierra el dialog
-      context.read<AuthBloc>().add(LoginRequested(user, pass));
+      
+      // Disparar evento con datos del usuario
+      final fullName = '${userData['nombre'] ?? ''} ${userData['apellido'] ?? ''}'.trim();
+      context.read<AuthBloc>().add(
+        LoginRequested(user, pass, userName: fullName.isEmpty ? 'Usuario' : fullName)
+      );
+      
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => const ProductCatalogPage()),

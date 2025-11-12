@@ -20,6 +20,7 @@ import 'pages/splash_page.dart';
 import 'package:first_flutter/pages/product_catalog_page.dart';
 import 'l10n/app_localizations.dart';
 import 'bloc/auth/auth_bloc.dart';
+import 'bloc/auth/auth_event.dart';
 import 'pages/perfil_wrapper.dart';
 import 'service/api_service.dart';
 
@@ -46,7 +47,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (_) => ProductBloc(repository)),
         BlocProvider(create: (_) => CartBloc()),
         BlocProvider(create: (_) => LanguageBloc()..add(const LoadLanguage())),
-        BlocProvider<AuthBloc>(create: (_) => AuthBloc()),
+        BlocProvider<AuthBloc>(create: (_) => AuthBloc()..add(CheckAuthStatus())),
         BlocProvider(create: (_) => CategoriasBloc(apiService)),
         BlocProvider(create: (_) => SearchBloc(apiService)),
         BlocProvider(create: (_) => ThemeBloc()),
