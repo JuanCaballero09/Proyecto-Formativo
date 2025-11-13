@@ -506,6 +506,12 @@ abstract class AppLocalizations {
   /// **'No products found'**
   String get noProductsFound;
 
+  /// No description provided for @noProductsConnection.
+  ///
+  /// In en, this message translates to:
+  /// **'No products found. Check your connection and try again.'**
+  String get noProductsConnection;
+
   /// No description provided for @showingAllProductsDebug.
   ///
   /// In en, this message translates to:

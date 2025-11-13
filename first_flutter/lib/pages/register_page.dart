@@ -243,15 +243,6 @@ const SizedBox(height: 14),
             ),
 
             const SizedBox(height: 12),
-            Text('O regístrate con tus redes', style: GoogleFonts.poppins(color: Colors.black54)),
-            const SizedBox(height: 8),
-            Row(mainAxisAlignment: MainAxisAlignment.center, children: const [
-              Icon(Icons.facebook, color: Colors.blue, size: 30),
-              SizedBox(width: 18),
-              Icon(Icons.alternate_email, color: Colors.lightBlue, size: 30),
-            ]),
-
-            const SizedBox(height: 12),
            TextButton(
               onPressed: () {
                 Navigator.pop(context); // Vuelve a la pantalla anterior (Login)

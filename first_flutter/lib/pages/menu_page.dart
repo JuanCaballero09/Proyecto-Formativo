@@ -14,23 +14,11 @@ class MenuPage extends StatefulWidget {
 }
 
 class _MenuPageState extends State<MenuPage> {
-  
   @override
   void initState() {
     super.initState();
     // Cargar las categorías cuando se inicializa la página
     context.read<CategoriasBloc>().add(LoadCategoriasEvent());
-  }
-
-  // Datos de fallback por si la API no responde
-  List<Map<String, String>> getCategoriasFallback(BuildContext context) {
-    return [
-      {"titulo": AppLocalizations.of(context)!.pizzas.toUpperCase(), "imagen": "assets/Pizza Hawiana.jpg"},
-      {"titulo": AppLocalizations.of(context)!.burgers.toUpperCase(), "imagen": "assets/Hamburguesa sencilla.jpg"},
-      {"titulo": AppLocalizations.of(context)!.tacos.toUpperCase(), "imagen": "assets/Tacos de Pollo.jpg"},
-      {"titulo": AppLocalizations.of(context)!.salads.toUpperCase(), "imagen": "assets/Ensalada Cesar.jpg"},
-      {"titulo": "SALCHIPAPA", "imagen": ""},
-    ];
   }
 
   @override
@@ -73,43 +61,113 @@ class _MenuPageState extends State<MenuPage> {
             // Grid de categorías usando BLoC
             BlocBuilder<CategoriasBloc, CategoriasState>(
               builder: (context, state) {
-                     if (state is CategoriasLoadingState) {
-                        return Center(
-                       child: Padding(
-                        padding: const EdgeInsets.all(50.0),
-                            child: LoadingAnimationWidget.threeRotatingDots(
-                            color:  const Color.fromRGBO(237, 88, 33, 1),
-                            size: 40,
-                                 ),
-                       )
-                         );
+                if (state is CategoriasLoadingState) {
+                  return Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(50.0),
+                      child: LoadingAnimationWidget.threeRotatingDots(
+                        color: const Color.fromRGBO(237, 88, 33, 1),
+                        size: 40,
+                      ),
+                    ),
+                  );
                 } else if (state is CategoriasLoadedState) {
-                  return _buildCategoriasGrid(state.categorias);
-                } else if (state is CategoriasErrorState) {
-                  return Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Text(
-                          'Error al cargar categorías: ${state.error}',
-                          style: const TextStyle(color: Colors.red),
-                          textAlign: TextAlign.center,
+                  // ✅ Mostrar categorías desde la API si están disponibles
+                  if (state.categorias.isEmpty) {
+                    return Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(32.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.restaurant_menu_outlined,
+                              size: 80,
+                              color: Colors.grey[400],
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              AppLocalizations.of(context)!.noProductsConnection,
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.grey[600],
+                                height: 1.4,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                            const SizedBox(height: 24),
+                            ElevatedButton.icon(
+                              onPressed: () {
+                                context.read<CategoriasBloc>().add(LoadCategoriasEvent());
+                              },
+                              icon: const Icon(Icons.refresh),
+                              label: Text(AppLocalizations.of(context)!.retry),
+                            ),
+                          ],
                         ),
                       ),
-                      ElevatedButton(
-                        onPressed: () {
-                          context.read<CategoriasBloc>().add(LoadCategoriasEvent());
-                        },
-                        child: const Text('Reintentar'),
+                    );
+                  }
+                  return _buildCategoriasGrid(state.categorias);
+                } else if (state is CategoriasErrorState) {
+                  // ❌ Error - NO mostrar fallback, mostrar mensaje de error
+                  return Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(32.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.wifi_off_outlined,
+                            size: 80,
+                            color: Colors.red[300],
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            AppLocalizations.of(context)!.networkError,
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.red,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            state.error,
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey[600],
+                              height: 1.4,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 24),
+                          ElevatedButton.icon(
+                            onPressed: () {
+                              context.read<CategoriasBloc>().add(LoadCategoriasEvent());
+                            },
+                            icon: const Icon(Icons.refresh),
+                            label: Text(AppLocalizations.of(context)!.retry),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.red[400],
+                            ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 20),
-                      // Mostrar categorías de fallback en caso de error
-                      _buildCategoriasFallbackGrid(),
-                    ],
+                    ),
                   );
                 } else {
-                  // Estado inicial - mostrar categorías de fallback
-                  return _buildCategoriasFallbackGrid();
+                  // ⏳ Estado inicial - mostrar loading o placeholder
+                  return Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(50.0),
+                      child: LoadingAnimationWidget.threeRotatingDots(
+                        color: const Color.fromRGBO(237, 88, 33, 1),
+                        size: 40,
+                      ),
+                    ),
+                  );
                 }
               },
             ),
@@ -137,26 +195,6 @@ class _MenuPageState extends State<MenuPage> {
         itemBuilder: (context, index) {
           final categoria = categorias[index];
           return _buildCategoryCardFromAPI(categoria);
-        },
-      ),
-    );
-  }
-
-  Widget _buildCategoriasFallbackGrid() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: GridView.builder(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        itemCount: getCategoriasFallback(context).length,
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          crossAxisSpacing: 16,
-          mainAxisSpacing: 16,
-          childAspectRatio: 1.2,
-        ),
-        itemBuilder: (context, index) {
-          return _buildCategoryCard(getCategoriasFallback(context)[index]);
         },
       ),
     );
@@ -349,145 +387,5 @@ class _MenuPageState extends State<MenuPage> {
     
     // Color por defecto
     return [Colors.grey[400]!, Colors.grey[700]!];
-  }
-
-  Widget _buildCategoryCard(Map<String, String> categoria) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => CategoryProductsPage(
-              categoryName: categoria['titulo']!,
-              categoryImage: categoria['imagen']!,
-            ),
-          ),
-        );
-      },
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 8,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Card(
-          elevation: 0,
-          margin: EdgeInsets.zero,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Stack(
-            children: [
-              // Imagen de fondo
-              ClipRRect(
-                borderRadius: BorderRadius.circular(16),
-                child: Image.asset(
-                  categoria['imagen']!,
-                  height: double.infinity,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      color: Colors.grey[300],
-                      child: const Center(
-                        child: Icon(Icons.broken_image, size: 50, color: Colors.grey),
-                      ),
-                    );
-                  },
-                ),
-              ),
-              // Overlay con gradiente
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Colors.transparent,
-                      Colors.black.withOpacity(0.7),
-                    ],
-                    stops: const [0.3, 1.0],
-                  ),
-                ),
-              ),
-              // Texto del título
-              Positioned(
-                bottom: 0,
-                left: 0,
-                right: 0,
-                child: Container(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        categoria['titulo']!,
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          shadows: [
-                            Shadow(
-                              offset: Offset(0, 1),
-                              blurRadius: 2,
-                              color: Colors.black54,
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: const Color.fromRGBO(237, 88, 33, 1),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Text(
-                          AppLocalizations.of(context)!.viewProducts,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              // Efecto de presión visual
-              Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  borderRadius: BorderRadius.circular(16),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => CategoryProductsPage(
-                          categoryName: categoria['titulo']!,
-                          categoryImage: categoria['imagen']!,
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
   }
 }

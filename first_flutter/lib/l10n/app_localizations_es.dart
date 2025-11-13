@@ -214,6 +214,10 @@ class AppLocalizationsEs extends AppLocalizations {
   String get noProductsFound => 'No se encontraron productos';
 
   @override
+  String get noProductsConnection =>
+      'No se encontraron productos. Revisa tu conexión e intenta de nuevo.';
+
+  @override
   String get showingAllProductsDebug =>
       '(Mostrando todos los productos para debug)';
 
