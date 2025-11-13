@@ -1,12 +1,13 @@
 import 'package:first_flutter/bloc/cart/cart_bloc.dart';
+import 'package:first_flutter/pages/carrito_Page.dart';
+import 'package:first_flutter/pages/domicilio_Page.dart';
+import 'package:first_flutter/pages/home_Page.dart';
 import 'package:first_flutter/pages/menu_navigator_page.dart';
+import 'package:first_flutter/pages/perfil_Page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../l10n/app_localizations.dart';
-import 'home_page.dart';
-import 'carrito_page.dart';
-import 'perfil_page.dart';
-import 'domicilio_page.dart';
+
 
 class ProductCatalogPage extends StatefulWidget {
   final int initialIndex;

@@ -220,7 +220,7 @@ class ApiService {
     }
   }
 
-  Future<bool> login(String email, String password) async {
+  Future<Map<String, dynamic>?> login(String email, String password) async {
     final url = Uri.parse(ApiConfig.loginUrl);
 
     final response = await http
@@ -239,15 +239,23 @@ class ApiService {
 
       // Guardamos el token recibido en almacenamiento seguro
       await storage.write(key: 'token', value: data['token']);
+      
+      // Guardamos también los datos del usuario
+      if (data['user'] != null) {
+        await storage.write(key: 'user_name', value: data['user']['nombre'] ?? '');
+        await storage.write(key: 'user_apellido', value: data['user']['apellido'] ?? '');
+        await storage.write(key: 'user_email', value: data['user']['email'] ?? '');
+        await storage.write(key: 'user_telefono', value: data['user']['telefono'] ?? '');
+      }
 
       // ignore: avoid_print
       print("✅ Login exitoso");
-      return true;
+      return data['user'];
     } else {
 
       // ignore: avoid_print
       print("❌ Error en login: ${response.body}");
-      return false;
+      return null;
     }
   }
 
@@ -267,7 +275,12 @@ class ApiService {
         .timeout(ApiConfig.connectionTimeout);
 
     if (response.statusCode == 200) {
+      // Eliminamos token y datos del usuario
       await storage.delete(key: 'token');
+      await storage.delete(key: 'user_name');
+      await storage.delete(key: 'user_apellido');
+      await storage.delete(key: 'user_email');
+      await storage.delete(key: 'user_telefono');
       // ignore: avoid_print
       print("✅ Sesión cerrada correctamente");
       return true;
@@ -352,6 +365,212 @@ class ApiService {
       // ignore: avoid_print
       print('❌ Error en búsqueda: $e');
       throw NetworkException('Error de conexión al buscar productos');
+    }
+  }
+
+  // ============================================
+  // MÉTODOS PARA MANEJO DE ÓRDENES
+  // ============================================
+
+  /// Crea una nueva orden
+  /// Si el usuario está autenticado, usa el token
+  /// Si es invitado, requiere datos guest_*
+  Future<Map<String, dynamic>> createOrder({
+    required List<Map<String, dynamic>> items,
+    required String direccion,
+    String? guestNombre,
+    String? guestApellido,
+    String? guestEmail,
+    String? guestTelefono,
+  }) async {
+    try {
+      final url = Uri.parse(ApiConfig.ordersUrl);
+      final headers = await _getAuthHeaders();
+      
+      final body = {
+        'items': items,
+        'direccion': direccion,
+      };
+
+      // Si no hay token, agregar datos de invitado
+      final token = await _getAuthToken();
+      if (token == null) {
+        if (guestNombre == null || guestApellido == null || 
+            guestEmail == null || guestTelefono == null) {
+          throw DataException('Datos de invitado requeridos para crear orden');
+        }
+        body['guest_nombre'] = guestNombre;
+        body['guest_apellido'] = guestApellido;
+        body['guest_email'] = guestEmail;
+        body['guest_telefono'] = guestTelefono;
+      }
+
+      // ignore: avoid_print
+      print("📦 Creando orden: ${items.length} items");
+
+      final response = await http
+          .post(
+            url,
+            headers: headers,
+            body: jsonEncode(body),
+          )
+          .timeout(ApiConfig.connectionTimeout);
+
+      if (response.statusCode == 201 || response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        // ignore: avoid_print
+        print("✅ Orden creada: ${data['code']}");
+        return data;
+      } else {
+        final errorData = jsonDecode(response.body);
+        final errorMsg = errorData['errors']?.join(', ') ?? 
+                        errorData['error'] ?? 
+                        'Error al crear la orden';
+        // ignore: avoid_print
+        print("❌ Error al crear orden: $errorMsg");
+        throw DataException(errorMsg);
+      }
+    } on TimeoutException {
+      // ignore: avoid_print
+      print("⏱️ Timeout al crear orden");
+      throw NetworkException('La petición tardó demasiado. Intenta nuevamente.');
+    } catch (e) {
+      if (e is NetworkException || e is DataException) rethrow;
+      // ignore: avoid_print
+      print("❌ Error inesperado al crear orden: $e");
+      throw NetworkException('Error de conexión al crear la orden');
+    }
+  }
+
+  /// Obtiene todas las órdenes del usuario autenticado o por email (invitado)
+  Future<List<Map<String, dynamic>>> getOrders({String? guestEmail}) async {
+    try {
+      final token = await _getAuthToken();
+      final headers = await _getAuthHeaders();
+      
+      Uri url;
+      if (token != null) {
+        // Usuario autenticado
+        url = Uri.parse(ApiConfig.ordersUrl);
+      } else {
+        // Usuario invitado - buscar por email
+        if (guestEmail == null || guestEmail.isEmpty) {
+          throw DataException('Email requerido para buscar órdenes de invitado');
+        }
+        url = Uri.parse('${ApiConfig.ordersUrl}?email=${Uri.encodeComponent(guestEmail)}');
+      }
+
+      // ignore: avoid_print
+      print("📋 Obteniendo órdenes${guestEmail != null ? ' para: $guestEmail' : ''}");
+
+      final response = await http
+          .get(url, headers: headers)
+          .timeout(ApiConfig.receiveTimeout);
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(response.body);
+        // ignore: avoid_print
+        print("✅ ${data.length} órdenes obtenidas");
+        return data.cast<Map<String, dynamic>>();
+      } else if (response.statusCode == 400 || response.statusCode == 401) {
+        final errorData = jsonDecode(response.body);
+        final errorMsg = errorData['error'] ?? 'Error al obtener órdenes';
+        throw DataException(errorMsg);
+      } else {
+        throw NetworkException('Error del servidor al obtener órdenes');
+      }
+    } on TimeoutException {
+      // ignore: avoid_print
+      print("⏱️ Timeout al obtener órdenes");
+      throw NetworkException('La petición tardó demasiado');
+    } catch (e) {
+      if (e is NetworkException || e is DataException) rethrow;
+      // ignore: avoid_print
+      print("❌ Error inesperado al obtener órdenes: $e");
+      throw NetworkException('Error de conexión al obtener órdenes');
+    }
+  }
+
+  /// Obtiene una orden específica por código
+  Future<Map<String, dynamic>> getOrderByCode(String code, {String? guestEmail}) async {
+    try {
+      final token = await _getAuthToken();
+      final headers = await _getAuthHeaders();
+      
+      Uri url;
+      if (token != null) {
+        url = Uri.parse(ApiConfig.getOrderUrl(code));
+      } else {
+        if (guestEmail == null || guestEmail.isEmpty) {
+          throw DataException('Email requerido para consultar orden de invitado');
+        }
+        url = Uri.parse('${ApiConfig.getOrderUrl(code)}?email=${Uri.encodeComponent(guestEmail)}');
+      }
+
+      // ignore: avoid_print
+      print("🔍 Obteniendo orden: $code");
+
+      final response = await http
+          .get(url, headers: headers)
+          .timeout(ApiConfig.receiveTimeout);
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        // ignore: avoid_print
+        print("✅ Orden obtenida: $code");
+        return data;
+      } else if (response.statusCode == 404) {
+        throw DataException('Orden no encontrada');
+      } else {
+        throw NetworkException('Error al obtener la orden');
+      }
+    } on TimeoutException {
+      throw NetworkException('La petición tardó demasiado');
+    } catch (e) {
+      if (e is NetworkException || e is DataException) rethrow;
+      throw NetworkException('Error de conexión al obtener la orden');
+    }
+  }
+
+  /// Cancela una orden
+  Future<Map<String, dynamic>> cancelOrder(String code, {String? guestEmail}) async {
+    try {
+      final token = await _getAuthToken();
+      final headers = await _getAuthHeaders();
+      
+      final url = Uri.parse(ApiConfig.getCancelOrderUrl(code));
+
+      // Si es invitado, agregar email en header
+      if (token == null && guestEmail != null) {
+        headers['X-Guest-Email'] = guestEmail;
+      }
+
+      // ignore: avoid_print
+      print("❌ Cancelando orden: $code");
+
+      final response = await http
+          .patch(url, headers: headers)
+          .timeout(ApiConfig.connectionTimeout);
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        // ignore: avoid_print
+        print("✅ Orden cancelada: $code");
+        return data;
+      } else if (response.statusCode == 422) {
+        final errorData = jsonDecode(response.body);
+        final errorMsg = errorData['error'] ?? 'Esta orden no puede ser cancelada';
+        throw DataException(errorMsg);
+      } else if (response.statusCode == 404) {
+        throw DataException('Orden no encontrada');
+      } else {
+        throw NetworkException('Error al cancelar la orden');
+      }
+    } on TimeoutException {
+      throw NetworkException('La petición tardó demasiado');
+    } catch (e) {
+      if (e is NetworkException || e is DataException) rethrow;
+      throw NetworkException('Error de conexión al cancelar la orden');
     }
   }
 }

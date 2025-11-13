@@ -88,7 +88,7 @@ class PerfilPage extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Text(
-                    AppLocalizations.of(context)!.personalInfo,
+                    AppLocalizations.of(context)?.personalInfo ?? 'Información Personal',
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -107,31 +107,96 @@ class PerfilPage extends StatelessWidget {
                       const Icon(Icons.language, color: Colors.black),
                       const SizedBox(width: 16),
                       Text(
-                        AppLocalizations.of(context)!.language,
+                        AppLocalizations.of(context)?.language ?? 'Idioma',
                         style: const TextStyle(fontSize: 16),
                       ),
                       const Spacer(),
                       const LanguageSelector(),
-                      const SizedBox(height: 8),
+                    ],
+                  ),
+                ),
+                
+                // Selector de tema
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.brightness_6, color: Colors.black),
+                      const SizedBox(width: 16),
+                      const Text(
+                        'Tema',
+                        style: TextStyle(fontSize: 16),
+                      ),
+                      const Spacer(),
                       const ThemeSelector(),
                     ],
                   ),
                 ),
 
+                const SizedBox(height: 8),
+
                 // Lista de opciones
-                _buildDisabledTile(Icons.restaurant_menu,
-                    AppLocalizations.of(context)!.orders),
-                _buildDisabledTile(Icons.receipt_long, 'Datos de facturación'),
-                _buildDisabledTile(
-                    Icons.location_on, AppLocalizations.of(context)!.addresses),
-                _buildDisabledTile(
-                    Icons.edit, AppLocalizations.of(context)!.editProfile),
-                _buildDisabledTile(Icons.privacy_tip,
-                    AppLocalizations.of(context)!.privacyPolicy),
-                _buildDisabledTile(Icons.help_outline,
-                    AppLocalizations.of(context)!.helpSupport),
-                _buildDisabledTile(Icons.article,
-                    AppLocalizations.of(context)!.termsConditions),
+                ListTile(
+                  leading: const Icon(Icons.restaurant_menu, color: Colors.black54),
+                  title: Text(
+                    AppLocalizations.of(context)?.orders ?? 'Pedidos',
+                    style: const TextStyle(color: Colors.black54),
+                  ),
+                  trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.black38),
+                  enabled: false,
+                ),
+                ListTile(
+                  leading: const Icon(Icons.receipt_long, color: Colors.black54),
+                  title: const Text('Datos de facturación', style: TextStyle(color: Colors.black54)),
+                  trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.black38),
+                  enabled: false,
+                ),
+                ListTile(
+                  leading: const Icon(Icons.location_on, color: Colors.black54),
+                  title: Text(
+                    AppLocalizations.of(context)?.addresses ?? 'Direcciones',
+                    style: const TextStyle(color: Colors.black54),
+                  ),
+                  trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.black38),
+                  enabled: false,
+                ),
+                ListTile(
+                  leading: const Icon(Icons.edit, color: Colors.black54),
+                  title: Text(
+                    AppLocalizations.of(context)?.editProfile ?? 'Editar Perfil',
+                    style: const TextStyle(color: Colors.black54),
+                  ),
+                  trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.black38),
+                  enabled: false,
+                ),
+                ListTile(
+                  leading: const Icon(Icons.privacy_tip, color: Colors.black54),
+                  title: Text(
+                    AppLocalizations.of(context)?.privacyPolicy ?? 'Política de Privacidad',
+                    style: const TextStyle(color: Colors.black54),
+                  ),
+                  trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.black38),
+                  enabled: false,
+                ),
+                ListTile(
+                  leading: const Icon(Icons.help_outline, color: Colors.black54),
+                  title: Text(
+                    AppLocalizations.of(context)?.helpSupport ?? 'Ayuda y Soporte',
+                    style: const TextStyle(color: Colors.black54),
+                  ),
+                  trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.black38),
+                  enabled: false,
+                ),
+                ListTile(
+                  leading: const Icon(Icons.article, color: Colors.black54),
+                  title: Text(
+                    AppLocalizations.of(context)?.termsConditions ?? 'Términos y Condiciones',
+                    style: const TextStyle(color: Colors.black54),
+                  ),
+                  trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.black38),
+                  enabled: false,
+                ),
 
                 const SizedBox(height: 10),
                 const Divider(),
@@ -140,25 +205,34 @@ class PerfilPage extends StatelessWidget {
                 ListTile(
                   leading: const Icon(Icons.logout, color: Colors.red),
                   title: Text(
-                    AppLocalizations.of(context)!.logout,
+                    AppLocalizations.of(context)?.logout ?? 'Cerrar Sesión',
                     style: const TextStyle(color: Colors.red),
                   ),
                   onTap: () async {
-                    final api = ApiService();
-                    final success = await api.logout();
-                    if (success) {
-                      // ignore: use_build_context_synchronously
+                    final confirmed = await showDialog<bool>(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: const Text('Cerrar sesión'),
+                        content: const Text('¿Estás seguro de que deseas cerrar sesión?'),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context, false),
+                            child: const Text('Cancelar'),
+                          ),
+                          TextButton(
+                            onPressed: () => Navigator.pop(context, true),
+                            child: const Text('Cerrar sesión', style: TextStyle(color: Colors.red)),
+                          ),
+                        ],
+                      ),
+                    );
+                    
+                    if (confirmed == true) {
+                      final api = ApiService();
+                      await api.logout();
+                      if (!context.mounted) return;
                       context.read<AuthBloc>().add(LogoutRequested());
-                      Navigator.pushNamedAndRemoveUntil(
-                        // ignore: use_build_context_synchronously
-                        context,
-                        '/welcome',
-                        (route) => false,
-                      );
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text("Error al cerrar sesión")),
-                      );
+                      // No necesitamos navegar, el BlocBuilder se encargará de mostrar la vista correcta
                     }
                   },
                 ),
@@ -168,7 +242,7 @@ class PerfilPage extends StatelessWidget {
                   padding: const EdgeInsets.only(bottom: 24.0),
                   child: Center(
                     child: Text(
-                      'v4.1.9',
+                      'v4.3.3',
                       style: TextStyle(color: Colors.black54, fontSize: 14),
                     ),
                   ),
@@ -310,20 +384,6 @@ class PerfilPage extends StatelessWidget {
           );
         }
       },
-    );
-  }
-
-  // ✅ Helper para los ítems inactivos
-  Widget _buildDisabledTile(IconData icon, String title) {
-    return ListTile(
-      leading: Icon(icon, color: Colors.black),
-      title: Text(title),
-      trailing: const Icon(
-        Icons.arrow_forward_ios,
-        size: 16,
-        color: Colors.black38,
-      ),
-      onTap: null,
     );
   }
 }
