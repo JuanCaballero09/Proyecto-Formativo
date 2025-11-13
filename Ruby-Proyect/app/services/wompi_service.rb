@@ -22,14 +22,27 @@ class WompiService
     }
   end
 
-  # 2) Generar firma: SHA256( reference + amount_in_cents + currency + integrity_secret )
-  def signature_for(reference:, amount_in_cents:, currency: "COP")
-    Digest::SHA256.hexdigest("#{reference}#{amount_in_cents}#{currency}#{@integrity_secret}")
+  # 2) Generar firma: SHA256( reference + amount_in_cents + currency + [expiration_time] + integrity_secret )
+  # If an expiration_time is provided it must be included in the concatenation in
+  # ISO8601 format with milliseconds and Z (e.g. 2023-06-09T20:28:50.000Z).
+  def signature_for(reference:, amount_in_cents:, currency: "COP", expiration_time: nil)
+    if expiration_time.present?
+      exp_str = expiration_time.respond_to?(:utc) ? expiration_time.utc.strftime("%Y-%m-%dT%H:%M:%S.000Z") : expiration_time.to_s
+      Digest::SHA256.hexdigest("#{reference}#{amount_in_cents}#{currency}#{exp_str}#{@integrity_secret}")
+    else
+      Digest::SHA256.hexdigest("#{reference}#{amount_in_cents}#{currency}#{@integrity_secret}")
+    end
   end
 
   # 3) Crear transacción con tarjeta tokenizada
-  def create_card_transaction(reference:, amount_in_cents:, customer_email:, token:, installments: 1)
+  # Create card transaction. You can pass `expiration_time` (Time or ISO string).
+  # If omitted, the service will set an expiration `Time.current + 24.hours` by default.
+  def create_card_transaction(reference:, amount_in_cents:, customer_email:, token:, installments: 1, expiration_time: nil, expiration_hours: 24)
     tokens = acceptance_tokens
+
+    # Determine expiration_time (Time or string). Default: now + expiration_hours
+    expiration_time ||= (Time.current + expiration_hours.hours)
+    exp_str = expiration_time.respond_to?(:utc) ? expiration_time.utc.strftime("%Y-%m-%dT%H:%M:%S.000Z") : expiration_time.to_s
 
     body = {
       amount_in_cents:  amount_in_cents,
@@ -38,11 +51,12 @@ class WompiService
       customer_email:   customer_email,
       acceptance_token: tokens[:acceptance_token],
       payment_method: {
-        type:        "CARD",
-        token:       token,
+        type:         "CARD",
+        token:        token,
         installments: installments
       },
-      signature: signature_for(reference: reference, amount_in_cents: amount_in_cents)
+      expiration_time: exp_str,
+      signature: signature_for(reference: reference, amount_in_cents: amount_in_cents, expiration_time: exp_str)
     }
 
     # Opcional: si tu cuenta exige este segundo token, lo agregas
@@ -78,6 +92,42 @@ class WompiService
     req = Net::HTTP::Post.new(uri)
     req["Content-Type"] = "application/json"
     req["Authorization"] = "Bearer #{@public_key}"
+    req.body = body.to_json
+
+    res = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) { |http| http.request(req) }
+    JSON.parse(res.body)
+  end
+
+  # 6) Metodo de pago por Nequi
+  # Create Nequi transaction. You can pass `expiration_time` (Time or ISO string).
+  # If omitted, the service will set an expiration `Time.current + 24.hours` by default.
+  def create_nequi_transaction(reference:, amount_in_cents:, customer_email:, phone_number:, expiration_time: nil, expiration_hours: 24)
+    tokens = acceptance_tokens
+
+    expiration_time ||= (Time.current + expiration_hours.hours)
+    exp_str = expiration_time.respond_to?(:utc) ? expiration_time.utc.strftime("%Y-%m-%dT%H:%M:%S.000Z") : expiration_time.to_s
+
+    body = {
+      amount_in_cents:  amount_in_cents,
+      currency:         "COP",
+      reference:        reference,
+      customer_email:   customer_email,
+      acceptance_token: tokens[:acceptance_token],
+      payment_method: {
+        type:         "NEQUI",
+        phone_number: phone_number
+      },
+      expiration_time: exp_str,
+      signature: signature_for(reference: reference, amount_in_cents: amount_in_cents, expiration_time: exp_str)
+    }
+
+    # Opcional: si tu cuenta exige este segundo token, lo agregas
+    body[:accept_personal_auth] = tokens[:personal_data_token] if tokens[:personal_data_token].present?
+
+    uri = URI("#{BASE_URL}/transactions")
+    req = Net::HTTP::Post.new(uri)
+    req["Authorization"] = "Bearer #{@public_key}"     # OJO: aquí va la PUBLIC KEY
+    req["Content-Type"]  = "application/json"
     req.body = body.to_json
 
     res = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) { |http| http.request(req) }

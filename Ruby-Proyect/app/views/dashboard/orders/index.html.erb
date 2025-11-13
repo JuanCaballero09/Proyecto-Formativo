@@ -35,6 +35,7 @@
             <th class="orders-th"><%= t("home.ordenes.clientee")%></th>
             <th class="orders-th"><%= t("home.ordenes.estado")%></th>
             <th class="orders-th orders-th--right"><%= t("home.ordenes.total")%></th>
+            <th class="orders-th">Método de pago</th>
             <th class="orders-th"><%= t("home.ordenes.fecha")%></th>
             <th class="orders-th"><%= t("home.ordenes.acciones")%></th>
           </tr>
@@ -51,6 +52,25 @@
                 $<%= number_to_currency(order.total, unit: "COP ", separator: ",", delimiter: ".") %>
                 <% if order.coupon.present? %>
                   <br><small style="color: green;">Cupón: <%= order.coupon.codigo %></small>
+                <% end %>
+              </td>
+              <td class="orders-td" data-label="Método de pago" style="text-align: center;">
+                <% payment = order.payments.last %>
+                <% if payment.present? %>
+                  <% case payment.payment_method %>
+                  <% when 'card' %>
+                    💳 <%= payment.type_card == 'credit' ? 'Crédito' : 'Débito' %>
+                  <% when 'nequi' %>
+                    <img src="/NequiLogo.png" alt="Nequi Logo" style="width: 16px; height: 16px; vertical-align: middle; margin-right: 4px;"> Nequi
+                  <% when 'pse' %>
+                    🏦 PSE
+                  <% when 'cash' %>
+                    💵 Efectivo
+                  <% else %>
+                    <%= payment.payment_method.humanize %>
+                  <% end %>
+                <% else %>
+                  <span style="color: #999;">Sin pago</span>
                 <% end %>
               </td>
 

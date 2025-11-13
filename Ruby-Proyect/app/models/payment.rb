@@ -1,6 +1,18 @@
 class Payment < ApplicationRecord
   belongs_to :order
 
+  enum :payment_method, {
+    card: 0,
+    nequi: 1,
+    pse: 2,
+    cash: 3
+  }
+
+  enum :type_card, {
+    credit: 0,
+    debit: 1
+  }
+
   enum :status, {
     pending: 0,
     approved: 1,

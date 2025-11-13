@@ -66,64 +66,179 @@
       <h3><%= t("home.order-pago.info_pago")%></h3>
       
       <%= form_with model: [@order, @payment], local: true, html: { id: "payment-form", class: "simple-form" } do |f| %>
-        <div class="form-field">
-          <%= f.label :card_number, t("home.order-pago.numero-tarjeta"), class: "field-label" %>
-          <%= f.text_field :card_number, 
-              maxlength: 19, 
-              required: true, 
-              class: "field-input", 
-              placeholder: "1234 5678 9012 3456",
-              inputmode: "numeric",
-              pattern: "[0-9\s]*",
-              autocomplete: "cc-number" %>
-          <span id="error-card" class="error-msg"></span>
+        
+        <!-- Paso 1: Selección de método de pago -->
+        <div id="payment-method-selection" class="payment-step">
+          <h4 class="step-title">Selecciona tu método de pago</h4>
+          
+          <div class="payment-methods-grid">
+            <div class="payment-method-card" data-method="card">
+              <div class="method-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                  <line x1="1" y1="10" x2="23" y2="10"></line>
+                </svg>
+              </div>
+              <h5>Tarjeta de Crédito/Débito</h5>
+              <p>Paga con tu tarjeta de forma segura</p>
+            </div>
+
+            <div class="payment-method-card" data-method="nequi">
+              <div class="method-icon nequi-icon">
+                <img src="/NequiLogo.png" alt="Nequi Logo" style="width:24px; height:24px;" />
+              </div>
+              <h5>Nequi</h5>
+              <p>Pago rápido con notificación push</p>
+              <div class="nequi-info">
+                <small>
+                  <strong>Importante:</strong> Recibirás una notificación push de Nequi en tu celular 
+                  para aceptar o rechazar la transacción. El resultado se reflejará en segundos.
+                </small>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div class="form-row">
-          <div class="form-field">
-            <%= f.label :exp_month, t("home.order-pago.mes-expiracion"), class: "field-label" %>
-            <%= f.select :exp_month, 
-                options_for_select((1..12).map { |m| [sprintf("%02d", m), m] }, nil), 
-                { prompt: "Mes" }, 
-                { required: true, class: "field-select" } %>
-            <span id="error-month" class="error-msg"></span>
+        <!-- Paso 2: Selección de tipo de tarjeta (solo para tarjetas) -->
+        <div id="card-type-selection" class="payment-step" style="display: none;">
+          <div class="step-header">
+            <button type="button" class="back-button" data-back-to="payment-method-selection">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+              </svg>
+              Volver
+            </button>
+            <h4 class="step-title">Selecciona el tipo de tarjeta</h4>
           </div>
 
-          <div class="form-field">
-            <%= f.label :exp_year, t("home.order-pago.año-expiracion"), class: "field-label" %>
-            <%= f.select :exp_year, 
-                options_for_select((Date.today.year..(Date.today.year+10)).map { |y| [y.to_s, y] }, nil), 
-                { prompt: "Año" }, 
-                { required: true, class: "field-select" } %>
-            <span id="error-year" class="error-msg"></span>
+          <div class="payment-methods-grid">
+            <div class="payment-method-card" data-card-type="credit">
+              <div class="method-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                  <line x1="1" y1="10" x2="23" y2="10"></line>
+                  <line x1="5" y1="15" x2="9" y2="15"></line>
+                </svg>
+              </div>
+              <h5>Tarjeta de Crédito</h5>
+              <p>Paga en cuotas de 1 a 36 meses</p>
+            </div>
+
+            <div class="payment-method-card" data-card-type="debit">
+              <div class="method-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                  <line x1="1" y1="10" x2="23" y2="10"></line>
+                  <circle cx="7" cy="15" r="1"></circle>
+                </svg>
+              </div>
+              <h5>Tarjeta Débito</h5>
+              <p>Pago único sin cuotas</p>
+            </div>
           </div>
         </div>
 
-        <div class="form-row">
+        <!-- Campos ocultos para método y tipo -->
+        <%= f.hidden_field :payment_method_type, id: "payment-method-selector" %>
+        <%= f.hidden_field :type_card, id: "card-type-selector" %>
+
+        <!-- Paso 3: Formulario de pago -->
+        <div id="payment-form-section" class="payment-step" style="display: none;">
+          <div class="step-header">
+            <button type="button" class="back-button" id="back-from-form">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+              </svg>
+              Volver
+            </button>
+            <h4 class="step-title" id="form-title">Completa tu información</h4>
+          </div>
+
+        <!-- Campos para TARJETA -->
+        <div id="card-fields" style="display: none;">
           <div class="form-field">
-            <%= f.label :cvc, "CVC", class: "field-label" %>
-            <%= f.text_field :cvc, 
-                maxlength: 4, 
-                required: true, 
+            <%= f.label :card_number, t("home.order-pago.numero-tarjeta"), class: "field-label" %>
+            <%= f.text_field :card_number, 
+                maxlength: 19, 
                 class: "field-input", 
-                placeholder: "123",
+                placeholder: "1234 5678 9012 3456",
                 inputmode: "numeric",
-                pattern: "[0-9]*",
-                autocomplete: "cc-csc" %>
-            <span id="error-cvc" class="error-msg"></span>
+                pattern: "[0-9\s]*",
+                autocomplete: "cc-number" %>
+            <span id="error-card" class="error-msg"></span>
           </div>
 
-          <div class="form-field">
-            <%= f.label :card_holder, t("home.order-pago.nombre-titular"), class: "field-label" %>
-            <%= f.text_field :card_holder, 
-                required: true, 
-                class: "field-input", 
-                placeholder: t("home.order-pago.nombre_completo"),
-                value: @order.customer_name %>
-            <span id="error-holder" class="error-msg"></span>
+          <div class="form-row">
+            <div class="form-field">
+              <%= f.label :exp_month, t("home.order-pago.mes-expiracion"), class: "field-label" %>
+              <%= f.select :exp_month, 
+                  options_for_select((1..12).map { |m| [sprintf("%02d", m), m] }, nil), 
+                  { prompt: "Mes" }, 
+                  { class: "field-select" } %>
+              <span id="error-month" class="error-msg"></span>
+            </div>
+
+            <div class="form-field">
+              <%= f.label :exp_year, t("home.order-pago.año-expiracion"), class: "field-label" %>
+              <%= f.select :exp_year, 
+                  options_for_select((Date.today.year..(Date.today.year+10)).map { |y| [y.to_s, y] }, nil), 
+                  { prompt: "Año" }, 
+                  { class: "field-select" } %>
+              <span id="error-year" class="error-msg"></span>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-field">
+              <%= f.label :cvc, "CVC", class: "field-label" %>
+              <%= f.text_field :cvc, 
+                  maxlength: 4, 
+                  class: "field-input", 
+                  placeholder: "123",
+                  inputmode: "numeric",
+                  pattern: "[0-9]*",
+                  autocomplete: "cc-csc" %>
+              <span id="error-cvc" class="error-msg"></span>
+            </div>
+
+            <div class="form-field">
+              <%= f.label :card_holder, t("home.order-pago.nombre-titular"), class: "field-label" %>
+              <%= f.text_field :card_holder, 
+                  class: "field-input", 
+                  placeholder: t("home.order-pago.nombre_completo"),
+                  value: @order.customer_name %>
+              <span id="error-holder" class="error-msg"></span>
+            </div>
+          </div>
+
+          <!-- Cuotas (solo para crédito) -->
+          <div class="form-field" id="installments-field" style="display: none;">
+            <%= f.label :installments, "Número de cuotas", class: "field-label" %>
+            <%= f.select :installments, 
+                options_for_select((1..36).map { |i| [i == 1 ? "1 cuota (sin intereses)" : "#{i} cuotas", i] }, 1),
+                {},
+                { class: "field-select" } %>
           </div>
         </div>
 
+        <!-- Campos para NEQUI -->
+        <div id="nequi-fields" style="display: none;">
+          <div class="form-field">
+            <%= f.label :phone_number, "Número de celular Nequi", class: "field-label" %>
+            <%= f.text_field :phone_number, 
+                maxlength: 10, 
+                class: "field-input", 
+                placeholder: "3001234567",
+                inputmode: "numeric",
+                pattern: "[0-9]*" %>
+            <span id="error-phone" class="error-msg"></span>
+            <small class="field-hint">Asegúrate de tener la app de Nequi instalada en tu celular</small>
+          </div>
+        </div>
+
+        <!-- Email (común para todos) -->
         <div class="form-field">
           <%= f.label :email, t("home.order-pago.correo-electronico"), class: "field-label" %>
           <%= f.email_field :email, 
@@ -155,57 +270,399 @@
           </div>
         </div>
 
-        <%= f.hidden_field :installments, value: 1 %>
-
         <div class="submit-section">
           <%= f.submit t("home.order-pago.pagar"), id: "pay-btn", class: "pay-button", disabled: true %>
           <p class="security-note">🔒 <%= t("home.order-pago.pago_seguro")%></p>
+        </div>
         </div>
       <% end %>
     </div>
   </div>
 </div>
 
+<style>
+  .payment-step {
+    animation: fadeIn 0.3s ease-in;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .step-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 25px;
+  }
+
+  .back-button {
+    background: #f5f5f5;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: #333;
+    transition: all 0.2s;
+  }
+
+  .back-button:hover {
+    background: #e0e0e0;
+  }
+
+  .back-button svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .step-title {
+    margin: 0;
+    font-size: 1.3rem;
+    color: #333;
+  }
+
+  .payment-methods-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+  }
+
+  .payment-method-card {
+    background: white;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 25px;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-align: center;
+  }
+
+  .payment-method-card:hover {
+    border-color: #FF6B35;
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(255, 107, 53, 0.2);
+  }
+
+  .payment-method-card.selected {
+    border-color: #FF6B35;
+    background: #fff5f2;
+  }
+
+  .method-icon {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto 15px;
+    background: #f5f5f5;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #FF6B35;
+  }
+
+  .method-icon svg {
+    width: 30px;
+    height: 30px;
+  }
+
+  .nequi-icon {
+    background: #f8e6ff;
+    color: #8B34D9;
+  }
+
+  .payment-method-card h5 {
+    margin: 10px 0;
+    font-size: 1.1rem;
+    color: #333;
+  }
+
+  .payment-method-card p {
+    margin: 5px 0;
+    font-size: 0.9rem;
+    color: #666;
+  }
+
+  .nequi-info {
+    margin-top: 15px;
+    padding: 12px;
+    background: #fff;
+    border-radius: 8px;
+    text-align: center;
+  }
+
+  .nequi-info small {
+    font-size: 0.8rem;
+    color: #555;
+    line-height: 1.4;
+  }
+
+  .field-hint {
+    display: block;
+    margin-top: 5px;
+    font-size: 0.85em;
+    color: #666;
+  }
+</style>
+
 <script>
 document.addEventListener('turbo:load', function() {
+  // Referencias a elementos del DOM
+  const paymentMethodSelector = document.getElementById('payment-method-selector');
+  const cardTypeSelector = document.getElementById('card-type-selector');
+  const installmentsField = document.getElementById('installments-field');
+  const installmentsSelect = document.querySelector('select[name*="installments"]');
+  const payBtn = document.getElementById('pay-btn');
+  const acceptTerms = document.querySelector('input[type="checkbox"][name*="accept_terms"]');
+  const acceptData = document.querySelector('input[type="checkbox"][name*="accept_data"]');
+  const emailInput = document.querySelector('input[name*="email"]');
+  const cardNumberInput = document.querySelector('input[name*="card_number"]');
+  const expMonthSelect = document.querySelector('select[name*="exp_month"]');
+  const expYearSelect = document.querySelector('select[name*="exp_year"]');
+  const cvcInput = document.querySelector('input[name*="cvc"]');
+  const cardHolderInput = document.querySelector('input[name*="card_holder"]');
+  const phoneInput = document.querySelector('input[name*="phone_number"]');
+  
+  // Referencias a pasos
+  const paymentMethodSelection = document.getElementById('payment-method-selection');
+  const cardTypeSelection = document.getElementById('card-type-selection');
+  const paymentFormSection = document.getElementById('payment-form-section');
+  const cardFields = document.getElementById('card-fields');
+  const nequiFields = document.getElementById('nequi-fields');
+
+  // Función para mostrar un paso específico
+  function showStep(stepElement) {
+    paymentMethodSelection.style.display = 'none';
+    cardTypeSelection.style.display = 'none';
+    paymentFormSection.style.display = 'none';
+    
+    if (stepElement) {
+      stepElement.style.display = 'block';
+    }
+  }
+
+  // Función para desmarcar checkboxes de términos
+  function uncheckTerms() {
+    if (acceptTerms) acceptTerms.checked = false;
+    if (acceptData) acceptData.checked = false;
+  }
+
+  // Manejar selección de método de pago
+  document.querySelectorAll('.payment-method-card[data-method]').forEach(card => {
+    card.addEventListener('click', function() {
+      const method = this.dataset.method;
+      paymentMethodSelector.value = method;
+      
+      // Desmarcar términos al cambiar método
+      uncheckTerms();
+      
+      if (method === 'card') {
+        // Mostrar selección de tipo de tarjeta
+        showStep(cardTypeSelection);
+      } else if (method === 'nequi') {
+        // Ir directo al formulario
+        cardTypeSelector.value = '';
+        nequiFields.style.display = 'block';
+        cardFields.style.display = 'none';
+        showStep(paymentFormSection);
+        
+        // Configurar campos requeridos
+        if (phoneInput) phoneInput.required = true;
+        if (cardNumberInput) cardNumberInput.required = false;
+        if (expMonthSelect) expMonthSelect.required = false;
+        if (expYearSelect) expYearSelect.required = false;
+        if (cvcInput) cvcInput.required = false;
+        if (cardHolderInput) cardHolderInput.required = false;
+      }
+      
+      validateForm();
+    });
+  });
+
+  // Manejar selección de tipo de tarjeta
+  document.querySelectorAll('.payment-method-card[data-card-type]').forEach(card => {
+    card.addEventListener('click', function() {
+      const cardType = this.dataset.cardType;
+      cardTypeSelector.value = cardType;
+      
+      // Desmarcar términos al cambiar tipo
+      uncheckTerms();
+      
+      // Mostrar/ocultar campo de cuotas
+      if (cardType === 'credit') {
+        installmentsField.style.display = 'block';
+      } else {
+        installmentsField.style.display = 'none';
+        if (installmentsSelect) installmentsSelect.value = '1';
+      }
+      
+      // Mostrar formulario
+      cardFields.style.display = 'block';
+      nequiFields.style.display = 'none';
+      showStep(paymentFormSection);
+      
+      // Configurar campos requeridos
+      if (cardNumberInput) cardNumberInput.required = true;
+      if (expMonthSelect) expMonthSelect.required = true;
+      if (expYearSelect) expYearSelect.required = true;
+      if (cvcInput) cvcInput.required = true;
+      if (cardHolderInput) cardHolderInput.required = true;
+      if (phoneInput) phoneInput.required = false;
+      
+      validateForm();
+    });
+  });
+
+  // Manejar botones de volver
+  document.querySelectorAll('.back-button[data-back-to]').forEach(button => {
+    button.addEventListener('click', function() {
+      const targetId = this.dataset.backTo;
+      const targetElement = document.getElementById(targetId);
+      showStep(targetElement);
+      uncheckTerms();
+      validateForm();
+    });
+  });
+
+  // Botón volver desde formulario
+  const backFromForm = document.getElementById('back-from-form');
+  if (backFromForm) {
+    backFromForm.addEventListener('click', function() {
+      const method = paymentMethodSelector.value;
+      if (method === 'card') {
+        showStep(cardTypeSelection);
+      } else {
+        showStep(paymentMethodSelection);
+      }
+      uncheckTerms();
+      validateForm();
+    });
+  }
+
+
+  // Función de validación del formulario
+  function validateForm() {
+    if (!paymentMethodSelector || !payBtn) return;
+    
+    const method = paymentMethodSelector.value;
+    console.log('Validating form, method:', method);
+    let isValid = false;
+
+    // Verificar términos
+    console.log('Accept terms checked:', acceptTerms?.checked, 'Accept data checked:', acceptData?.checked);
+    if (!acceptTerms || !acceptData || !acceptTerms.checked || !acceptData.checked) {
+      console.log('Terms not accepted, disabling button');
+      payBtn.disabled = true;
+      return;
+    }
+
+    // Verificar email
+    console.log('Email value:', emailInput?.value);
+    if (!emailInput || !emailInput.value || !emailInput.value.includes('@')) {
+      console.log('Email invalid, disabling button');
+      payBtn.disabled = true;
+      return;
+    }
+
+    if (method === 'card') {
+      // Validar campos de tarjeta
+      if (!cardNumberInput || !expMonthSelect || !expYearSelect || !cvcInput || !cardHolderInput) {
+        console.log('Card fields not found, disabling button');
+        payBtn.disabled = true;
+        return;
+      }
+
+      const cardNumber = cardNumberInput.value.replace(/\s/g, '');
+      const expMonth = expMonthSelect.value;
+      const expYear = expYearSelect.value;
+      const cvc = cvcInput.value;
+      const cardHolder = cardHolderInput.value;
+
+      console.log('Card validation:', {cardNumber: cardNumber.length, expMonth, expYear, cvc: cvc.length, cardHolder: cardHolder.length});
+
+      isValid = cardNumber.length >= 13 && cardNumber.length <= 19 &&
+                expMonth !== '' &&
+                expYear !== '' &&
+                cvc.length >= 3 && cvc.length <= 4 &&
+                cardHolder.trim().length > 0;
+    } else if (method === 'nequi') {
+      // Validar teléfono Nequi (10 dígitos, colombiano empieza con 3)
+      if (!phoneInput) {
+        console.log('Phone input not found, disabling button');
+        payBtn.disabled = true;
+        return;
+      }
+
+      const phone = phoneInput.value;
+      console.log('Nequi phone validation:', {phone, length: phone.length, startsWith3: phone.startsWith('3')});
+      isValid = phone.length === 10 && phone.startsWith('3');
+    }
+
+    console.log('Final validation result:', isValid);
+    payBtn.disabled = !isValid;
+  }
+
   // Función para permitir solo números
   function onlyNumbers(event) {
     const char = String.fromCharCode(event.which);
-    // Permitir: backspace, delete, tab, escape, enter
     if ([8, 9, 27, 13, 46].indexOf(event.keyCode) !== -1 ||
-        // Permitir Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X
         (event.keyCode === 65 && event.ctrlKey === true) ||
         (event.keyCode === 67 && event.ctrlKey === true) ||
         (event.keyCode === 86 && event.ctrlKey === true) ||
         (event.keyCode === 88 && event.ctrlKey === true)) {
       return;
     }
-    // Asegurar que es un número (0-9)
     if (!/[0-9]/.test(char)) {
       event.preventDefault();
     }
   }
 
-  // Aplicar validación solo a número de tarjeta y CVC
-  const cardNumberInput = document.querySelector('input[name*="card_number"]');
-  const cvcInput = document.querySelector('input[name*="cvc"]');
+  // Event listeners para validación de términos
+  if (acceptTerms) acceptTerms.addEventListener('change', validateForm);
+  if (acceptData) acceptData.addEventListener('change', validateForm);
+  if (emailInput) emailInput.addEventListener('input', validateForm);
 
+  // Event listeners para campos de tarjeta
   if (cardNumberInput) {
+    cardNumberInput.addEventListener('input', validateForm);
     cardNumberInput.addEventListener('keydown', onlyNumbers);
-    // Prevenir pegar texto no numérico
     cardNumberInput.addEventListener('paste', function(event) {
       setTimeout(() => {
         this.value = this.value.replace(/[^0-9]/g, '');
+        validateForm();
       }, 10);
     });
   }
 
+  if (expMonthSelect) expMonthSelect.addEventListener('change', validateForm);
+  if (expYearSelect) expYearSelect.addEventListener('change', validateForm);
+  
   if (cvcInput) {
+    cvcInput.addEventListener('input', validateForm);
     cvcInput.addEventListener('keydown', onlyNumbers);
-    // Prevenir pegar texto no numérico
     cvcInput.addEventListener('paste', function(event) {
       setTimeout(() => {
         this.value = this.value.replace(/[^0-9]/g, '');
+        validateForm();
+      }, 10);
+    });
+  }
+
+  if (cardHolderInput) cardHolderInput.addEventListener('input', validateForm);
+
+  // Event listeners para campo de teléfono Nequi
+  if (phoneInput) {
+    phoneInput.addEventListener('input', validateForm);
+    phoneInput.addEventListener('keydown', onlyNumbers);
+    phoneInput.addEventListener('paste', function(event) {
+      setTimeout(() => {
+        this.value = this.value.replace(/[^0-9]/g, '');
+        validateForm();
       }, 10);
     });
   }
@@ -216,18 +673,18 @@ document.addEventListener('turbo:load', function() {
     const orderSummary = document.querySelector('.simple-order-summary');
     
     if (paymentForm && orderSummary && window.innerWidth > 768) {
-      // Solo en desktop
       const paymentHeight = paymentForm.offsetHeight;
       orderSummary.style.setProperty('--target-height', paymentHeight + 'px');
       orderSummary.classList.add('height-matched');
     } else if (orderSummary) {
-      // En móvil, quitar restricciones de altura
       orderSummary.classList.remove('height-matched');
       orderSummary.style.removeProperty('--target-height');
     }
   }
 
-  // Ejecutar al cargar y al redimensionar
+  // Inicializar estado
+  showStep(paymentMethodSelection);
+  validateForm();
   matchHeights();
   window.addEventListener('resize', matchHeights);
 });
