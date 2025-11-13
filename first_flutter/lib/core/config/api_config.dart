@@ -14,7 +14,7 @@ class ApiConfig {
   static const String _productionBaseUrl = "https://api.tudominio.com/api/v1";
   
   /// URL base para staging/pruebas
-  static const String _stagingBaseUrl = "https://api-staging.tudominio.com/api/v1";
+  // static const String _stagingBaseUrl = "https://api-staging.tudominio.com/api/v1";
 
   /// Indica si estamos en modo desarrollo
   static const bool _isDevelopment = true; // Cambiar a false para producción

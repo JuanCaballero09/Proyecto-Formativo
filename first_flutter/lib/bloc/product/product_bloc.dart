@@ -131,7 +131,7 @@ class ProductBloc extends Bloc<ProductEvent, BaseState> {
           final products = await repository.getProductsByCategory(event.categoryName);
           final product = products.firstWhere(
             (p) => p.id == event.productId,
-            orElse: () => throw DataException('Producto no encontrado'),
+            orElse: () => throw DataException(message: 'Producto no encontrado'),
           );
           emit(SuccessState([product]));
         }
