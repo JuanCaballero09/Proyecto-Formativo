@@ -29,21 +29,22 @@ class FloatingCartButton extends StatelessWidget {
             child: Stack(
               clipBehavior: Clip.none,
               children: [
-                const Icon(Icons.shopping_cart, size: 28, color: Colors.white),
+                Icon(Icons.shopping_cart,
+                    size: 28, color: Theme.of(context).colorScheme.onPrimary),
                 if (itemCount > 0)
                   Positioned(
                     right: -6,
                     top: -6,
                     child: Container(
                       padding: const EdgeInsets.all(5),
-                      decoration: const BoxDecoration(
-                        color: Colors.red,
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.error,
                         shape: BoxShape.circle,
                       ),
                       child: Text(
                         '$itemCount',
-                        style: const TextStyle(
-                          color: Colors.white,
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onError,
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
                         ),

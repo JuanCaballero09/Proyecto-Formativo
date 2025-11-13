@@ -6,6 +6,7 @@ import '../models/categoria.dart';
 import 'category_products_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+
 class MenuPage extends StatefulWidget {
   const MenuPage({super.key});
 
@@ -14,15 +15,12 @@ class MenuPage extends StatefulWidget {
 }
 
 class _MenuPageState extends State<MenuPage> {
-  
   @override
   void initState() {
     super.initState();
-    // Cargar las categorías cuando se inicializa la página
     context.read<CategoriasBloc>().add(LoadCategoriasEvent());
   }
 
-  // Datos de fallback por si la API no responde
   List<Map<String, String>> getCategoriasFallback(BuildContext context) {
     return [
       {"titulo": AppLocalizations.of(context)!.pizzas.toUpperCase(), "imagen": "assets/Pizza Hawiana.jpg"},
@@ -35,54 +33,56 @@ class _MenuPageState extends State<MenuPage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context); // 👈 usamos el tema actual
+    final textColor = theme.textTheme.bodyLarge?.color; // color dinámico del texto
+
     return Scaffold(
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 30),
-            
-            // Título principal
+
+            // 🔸 Título principal
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Text(
                 AppLocalizations.of(context)!.ourMenu.toUpperCase(),
-                style: const TextStyle(
-                  fontSize: 24,
+                style: theme.textTheme.headlineSmall?.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: Colors.black87,
+                  color: textColor, // 👈 texto dinámico
                 ),
               ),
             ),
-            
-            // Subtítulo
+
+            // 🔸 Subtítulo
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Text(
                 AppLocalizations.of(context)!.selectCategoryToSeeProducts,
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey[600],
-                   height: 1.0, // reduce el alto de línea
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: textColor?.withOpacity(0.7), // 👈 texto dinámico más suave
+                  height: 1.2,
                 ),
               ),
             ),
-            
+
             const SizedBox(height: 20),
-            
-            // Grid de categorías usando BLoC
+
+            // 🔸 Grid de categorías
             BlocBuilder<CategoriasBloc, CategoriasState>(
               builder: (context, state) {
-                     if (state is CategoriasLoadingState) {
-                        return Center(
-                       child: Padding(
-                        padding: const EdgeInsets.all(50.0),
-                            child: LoadingAnimationWidget.threeRotatingDots(
-                            color:  const Color.fromRGBO(237, 88, 33, 1),
-                            size: 40,
-                                 ),
-                       )
-                         );
+                if (state is CategoriasLoadingState) {
+                  return Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(50.0),
+                      child: LoadingAnimationWidget.threeRotatingDots(
+                        color: const Color.fromRGBO(237, 88, 33, 1),
+                        size: 40,
+                      ),
+                    ),
+                  );
                 } else if (state is CategoriasLoadedState) {
                   return _buildCategoriasGrid(state.categorias);
                 } else if (state is CategoriasErrorState) {
@@ -92,7 +92,7 @@ class _MenuPageState extends State<MenuPage> {
                         padding: const EdgeInsets.all(16.0),
                         child: Text(
                           'Error al cargar categorías: ${state.error}',
-                          style: const TextStyle(color: Colors.red),
+                          style: theme.textTheme.bodyMedium?.copyWith(color: Colors.redAccent),
                           textAlign: TextAlign.center,
                         ),
                       ),
@@ -103,17 +103,15 @@ class _MenuPageState extends State<MenuPage> {
                         child: const Text('Reintentar'),
                       ),
                       const SizedBox(height: 20),
-                      // Mostrar categorías de fallback en caso de error
                       _buildCategoriasFallbackGrid(),
                     ],
                   );
                 } else {
-                  // Estado inicial - mostrar categorías de fallback
                   return _buildCategoriasFallbackGrid();
                 }
               },
             ),
-            
+
             const SizedBox(height: 20),
           ],
         ),
@@ -135,8 +133,7 @@ class _MenuPageState extends State<MenuPage> {
           childAspectRatio: 1.2,
         ),
         itemBuilder: (context, index) {
-          final categoria = categorias[index];
-          return _buildCategoryCardFromAPI(categoria);
+          return _buildCategoryCardFromAPI(categorias[index]);
         },
       ),
     );
@@ -165,164 +162,50 @@ class _MenuPageState extends State<MenuPage> {
   Widget _buildCategoryCardFromAPI(Categoria categoria) {
     return GestureDetector(
       onTap: () {
-        // Debug: Ver qué categoría se está seleccionando
-        print('=== DEBUG: Categoría seleccionada en MenuPage ===');
-        print('ID: ${categoria.id}');
-        print('Nombre original: ${categoria.nombre}');
-        print('Nombre en mayúsculas: ${categoria.nombre.toUpperCase()}');
-        print('Imagen: ${categoria.imagenUrl}');
-        print('=================================================');
-        
         Navigator.push(
           context,
           CupertinoPageRoute(
             builder: (context) => CategoryProductsPage(
               categoryName: categoria.nombre.toUpperCase(),
               categoryImage: categoria.imagenUrl ?? categoria.getDefaultImage(),
-              categoryId: categoria.id, // SOLUCIÓN: Pasar el ID directamente
+              categoryId: categoria.id,
             ),
           ),
         );
       },
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 8,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Card(
-          elevation: 0,
-          margin: EdgeInsets.zero,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Stack(
-            children: [
-              // Imagen de fondo
-              ClipRRect(
-                borderRadius: BorderRadius.circular(16),
-                child: _buildCategoryImage(categoria),
-              ),
-              // Overlay con gradiente
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Colors.transparent,
-                      Colors.black.withOpacity(0.7),
-                    ],
-                    stops: const [0.3, 1.0],
-                  ),
-                ),
-              ),
-              // Texto del título
-              Positioned(
-                bottom: 0,
-                left: 0,
-                right: 0,
-                child: Container(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        categoria.nombre.toUpperCase(),
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          shadows: [
-                            Shadow(
-                              offset: Offset(0, 1),
-                              blurRadius: 2,
-                              color: Colors.black54,
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: const Color.fromRGBO(237, 88, 33, 1),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Text(
-                          AppLocalizations.of(context)!.viewProducts,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
+      child: _categoryCardLayout(
+        context: context,
+        title: categoria.nombre.toUpperCase(),
+        imageWidget: _buildCategoryImage(categoria),
       ),
     );
   }
 
   Widget _buildCategoryImage(Categoria categoria) {
-    // Extraer el emoji del nombre de la categoría
-    String emoji = '🍽️'; // Emoji por defecto
-    
+    String emoji = '🍽️';
     if (categoria.nombre.isNotEmpty) {
-      // Buscar el primer emoji en el nombre
       final runes = categoria.nombre.runes.toList();
       for (var rune in runes) {
-        final char = String.fromCharCode(rune);
-        // Verificar si es un emoji (código Unicode > 127)
         if (rune > 127) {
-          emoji = char;
+          emoji = String.fromCharCode(rune);
           break;
         }
       }
     }
-    
-    // Definir colores de gradiente según la categoría
-    List<Color> gradientColors = _getGradientColors(categoria.nombre);
-    
-    print('📸 Mostrando emoji para ${categoria.nombre}: $emoji');
 
+    final gradientColors = _getGradientColors(categoria.nombre);
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
+          colors: gradientColors,
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: gradientColors,
         ),
       ),
       child: Center(
         child: Text(
           emoji,
-          style: const TextStyle(
-            fontSize: 100,
-            shadows: [
-              Shadow(
-                offset: Offset(2, 2),
-                blurRadius: 4,
-                color: Colors.black26,
-              ),
-            ],
-          ),
+          style: const TextStyle(fontSize: 100),
         ),
       ),
     );
@@ -330,7 +213,6 @@ class _MenuPageState extends State<MenuPage> {
 
   List<Color> _getGradientColors(String nombre) {
     final nombreLower = nombre.toLowerCase();
-    
     if (nombreLower.contains('hamburguesa') || nombreLower.contains('burger')) {
       return [Colors.orange[300]!, Colors.orange[600]!];
     } else if (nombreLower.contains('pizza')) {
@@ -346,8 +228,6 @@ class _MenuPageState extends State<MenuPage> {
     } else if (nombreLower.contains('ensalada') || nombreLower.contains('salad')) {
       return [Colors.lightGreen[300]!, Colors.lightGreen[600]!];
     }
-    
-    // Color por defecto
     return [Colors.grey[400]!, Colors.grey[700]!];
   }
 
@@ -356,7 +236,7 @@ class _MenuPageState extends State<MenuPage> {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(
+          CupertinoPageRoute(
             builder: (context) => CategoryProductsPage(
               categoryName: categoria['titulo']!,
               categoryImage: categoria['imagen']!,
@@ -364,130 +244,105 @@ class _MenuPageState extends State<MenuPage> {
           ),
         );
       },
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 8,
-              offset: const Offset(0, 4),
-            ),
-          ],
+      child: _categoryCardLayout(
+        context: context,
+        title: categoria['titulo']!,
+        imageWidget: Image.asset(
+          categoria['imagen']!,
+          height: double.infinity,
+          width: double.infinity,
+          fit: BoxFit.cover,
         ),
-        child: Card(
-          elevation: 0,
-          margin: EdgeInsets.zero,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
+      ),
+    );
+  }
+
+  Widget _categoryCardLayout({
+    required BuildContext context,
+    required String title,
+    required Widget imageWidget,
+  }) {
+    final theme = Theme.of(context);
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
           ),
-          child: Stack(
-            children: [
-              // Imagen de fondo
-              ClipRRect(
+        ],
+      ),
+      child: Card(
+        elevation: 0,
+        color: theme.cardColor, // 👈 se adapta al modo oscuro
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Stack(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: imageWidget,
+            ),
+            Container(
+              decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(16),
-                child: Image.asset(
-                  categoria['imagen']!,
-                  height: double.infinity,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      color: Colors.grey[300],
-                      child: const Center(
-                        child: Icon(Icons.broken_image, size: 50, color: Colors.grey),
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.transparent,
+                    Colors.black.withOpacity(0.7),
+                  ],
+                ),
+              ),
+            ),
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: Container(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      title,
+                      textAlign: TextAlign.center,
+                      style: theme.textTheme.bodyLarge?.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
                       ),
-                    );
-                  },
-                ),
-              ),
-              // Overlay con gradiente
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Colors.transparent,
-                      Colors.black.withOpacity(0.7),
-                    ],
-                    stops: const [0.3, 1.0],
-                  ),
-                ),
-              ),
-              // Texto del título
-              Positioned(
-                bottom: 0,
-                left: 0,
-                right: 0,
-                child: Container(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        categoria['titulo']!,
-                        textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 4),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: const Color.fromRGBO(237, 88, 33, 1),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        AppLocalizations.of(context)!.viewProducts,
                         style: const TextStyle(
                           color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          shadows: [
-                            Shadow(
-                              offset: Offset(0, 1),
-                              blurRadius: 2,
-                              color: Colors.black54,
-                            ),
-                          ],
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
-                      const SizedBox(height: 4),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: const Color.fromRGBO(237, 88, 33, 1),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Text(
-                          AppLocalizations.of(context)!.viewProducts,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
-              // Efecto de presión visual
-              Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  borderRadius: BorderRadius.circular(16),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => CategoryProductsPage(
-                          categoryName: categoria['titulo']!,
-                          categoryImage: categoria['imagen']!,
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
   }
 }
+

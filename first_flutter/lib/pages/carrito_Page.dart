@@ -54,7 +54,8 @@ class CarritoPageState extends State<CarritoPage> {
             return AlertDialog(
               title: Row(
                 children: [
-                  const Icon(Icons.shopping_bag, color: Color.fromRGBO(237, 88, 33, 1)),
+                  const Icon(Icons.shopping_bag,
+                      color: Color.fromRGBO(237, 88, 33, 1)),
                   const SizedBox(width: 8),
                   const Text('Finalizar Pedido'),
                 ],
@@ -82,19 +83,23 @@ class CarritoPageState extends State<CarritoPage> {
                                   const SizedBox(width: 8),
                                   Text(
                                     '${state.cart.items.length} productos',
-                                    style: const TextStyle(fontWeight: FontWeight.bold),
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold),
                                   ),
                                   const Spacer(),
                                   Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8, vertical: 4),
                                     decoration: BoxDecoration(
                                       color: Colors.orange,
                                       borderRadius: BorderRadius.circular(12),
                                     ),
                                     child: Text(
                                       '\$${NumberFormat('#,###', 'es_CO').format(state.cart.totalPrice)}',
-                                      style: const TextStyle(
-                                        color: Colors.white,
+                                      style: TextStyle(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onPrimary,
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
@@ -109,7 +114,8 @@ class CarritoPageState extends State<CarritoPage> {
                     const SizedBox(height: 16),
 
                     // Dirección de entrega (TODOS)
-                    const Text('📍 Dirección de Entrega', style: TextStyle(fontWeight: FontWeight.bold)),
+                    const Text('📍 Dirección de Entrega',
+                        style: TextStyle(fontWeight: FontWeight.bold)),
                     const SizedBox(height: 8),
                     TextField(
                       controller: _direccionController,
@@ -124,7 +130,8 @@ class CarritoPageState extends State<CarritoPage> {
 
                     // Datos del invitado (solo si NO está autenticado)
                     if (!isAuthenticated) ...[
-                      const Text('👤 Información Personal', style: TextStyle(fontWeight: FontWeight.bold)),
+                      const Text('👤 Información Personal',
+                          style: TextStyle(fontWeight: FontWeight.bold)),
                       const SizedBox(height: 8),
                       Row(
                         children: [
@@ -182,25 +189,32 @@ class CarritoPageState extends State<CarritoPage> {
               ),
               actions: [
                 TextButton(
-                  onPressed: _isProcessing ? null : () => Navigator.pop(context),
+                  onPressed:
+                      _isProcessing ? null : () => Navigator.pop(context),
                   child: const Text('Cancelar'),
                 ),
                 ElevatedButton(
-                  onPressed: _isProcessing ? null : () async {
-                    setState(() => _isProcessing = true);
-                    await _processOrder(dialogContext);
-                    setState(() => _isProcessing = false);
-                  },
+                  onPressed: _isProcessing
+                      ? null
+                      : () async {
+                          setState(() => _isProcessing = true);
+                          await _processOrder(dialogContext);
+                          setState(() => _isProcessing = false);
+                        },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color.fromRGBO(237, 88, 33, 1),
                   ),
                   child: _isProcessing
-                      ? const SizedBox(
+                      ? SizedBox(
                           width: 20,
                           height: 20,
-                          child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                          child: CircularProgressIndicator(
+                              color: Theme.of(context).colorScheme.onPrimary,
+                              strokeWidth: 2),
                         )
-                      : const Text('Confirmar Pedido', style: TextStyle(color: Colors.white)),
+                      : Text('Confirmar Pedido',
+                          style: TextStyle(
+                              color: Theme.of(context).colorScheme.onPrimary)),
                 ),
               ],
             );
@@ -217,7 +231,8 @@ class CarritoPageState extends State<CarritoPage> {
 
     // Validar dirección
     if (_direccionController.text.trim().length < 5) {
-      _showError(dialogContext, 'Por favor ingresa una dirección válida (mínimo 5 caracteres)');
+      _showError(dialogContext,
+          'Por favor ingresa una dirección válida (mínimo 5 caracteres)');
       return;
     }
 
@@ -227,7 +242,8 @@ class CarritoPageState extends State<CarritoPage> {
           _apellidoController.text.trim().isEmpty ||
           _emailController.text.trim().isEmpty ||
           _telefonoController.text.trim().isEmpty) {
-        _showError(dialogContext, 'Por favor completa todos los campos requeridos');
+        _showError(
+            dialogContext, 'Por favor completa todos los campos requeridos');
         return;
       }
 
@@ -253,17 +269,19 @@ class CarritoPageState extends State<CarritoPage> {
         items: items,
         direccion: _direccionController.text.trim(),
         guestNombre: !isAuthenticated ? _nombreController.text.trim() : null,
-        guestApellido: !isAuthenticated ? _apellidoController.text.trim() : null,
+        guestApellido:
+            !isAuthenticated ? _apellidoController.text.trim() : null,
         guestEmail: !isAuthenticated ? _emailController.text.trim() : null,
-        guestTelefono: !isAuthenticated ? _telefonoController.text.trim() : null,
+        guestTelefono:
+            !isAuthenticated ? _telefonoController.text.trim() : null,
       );
 
       // Orden creada exitosamente
       if (!mounted) return;
-      
+
       // Vaciar el carrito
       context.read<CartBloc>().add(ClearCart());
-      
+
       // Cerrar diálogo
       Navigator.pop(dialogContext);
 
@@ -271,11 +289,13 @@ class CarritoPageState extends State<CarritoPage> {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: const Row(
+          title: Row(
             children: [
-              Icon(Icons.check_circle, color: Colors.green, size: 32),
-              SizedBox(width: 8),
-              Text('¡Pedido Confirmado!'),
+              Icon(Icons.check_circle,
+                  color: Theme.of(context).colorScheme.secondary, size: 32),
+              const SizedBox(width: 8),
+              Text('¡Pedido Confirmado!',
+                  style: Theme.of(context).textTheme.titleLarge),
             ],
           ),
           content: Column(
@@ -284,11 +304,15 @@ class CarritoPageState extends State<CarritoPage> {
             children: [
               Text('Código de orden: ${orderData['code']}'),
               const SizedBox(height: 8),
-              Text('Total: \$${NumberFormat('#,###', 'es_CO').format(orderData['total'])}'),
+              Text(
+                  'Total: \$${NumberFormat('#,###', 'es_CO').format(orderData['total'])}'),
               const SizedBox(height: 8),
-              const Text(
+              Text(
                 'Tu pedido ha sido registrado exitosamente. Recibirás confirmación pronto.',
-                style: TextStyle(fontSize: 14, color: Colors.black54),
+                style: Theme.of(context)
+                    .textTheme
+                    .bodySmall
+                    ?.copyWith(fontSize: 14),
               ),
             ],
           ),
@@ -322,85 +346,86 @@ class CarritoPageState extends State<CarritoPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-              
       body: BlocBuilder<CartBloc, CartState>(
         builder: (context, state) {
           final cartItems = state.cart.items;
 
-         if (cartItems.isEmpty) {
-  return Center(
-    child: Padding(
-      padding: const EdgeInsets.all(24.0),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Imagen de carrito vacío
-          Image.asset(
-            'assets/carro_vacio.jpeg',
-            width: 180,
-            height: 180,
-          ),
-          const SizedBox(height: 24),
+          if (cartItems.isEmpty) {
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Imagen de carrito vacío
+                    Image.asset(
+                      'assets/carro_vacio.jpeg',
+                      width: 180,
+                      height: 180,
+                    ),
+                    const SizedBox(height: 24),
 
-          // Texto principal
-          Text(
-            AppLocalizations.of(context)!.cartEmpty.toUpperCase(),
-            style: const TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 8),
+                    // Texto principal
+                    Text(
+                      AppLocalizations.of(context)!.cartEmpty.toUpperCase(),
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 8),
 
-          // Subtexto
-          Text(
-            AppLocalizations.of(context)!.cartEmptyMessage,
-            style: const TextStyle(
-              fontSize: 16,
-              color: Colors.black54,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 24),
+                    // Subtexto
+                    Text(
+                      AppLocalizations.of(context)!.cartEmptyMessage,
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyMedium
+                          ?.copyWith(fontSize: 16),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 24),
 
-          // Botón para ir al menú
-          SizedBox(
-            width: 220,
-            height: 50,
-            child: ElevatedButton(
-            onPressed: () {
-  Navigator.pushReplacement(
-    context,
-    MaterialPageRoute(
-      builder: (context) => ProductCatalogPage(initialIndex: 1), // 👈 abrir directo el Menú
-    ),
-  );
-},
-
-              style: ElevatedButton.styleFrom(
-               backgroundColor: const Color.fromRGBO(237, 88, 33, 1),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
+                    // Botón para ir al menú
+                    SizedBox(
+                      width: 220,
+                      height: 50,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ProductCatalogPage(
+                                  initialIndex: 1), // 👈 abrir directo el Menú
+                            ),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color.fromRGBO(237, 88, 33, 1),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                        ),
+                        child: Text(
+                          AppLocalizations.of(context)!.startShopping,
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyMedium
+                              ?.copyWith(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context).colorScheme.onPrimary,
+                              ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                padding: const EdgeInsets.symmetric(vertical: 16),
               ),
-              child: Text(
-                AppLocalizations.of(context)!.startShopping,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    ),
-  );
-}
-
+            );
+          }
 
           return ListView.builder(
             itemCount: cartItems.length,
@@ -444,10 +469,10 @@ class CarritoPageState extends State<CarritoPage> {
                                 padding: const EdgeInsets.only(top: 4.0),
                                 child: Text(
                                   item.description!,
-                                  style: TextStyle(
-                                    color: Colors.grey[700],
-                                    fontSize: 13,
-                                  ),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall
+                                      ?.copyWith(fontSize: 13),
                                 ),
                               ),
                             Row(
@@ -456,16 +481,19 @@ class CarritoPageState extends State<CarritoPage> {
                                   icon: const Icon(Icons.remove_circle),
                                   onPressed: () {
                                     context.read<CartBloc>().add(
-                                          UpdateCartItemQuantity(item.id, item.quantity - 1),
+                                          UpdateCartItemQuantity(
+                                              item.id, item.quantity - 1),
                                         );
                                   },
                                 ),
-                                Text('${AppLocalizations.of(context)!.quantity}: ${item.quantity}'),
+                                Text(
+                                    '${AppLocalizations.of(context)!.quantity}: ${item.quantity}'),
                                 IconButton(
                                   icon: const Icon(Icons.add_circle),
                                   onPressed: () {
                                     context.read<CartBloc>().add(
-                                          UpdateCartItemQuantity(item.id, item.quantity + 1),
+                                          UpdateCartItemQuantity(
+                                              item.id, item.quantity + 1),
                                         );
                                   },
                                 ),
@@ -480,9 +508,12 @@ class CarritoPageState extends State<CarritoPage> {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           IconButton(
-                            icon: const Icon(Icons.delete, color: Colors.red),
+                            icon: Icon(Icons.delete,
+                                color: Theme.of(context).colorScheme.error),
                             onPressed: () {
-                              context.read<CartBloc>().add(RemoveFromCart(item.id));
+                              context
+                                  .read<CartBloc>()
+                                  .add(RemoveFromCart(item.id));
                             },
                           ),
                           Text(
@@ -512,10 +543,10 @@ class CarritoPageState extends State<CarritoPage> {
               children: [
                 Text(
                   '${AppLocalizations.of(context)!.total}: \$ ${NumberFormat('#,###', 'es_CO').format(state.cart.totalPrice)} COP',
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleLarge
+                      ?.copyWith(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 10),
                 ElevatedButton(
@@ -524,9 +555,12 @@ class CarritoPageState extends State<CarritoPage> {
                     backgroundColor: const Color.fromRGBO(237, 88, 33, 1),
                     minimumSize: const Size(double.infinity, 50),
                   ),
-                  child: const Text(
+                  child: Text(
                     'Proceder al Pago',
-                    style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: Theme.of(context).colorScheme.onPrimary,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold),
                   ),
                 ),
               ],

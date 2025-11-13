@@ -16,10 +16,10 @@ if detected_path.empty?
 end
 
 # Configurar WickedPdf
-WickedPdf.config = {
-  exe_path: detected_path,
-  enable_local_file_access: true
-}
+WickedPdf.configure do |config|
+  config.exe_path = detected_path
+  config.enable_local_file_access = true
+end
 
 # Mostrar advertencia si no se encontró
 unless File.exist?(detected_path.to_s)

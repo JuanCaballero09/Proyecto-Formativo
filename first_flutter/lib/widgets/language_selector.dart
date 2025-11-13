@@ -16,7 +16,7 @@ class LanguageSelector extends StatelessWidget {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: Colors.amber.shade300),
-              color: Colors.white,
+              color: Theme.of(context).cardColor,
             ),
             child: DropdownButtonHideUnderline(
               child: DropdownButton<String>(
@@ -48,24 +48,26 @@ class LanguageSelector extends StatelessWidget {
                 onChanged: (String? newValue) {
                   if (newValue != null) {
                     context.read<LanguageBloc>().add(
-                      ChangeLanguage(languageCode: newValue),
-                    );
+                          ChangeLanguage(languageCode: newValue),
+                        );
                   }
                 },
-                icon: const Icon(Icons.arrow_drop_down, color: Colors.amber),
-                style: const TextStyle(
-                  color: Colors.black87,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                ),
-                dropdownColor: Colors.white,
+                icon: Icon(Icons.arrow_drop_down,
+                    color: Theme.of(context).colorScheme.primary),
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
+                dropdownColor: Theme.of(context).cardColor,
                 borderRadius: BorderRadius.circular(12),
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               ),
             ),
           );
         }
-        return const CircularProgressIndicator(color: Colors.amber);
+        return CircularProgressIndicator(
+            color: Theme.of(context).colorScheme.primary);
       },
     );
   }
@@ -79,20 +81,19 @@ class LanguageSelectorDialog extends StatelessWidget {
     // We'll use generated localizations once flutter build is complete
     // For now, we'll use hardcoded strings
     const String selectLanguageText = "Seleccionar Idioma";
-    
+
     return AlertDialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       title: Row(
         children: [
           Icon(Icons.language, color: Colors.amber.shade600),
           const SizedBox(width: 12),
-          const Text(
+          Text(
             selectLanguageText,
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Colors.black87,
-            ),
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
           ),
         ],
       ),
@@ -142,8 +143,8 @@ class _LanguageOption extends StatelessWidget {
             borderRadius: BorderRadius.circular(12),
             onTap: () {
               context.read<LanguageBloc>().add(
-                ChangeLanguage(languageCode: code),
-              );
+                    ChangeLanguage(languageCode: code),
+                  );
               Navigator.of(context).pop();
             },
             child: Container(
@@ -152,7 +153,8 @@ class _LanguageOption extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
                 color: isSelected ? Colors.amber.shade50 : Colors.transparent,
                 border: Border.all(
-                  color: isSelected ? Colors.amber.shade300 : Colors.grey.shade300,
+                  color:
+                      isSelected ? Colors.amber.shade300 : Colors.grey.shade300,
                   width: isSelected ? 2 : 1,
                 ),
               ),
@@ -163,11 +165,14 @@ class _LanguageOption extends StatelessWidget {
                   Expanded(
                     child: Text(
                       language,
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                        color: isSelected ? Colors.amber.shade800 : Colors.black87,
-                      ),
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            fontSize: 16,
+                            fontWeight:
+                                isSelected ? FontWeight.bold : FontWeight.w500,
+                            color: isSelected
+                                ? Colors.amber.shade800
+                                : Theme.of(context).textTheme.bodyMedium?.color,
+                          ),
                     ),
                   ),
                   if (isSelected)

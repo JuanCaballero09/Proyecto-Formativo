@@ -18,17 +18,18 @@ class SearchResultsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.white,
+      color: Theme.of(context).cardColor,
       constraints: const BoxConstraints(maxHeight: 400),
       child: Column(
         children: [
           // Header con contador y botón cerrar
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
             decoration: BoxDecoration(
-              color: Colors.grey[100],
+              color: Theme.of(context).colorScheme.surface,
               border: Border(
-                bottom: BorderSide(color: Colors.grey[300]!),
+                bottom: BorderSide(color: Theme.of(context).dividerColor),
               ),
             ),
             child: Row(
@@ -50,7 +51,7 @@ class SearchResultsList extends StatelessWidget {
               ],
             ),
           ),
-          
+
           // Lista de resultados
           Expanded(
             child: ListView.separated(
@@ -72,17 +73,17 @@ class SearchResultsList extends StatelessWidget {
   /// Construye cada item de resultado
   Widget _buildResultItem(BuildContext context, SearchResult result) {
     final isProduct = result.type == 'product';
-    
+
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: isProduct 
-            ? Colors.white 
+        color: isProduct
+            ? Theme.of(context).cardColor
             : const Color.fromRGBO(237, 88, 33, 0.05),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isProduct 
-              ? Colors.grey[200]! 
+          color: isProduct
+              ? Theme.of(context).dividerColor
               : const Color.fromRGBO(237, 88, 33, 0.2),
           width: 1,
         ),
@@ -107,16 +108,14 @@ class SearchResultsList extends StatelessWidget {
                   Icon(
                     isProduct ? Icons.restaurant : Icons.category,
                     size: 12,
-                    color: Colors.white,
+                    color: Theme.of(context).colorScheme.onPrimary,
                   ),
                   const SizedBox(width: 4),
                   Text(
                     isProduct ? 'Producto' : 'Categoría',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).colorScheme.onPrimary),
                   ),
                 ],
               ),
@@ -145,10 +144,10 @@ class SearchResultsList extends StatelessWidget {
                 padding: const EdgeInsets.only(bottom: 4.0),
                 child: Text(
                   result.description!,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey[600],
-                  ),
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodySmall
+                      ?.copyWith(fontSize: 12),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -163,11 +162,10 @@ class SearchResultsList extends StatelessWidget {
                 ),
                 child: Text(
                   '\$${result.price!.toStringAsFixed(0)}',
-                  style: const TextStyle(
-                    color: Color.fromRGBO(237, 88, 33, 1),
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: const Color.fromRGBO(237, 88, 33, 1),
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16),
                 ),
               )
             else if (!isProduct)
@@ -215,7 +213,7 @@ class SearchResultsList extends StatelessWidget {
   /// Construye la imagen/ícono del resultado
   Widget _buildLeadingImage(SearchResult result) {
     final isProduct = result.type == 'product';
-    
+
     if (result.image != null && result.image!.isNotEmpty) {
       return Stack(
         children: [
@@ -273,7 +271,7 @@ class SearchResultsList extends StatelessWidget {
   /// Construye el ícono por defecto según el tipo
   Widget _buildDefaultIcon(String type) {
     final isProduct = type == 'product';
-    
+
     return Container(
       width: 60,
       height: 60,
@@ -301,9 +299,8 @@ class SearchResultsList extends StatelessWidget {
       ),
       child: Icon(
         isProduct ? Icons.restaurant_menu : Icons.category,
-        color: isProduct
-            ? const Color.fromRGBO(237, 88, 33, 1)
-            : Colors.blue[700],
+        color:
+            isProduct ? const Color.fromRGBO(237, 88, 33, 1) : Colors.blue[700],
         size: 32,
       ),
     );
