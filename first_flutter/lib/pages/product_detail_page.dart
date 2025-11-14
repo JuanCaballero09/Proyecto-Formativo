@@ -13,7 +13,6 @@ class ProductDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Debug: Verificar qué producto recibió la página de detalle
     print('=== DEBUG: ProductDetailPage recibió ===');
     print('ID: ${product.id}');
     print('Nombre: ${product.name}');
@@ -22,24 +21,25 @@ class ProductDetailPage extends StatelessWidget {
     print('Descripción: ${product.description}');
     print('Ingredientes: ${product.ingredients}');
     print('==========================================');
-    
-    return Scaffold(
-appBar: AppBar(
-  title: Text(
-    AppLocalizations.of(context)!.productDetails,
-    style: const TextStyle(
-      color: Colors.white, // <-- color del texto
-      fontWeight: FontWeight.bold,
-    ),
-  ),
-  backgroundColor: const Color.fromRGBO(237, 88, 33, 1),
-  foregroundColor: Colors.white,
-  elevation: 0,
-  iconTheme: const IconThemeData(
-    color: Colors.white, // <-- color de la flecha ("lechita")
-  ),
-),
 
+    // El tema se maneja vía ThemeData; los estilos de texto usan textTheme
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          AppLocalizations.of(context)!.productDetails,
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        backgroundColor: const Color.fromRGBO(237, 88, 33, 1),
+        foregroundColor: Colors.white,
+        elevation: 0,
+        iconTheme: const IconThemeData(
+          color: Colors.white,
+        ),
+      ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(24.0),
@@ -53,48 +53,55 @@ appBar: AppBar(
                   height: 220,
                   width: double.infinity,
                   fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) => const Icon(Icons.broken_image, size: 100, color: Colors.grey)
+                  errorBuilder: (context, error, stackTrace) => Icon(
+                      Icons.broken_image,
+                      size: 100,
+                      color: Theme.of(context).disabledColor),
                 ),
               ),
               const SizedBox(height: 24),
               Text(
                 product.name,
                 style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.amber[800],
-                ),
+                      fontWeight: FontWeight.bold,
+                      color: Colors.amber[800],
+                    ),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 16),
               Text(
                 '\$ ${NumberFormat('#,###', 'es_CO').format(product.price)} COP',
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  color: Colors.green[700],
-                  fontWeight: FontWeight.bold,
-                ),
+                      color: Colors.green[700],
+                      fontWeight: FontWeight.bold,
+                    ),
               ),
               const SizedBox(height: 24),
               Row(
                 children: [
                   const Icon(Icons.description, color: Colors.amber),
                   const SizedBox(width: 8),
-                    Text(
-                      'Descripción',
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.amber[800],
-                      ),
-                    ),
+                  Text(
+                    'Descripción',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.amber[800],
+                        ),
+                  ),
                 ],
               ),
               const SizedBox(height: 8),
+
+              // 👇 Aquí se cambia el color de la descripción si está en modo oscuro
               Text(
                 product.description,
-                style: const TextStyle(fontSize: 16, color: Colors.black87),
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyMedium
+                    ?.copyWith(fontSize: 16),
                 textAlign: TextAlign.justify,
               ),
-              
-              // Sección de ingredientes
+
               if (product.ingredients.isNotEmpty) ...[
                 const SizedBox(height: 24),
                 Row(
@@ -104,9 +111,9 @@ appBar: AppBar(
                     Text(
                       AppLocalizations.of(context)!.ingredients,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.amber[800],
-                      ),
+                            fontWeight: FontWeight.bold,
+                            color: Colors.amber[800],
+                          ),
                     ),
                   ],
                 ),
@@ -152,7 +159,7 @@ appBar: AppBar(
                   ),
                 ),
               ],
-              
+
               const SizedBox(height: 32),
               SizedBox(
                 width: double.infinity,
@@ -173,38 +180,38 @@ appBar: AppBar(
                   ),
                   onPressed: () {
                     context.read<CartBloc>().add(
-                      AddToCart(
-                        CartItem(
-                          id: product.id.toString(),
-                          name: product.name,
-                          price: product.price,
-                          quantity: 1,
-                          image: product.image,
-                          description: product.description,
-                        ),
-                      ),
-                    );
+                          AddToCart(
+                            CartItem(
+                              id: product.id.toString(),
+                              name: product.name,
+                              price: product.price,
+                              quantity: 1,
+                              image: product.image,
+                              description: product.description,
+                            ),
+                          ),
+                        );
 
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Center( 
-                          child: Text('Añadido Con Exito', style: TextStyle(fontFamily: 'Arial', fontWeight: FontWeight.bold, color: Colors.black),),
-                      
+                        content: Center(
+                          child: Text(
+                            'Añadido Con Éxito',
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium
+                                ?.copyWith(fontWeight: FontWeight.bold),
+                          ),
                         ),
-
-                        backgroundColor: const Color.fromARGB(255, 113, 219, 140),
-                        duration: Duration(seconds: 3),
+                        backgroundColor:
+                            const Color.fromARGB(255, 113, 219, 140),
+                        duration: const Duration(seconds: 3),
                         behavior: SnackBarBehavior.floating,
-                        margin: EdgeInsets.only(
-                          bottom: 10,
-                          left: 100,
-                          right: 100,
-                        ),
+                        margin: const EdgeInsets.only(
+                            bottom: 10, left: 100, right: 100),
                         shape: BeveledRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-
+                          borderRadius: BorderRadius.circular(10),
                         ),
-
                       ),
                     );
                   },

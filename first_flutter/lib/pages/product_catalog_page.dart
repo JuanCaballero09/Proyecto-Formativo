@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../l10n/app_localizations.dart';
 
-
 class ProductCatalogPage extends StatefulWidget {
   final int initialIndex;
   const ProductCatalogPage({super.key, this.initialIndex = 0});
@@ -34,14 +33,20 @@ class _ProductCatalogPageState extends State<ProductCatalogPage> {
 
   @override
   Widget build(BuildContext context) {
-    final pages = [HomePage(), MenuNavigator(), CarritoPage(), PerfilPage(), DomicilioPage()];
+    final pages = [
+      HomePage(),
+      MenuNavigator(),
+      CarritoPage(),
+      PerfilPage(),
+      DomicilioPage()
+    ];
 
     return Scaffold(
       body: pages[_selectedIndex],
       bottomNavigationBar: BottomAppBar(
         color: const Color.fromRGBO(237, 88, 33, 1),
         child: SizedBox(
-          height: 70,  // altura mayor para que el botón quepa bien
+          height: 70, // altura mayor para que el botón quepa bien
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
@@ -50,7 +55,7 @@ class _ProductCatalogPageState extends State<ProductCatalogPage> {
                 label: AppLocalizations.of(context)!.menu,
                 index: 1,
               ),
-   BlocBuilder<CartBloc, CartState>(
+              BlocBuilder<CartBloc, CartState>(
                 builder: (context, state) {
                   final cartCount = state.cart.items.fold<int>(
                     0,
@@ -104,8 +109,8 @@ class _ProductCatalogPageState extends State<ProductCatalogPage> {
                           const SizedBox(height: 2),
                           Text(
                             AppLocalizations.of(context)!.cart,
-                            style: TextStyle(
-                              color: isSelected ? Colors.black : Colors.white,
+                            style: const TextStyle(
+                              color: Colors.white,
                               fontSize: 11,
                             ),
                           ),
@@ -140,7 +145,6 @@ class _ProductCatalogPageState extends State<ProductCatalogPage> {
     required int index,
   }) {
     final isSelected = _selectedIndex == index;
-
     return InkWell(
       onTap: () => _onItemTapped(index),
       child: SizedBox(
@@ -176,7 +180,9 @@ class _ProductCatalogPageState extends State<ProductCatalogPage> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 5),
         decoration: BoxDecoration(
-          color: isSelected ? Colors.white : Colors.orange.shade100,
+          color: isSelected
+              ? Colors.white
+              : const Color.fromRGBO(237, 231, 220, 1),
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
