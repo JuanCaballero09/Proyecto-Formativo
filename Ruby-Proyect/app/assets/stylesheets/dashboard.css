@@ -434,10 +434,20 @@
     object-fit: cover;
     margin: 10px auto;
     width: 95%;
-    aspect-ratio: 16 / 5;
+    aspect-ratio: 3 / 2;
     border-radius: 15px;
     outline: var(--base) solid 2px;
     outline-offset: 3px;
+}
+
+.banner img{text-align: center;
+    object-fit: cover;
+    margin: 10px auto;
+    width: 95%;
+    border-radius: 15px;
+    outline: var(--base) solid 2px;
+    outline-offset: 3px;
+    aspect-ratio: 16 / 5;
 }
 
 
