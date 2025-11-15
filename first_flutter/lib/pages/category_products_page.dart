@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -27,6 +28,9 @@ class CategoryProductsPage extends StatefulWidget {
 }
 
 class _CategoryProductsPageState extends State<CategoryProductsPage> {
+  Timer? _retryTimer;
+  bool _autoRetryDone = false;
+
   @override
   void initState() {
     super.initState();
@@ -130,9 +134,34 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
                 if (state is SuccessState<List<Product>>) {
                   final products = state.data;
                   if (products.isEmpty) {
+                    // Schedule one automatic retry after 2 seconds (one-time)
+                    if (!_autoRetryDone && _retryTimer == null) {
+                      _retryTimer = Timer(const Duration(seconds: 2), () {
+                        if (!mounted) return;
+                        if (widget.categoryId != null) {
+                          context.read<ProductBloc>().add(LoadProductsByCategoryId(widget.categoryId!));
+                        } else {
+                          context.read<ProductBloc>().add(LoadProductsByCategory(widget.categoryName));
+                        }
+                        _autoRetryDone = true;
+                        _retryTimer = null;
+                      });
+                    }
+
                     return EmptyStateWidget(
-                      message: AppLocalizations.of(context)!.noProductsFound,
+                      message: AppLocalizations.of(context)!.noProductsConnection,
                       icon: Icons.restaurant_menu_outlined,
+                      onRetry: () {
+                        // Cancel any pending automatic retry and trigger manual reload
+                        _retryTimer?.cancel();
+                        _retryTimer = null;
+                        _autoRetryDone = false;
+                        if (widget.categoryId != null) {
+                          context.read<ProductBloc>().add(LoadProductsByCategoryId(widget.categoryId!));
+                        } else {
+                          context.read<ProductBloc>().add(LoadProductsByCategory(widget.categoryName));
+                        }
+                      },
                     );
                   }
 
@@ -288,5 +317,11 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
         ],
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _retryTimer?.cancel();
+    super.dispose();
   }
 }

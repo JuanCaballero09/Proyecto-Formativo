@@ -69,6 +69,7 @@
   "lowToHigh": "Low to High",
   "highToLow": "High to Low",
   "noProductsFound": "No products found",
+  "noProductsConnection": "No products found. Check your connection and try again.",
   "showingAllProductsDebug": "(Showing all products for debug)",
   "seeAllProductsDebug": "See all products (Debug)",
   "availableProducts": "Available products",

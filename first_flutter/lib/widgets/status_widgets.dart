@@ -77,11 +77,13 @@ class ErrorDisplayWidget extends StatelessWidget {
 class EmptyStateWidget extends StatelessWidget {
   final String message;
   final IconData? icon;
+  final VoidCallback? onRetry;
 
   const EmptyStateWidget({
     Key? key,
     required this.message,
     this.icon,
+    this.onRetry,
   }) : super(key: key);
 
   @override
@@ -103,6 +105,17 @@ class EmptyStateWidget extends StatelessWidget {
             ),
             textAlign: TextAlign.center,
           ),
+          if (onRetry != null) ...[
+            const SizedBox(height: 16),
+            ElevatedButton.icon(
+              onPressed: onRetry,
+              icon: const Icon(Icons.refresh),
+              label: const Text('Reintentar'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color.fromRGBO(237, 88, 33, 1),
+              ),
+            ),
+          ],
         ],
       ),
     );

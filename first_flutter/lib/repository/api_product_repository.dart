@@ -36,9 +36,11 @@ class ApiProductRepository implements ProductRepository {
         }
       }
       
+      // Filtrar productos inválidos (evitar mostrar elementos generados a partir de respuestas no válidas)
+      final filtered = allProducts.where((p) => p.id > 0 && p.name.trim().isNotEmpty).toList();
       // ignore: avoid_print
-      print("✅ Total de productos obtenidos: ${allProducts.length}");
-      return allProducts;
+      print("✅ Total de productos válidos obtenidos: ${filtered.length}");
+      return filtered;
 
     } catch (e) {
       // ignore: avoid_print
@@ -61,9 +63,11 @@ class ApiProductRepository implements ProductRepository {
       // Obtener productos usando el ID de categoría
       final products = await _apiService.getProductsByCategory(categoryId);
       
+      // Filtrar productos inválidos
+      final filtered = products.where((p) => p.id > 0 && p.name.trim().isNotEmpty).toList();
       // ignore: avoid_print
-      print("✅ Productos obtenidos para categoría '$categoryName' (ID: $categoryId): ${products.length}");
-      return products;
+      print("✅ Productos válidos obtenidos para categoría '$categoryName' (ID: $categoryId): ${filtered.length}");
+      return filtered;
 
     } catch (e) {
       // ignore: avoid_print
@@ -77,10 +81,11 @@ class ApiProductRepository implements ProductRepository {
   Future<List<Product>> getProductsByCategoryId(int categoryId) async {
     try {
       final products = await _apiService.getProductsByCategory(categoryId);
-      
+      // Filtrar productos inválidos
+      final filtered = products.where((p) => p.id > 0 && p.name.trim().isNotEmpty).toList();
       // ignore: avoid_print
-      print("✅ Productos obtenidos para categoría ID $categoryId: ${products.length}");
-      return products;
+      print("✅ Productos válidos obtenidos para categoría ID $categoryId: ${filtered.length}");
+      return filtered;
 
     } catch (e) {
       // ignore: avoid_print

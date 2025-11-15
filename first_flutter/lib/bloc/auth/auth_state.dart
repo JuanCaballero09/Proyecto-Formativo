@@ -15,6 +15,8 @@ abstract class AuthState extends Equatable {
 
 class AuthInitial extends AuthState {}
 
+class AuthLoading extends AuthState {}
+
 class Authenticated extends AuthState {
   final User user;
   Authenticated(this.user);
@@ -24,3 +26,13 @@ class Authenticated extends AuthState {
 }
 
 class Unauthenticated extends AuthState {}
+
+class AuthError extends AuthState {
+  final String message;
+  final String? errorCode;
+
+  AuthError(this.message, {this.errorCode});
+
+  @override
+  List<Object?> get props => [message, errorCode];
+}

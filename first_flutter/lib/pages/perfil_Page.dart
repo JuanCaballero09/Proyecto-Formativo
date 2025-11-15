@@ -8,7 +8,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/auth/auth_bloc.dart';
 import '../bloc/auth/auth_state.dart';
 
+// 🔹 Colores globales
 const kOrange = Color(0xFFFF9800);
+const kDarkGray = Color(0xFF424242);
+const kLightGray = Color(0xFFFAFAFA);
 
 class PerfilPage extends StatelessWidget {
   const PerfilPage({super.key});
@@ -22,185 +25,296 @@ class PerfilPage extends StatelessWidget {
       builder: (context, state) {
         if (state is Authenticated) {
           return Scaffold(
-            backgroundColor: theme.scaffoldBackgroundColor,
-            appBar: PreferredSize(
-              preferredSize: const Size.fromHeight(70),
-              child: SafeArea(
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 10.0, right: 12.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "Mi Perfil",
-                        style: theme.textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
+            backgroundColor: kLightGray,
+            appBar: AppBar(
+              backgroundColor: Colors.white,
+              elevation: 1,
+              title: Text(
+                AppLocalizations.of(context)?.profile ?? "Mi Perfil",
+                style: const TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  color: kDarkGray,
                 ),
               ),
+              centerTitle: false,
             ),
             body: ListView(
               children: [
-                // 🔸 Encabezado del perfil
+                // 🔹 Encabezado del perfil mejorado
                 Container(
-                  color: theme.cardColor,
+                  margin: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.08),
+                        blurRadius: 10,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
                   child: Row(
                     children: [
-                      const CircleAvatar(
-                        radius: 30,
-                        backgroundColor: Colors.black,
-                        child: Icon(Icons.person, color: Colors.white, size: 40),
+                      // Avatar con fondo gradiente
+                      Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          gradient: const LinearGradient(
+                            colors: [kOrange, Color(0xFFFF6E40)],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                        ),
+                        child: const CircleAvatar(
+                          radius: 32,
+                          backgroundColor: Colors.transparent,
+                          child: Icon(Icons.person, color: Colors.white, size: 42),
+                        ),
                       ),
-                      const SizedBox(width: 12),
+                      const SizedBox(width: 16),
+                      // Información del usuario
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
                               state.user.name,
-                              style: theme.textTheme.titleMedium?.copyWith(
+                              style: const TextStyle(
+                                fontSize: 18,
                                 fontWeight: FontWeight.bold,
+                                color: kDarkGray,
                               ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
-                            const SizedBox(height: 4),
+                            const SizedBox(height: 6),
                             Text(
                               state.user.email,
-                              style: theme.textTheme.bodySmall?.copyWith(
-                                color: theme.textTheme.bodySmall?.color?.withOpacity(0.7),
+                              style: const TextStyle(
+                                fontSize: 13,
+                                color: Colors.black54,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            const SizedBox(height: 4),
+                            const Text(
+                              'Cuenta Activa ✓',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.green,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
                           ],
                         ),
                       ),
+                      // Botón Editar Perfil
+                      IconButton(
+                        onPressed: () {
+                          // TODO: Navegar a editar perfil
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Editar perfil - Próximamente'),
+                              duration: Duration(seconds: 2),
+                            ),
+                          );
+                        },
+                        icon: const Icon(Icons.edit, color: kOrange),
+                      ),
                     ],
                   ),
                 ),
 
-                const SizedBox(height: 20),
+                const SizedBox(height: 8),
 
-                // 🔸 Información personal
+                // 🔹 Sección Preferencias
+                _buildSectionTitle(context, 'Preferencias'),
+
+                // Selector de idioma
+                _buildPreferenceRow(
+                  icon: Icons.language,
+                  label: AppLocalizations.of(context)?.language ?? 'Idioma',
+                  widget: const LanguageSelector(),
+                ),
+
+                // Selector de tema
+                _buildPreferenceRow(
+                  icon: Icons.brightness_6,
+                  label: 'Tema',
+                  widget: const ThemeSelector(),
+                ),
+
+                const SizedBox(height: 12),
+
+                // 🔹 Sección Cuenta
+                _buildSectionTitle(context, 'Cuenta'),
+
+                // Pedidos
+                _buildMenuTile(
+                  context,
+                  icon: Icons.receipt_long,
+                  label: AppLocalizations.of(context)?.orders ?? 'Mis Pedidos',
+                  onTap: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Mis Pedidos - Próximamente'),
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+                  },
+                ),
+
+                // Direcciones
+                _buildMenuTile(
+                  context,
+                  icon: Icons.location_on,
+                  label: AppLocalizations.of(context)?.addresses ?? 'Mis Direcciones',
+                  onTap: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Mis Direcciones - Próximamente'),
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+                  },
+                ),
+
+                // Datos de facturación
+                _buildMenuTile(
+                  context,
+                  icon: Icons.receipt,
+                  label: 'Datos de Facturación',
+                  onTap: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Datos de Facturación - Próximamente'),
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+                  },
+                ),
+
+                const SizedBox(height: 12),
+
+                // 🔹 Sección Legal e Información
+                _buildSectionTitle(context, 'Información'),
+
+                // Ayuda y Soporte
+                _buildMenuTile(
+                  context,
+                  icon: Icons.help_outline,
+                  label: AppLocalizations.of(context)?.helpSupport ?? 'Ayuda y Soporte',
+                  onTap: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Ayuda y Soporte - Próximamente'),
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+                  },
+                ),
+
+                // Política de Privacidad
+                _buildMenuTile(
+                  context,
+                  icon: Icons.privacy_tip,
+                  label: AppLocalizations.of(context)?.privacyPolicy ?? 'Política de Privacidad',
+                  onTap: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Política de Privacidad - Próximamente'),
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+                  },
+                ),
+
+                // Términos y Condiciones
+                _buildMenuTile(
+                  context,
+                  icon: Icons.article,
+                  label: AppLocalizations.of(context)?.termsConditions ?? 'Términos y Condiciones',
+                  onTap: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Términos y Condiciones - Próximamente'),
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+                  },
+                ),
+
+                const SizedBox(height: 16),
+                const Divider(height: 1),
+
+                // 🔹 Cerrar sesión
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Text(
-                    AppLocalizations.of(context)?.personalInfo ?? 'Información Personal',
-                    style: theme.textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: theme.textTheme.bodyMedium?.color?.withOpacity(0.7),
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: () async {
+                        final confirmed = await showDialog<bool>(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            title: const Text('Cerrar sesión'),
+                            content: const Text('¿Estás seguro de que deseas cerrar sesión?'),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(context, false),
+                                child: const Text('Cancelar'),
+                              ),
+                              TextButton(
+                                onPressed: () => Navigator.pop(context, true),
+                                child: const Text('Cerrar sesión', style: TextStyle(color: Colors.red)),
+                              ),
+                            ],
+                          ),
+                        );
+
+                        if (confirmed == true) {
+                          final api = ApiService();
+                          await api.logout();
+                          if (!context.mounted) return;
+                          context.read<AuthBloc>().add(LogoutRequested());
+                        }
+                      },
+                      borderRadius: BorderRadius.circular(8),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                        child: Row(
+                          children: const [
+                            Icon(Icons.logout, color: Colors.red, size: 22),
+                            SizedBox(width: 16),
+                            Text(
+                              'Cerrar Sesión',
+                              style: TextStyle(
+                                color: Colors.red,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
                 ),
 
-                const SizedBox(height: 8),
-
-                // 🔸 Selector de idioma
-                _configRow(
-                  icon: Icons.language,
-                  text: AppLocalizations.of(context)?.language ?? 'Idioma',
-                  trailing: const LanguageSelector(),
-                  context: context,
-                ),
-
-                // 🔸 Selector de tema
-                _configRow(
-                  icon: Icons.brightness_6,
-                  text: 'Tema',
-                  trailing: const ThemeSelector(),
-                  context: context,
-                ),
-
-                const Divider(),
-
-                // 🔸 Lista de opciones
-                _optionTile(
-                  icon: Icons.restaurant_menu,
-                  text: AppLocalizations.of(context)?.orders ?? 'Pedidos',
-                  context: context,
-                ),
-                _optionTile(
-                  icon: Icons.receipt_long,
-                  text: 'Datos de facturación',
-                  context: context,
-                ),
-                _optionTile(
-                  icon: Icons.location_on,
-                  text: AppLocalizations.of(context)?.addresses ?? 'Direcciones',
-                  context: context,
-                ),
-                _optionTile(
-                  icon: Icons.edit,
-                  text: AppLocalizations.of(context)?.editProfile ?? 'Editar Perfil',
-                  context: context,
-                ),
-                _optionTile(
-                  icon: Icons.privacy_tip,
-                  text: AppLocalizations.of(context)?.privacyPolicy ?? 'Política de Privacidad',
-                  context: context,
-                ),
-                _optionTile(
-                  icon: Icons.help_outline,
-                  text: AppLocalizations.of(context)?.helpSupport ?? 'Ayuda y Soporte',
-                  context: context,
-                ),
-                _optionTile(
-                  icon: Icons.article,
-                  text: AppLocalizations.of(context)?.termsConditions ?? 'Términos y Condiciones',
-                  context: context,
-                ),
-
-                const Divider(),
-
-                // 🔸 Cerrar sesión
-                ListTile(
-                  leading: const Icon(Icons.logout, color: Colors.red),
-                  title: Text(
-                    AppLocalizations.of(context)?.logout ?? 'Cerrar Sesión',
-                    style: const TextStyle(color: Colors.red),
-                  ),
-                  onTap: () async {
-                    final confirmed = await showDialog<bool>(
-                      context: context,
-                      builder: (context) => AlertDialog(
-                        title: const Text('Cerrar sesión'),
-                        content: const Text('¿Estás seguro de que deseas cerrar sesión?'),
-                        actions: [
-                          TextButton(
-                            onPressed: () => Navigator.pop(context, false),
-                            child: const Text('Cancelar'),
-                          ),
-                          TextButton(
-                            onPressed: () => Navigator.pop(context, true),
-                            child: const Text(
-                              'Cerrar sesión',
-                              style: TextStyle(color: Colors.red),
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-
-                    if (confirmed == true) {
-                      final api = ApiService();
-                      await api.logout();
-                      if (!context.mounted) return;
-                      context.read<AuthBloc>().add(LogoutRequested());
-                    }
-                  },
-                ),
-
-                const SizedBox(height: 8),
-
-                // 🔸 Versión
+                // Versión de la app
                 Padding(
-                  padding: const EdgeInsets.only(bottom: 24.0),
+                  padding: const EdgeInsets.symmetric(vertical: 24.0),
                   child: Center(
                     child: Text(
                       'v4.3.3',
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.textTheme.bodySmall?.color?.withOpacity(0.6),
+                      style: TextStyle(
+                        color: Colors.black38,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   ),
@@ -275,8 +389,13 @@ class PerfilPage extends StatelessWidget {
                     const SizedBox(height: 20),
 
                     TextButton(
-                      onPressed: () => Navigator.pushNamed(context, "/forgot-password"),
-                      child: const Text("¿Olvidaste tu contraseña?"),
+                      onPressed: () {
+                        Navigator.pushNamed(context, "/forgot-password");
+                      },
+                      child: const Text(
+                        "¿Olvidaste tu contraseña?",
+                        style: TextStyle(color: Colors.blueAccent),
+                      ),
                     ),
                   ],
                 ),
@@ -288,46 +407,107 @@ class PerfilPage extends StatelessWidget {
     );
   }
 
-  /// 🔹 Row para configuraciones (Idioma / Tema)
-  Widget _configRow({
-    required IconData icon,
-    required String text,
-    required Widget trailing,
-    required BuildContext context,
-  }) {
-    final theme = Theme.of(context);
+  // 🔹 Métodos auxiliares para construir widgets reutilizables
+
+  /// Construye un título de sección
+  Widget _buildSectionTitle(BuildContext context, String title) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Row(
-        children: [
-          Icon(icon, color: theme.iconTheme.color),
-          const SizedBox(width: 16),
-          Text(text, style: theme.textTheme.bodyMedium),
-          const Spacer(),
-          trailing,
-        ],
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      child: Text(
+        title,
+        style: const TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.bold,
+          color: Colors.black54,
+          letterSpacing: 0.5,
+        ),
       ),
     );
   }
 
-  /// 🔹 Opción de menú
-  Widget _optionTile({
+  /// Construye una fila de preferencia
+  Widget _buildPreferenceRow({
     required IconData icon,
-    required String text,
-    required BuildContext context,
+    required String label,
+    required Widget widget,
   }) {
-    final theme = Theme.of(context);
-    return ListTile(
-      leading: Icon(icon, color: theme.iconTheme.color?.withOpacity(0.7)),
-      title: Text(
-        text,
-        style: theme.textTheme.bodyMedium?.copyWith(
-          color: theme.textTheme.bodyMedium?.color?.withOpacity(0.8),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 4),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          child: Row(
+            children: [
+              Icon(icon, color: kOrange, size: 20),
+              const SizedBox(width: 16),
+              Text(
+                label,
+                style: const TextStyle(
+                  fontSize: 15,
+                  color: kDarkGray,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const Spacer(),
+              widget,
+            ],
+          ),
         ),
       ),
-      trailing: Icon(Icons.arrow_forward_ios,
-          size: 16, color: theme.iconTheme.color?.withOpacity(0.5)),
-      enabled: false,
+    );
+  }
+
+  /// Construye un elemento de menú con ícono y navegación
+  Widget _buildMenuTile(
+    BuildContext context, {
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(8),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              child: Row(
+                children: [
+                  Icon(icon, color: kOrange, size: 20),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Text(
+                      label,
+                      style: const TextStyle(
+                        fontSize: 15,
+                        color: kDarkGray,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                  const Icon(
+                    Icons.arrow_forward_ios,
+                    size: 16,
+                    color: Colors.black26,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

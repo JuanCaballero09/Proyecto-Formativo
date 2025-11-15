@@ -79,20 +79,20 @@ class ApiService {
     // Lanzar excepción según el código de estado
     switch (response.statusCode) {
       case 400:
-        throw DataException('Datos inválidos: $errorMessage');
+        throw DataException(message: 'Datos inválidos: $errorMessage');
       case 401:
-        throw NetworkException('No autorizado: $errorMessage');
+        throw NetworkException(message: 'No autorizado: $errorMessage');
       case 403:
-        throw NetworkException('Acceso denegado: $errorMessage');
+        throw NetworkException(message: 'Acceso denegado: $errorMessage');
       case 404:
-        throw DataException('Recurso no encontrado: $errorMessage');
+        throw DataException(message: 'Recurso no encontrado: $errorMessage');
       case 500:
-        throw NetworkException('Error interno del servidor: $errorMessage');
+        throw NetworkException(message: 'Error interno del servidor: $errorMessage');
       default:
         if (response.statusCode >= 500) {
-          throw NetworkException('Error del servidor: $errorMessage');
+          throw NetworkException(message: 'Error del servidor: $errorMessage');
         } else {
-          throw DataException(errorMessage);
+          throw DataException(message: errorMessage);
         }
     }
   }
@@ -102,7 +102,7 @@ class ApiService {
   /// Retorna una lista de productos de la categoría solicitada
   Future<List<Product>> getProductsByCategory(int categoryId) async {
     if (categoryId < 1) {
-      throw DataException('ID de categoría inválido. Debe ser mayor a 0');
+      throw DataException(message: 'ID de categoría inválido. Debe ser mayor a 0');
     }
 
     try {
@@ -129,7 +129,7 @@ class ApiService {
       } else if (data is Map && data['data'] != null) {
         productsJson = data['data'];
       } else {
-        throw DataException('Formato de respuesta inválido para productos');
+        throw DataException(message: 'Formato de respuesta inválido para productos');
       }
 
       // 🔄 TRANSFORMAR: grupo_id → categoria_id
@@ -143,7 +143,7 @@ class ApiService {
     } on TimeoutException {
       // ignore: avoid_print
       print("⏱️ Timeout al obtener productos de categoría $categoryId");
-      throw NetworkException('La petición tardó demasiado. Verifica tu conexión y que el servidor esté funcionando.');
+      throw NetworkException(message: 'La petición tardó demasiado. Verifica tu conexión y que el servidor esté funcionando.');
     } on NetworkException {
       rethrow;
     } on DataException {
@@ -151,7 +151,7 @@ class ApiService {
     } catch (e) {
       // ignore: avoid_print
       print("❌ Error inesperado al obtener productos de categoría $categoryId: $e");
-      throw NetworkException('Error de conexión al obtener productos de la categoría');
+      throw NetworkException(message: 'Error de conexión al obtener productos de la categoría');
     }
   }
 
@@ -161,13 +161,13 @@ class ApiService {
   /// Retorna el producto solicitado
   Future<Product> getProductByCategoryAndId(int categoryId, int productId) async {
     if (categoryId < 1) {
-      throw DataException('ID de categoría inválido. Debe ser mayor a 0');
+      throw DataException(message: 'ID de categoría inválido. Debe ser mayor a 0');
     }
 
     // Eliminar la validación restrictiva del productId
     // Los productos pueden tener cualquier ID válido
     if (productId < 1) {
-      throw DataException('ID de producto inválido. Debe ser mayor a 0');
+      throw DataException(message: 'ID de producto inválido. Debe ser mayor a 0');
     }
 
     try {
@@ -194,7 +194,7 @@ class ApiService {
       } else if (data is Map && data['data'] != null) {
         productJson = data['data'];
       } else {
-        throw DataException('Formato de respuesta inválido para producto');
+        throw DataException(message: 'Formato de respuesta inválido para producto');
       }
 
       // 🔄 TRANSFORMAR: grupo_id → categoria_id
@@ -208,7 +208,7 @@ class ApiService {
     } on TimeoutException {
       // ignore: avoid_print
       print("⏱️ Timeout al obtener producto $productId de categoría $categoryId");
-      throw NetworkException('La petición tardó demasiado. Verifica tu conexión y que el servidor esté funcionando.');
+      throw NetworkException(message: 'La petición tardó demasiado. Verifica tu conexión y que el servidor esté funcionando.');
     } on NetworkException {
       rethrow;
     } on DataException {
@@ -216,7 +216,7 @@ class ApiService {
     } catch (e) {
       // ignore: avoid_print
       print("❌ Error inesperado al obtener producto $productId de categoría $categoryId: $e");
-      throw NetworkException('Error de conexión al obtener el producto');
+      throw NetworkException(message: 'Error de conexión al obtener el producto');
     }
   }
 
@@ -356,7 +356,7 @@ class ApiService {
     } on TimeoutException {
       // ignore: avoid_print
       print('⏱️ Timeout en búsqueda de productos');
-      throw NetworkException('La búsqueda tardó demasiado. Verifica tu conexión.');
+      throw NetworkException(message: 'La búsqueda tardó demasiado. Verifica tu conexión.');
     } on NetworkException {
       rethrow;
     } on DataException {
@@ -364,7 +364,7 @@ class ApiService {
     } catch (e) {
       // ignore: avoid_print
       print('❌ Error en búsqueda: $e');
-      throw NetworkException('Error de conexión al buscar productos');
+      throw NetworkException(message: 'Error de conexión al buscar productos');
     }
   }
 
@@ -397,7 +397,7 @@ class ApiService {
       if (token == null) {
         if (guestNombre == null || guestApellido == null || 
             guestEmail == null || guestTelefono == null) {
-          throw DataException('Datos de invitado requeridos para crear orden');
+          throw DataException(message: 'Datos de invitado requeridos para crear orden');
         }
         body['guest_nombre'] = guestNombre;
         body['guest_apellido'] = guestApellido;
@@ -428,17 +428,17 @@ class ApiService {
                         'Error al crear la orden';
         // ignore: avoid_print
         print("❌ Error al crear orden: $errorMsg");
-        throw DataException(errorMsg);
+        throw DataException(message: errorMsg);
       }
     } on TimeoutException {
       // ignore: avoid_print
       print("⏱️ Timeout al crear orden");
-      throw NetworkException('La petición tardó demasiado. Intenta nuevamente.');
+      throw NetworkException(message: 'La petición tardó demasiado. Intenta nuevamente.');
     } catch (e) {
       if (e is NetworkException || e is DataException) rethrow;
       // ignore: avoid_print
       print("❌ Error inesperado al crear orden: $e");
-      throw NetworkException('Error de conexión al crear la orden');
+      throw NetworkException(message: 'Error de conexión al crear la orden');
     }
   }
 
@@ -455,7 +455,7 @@ class ApiService {
       } else {
         // Usuario invitado - buscar por email
         if (guestEmail == null || guestEmail.isEmpty) {
-          throw DataException('Email requerido para buscar órdenes de invitado');
+          throw DataException(message: 'Email requerido para buscar órdenes de invitado');
         }
         url = Uri.parse('${ApiConfig.ordersUrl}?email=${Uri.encodeComponent(guestEmail)}');
       }
@@ -475,19 +475,19 @@ class ApiService {
       } else if (response.statusCode == 400 || response.statusCode == 401) {
         final errorData = jsonDecode(response.body);
         final errorMsg = errorData['error'] ?? 'Error al obtener órdenes';
-        throw DataException(errorMsg);
+        throw DataException(message: errorMsg);
       } else {
-        throw NetworkException('Error del servidor al obtener órdenes');
+        throw NetworkException(message: 'Error del servidor al obtener órdenes');
       }
     } on TimeoutException {
       // ignore: avoid_print
       print("⏱️ Timeout al obtener órdenes");
-      throw NetworkException('La petición tardó demasiado');
+      throw NetworkException(message: 'La petición tardó demasiado');
     } catch (e) {
       if (e is NetworkException || e is DataException) rethrow;
       // ignore: avoid_print
       print("❌ Error inesperado al obtener órdenes: $e");
-      throw NetworkException('Error de conexión al obtener órdenes');
+      throw NetworkException(message: 'Error de conexión al obtener órdenes');
     }
   }
 
@@ -502,7 +502,7 @@ class ApiService {
         url = Uri.parse(ApiConfig.getOrderUrl(code));
       } else {
         if (guestEmail == null || guestEmail.isEmpty) {
-          throw DataException('Email requerido para consultar orden de invitado');
+          throw DataException(message: 'Email requerido para consultar orden de invitado');
         }
         url = Uri.parse('${ApiConfig.getOrderUrl(code)}?email=${Uri.encodeComponent(guestEmail)}');
       }
@@ -520,15 +520,15 @@ class ApiService {
         print("✅ Orden obtenida: $code");
         return data;
       } else if (response.statusCode == 404) {
-        throw DataException('Orden no encontrada');
+        throw DataException(message: 'Orden no encontrada');
       } else {
-        throw NetworkException('Error al obtener la orden');
+        throw NetworkException(message: 'Error al obtener la orden');
       }
     } on TimeoutException {
-      throw NetworkException('La petición tardó demasiado');
+      throw NetworkException(message: 'La petición tardó demasiado');
     } catch (e) {
       if (e is NetworkException || e is DataException) rethrow;
-      throw NetworkException('Error de conexión al obtener la orden');
+      throw NetworkException(message: 'Error de conexión al obtener la orden');
     }
   }
 
@@ -560,17 +560,17 @@ class ApiService {
       } else if (response.statusCode == 422) {
         final errorData = jsonDecode(response.body);
         final errorMsg = errorData['error'] ?? 'Esta orden no puede ser cancelada';
-        throw DataException(errorMsg);
+        throw DataException(message: errorMsg);
       } else if (response.statusCode == 404) {
-        throw DataException('Orden no encontrada');
+        throw DataException(message: 'Orden no encontrada');
       } else {
-        throw NetworkException('Error al cancelar la orden');
+        throw NetworkException(message: 'Error al cancelar la orden');
       }
     } on TimeoutException {
-      throw NetworkException('La petición tardó demasiado');
+      throw NetworkException(message: 'La petición tardó demasiado');
     } catch (e) {
       if (e is NetworkException || e is DataException) rethrow;
-      throw NetworkException('Error de conexión al cancelar la orden');
+      throw NetworkException(message: 'Error de conexión al cancelar la orden');
     }
   }
 }
