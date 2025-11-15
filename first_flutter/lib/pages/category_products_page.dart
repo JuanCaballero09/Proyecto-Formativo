@@ -43,8 +43,10 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context); // 🔹 Usamos el tema actual
+
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: CustomScrollView(
         slivers: [
           // 🔹 Imagen superior con título y flecha
@@ -74,7 +76,7 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
                   top: 40,
                   left: 16,
                   child: IconButton(
-                    icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+                    icon: Icon(Icons.arrow_back_ios, color: Colors.white.withOpacity(0.9)),
                     onPressed: () => Navigator.pop(context),
                   ),
                 ),
@@ -87,10 +89,7 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
                         fontSize: 26,
                         fontWeight: FontWeight.bold,
                         shadows: [
-                          Shadow(
-                            color: Colors.black54,
-                            blurRadius: 6,
-                          ),
+                          Shadow(color: Colors.black54, blurRadius: 6),
                         ],
                       ),
                     ),
@@ -109,18 +108,16 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        // 👇 Loader de 3 puntos giratorios
                         LoadingAnimationWidget.threeRotatingDots(
-                          color: const Color.fromRGBO(237, 88, 33, 1),
+                          color: theme.colorScheme.primary,
                           size: 40,
                         ),
                         const SizedBox(height: 16),
                         Text(
                           state is LoadingState
-                              ? (state.message ??
-                                  AppLocalizations.of(context)!.loadingProducts)
+                              ? (state.message ?? AppLocalizations.of(context)!.loadingProducts)
                               : AppLocalizations.of(context)!.loadingProducts,
-                          style: const TextStyle(fontSize: 16),
+                          style: TextStyle(fontSize: 16, color: theme.textTheme.bodyLarge?.color),
                         ),
                       ],
                     ),
@@ -171,8 +168,7 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
                   return Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: GridView.builder(
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
                         mainAxisSpacing: 16,
                         crossAxisSpacing: 16,
@@ -182,7 +178,8 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
                       itemBuilder: (context, index) {
                         final product = products[index];
                         return Card(
-                          elevation: 6,
+                          color: theme.cardColor,
+                          elevation: 4,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16),
                           ),
@@ -205,18 +202,15 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
                                 Expanded(
                                   flex: 3,
                                   child: ClipRRect(
-                                    borderRadius: const BorderRadius.vertical(
-                                      top: Radius.circular(16),
-                                    ),
+                                    borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
                                     child: Image.network(
                                       product.image,
                                       fit: BoxFit.cover,
-                                      errorBuilder:
-                                          (context, error, stackTrace) {
-                                        return const Icon(
+                                      errorBuilder: (context, error, stackTrace) {
+                                        return Icon(
                                           Icons.broken_image_outlined,
                                           size: 50,
-                                          color: Colors.grey,
+                                          color: theme.iconTheme.color?.withOpacity(0.6),
                                         );
                                       },
                                     ),
@@ -227,16 +221,13 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text(
                                           product.name,
-                                          style: const TextStyle(
+                                          style: theme.textTheme.titleMedium?.copyWith(
                                             fontWeight: FontWeight.bold,
-                                            fontSize: 16,
                                           ),
                                           maxLines: 2,
                                           overflow: TextOverflow.ellipsis,
@@ -245,9 +236,8 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
                                         if (product.description.isNotEmpty)
                                           Text(
                                             product.description,
-                                            style: const TextStyle(
-                                              fontSize: 12,
-                                              color: Colors.grey,
+                                            style: theme.textTheme.bodySmall?.copyWith(
+                                              color: theme.textTheme.bodySmall?.color?.withOpacity(0.7),
                                             ),
                                             maxLines: 2,
                                             overflow: TextOverflow.ellipsis,
@@ -256,44 +246,36 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
                                         if (product.ingredients.isNotEmpty)
                                           Text(
                                             'Ingredientes: ${product.ingredients.take(3).join(", ")}${product.ingredients.length > 3 ? "..." : ""}',
-                                            style: const TextStyle(
-                                              fontSize: 11,
+                                            style: theme.textTheme.bodySmall?.copyWith(
                                               fontStyle: FontStyle.italic,
-                                              color: Colors.black54,
+                                              color: theme.textTheme.bodySmall?.color?.withOpacity(0.6),
                                             ),
                                             maxLines: 1,
                                             overflow: TextOverflow.ellipsis,
                                           ),
                                         const SizedBox(height: 4),
                                         Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                           children: [
                                             Text(
                                               '\$${NumberFormat('#,###', 'es_CO').format(product.price)} COP',
                                               style: TextStyle(
-                                                color: Colors.green[700],
+                                                color: Colors.green[400],
                                                 fontWeight: FontWeight.bold,
                                                 fontSize: 13,
                                               ),
                                             ),
                                             Container(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 8,
-                                                      vertical: 2),
+                                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                                               decoration: BoxDecoration(
-                                                color: const Color.fromRGBO(
-                                                    237, 88, 33, 0.1),
-                                                borderRadius:
-                                                    BorderRadius.circular(12),
+                                                color: theme.colorScheme.primary.withOpacity(0.1),
+                                                borderRadius: BorderRadius.circular(12),
                                               ),
                                               child: Text(
                                                 product.category,
-                                                style: const TextStyle(
+                                                style: TextStyle(
                                                   fontSize: 10,
-                                                  color: Color.fromRGBO(
-                                                      237, 88, 33, 1),
+                                                  color: theme.colorScheme.primary,
                                                 ),
                                               ),
                                             ),
@@ -317,13 +299,12 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(AppLocalizations.of(context)!.unknownState),
+                      Text(AppLocalizations.of(context)!.unknownState,
+                          style: TextStyle(color: theme.textTheme.bodyLarge?.color)),
                       const SizedBox(height: 16),
                       ElevatedButton(
                         onPressed: () {
-                          context
-                              .read<ProductBloc>()
-                              .add(LoadProductsByCategory(widget.categoryName));
+                          context.read<ProductBloc>().add(LoadProductsByCategory(widget.categoryName));
                         },
                         child: Text(AppLocalizations.of(context)!.reload),
                       ),

@@ -18,10 +18,12 @@ class PerfilPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context); // 👈 accedemos al tema actual
+    final isDark = theme.brightness == Brightness.dark;
+
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, state) {
         if (state is Authenticated) {
-          // 🔹 Vista del perfil cuando hay sesión
           return Scaffold(
             backgroundColor: kLightGray,
             appBar: AppBar(
@@ -321,35 +323,30 @@ class PerfilPage extends StatelessWidget {
             ),
           );
         } else {
-          // 🔹 Vista cuando NO hay sesión
+          // 🔸 Vista sin sesión
           return Scaffold(
+            backgroundColor: theme.scaffoldBackgroundColor,
             body: Center(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // 🔹 Logo arriba
-                    Image.asset(
-                      "assets/loogo.jpg",
-                      width: 120,
-                      height: 120,
-                    ),
+                    Image.asset("assets/loogo.jpg", width: 120, height: 120),
                     const SizedBox(height: 20),
-
-                    // Texto de bienvenida
-                    const Text(
+                    Text(
                       "Bienvenido a Bitevia",
-                      style:
-                          TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+                      style: theme.textTheme.headlineSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     const SizedBox(height: 10),
-
-                    // Subtítulo
-                    const Text(
+                    Text(
                       "Inicia sesión o regístrate para continuar",
                       textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 16, color: Colors.black54),
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: theme.textTheme.bodyMedium?.color?.withOpacity(0.7),
+                      ),
                     ),
                     const SizedBox(height: 30),
 
@@ -358,9 +355,7 @@ class PerfilPage extends StatelessWidget {
                       width: 220,
                       height: 50,
                       child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.pushNamed(context, "/login");
-                        },
+                        onPressed: () => Navigator.pushNamed(context, "/login"),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color.fromRGBO(237, 88, 33, 1),
                           shape: RoundedRectangleBorder(
@@ -380,26 +375,19 @@ class PerfilPage extends StatelessWidget {
                       width: 220,
                       height: 50,
                       child: OutlinedButton(
-                        onPressed: () {
-                          Navigator.pushNamed(context, "/register");
-                        },
+                        onPressed: () => Navigator.pushNamed(context, "/register"),
                         style: OutlinedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          foregroundColor: Colors.black,
+                          foregroundColor: theme.textTheme.bodyLarge?.color,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
                           ),
                         ),
-                        child: const Text(
-                          'Registrarse',
-                          style: TextStyle(fontSize: 18),
-                        ),
+                        child: const Text('Registrarse', style: TextStyle(fontSize: 18)),
                       ),
                     ),
 
                     const SizedBox(height: 20),
 
-                    // Link ¿Olvidaste tu contraseña?
                     TextButton(
                       onPressed: () {
                         Navigator.pushNamed(context, "/forgot-password");
