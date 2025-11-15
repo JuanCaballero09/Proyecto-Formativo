@@ -4,3 +4,4 @@ pin "@hotwired/turbo", to: "turbo.js" # opcional, puede eliminarse si no usas di
 pin "@rails/actioncable/src", to: "@rails--actioncable--src.js" # si lo necesitas
 pin "script", to: "script.js"
 pin "chart", to: "chart.js"
+pin "bootstrap", to: "bootstrap.bundle.min.js"

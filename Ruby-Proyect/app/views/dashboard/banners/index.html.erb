@@ -7,9 +7,9 @@
     <% if @banners.any? %>
         <section class="productss">
             <% @banners.each do |banner| %>
-                <div class= "product-card">
+                <div class="product-card">
                     <% if banner.imagen.attached? %>
-                        <%= image_tag(banner.imagen.attached? ? banner.imagen : "LogoLogoText2.svg") %>
+                        <%= image_tag(banner.imagen) %>
                         <%= button_to 'Eliminar', dashboard_banner_path(banner), method: :delete, class: "btn-eliminar", style: "margin: 15px auto; display: flex;" %>
                     <% else %>
                         <p>⚠️ Esta imagen no está adjunta</p>
