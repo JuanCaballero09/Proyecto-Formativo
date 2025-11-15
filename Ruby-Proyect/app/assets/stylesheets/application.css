@@ -467,6 +467,10 @@ input:focus{outline: none;}
     position: relative;
 }
 
+.btn-user-login img{
+    filter: none;
+}
+
 .btn-user::before {
     content: '';
     position: absolute;
