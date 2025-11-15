@@ -808,6 +808,104 @@
     margin: 5px auto;
 }
 
+.status-finalizado p, .status-finalizado span {
+    padding: 8px 10px;
+    border-radius: 10px;
+    color: white;
+    text-align: center;
+    background-color: #008080;  /* turquesa/cyan */
+    font-weight: 600;
+    margin: 5px auto;
+}
+
+.status-pendiente_confirmacion_pago p, .status-pendiente_confirmacion_pago span {
+    padding: 8px 10px;
+    border-radius: 10px;
+    color: white;
+    text-align: center;
+    background-color: #FF9800;  /* naranja - esperando confirmación */
+    font-weight: 600;
+    margin: 5px auto;
+}
+
+/* Botones de acción de órdenes */
+.order-action-btn {
+    margin: 8px auto;
+    background: none;
+    border: 2px solid;
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 16px;
+    padding: 10px 20px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    width: fit-content;
+    font-weight: 600;
+    display: block;
+}
+
+.order-action-btn-preparar {
+    color: #2196F3;
+    border-color: #2196F3;
+}
+
+.order-action-btn-preparar:hover {
+    background-color: #2196F3;
+    color: white;
+}
+
+.order-action-btn-enviar {
+    color: #8B34D9;
+    border-color: #8B34D9;
+}
+
+.order-action-btn-enviar:hover {
+    background-color: #8B34D9;
+    color: white;
+}
+
+.order-action-btn-finalizar {
+    color: #4CAF50;
+    border-color: #4CAF50;
+}
+
+.order-action-btn-finalizar:hover {
+    background-color: #4CAF50;
+    color: white;
+}
+
+/* Botón de confirmar pago en efectivo (admin) */
+.btn-confirmar-pago {
+    margin: 8px auto;
+    background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 15px;
+    padding: 10px 18px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    width: fit-content;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: white;
+    box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
+}
+
+.btn-confirmar-pago:hover {
+    background: linear-gradient(135deg, #45a049 0%, #3d8b40 100%);
+    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.5);
+    transform: translateY(-2px);
+    color: white;
+}
+
+.btn-confirmar-pago:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(76, 175, 80, 0.3);
+}
+
 
 /* Estilos para el código QR */
 .qr-code-container {

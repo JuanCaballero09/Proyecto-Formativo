@@ -4,6 +4,16 @@
         <p style="font-size: 20px; margin: 0;"><%= order.created_at.strftime("%d/%m/%Y %H:%M") %></p>
         <p class="<%= "status-#{order.status}" %>" style="font-size: 20px; margin: 10px;"><span><%= order.status.humanize %></span></p>
         <p style="font-size: 20px; margin: 8px;"><strong>Cliente:</strong> <%= order.customer_name %></p>
+        
+        <% payment = order.payments.last %>
+        <% if payment&.payment_method == "cash" %>
+          <p style="font-size: 18px; margin: 8px; color: #FF6B35;"><strong>💵 Pago: Efectivo</strong></p>
+          <% if payment.pending? %>
+            <p style="font-size: 16px; margin: 8px; color: #FFA500;"><strong>⏳ Pago pendiente</strong></p>
+          <% end %>
+        <% else %>
+          <p style="font-size: 18px; margin: 8px; color: #3498db;"><strong>💳 Pago: Online</strong></p>
+        <% end %>
 
         <strong style="margin-bottom: 10px; font-size: 23px;">Producto:</strong>
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 20px;">
@@ -17,17 +27,17 @@
     </div>
     <div class="btn-orden">
         <% if order.pagado? %>
-        <%= button_to "Marcar como En preparación",
-                cambiar_estado_dashboard_order_path(order, order: { status: :en_preparacion }),
-                method: :patch,
-                data: { turbo_stream: true },
-                class: "btn-eliminar" %>
+          <%= button_to "Marcar como En preparación",
+                  cambiar_estado_dashboard_order_path(order, order: { status: :en_preparacion }),
+                  method: :patch,
+                  data: { turbo_stream: true },
+                  class: "order-action-btn order-action-btn-preparar" %>
         <% elsif order.en_preparacion? %>
-        <%= button_to "Marcar como Enviado",
-                cambiar_estado_dashboard_order_path(order, order: { status: :enviado }),
-                method: :patch,
-                data: { turbo_stream: true },
-                class: "btn-eliminar" %>
+          <%= button_to "Marcar como Enviado",
+                  cambiar_estado_dashboard_order_path(order, order: { status: :enviado }),
+                  method: :patch,
+                  data: { turbo_stream: true },
+                  class: "order-action-btn order-action-btn-enviar" %>
         <% end %>
     </div>
 </div>

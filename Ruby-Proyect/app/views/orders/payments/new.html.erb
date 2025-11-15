@@ -1,761 +1,674 @@
-<div class="simple-payment-container">
-  <div class="simple-payment-header">
-    <h1><%= t("home.order-pago.pagar_orden")%> <%= @order.code %></h1>
-    <p><%= t("home.order-pago.completa")%></p>
-  </div>
+  <div class="simple-payment-container">
+    <div class="simple-payment-header">
+      <h1><%= t("home.order-pago.pagar_orden")%> <%= @order.code %></h1>
+      <p><%= t("home.order-pago.completa")%></p>
+    </div>
 
-  <div class="simple-payment-grid">
-    <!-- Order Summary -->
-    <div class="simple-order-summary">
-      <h3><%= t("home.order-pago.resumen")%></h3>
-      
-      <div class="simple-order-items">
-        <% @order.order_items.each do |item| %>
-          <div class="simple-order-item">
-            <div class="item-info">
-              <span class="item-name"><%= item.product.nombre %></span>
-              <span class="item-details"> 
-                <%= t("home.ordenes.cantidadd")%> <%= item.quantity %> x 
-                <span class="precio" >
-                  <strong class= "precio-unitario" data-precio="<%= item.product.precio %>" data-locale="<%= I18n.locale %>"></strong> 
+    <div class="simple-payment-grid">
+      <!-- Order Summary -->
+      <div class="simple-order-summary">
+        <h3><%= t("home.order-pago.resumen")%></h3>
+        
+        <div class="simple-order-items">
+          <% @order.order_items.each do |item| %>
+            <div class="simple-order-item">
+              <div class="item-info">
+                <span class="item-name"><%= item.product.nombre %></span>
+                <span class="item-details"> 
+                  <%= t("home.ordenes.cantidadd")%> <%= item.quantity %> x 
+                  <span class="precio" >
+                    <strong class= "precio-unitario" data-precio="<%= item.product.precio %>" data-locale="<%= I18n.locale %>"></strong> 
+                  </span>
                 </span>
+              </div>
+              <span class="item-total">
+                <strong class= "precio-unitario" data-precio="<%= item.quantity * item.product.precio %>" data-locale="<%= I18n.locale %>"></strong> 
               </span>
             </div>
-            <span class="item-total">
-              <strong class= "precio-unitario" data-precio="<%= item.quantity * item.product.precio %>" data-locale="<%= I18n.locale %>"></strong> 
-            </span>
-          </div>
-        <% end %>
-      </div>
+          <% end %>
+        </div>
 
-      <div class="simple-order-footer">
-        <% if @order.coupon.present? %>
-          <div class="coupon-line">
-            <span>Cupón (<%= @order.coupon.codigo %>):</span>
-            <span class="discount">
-              <% if @order.coupon.tipo_descuento == "porcentaje" %>
-                - <%= @order.coupon.valor.to_i %>%
-              <% else %>
-                - <%= number_to_currency(@order.coupon.valor, unit: "COP ", separator: ",", delimiter: ".") %>
-              <% end %>
-            </span>
-          </div>
-        <% end %>
-        
-        <div class="total-line">
-          <span><%= t("home.carrito.total_pagar")%></span>
-          <span class="total-amount">
-            <span class="precio">
-              <strong class="precio-total"
-                data-precio="<%= @order.total %>"
-                data-locale="<%= I18n.locale %>"> 
-                <% if I18n.locale == :en %>
-                  <%= number_to_currency(@order.total/ 4000, unit: "USD", format: "%n %u", precision: 2) %>
+        <div class="simple-order-footer">
+          <% if @order.coupon.present? %>
+            <div class="coupon-line">
+              <span>Cupón (<%= @order.coupon.codigo %>):</span>
+              <span class="discount">
+                <% if @order.coupon.tipo_descuento == "porcentaje" %>
+                  - <%= @order.coupon.valor.to_i %>%
                 <% else %>
-                  <%= number_to_currency(@order.total, unit: "COP", format: "%n %u", precision: 2) %>
+                  - <%= number_to_currency(@order.coupon.valor, unit: "COP ", separator: ",", delimiter: ".") %>
                 <% end %>
-              </strong>
+              </span>
+            </div>
+          <% end %>
+          
+          <div class="total-line">
+            <span><%= t("home.carrito.total_pagar")%></span>
+            <span class="total-amount">
+              <span class="precio">
+                <strong class="precio-total"
+                  data-precio="<%= @order.total %>"
+                  data-locale="<%= I18n.locale %>"> 
+                  <% if I18n.locale == :en %>
+                    <%= number_to_currency(@order.total/ 4000, unit: "USD", format: "%n %u", precision: 2) %>
+                  <% else %>
+                    <%= number_to_currency(@order.total, unit: "COP", format: "%n %u", precision: 2) %>
+                  <% end %>
+                </strong>
+              </span>
             </span>
-          </span>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- Payment Form -->
-    <div class="simple-payment-form">
-      <h3><%= t("home.order-pago.info_pago")%></h3>
-      
-      <%= form_with model: [@order, @payment], local: true, html: { id: "payment-form", class: "simple-form" } do |f| %>
+      <!-- Payment Form -->
+      <div class="simple-payment-form">
+        <h3><%= t("home.order-pago.info_pago")%></h3>
         
-        <!-- Paso 1: Selección de método de pago -->
-        <div id="payment-method-selection" class="payment-step">
-          <h4 class="step-title">Selecciona tu método de pago</h4>
+        <%= form_tag order_payments_path(@order), method: :post, id: "payment-form", class: "simple-form" do %>
           
-          <div class="payment-methods-grid">
-            <div class="payment-method-card" data-method="card">
-              <div class="method-icon">
+          <!-- Paso 1: Selección de método de pago -->
+          <div id="payment-method-selection" class="payment-step">
+            <h4 class="step-title">Selecciona tu método de pago</h4>
+            
+            <div class="payment-methods-grid">
+              <div class="payment-method-card" data-method="card">
+                <div class="method-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                    <line x1="1" y1="10" x2="23" y2="10"></line>
+                  </svg>
+                </div>
+                <h5>Tarjeta de Crédito/Débito</h5>
+                <p>Paga con tu tarjeta de forma segura</p>
+              </div>
+
+              <div class="payment-method-card" data-method="nequi">
+                <div class="method-icon nequi-icon">
+                  <img src="/NequiLogo.png" alt="Nequi Logo" style="width:24px; height:24px;" />
+                </div>
+                <h5>Nequi</h5>
+                <p>Pago rápido con notificación push</p>
+                <div class="nequi-info">
+                  <small>
+                    <strong>Importante:</strong> Recibirás una notificación push de Nequi en tu celular 
+                    para aceptar o rechazar la transacción. El resultado se reflejará en segundos.
+                  </small>
+                </div>
+              </div>
+
+              <div class="payment-method-card" data-method="cash">
+                <div class="method-icon cash-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="6" width="20" height="12" rx="2"/>
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M6 12h.01M18 12h.01"/>
+                  </svg>
+                </div>
+                <h5>Efectivo</h5>
+                <p>Paga en efectivo al recibir tu pedido</p>
+                <div class="cash-info">
+                  <small>
+                    Tu pedido será preparado y enviado. Pagarás en efectivo al domiciliario cuando recibas tu orden.
+                  </small>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Paso 2: Selección de tipo de tarjeta (solo para tarjetas) -->
+          <div id="card-type-selection" class="payment-step" style="display: none;">
+            <div class="step-header">
+              <button type="button" class="back-button" data-back-to="payment-method-selection">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
-                  <line x1="1" y1="10" x2="23" y2="10"></line>
+                  <line x1="19" y1="12" x2="5" y2="12"></line>
+                  <polyline points="12 19 5 12 12 5"></polyline>
                 </svg>
-              </div>
-              <h5>Tarjeta de Crédito/Débito</h5>
-              <p>Paga con tu tarjeta de forma segura</p>
+                Volver
+              </button>
+              <h4 class="step-title">Selecciona el tipo de tarjeta</h4>
             </div>
 
-            <div class="payment-method-card" data-method="nequi">
-              <div class="method-icon nequi-icon">
-                <img src="/NequiLogo.png" alt="Nequi Logo" style="width:24px; height:24px;" />
+            <div class="payment-methods-grid">
+              <div class="payment-method-card" data-card-type="credit">
+                <div class="method-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                    <line x1="1" y1="10" x2="23" y2="10"></line>
+                    <line x1="5" y1="15" x2="9" y2="15"></line>
+                  </svg>
+                </div>
+                <h5>Tarjeta de Crédito</h5>
+                <p>Paga en cuotas de 1 a 36 meses</p>
               </div>
-              <h5>Nequi</h5>
-              <p>Pago rápido con notificación push</p>
-              <div class="nequi-info">
-                <small>
-                  <strong>Importante:</strong> Recibirás una notificación push de Nequi en tu celular 
-                  para aceptar o rechazar la transacción. El resultado se reflejará en segundos.
-                </small>
-              </div>
-            </div>
 
-            <div class="payment-method-card" data-method="cash">
-              <div class="method-icon cash-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.1 0-2-.9-2-2V5c0-1.1.9-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/>
-                </svg>
-              </div>
-              <h5>Pago Contra Entrega</h5>
-              <p>Paga en efectivo al recibir tu pedido</p>
-              <div class="cash-info">
-                <small>
-                  Tu pedido será preparado y enviado. Pagarás en efectivo al domiciliario cuando recibas tu orden.
-                </small>
+              <div class="payment-method-card" data-card-type="debit">
+                <div class="method-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                    <line x1="1" y1="10" x2="23" y2="10"></line>
+                    <circle cx="7" cy="15" r="1"></circle>
+                  </svg>
+                </div>
+                <h5>Tarjeta Débito</h5>
+                <p>Pago único sin cuotas</p>
               </div>
             </div>
           </div>
-        </div>
 
-        <!-- Paso 2: Selección de tipo de tarjeta (solo para tarjetas) -->
-        <div id="card-type-selection" class="payment-step" style="display: none;">
-          <div class="step-header">
-            <button type="button" class="back-button" data-back-to="payment-method-selection">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="19" y1="12" x2="5" y2="12"></line>
-                <polyline points="12 19 5 12 12 5"></polyline>
-              </svg>
-              Volver
-            </button>
-            <h4 class="step-title">Selecciona el tipo de tarjeta</h4>
-          </div>
+          <!-- Campos ocultos para método y tipo -->
+          <%= hidden_field_tag 'payment[payment_method]', '', id: "payment-method-selector" %>
+          <%= hidden_field_tag 'payment[type_card]', '', id: "card-type-selector" %>
 
-          <div class="payment-methods-grid">
-            <div class="payment-method-card" data-card-type="credit">
-              <div class="method-icon">
+          <!-- Paso 3: Formulario de pago -->
+          <div id="payment-form-section" class="payment-step" style="display: none;">
+            <div class="step-header">
+              <button type="button" class="back-button" id="back-from-form">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
-                  <line x1="1" y1="10" x2="23" y2="10"></line>
-                  <line x1="5" y1="15" x2="9" y2="15"></line>
+                  <line x1="19" y1="12" x2="5" y2="12"></line>
+                  <polyline points="12 19 5 12 12 5"></polyline>
                 </svg>
-              </div>
-              <h5>Tarjeta de Crédito</h5>
-              <p>Paga en cuotas de 1 a 36 meses</p>
+                Volver
+              </button>
+              <h4 class="step-title" id="form-title">Completa tu información</h4>
             </div>
 
-            <div class="payment-method-card" data-card-type="debit">
-              <div class="method-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
-                  <line x1="1" y1="10" x2="23" y2="10"></line>
-                  <circle cx="7" cy="15" r="1"></circle>
-                </svg>
-              </div>
-              <h5>Tarjeta Débito</h5>
-              <p>Pago único sin cuotas</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Campos ocultos para método y tipo -->
-        <%= f.hidden_field :payment_method_type, id: "payment-method-selector" %>
-        <%= f.hidden_field :type_card, id: "card-type-selector" %>
-
-        <!-- Paso 3: Formulario de pago -->
-        <div id="payment-form-section" class="payment-step" style="display: none;">
-          <div class="step-header">
-            <button type="button" class="back-button" id="back-from-form">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="19" y1="12" x2="5" y2="12"></line>
-                <polyline points="12 19 5 12 12 5"></polyline>
-              </svg>
-              Volver
-            </button>
-            <h4 class="step-title" id="form-title">Completa tu información</h4>
-          </div>
-
-        <!-- Campos para TARJETA -->
-        <div id="card-fields" style="display: none;">
-          <div class="form-field">
-            <%= f.label :card_number, t("home.order-pago.numero-tarjeta"), class: "field-label" %>
-            <%= f.text_field :card_number, 
-                maxlength: 19, 
-                class: "field-input", 
-                placeholder: "1234 5678 9012 3456",
-                inputmode: "numeric",
-                pattern: "[0-9\s]*",
-                autocomplete: "cc-number" %>
-            <span id="error-card" class="error-msg"></span>
-          </div>
-
-          <div class="form-row">
+          <!-- Campos para TARJETA -->
+          <div id="card-fields" style="display: none;">
             <div class="form-field">
-              <%= f.label :exp_month, t("home.order-pago.mes-expiracion"), class: "field-label" %>
-              <%= f.select :exp_month, 
-                  options_for_select((1..12).map { |m| [sprintf("%02d", m), m] }, nil), 
-                  { prompt: "Mes" }, 
-                  { class: "field-select" } %>
-              <span id="error-month" class="error-msg"></span>
-            </div>
-
-            <div class="form-field">
-              <%= f.label :exp_year, t("home.order-pago.año-expiracion"), class: "field-label" %>
-              <%= f.select :exp_year, 
-                  options_for_select((Date.today.year..(Date.today.year+10)).map { |y| [y.to_s, y] }, nil), 
-                  { prompt: "Año" }, 
-                  { class: "field-select" } %>
-              <span id="error-year" class="error-msg"></span>
-            </div>
-          </div>
-
-          <div class="form-row">
-            <div class="form-field">
-              <%= f.label :cvc, "CVC", class: "field-label" %>
-              <%= f.text_field :cvc, 
-                  maxlength: 4, 
+              <%= label_tag 'payment[card_number]', t("home.order-pago.numero-tarjeta"), class: "field-label" %>
+              <%= text_field_tag 'payment[card_number]', nil,
+                  maxlength: 19, 
                   class: "field-input", 
-                  placeholder: "123",
+                  placeholder: "1234 5678 9012 3456",
                   inputmode: "numeric",
-                  pattern: "[0-9]*",
-                  autocomplete: "cc-csc" %>
-              <span id="error-cvc" class="error-msg"></span>
+                  pattern: "[0-9\s]*",
+                  autocomplete: "cc-number" %>
+              <span id="error-card" class="error-msg"></span>
             </div>
 
+            <div class="form-row">
+              <div class="form-field">
+                <%= label_tag 'payment[exp_month]', t("home.order-pago.mes-expiracion"), class: "field-label" %>
+                <%= select_tag 'payment[exp_month]',
+                    options_for_select((1..12).map { |m| [sprintf("%02d", m), m] }, nil), 
+                    prompt: "Mes",
+                    class: "field-select" %>
+                <span id="error-month" class="error-msg"></span>
+              </div>
+
+              <div class="form-field">
+                <%= label_tag 'payment[exp_year]', t("home.order-pago.año-expiracion"), class: "field-label" %>
+                <%= select_tag 'payment[exp_year]',
+                    options_for_select((Date.today.year..(Date.today.year+10)).map { |y| [y.to_s, y] }, nil), 
+                    prompt: "Año",
+                    class: "field-select" %>
+                <span id="error-year" class="error-msg"></span>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-field">
+                <%= label_tag 'payment[cvc]', "CVC", class: "field-label" %>
+                <%= text_field_tag 'payment[cvc]', nil,
+                    maxlength: 4, 
+                    class: "field-input", 
+                    placeholder: "123",
+                    inputmode: "numeric",
+                    pattern: "[0-9]*",
+                    autocomplete: "cc-csc" %>
+                <span id="error-cvc" class="error-msg"></span>
+              </div>
+
+              <div class="form-field">
+                <%= label_tag 'payment[card_holder]', t("home.order-pago.nombre-titular"), class: "field-label" %>
+                <%= text_field_tag 'payment[card_holder]', @order.customer_name,
+                    class: "field-input", 
+                    placeholder: t("home.order-pago.nombre_completo") %>
+                <span id="error-holder" class="error-msg"></span>
+              </div>
+            </div>
+
+            <!-- Cuotas (solo para crédito) -->
+            <div class="form-field" id="installments-field" style="display: none;">
+              <%= label_tag 'payment[installments]', "Número de cuotas", class: "field-label" %>
+              <%= select_tag 'payment[installments]',
+                  options_for_select((1..36).map { |i| [i == 1 ? "1 cuota (sin intereses)" : "#{i} cuotas", i] }, 1),
+                  class: "field-select" %>
+            </div>
+          </div>
+
+          <!-- Campos para NEQUI -->
+          <div id="nequi-fields" style="display: none;">
             <div class="form-field">
-              <%= f.label :card_holder, t("home.order-pago.nombre-titular"), class: "field-label" %>
-              <%= f.text_field :card_holder, 
+              <%= label_tag 'payment[phone_number]', "Número de celular Nequi", class: "field-label" %>
+              <%= text_field_tag 'payment[phone_number]', nil,
+                  maxlength: 10, 
                   class: "field-input", 
-                  placeholder: t("home.order-pago.nombre_completo"),
-                  value: @order.customer_name %>
-              <span id="error-holder" class="error-msg"></span>
+                  placeholder: "3001234567",
+                  inputmode: "numeric",
+                  pattern: "[0-9]*" %>
+              <span id="error-phone" class="error-msg"></span>
+              <small class="field-hint">Asegúrate de tener la app de Nequi instalada en tu celular</small>
             </div>
           </div>
 
-          <!-- Cuotas (solo para crédito) -->
-          <div class="form-field" id="installments-field" style="display: none;">
-            <%= f.label :installments, "Número de cuotas", class: "field-label" %>
-            <%= f.select :installments, 
-                options_for_select((1..36).map { |i| [i == 1 ? "1 cuota (sin intereses)" : "#{i} cuotas", i] }, 1),
-                {},
-                { class: "field-select" } %>
-          </div>
-        </div>
-
-        <!-- Campos para NEQUI -->
-        <div id="nequi-fields" style="display: none;">
+          <!-- Email (común para todos) -->
           <div class="form-field">
-            <%= f.label :phone_number, "Número de celular Nequi", class: "field-label" %>
-            <%= f.text_field :phone_number, 
-                maxlength: 10, 
+            <%= label_tag 'payment[email]', t("home.order-pago.correo-electronico"), class: "field-label" %>
+            <%= email_field_tag 'payment[email]', @order.customer_email,
+                required: true, 
                 class: "field-input", 
-                placeholder: "3001234567",
-                inputmode: "numeric",
-                pattern: "[0-9]*" %>
-            <span id="error-phone" class="error-msg"></span>
-            <small class="field-hint">Asegúrate de tener la app de Nequi instalada en tu celular</small>
+                placeholder: "tu@email.com" %>
+            <span id="error-email" class="error-msg"></span>
           </div>
-        </div>
 
-        <!-- Email (común para todos) -->
-        <div class="form-field">
-          <%= f.label :email, t("home.order-pago.correo-electronico"), class: "field-label" %>
-          <%= f.email_field :email, 
-              required: true, 
-              class: "field-input", 
-              placeholder: "tu@email.com",
-              value: @order.customer_email %>
-          <span id="error-email" class="error-msg"></span>
-        </div>
-
-        <div class="checkbox-section">
-          <div class="checkbox-item">
-            <%= f.check_box :accept_terms, required: true, class: "checkbox" %>
-            <%= f.label :accept_terms, class: "checkbox-label" do %>
-              Acepto los 
-              <a href="https://wompi.com/assets/downloadble/reglamento-Usuarios-Colombia.pdf?_gl=1*126i4oi*_gcl_aw*R0NMLjE3NTYyMjY0MjQuQ2p3S0NBand0clhGQmhCaUVpd0FFK2VuMXpvMWtBb2dwUkpBWklvc3JjNkJuZ3NIRktrMVRfT3hzODRBWnFTQXdhNGd2Z3JLaVhBWGhSb0NJVnNRQXZEX0J3RQ..*_gcl_au*MjA5MDc4MDUwMy4xNzU1NzE1ODAz*_ga*MTMzNjc3NjQyNC4xNzU1NzE1ODA1*_ga_BQ9HE5B63X*czE3NTYyMjY0MzUkbzE0JGcxJHQxNzU2MjI2ODQ2JGo2MCRsMCRoMA.." target="_blank">términos y condiciones</a>
-              de Wompi
-            <% end %>
+          <div class="checkbox-section">
+            <div class="checkbox-item">
+              <%= check_box_tag 'payment[accept_terms]', '1', false, required: true, class: "checkbox" %>
+              <%= label_tag 'payment_accept_terms', class: "checkbox-label" do %>
+                Acepto los 
+                <a href="https://wompi.com/assets/downloadble/reglamento-Usuarios-Colombia.pdf?_gl=1*126i4oi*_gcl_aw*R0NMLjE3NTYyMjY0MjQuQ2p3S0NBand0clhGQmhCaUVpd0FFK2VuMXpvMWtBb2dwUkpBWklvc3JjNkJuZ3NIRktrMVRfT3hzODRBWnFTQXdhNGd2Z3JLaVhBWGhSb0NJVnNRQXZEX0J3RQ..*_gcl_au*MjA5MDc4MDUwMy4xNzU1NzE1ODAz*_ga*MTMzNjc3NjQyNC4xNzU1NzE1ODA1*_ga_BQ9HE5B63X*czE3NTYyMjY0MzUkbzE0JGcxJHQxNzU2MjI2ODQ2JGo2MCRsMCRoMA.." target="_blank">términos y condiciones</a>
+                de Wompi
+              <% end %>
+            </div>
+            <div class="checkbox-item">
+              <%= check_box_tag 'payment[accept_data]', '1', false, required: true, class: "checkbox" %>
+              <%= label_tag 'payment_accept_data', class: "checkbox-label" do %>
+                Acepto la
+                <a target="_blank" href="https://wompi.com/assets/downloadble/autorizacion-tratamiento-datos-personales.pdf?_gl=1*jcrp79*_gcl_aw*R0NMLjE3NTYyMjY0MjQuQ2p3S0NBand0clhGQmhCaUVpd0FFK2VuMXpvMWtBb2dwUkpBWklvc3JjNkJuZ3NIRktrMVRfT3hzODRBWnFTQXdhNGd2Z3JLaVhBWGhSb0NJVnNRQXZEX0J3RQ..*_gcl_au*MjA5MDc4MDUwMy4xNzU1NzE1ODAz*_ga*MTMzNjc3NjQyNC4xNzU1NzE1ODA1*_ga_BQ9HE5B63X*czE3NTYyMjY0MzUkbzE0JGcxJHQxNzU2MjI2NTU3JGo0JGwwJGgw">autorización para la administración de datos personales</a>
+                y conozco la 
+                <a target="_blank" href="https://wompi.com/es/co/politica-de-privacidad?_gl=1*13f7i2g*_gcl_aw*R0NMLjE3NTYyMjY0MjQuQ2p3S0NBand0clhGQmhCaUVpd0FFK2VuMXpvMWtBb2dwUkpBWklvc3JjNkJuZ3NIRktrMVRfT3hzODRBWnFTQXdhNGd2Z3JLaVhBWGhSb0NJVnNRQXZEX0J3RQ..*_gcl_au*MjA5MDc4MDUwMy4xNzU1NzE1ODAz*_ga*MTMzNjc3NjQyNC4xNzU1NzE1ODA1*_ga_BQ9HE5B63X*czE3NTYyMjY0MzUkbzE0JGcxJHQxNzU2MjI2NTU3JGo0JGwwJGgw" target="_blank">política para el tratamiento de datos personales.</a>
+              <% end %>
+            </div>
           </div>
-          <div class="checkbox-item">
-            <%= f.check_box :accept_data, required: true, class: "checkbox" %>
-            <%= f.label :accept_data, class: "checkbox-label" do %>
-              Acepto la
-              <a target="_blank" href="https://wompi.com/assets/downloadble/autorizacion-tratamiento-datos-personales.pdf?_gl=1*jcrp79*_gcl_aw*R0NMLjE3NTYyMjY0MjQuQ2p3S0NBand0clhGQmhCaUVpd0FFK2VuMXpvMWtBb2dwUkpBWklvc3JjNkJuZ3NIRktrMVRfT3hzODRBWnFTQXdhNGd2Z3JLaVhBWGhSb0NJVnNRQXZEX0J3RQ..*_gcl_au*MjA5MDc4MDUwMy4xNzU1NzE1ODAz*_ga*MTMzNjc3NjQyNC4xNzU1NzE1ODA1*_ga_BQ9HE5B63X*czE3NTYyMjY0MzUkbzE0JGcxJHQxNzU2MjI2NTU3JGo0JGwwJGgw">autorización para la administración de datos personales</a>
-              y conozco la 
-              <a target="_blank" href="https://wompi.com/es/co/politica-de-privacidad?_gl=1*13f7i2g*_gcl_aw*R0NMLjE3NTYyMjY0MjQuQ2p3S0NBand0clhGQmhCaUVpd0FFK2VuMXpvMWtBb2dwUkpBWklvc3JjNkJuZ3NIRktrMVRfT3hzODRBWnFTQXdhNGd2Z3JLaVhBWGhSb0NJVnNRQXZEX0J3RQ..*_gcl_au*MjA5MDc4MDUwMy4xNzU1NzE1ODAz*_ga*MTMzNjc3NjQyNC4xNzU1NzE1ODA1*_ga_BQ9HE5B63X*czE3NTYyMjY0MzUkbzE0JGcxJHQxNzU2MjI2NTU3JGo0JGwwJGgw" target="_blank">política para el tratamiento de datos personales.</a>
-            <% end %>
-          </div>
-        </div>
 
-        <div class="submit-section">
-          <%= f.submit t("home.order-pago.pagar"), id: "pay-btn", class: "pay-button", disabled: true %>
-          <p class="security-note">🔒 <%= t("home.order-pago.pago_seguro")%></p>
-        </div>
-        </div>
-      <% end %>
+          <div class="submit-section">
+            <%= submit_tag t("home.order-pago.pagar"), id: "pay-btn", class: "pay-button" %>
+            <p class="security-note">🔒 <%= t("home.order-pago.pago_seguro")%></p>
+          </div>
+          </div>
+        <% end %>
+      </div>
     </div>
   </div>
-</div>
 
-<style>
-  .payment-step {
-    animation: fadeIn 0.3s ease-in;
-  }
-
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .step-header {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    margin-bottom: 25px;
-  }
-
-  .back-button {
-    background: #f5f5f5;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 8px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 14px;
-    color: #333;
-    transition: all 0.2s;
-  }
-
-  .back-button:hover {
-    background: #e0e0e0;
-  }
-
-  .back-button svg {
-    width: 18px;
-    height: 18px;
-  }
-
-  .step-title {
-    margin: 0;
-    font-size: 1.3rem;
-    color: #333;
-  }
-
-  .payment-methods-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
-    margin-top: 20px;
-  }
-
-  .payment-method-card {
-    background: white;
-    border: 2px solid #e0e0e0;
-    border-radius: 12px;
-    padding: 25px;
-    cursor: pointer;
-    transition: all 0.3s;
-    text-align: center;
-  }
-
-  .payment-method-card:hover {
-    border-color: #FF6B35;
-    transform: translateY(-5px);
-    box-shadow: 0 5px 15px rgba(255, 107, 53, 0.2);
-  }
-
-  .payment-method-card.selected {
-    border-color: #FF6B35;
-    background: #fff5f2;
-  }
-
-  .method-icon {
-    width: 60px;
-    height: 60px;
-    margin: 0 auto 15px;
-    background: #f5f5f5;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #FF6B35;
-  }
-
-  .method-icon svg {
-    width: 30px;
-    height: 30px;
-  }
-
-  .nequi-icon {
-    background: #f8e6ff;
-    color: #8B34D9;
-  }
-
-  .cash-icon {
-    background: #e8f5e9;
-    color: #4CAF50;
-  }
-
-  .payment-method-card h5 {
-    margin: 10px 0;
-    font-size: 1.1rem;
-    color: #333;
-  }
-
-  .payment-method-card p {
-    margin: 5px 0;
-    font-size: 0.9rem;
-    color: #666;
-  }
-
-  .nequi-info {
-    margin-top: 15px;
-    background: #fff;
-    border-radius: 8px;
-    text-align: center;
-  }
-
-  .nequi-info small {
-    font-size: 0.7rem;
-    color: #555;
-    line-height: 1.4;
-  }
-
-  .cash-info {
-    margin-top: 15px;
-    padding: 12px;
-    background: #fff;
-    border-radius: 8px;
-    text-align: center;
-  }
-
-  .cash-info small {
-    font-size: 0.8rem;
-    color: #555;
-    line-height: 1.4;
-  }
-
-  .field-hint {
-    display: block;
-    margin-top: 5px;
-    font-size: 0.85em;
-    color: #666;
-  }
-</style>
-
-<script>
-document.addEventListener('turbo:load', function() {
-  // Referencias a elementos del DOM
-  const paymentMethodSelector = document.getElementById('payment-method-selector');
-  const cardTypeSelector = document.getElementById('card-type-selector');
-  const installmentsField = document.getElementById('installments-field');
-  const installmentsSelect = document.querySelector('select[name*="installments"]');
-  const payBtn = document.getElementById('pay-btn');
-  const acceptTerms = document.querySelector('input[type="checkbox"][name*="accept_terms"]');
-  const acceptData = document.querySelector('input[type="checkbox"][name*="accept_data"]');
-  const emailInput = document.querySelector('input[name*="email"]');
-  const cardNumberInput = document.querySelector('input[name*="card_number"]');
-  const expMonthSelect = document.querySelector('select[name*="exp_month"]');
-  const expYearSelect = document.querySelector('select[name*="exp_year"]');
-  const cvcInput = document.querySelector('input[name*="cvc"]');
-  const cardHolderInput = document.querySelector('input[name*="card_holder"]');
-  const phoneInput = document.querySelector('input[name*="phone_number"]');
-  
-  // Referencias a pasos
-  const paymentMethodSelection = document.getElementById('payment-method-selection');
-  const cardTypeSelection = document.getElementById('card-type-selection');
-  const paymentFormSection = document.getElementById('payment-form-section');
-  const cardFields = document.getElementById('card-fields');
-  const nequiFields = document.getElementById('nequi-fields');
-
-  // Función para mostrar un paso específico
-  function showStep(stepElement) {
-    paymentMethodSelection.style.display = 'none';
-    cardTypeSelection.style.display = 'none';
-    paymentFormSection.style.display = 'none';
-    
-    if (stepElement) {
-      stepElement.style.display = 'block';
+  <style>
+    .payment-step {
+      animation: fadeIn 0.3s ease-in;
     }
-  }
 
-  // Función para desmarcar checkboxes de términos
-  function uncheckTerms() {
-    if (acceptTerms) acceptTerms.checked = false;
-    if (acceptData) acceptData.checked = false;
-  }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
 
-  // Función para limpiar todos los campos del formulario
-  function clearFormFields() {
-    // Limpiar campos de tarjeta
-    if (cardNumberInput) cardNumberInput.value = null;
-    if (expMonthSelect) expMonthSelect.selectedIndex = null;
-    if (expYearSelect) expYearSelect.selectedIndex = null;
-    if (cvcInput) cvcInput.value = null;
-    if (cardHolderInput) cardHolderInput.value = null;
-    if (installmentsSelect) installmentsSelect.selectedIndex = null;
+    .step-header {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    .back-button {
+      background: #f5f5f5;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      color: #333;
+      transition: all 0.2s;
+    }
+
+    .back-button:hover {
+      background: #e0e0e0;
+    }
+
+    .back-button svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .step-title {
+      margin: 0;
+      font-size: 1.3rem;
+      color: #333;
+    }
+
+    .payment-methods-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .payment-method-card {
+      background: white;
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      padding: 25px;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-align: center;
+    }
+
+    .payment-method-card:hover {
+      border-color: #FF6B35;
+      transform: translateY(-5px);
+      box-shadow: 0 5px 15px rgba(255, 107, 53, 0.2);
+    }
+
+    .payment-method-card.selected {
+      border-color: #FF6B35;
+      background: #fff5f2;
+    }
+
+    .method-icon {
+      width: 60px;
+      height: 60px;
+      margin: 0 auto 15px;
+      background: #f5f5f5;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #FF6B35;
+    }
+
+    .method-icon svg {
+      width: 30px;
+      height: 30px;
+    }
+
+    .nequi-icon {
+      background: #f8e6ff;
+      color: #8B34D9;
+    }
+
+    .cash-icon {
+      background: #e8f5e9;
+      color: #4CAF50;
+    }
+
+    .payment-method-card h5 {
+      margin: 10px 0;
+      font-size: 1.1rem;
+      color: #333;
+    }
+
+    .payment-method-card p {
+      margin: 5px 0;
+      font-size: 0.9rem;
+      color: #666;
+    }
+
+    .nequi-info {
+      margin-top: 15px;
+      background: #fff;
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    .nequi-info small {
+      font-size: 0.7rem;
+      color: #555;
+      line-height: 1.4;
+    }
+
+    .cash-info {
+      margin-top: 15px;
+      padding: 12px;
+      background: #fff;
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    .cash-info small {
+      font-size: 0.8rem;
+      color: #555;
+      line-height: 1.4;
+    }
+
+    .field-hint {
+      display: block;
+      margin-top: 5px;
+      font-size: 0.85em;
+      color: #666;
+    }
+  </style>
+
+  <script>
+  (function() {
+    console.log('🚀 Script cargado');
     
-    // Limpiar campo de Nequi
-    if (phoneInput) phoneInput.value = '';
+    const paymentMethodSelector = document.getElementById('payment-method-selector');
+    const paymentMethodSelection = document.getElementById('payment-method-selection');
+    const cardTypeSelection = document.getElementById('card-type-selection');
+    const paymentFormSection = document.getElementById('payment-form-section');
+    const cardFields = document.getElementById('card-fields');
+    const nequiFields = document.getElementById('nequi-fields');
+    const installmentsField = document.getElementById('installments-field');
+    const cardTypeSelector = document.getElementById('card-type-selector');
+    const form = document.getElementById('payment-form');
+    const payBtn = document.getElementById('pay-btn');
+    const acceptTerms = document.querySelector('input[name*="accept_terms"]');
+    const acceptData = document.querySelector('input[name*="accept_data"]');
+    const emailInput = document.querySelector('input[name*="email"]');
     
-    // Limpiar mensajes de error
-    document.querySelectorAll('.error-msg').forEach(error => error.innerHTML = '');
-  }
+    // Campos de tarjeta
+    const cardNumberInput = document.querySelector('input[name*="card_number"]');
+    const expMonthSelect = document.querySelector('select[name*="exp_month"]');
+    const expYearSelect = document.querySelector('select[name*="exp_year"]');
+    const cvcInput = document.querySelector('input[name*="cvc"]');
+    const cardHolderInput = document.querySelector('input[name*="card_holder"]');
+    const installmentsSelect = document.querySelector('select[name*="installments"]');
+    
+    // Campo de Nequi
+    const phoneInput = document.querySelector('input[name*="phone_number"]');
 
-  // Manejar selección de método de pago
-  document.querySelectorAll('.payment-method-card[data-method]').forEach(card => {
-    card.addEventListener('click', function() {
-      const method = this.dataset.method;
+    function showStep(stepElement) {
+      [paymentMethodSelection, cardTypeSelection, paymentFormSection].forEach(el => {
+        if (el) el.style.display = 'none';
+      });
+      if (stepElement) stepElement.style.display = 'block';
+      validateAndEnableButton();
+    }
+
+    // Validación inteligente según método de pago
+    function validateAndEnableButton() {
+      const method = paymentMethodSelector.value;
+      const terms = acceptTerms && acceptTerms.checked;
+      const data = acceptData && acceptData.checked;
+      const email = emailInput && emailInput.value && emailInput.value.includes('@');
+      
+      console.log('🔍 Validando...', { method, terms, data, email });
+
+      // SIEMPRE se requieren términos y condiciones
+      if (!terms || !data) {
+        console.log('❌ Faltan términos');
+        disableButton();
+        return;
+      }
+
+      // SIEMPRE se requiere email
+      if (!email) {
+        console.log('❌ Email inválido');
+        disableButton();
+        return;
+      }
+
+      // Validación específica por método
+      let isValid = false;
+
+      if (method === 'cash') {
+        // Efectivo: solo email y términos (ya validados arriba)
+        console.log('✅ Cash - válido');
+        isValid = true;
+        
+      } else if (method === 'nequi') {
+        // Nequi: email, términos y teléfono
+        const phone = phoneInput && phoneInput.value;
+        isValid = phone && phone.length === 10 && phone.startsWith('3');
+        console.log('💰 Nequi válido:', isValid, phone);
+        
+      } else if (method === 'card') {
+        // Tarjeta: todos los campos de tarjeta
+        const cardType = cardTypeSelector.value;
+        const cardNumber = cardNumberInput && cardNumberInput.value.replace(/\s/g, '');
+        const expMonth = expMonthSelect && expMonthSelect.value;
+        const expYear = expYearSelect && expYearSelect.value;
+        const cvc = cvcInput && cvcInput.value;
+        const cardHolder = cardHolderInput && cardHolderInput.value;
+        
+        isValid = cardType && 
+                  cardNumber && cardNumber.length >= 13 && cardNumber.length <= 19 &&
+                  expMonth && expYear && 
+                  cvc && cvc.length >= 3 && 
+                  cardHolder && cardHolder.trim().length > 0;
+        
+        console.log('💳 Card válido:', isValid, { cardType, cardNumber: cardNumber?.length, expMonth, expYear, cvc: cvc?.length, cardHolder: !!cardHolder });
+      }
+
+      if (isValid) {
+        enableButton();
+      } else {
+        disableButton();
+      }
+    }
+
+    function enableButton() {
+      if (payBtn) {
+        payBtn.disabled = false;
+        payBtn.style.opacity = '1';
+        payBtn.style.cursor = 'pointer';
+        console.log('✅ Botón habilitado');
+      }
+    }
+
+    function disableButton() {
+      if (payBtn) {
+        payBtn.disabled = true;
+        payBtn.style.opacity = '0.5';
+        payBtn.style.cursor = 'not-allowed';
+        console.log('🚫 Botón deshabilitado');
+      }
+    }
+
+    function handlePaymentMethodClick(e) {
+      const card = e.currentTarget;
+      const method = card.dataset.method;
+      console.log('💳 Método seleccionado:', method);
       paymentMethodSelector.value = method;
       
-      // Limpiar campos y desmarcar términos al cambiar método
-      clearFormFields();
-      uncheckTerms();
-      
       if (method === 'card') {
-        // Mostrar selección de tipo de tarjeta
         showStep(cardTypeSelection);
-      } else if (method === 'nequi') {
-        // Ir directo al formulario
-        cardTypeSelector.value = '';
-        nequiFields.style.display = 'block';
+      } else {
         cardFields.style.display = 'none';
+        nequiFields.style.display = method === 'nequi' ? 'block' : 'none';
         showStep(paymentFormSection);
-        
-        // Configurar campos requeridos
-        if (phoneInput) phoneInput.required = true;
-        if (cardNumberInput) cardNumberInput.required = false;
-        if (expMonthSelect) expMonthSelect.required = false;
-        if (expYearSelect) expYearSelect.required = false;
-        if (cvcInput) cvcInput.required = false;
-        if (cardHolderInput) cardHolderInput.required = false;
-      } else if (method === 'cash') {
-        // Pago en efectivo: solo email y términos
-        cardTypeSelector.value = '';
-        nequiFields.style.display = 'none';
-        cardFields.style.display = 'none';
-        showStep(paymentFormSection);
-        
-        // Ningún campo adicional requerido
-        if (phoneInput) phoneInput.required = false;
-        if (cardNumberInput) cardNumberInput.required = false;
-        if (expMonthSelect) expMonthSelect.required = false;
-        if (expYearSelect) expYearSelect.required = false;
-        if (cvcInput) cvcInput.required = false;
-        if (cardHolderInput) cardHolderInput.required = false;
       }
-      
-      validateForm();
-    });
-  });
+    }
 
-  // Manejar selección de tipo de tarjeta
-  document.querySelectorAll('.payment-method-card[data-card-type]').forEach(card => {
-    card.addEventListener('click', function() {
-      const cardType = this.dataset.cardType;
+    function handleCardTypeClick(e) {
+      const card = e.currentTarget;
+      const cardType = card.dataset.cardType;
+      console.log('🎴 Tipo de tarjeta:', cardType);
       cardTypeSelector.value = cardType;
       
-      // Limpiar campos y desmarcar términos al cambiar tipo
-      clearFormFields();
-      uncheckTerms();
-      
-      // Mostrar/ocultar campo de cuotas
-      if (cardType === 'credit') {
-        installmentsField.style.display = 'block';
-      } else {
+      // Débito = 1 cuota automática, Crédito = mostrar selector
+      if (cardType === 'debit') {
         installmentsField.style.display = 'none';
         if (installmentsSelect) installmentsSelect.value = '1';
+      } else {
+        installmentsField.style.display = 'block';
       }
       
-      // Mostrar formulario
       cardFields.style.display = 'block';
       nequiFields.style.display = 'none';
       showStep(paymentFormSection);
-      
-      // Configurar campos requeridos
-      if (cardNumberInput) cardNumberInput.required = true;
-      if (expMonthSelect) expMonthSelect.required = true;
-      if (expYearSelect) expYearSelect.required = true;
-      if (cvcInput) cvcInput.required = true;
-      if (cardHolderInput) cardHolderInput.required = true;
-      if (phoneInput) phoneInput.required = false;
-      
-      validateForm();
-    });
-  });
+    }
 
-  // Manejar botones de volver
-  document.querySelectorAll('.back-button[data-back-to]').forEach(button => {
-    button.addEventListener('click', function() {
-      const targetId = this.dataset.backTo;
-      const targetElement = document.getElementById(targetId);
-      showStep(targetElement);
-      clearFormFields();
-      uncheckTerms();
-      validateForm();
-    });
-  });
+    function handleBackButtonClick(e) {
+      const btn = e.currentTarget;
+      const targetId = btn.dataset.backTo;
+      showStep(document.getElementById(targetId));
+    }
 
-  // Botón volver desde formulario
-  const backFromForm = document.getElementById('back-from-form');
-  if (backFromForm) {
-    backFromForm.addEventListener('click', function() {
+    function handleBackFromForm() {
+      showStep(paymentMethodSelector.value === 'card' ? cardTypeSelection : paymentMethodSelection);
+    }
+
+    function handleFormSubmit(e) {
+      console.log('📝 Formulario enviado');
+      
       const method = paymentMethodSelector.value;
-      if (method === 'card') {
-        showStep(cardTypeSelection);
-      } else {
-        showStep(paymentMethodSelection);
-      }
-      clearFormFields();
-      uncheckTerms();
-      validateForm();
-    });
-  }
+      const email = emailInput ? emailInput.value : '';
+      const terms = acceptTerms ? acceptTerms.checked : false;
+      const data = acceptData ? acceptData.checked : false;
 
-
-  // Función de validación del formulario
-  function validateForm() {
-    if (!paymentMethodSelector || !payBtn) return;
-    
-    const method = paymentMethodSelector.value;
-    
-    if (!method) {
-      payBtn.disabled = true;
-      return;
-    }
-    
-    let isValid = false;
-
-    if (paymentFormSection.style.display !== 'none') {
-      const termsAccepted = acceptTerms && acceptTerms.checked && acceptData && acceptData.checked;
-      if (!termsAccepted) {
-        payBtn.disabled = true;
-        return;
+      if (!method) {
+        console.log('❌ Falta método de pago');
+        e.preventDefault();
+        alert('Por favor selecciona un método de pago');
+        return false;
       }
 
-      const emailValid = emailInput && emailInput.value && emailInput.value.includes('@');
-      if (!emailValid) {
-        payBtn.disabled = true;
-        return;
+      if (!email.includes('@')) {
+        console.log('❌ Email inválido');
+        e.preventDefault();
+        alert('Por favor ingresa un email válido');
+        return false;
       }
 
-      if (method === 'card') {
-        if (cardFields && cardFields.style.display !== 'none') {
-          const cardNumber = cardNumberInput ? cardNumberInput.value.replace(/\s/g, '') : '';
-          const expMonth = expMonthSelect ? expMonthSelect.value : '';
-          const expYear = expYearSelect ? expYearSelect.value : '';
-          const cvc = cvcInput ? cvcInput.value : '';
-          const cardHolder = cardHolderInput ? cardHolderInput.value : '';
-
-          isValid = cardNumber.length >= 13 && cardNumber.length <= 19 &&
-                    expMonth !== '' &&
-                    expYear !== '' &&
-                    cvc.length >= 3 && cvc.length <= 4 &&
-                    cardHolder.trim().length > 0;
-        }
-      } else if (method === 'nequi') {
-        if (nequiFields && nequiFields.style.display !== 'none') {
-          const phone = phoneInput ? phoneInput.value : '';
-          isValid = phone.length === 10 && phone.startsWith('3');
-        }
-      } else if (method === 'cash') {
-        isValid = true;
+      if (!terms || !data) {
+        console.log('❌ Faltan términos y condiciones');
+        e.preventDefault();
+        alert('Debes aceptar los términos y condiciones');
+        return false;
       }
-    } else {
-      payBtn.disabled = true;
-      return;
-    }
-    
-    if (isValid) {
-      payBtn.disabled = false;
-      payBtn.removeAttribute('disabled');
-      payBtn.style.opacity = '1';
-      payBtn.style.cursor = 'pointer';
-      payBtn.style.pointerEvents = 'auto';
-    } else {
-      payBtn.disabled = true;
-      payBtn.setAttribute('disabled', 'disabled');
-    }
-  }
 
-  // Función para permitir solo números
-  function onlyNumbers(event) {
-    const char = String.fromCharCode(event.which);
-    if ([8, 9, 27, 13, 46].indexOf(event.keyCode) !== -1 ||
-        (event.keyCode === 65 && event.ctrlKey === true) ||
-        (event.keyCode === 67 && event.ctrlKey === true) ||
-        (event.keyCode === 86 && event.ctrlKey === true) ||
-        (event.keyCode === 88 && event.ctrlKey === true)) {
-      return;
+      console.log('✅ Validación pasada, enviando formulario...');
     }
-    if (!/[0-9]/.test(char)) {
-      event.preventDefault();
-    }
-  }
 
-  // Event listeners para validación de términos
-  if (acceptTerms) acceptTerms.addEventListener('change', validateForm);
-  if (acceptData) acceptData.addEventListener('change', validateForm);
-  if (emailInput) emailInput.addEventListener('input', validateForm);
-
-  // Event listeners para campos de tarjeta
-  if (cardNumberInput) {
-    cardNumberInput.addEventListener('input', validateForm);
-    cardNumberInput.addEventListener('keydown', onlyNumbers);
-    cardNumberInput.addEventListener('paste', function(event) {
-      setTimeout(() => {
-        this.value = this.value.replace(/[^0-9]/g, '');
-        validateForm();
-      }, 10);
+    // Selección de método de pago
+    document.querySelectorAll('.payment-method-card[data-method]').forEach(card => {
+      card.addEventListener('click', handlePaymentMethodClick);
     });
-  }
 
-  if (expMonthSelect) expMonthSelect.addEventListener('change', validateForm);
-  if (expYearSelect) expYearSelect.addEventListener('change', validateForm);
-  
-  if (cvcInput) {
-    cvcInput.addEventListener('input', validateForm);
-    cvcInput.addEventListener('keydown', onlyNumbers);
-    cvcInput.addEventListener('paste', function(event) {
-      setTimeout(() => {
-        this.value = this.value.replace(/[^0-9]/g, '');
-        validateForm();
-      }, 10);
+    // Selección de tipo de tarjeta
+    document.querySelectorAll('.payment-method-card[data-card-type]').forEach(card => {
+      card.addEventListener('click', handleCardTypeClick);
     });
-  }
 
-  if (cardHolderInput) cardHolderInput.addEventListener('input', validateForm);
-
-  // Event listeners para campo de teléfono Nequi
-  if (phoneInput) {
-    phoneInput.addEventListener('input', validateForm);
-    phoneInput.addEventListener('keydown', onlyNumbers);
-    phoneInput.addEventListener('paste', function(event) {
-      setTimeout(() => {
-        this.value = this.value.replace(/[^0-9]/g, '');
-        validateForm();
-      }, 10);
+    // Botones de volver
+    document.querySelectorAll('.back-button[data-back-to]').forEach(btn => {
+      btn.addEventListener('click', handleBackButtonClick);
     });
-  }
 
-  // Ajustar altura del resumen de orden al formulario de pago
-  function matchHeights() {
-    const paymentForm = document.querySelector('.simple-payment-form');
-    const orderSummary = document.querySelector('.simple-order-summary');
-    
-    if (paymentForm && orderSummary && window.innerWidth > 768) {
-      const paymentHeight = paymentForm.offsetHeight;
-      orderSummary.style.setProperty('--target-height', paymentHeight + 'px');
-      orderSummary.classList.add('height-matched');
-    } else if (orderSummary) {
-      orderSummary.classList.remove('height-matched');
-      orderSummary.style.removeProperty('--target-height');
+    const backFromFormBtn = document.getElementById('back-from-form');
+    if (backFromFormBtn) {
+      backFromFormBtn.addEventListener('click', handleBackFromForm);
     }
-  }
 
-  // Inicializar estado
-  showStep(paymentMethodSelection);
-  validateForm();
-  matchHeights();
-  window.addEventListener('resize', matchHeights);
-});
-</script>
+    // Listeners para validación en tiempo real
+    [acceptTerms, acceptData, emailInput, phoneInput, cardNumberInput, 
+     expMonthSelect, expYearSelect, cvcInput, cardHolderInput].forEach(el => {
+      if (el) {
+        el.addEventListener('change', validateAndEnableButton);
+        el.addEventListener('input', validateAndEnableButton);
+      }
+    });
+
+    // Validación final en submit
+    if (form) {
+      form.addEventListener('submit', handleFormSubmit);
+    }
+
+    showStep(paymentMethodSelection);
+    disableButton(); // Inicialmente deshabilitado
+  })();
+  </script>

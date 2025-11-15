@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
   scope "(:locale)", locale: /es|en/ do
     devise_for :users, controllers: { registrations: "users/registrations" }
-    delete '/users/delete_account', to: 'users/registrations#destroy', as: :delete_account
+    delete "/users/delete_account", to: "users/registrations#destroy", as: :delete_account
 
 
     root to: "grupos#dashboard"
@@ -33,6 +33,8 @@ Rails.application.routes.draw do
       resource :payments, path: "payment", only: [ :new, :create ], module: :orders do
         get :status
         patch :cancel
+        patch :confirm_cash_payment
+        patch :finalize_cash_payment
       end
     end
 
@@ -58,6 +60,7 @@ Rails.application.routes.draw do
       member do
         patch :cambiar_estado
         patch :cancelar
+        patch :finalizar
       end
     end
     resources :products, path: "productos" do

@@ -1,8 +1,18 @@
 <div id="carrito-item-<%= item.id %>" class="carrito-item-modern">
   <div class="item-imagen">
-    <%= image_tag(item.product.imagen.attached? ? item.product.imagen : "LogoLogoText2.svg", 
+    <%#= image_tag(item.product.imagen.attached? ? item.product.imagen : "LogoLogoText2.svg", 
                  alt: item.product.nombre, 
                  class: "producto-imagen") %>
+    <div class="img-wrapper shimmer" style="height: 120px !important;">
+      <div class="img-loader"></div>
+      <img
+        src="<%= item.product.imagen.attached? ? url_for(item.product.imagen_resized) : asset_path('LogoLogoText2.svg') %>"
+        alt="<%= item.product.nombre %>"
+        class="producto-imagen"
+        onload="imageLoaded(this)"
+        onerror="imageError(this)"
+      >
+    </div>
   </div>
 
   <div class="item-info">

@@ -11,8 +11,9 @@ class Order < ApplicationRecord
     pagado: 1,
     en_preparacion: 2,
     enviado: 3,
-    entregado: 4,
-    cancelado: 5
+    finalizado: 4,
+    cancelado: 5,
+    pendiente_confirmacion_pago: 6
   }
 
   scope :by_user, ->(user) { where(user_id: user.id) }
