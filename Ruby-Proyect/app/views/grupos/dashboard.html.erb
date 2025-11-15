@@ -65,9 +65,18 @@
           <% @combos.each_with_index do |combo, index| %>
             <div class="combo-card-premium" data-aos="fade-up" data-aos-delay="<%= index * 100 %>">
               <div class="combo-image-container">
-                <%= image_tag(combo.imagen.attached? ? combo.imagen : 'LogoLogoAPP.svg', 
-                             alt: combo.nombre, 
-                             class: "combo-image") %>
+                <div class="img-wrapper shimmer">
+                    <div class="img-loader"></div>
+                    <img
+                      src="<%= combo.imagen.attached? ? url_for(combo.imagen_resized) : asset_path('LogoLogoText2.svg') %>"
+                      alt="<%= combo.nombre %>"
+                      class="product-image"
+                      style="outline-offset: 0;"
+                      onload="imageLoaded(this)"
+                      onerror="imageError(this)"
+                    >
+                  </div>
+                
               </div>
               
               <div class="combo-content">
@@ -87,11 +96,11 @@
                     <span class="price-label">Solo</span>
                     <span class="price-value"><%= number_to_currency(combo.precio, unit: "COP $", separator: ",", delimiter: ".", precision: 0) %></span>
                   </div>
-                  
-                  <%= button_to "Pedir Ahora", carrito_items_path(product_id: combo.id), 
-                               method: :post, 
-                               class: "combo-btn-premium",
-                               data: { turbo_frame: "_top" } %>
+
+                  <%= button_to t("home.carrito.pedir_ahora"), carrito_items_path(product_id: combo.id), 
+                    method: :post, 
+                    class: "combo-btn-premiums",
+                    data: { turbo_frame: "_top" } %>
                 </div>
               </div>
             </div>

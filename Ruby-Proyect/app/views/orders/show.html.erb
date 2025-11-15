@@ -120,11 +120,17 @@
             <div class="product-item <%= 'is-combo' if order_item.product.is_a?(Combo) %>">
               <div class="product-main-info">
                 <div class="product-image-container">
-                  <% if order_item.product.imagen.attached? %>
-                    <%= image_tag order_item.product.imagen, alt: order_item.product.nombre, class: "product-image" %>
-                  <% else %>
-                    <%= image_tag 'LogoLogo.svg', alt: order_item.product.nombre, class: "product-image placeholder" %>
-                  <% end %>
+                  <div class="img-wrapper shimmer">
+                    <div class="img-loader"></div>
+                    <img
+                      src="<%= order_item.product.grupo.imagen.attached? ? url_for(order_item.product.grupo.imagen_resized) : asset_path('LogoLogoText2.svg') %>"
+                      alt="<%= order_item.product.grupo.nombre %>"
+                      class="product-image"
+                      style="outline-offset: 0;"
+                      onload="imageLoaded(this)"
+                      onerror="imageError(this)"
+                    >
+                  </div>
                   
                   <% if order_item.product.is_a?(Combo) %>
                     <div class="combo-badge">

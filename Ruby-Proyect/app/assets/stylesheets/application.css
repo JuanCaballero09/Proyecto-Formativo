@@ -1059,9 +1059,7 @@ input:focus{outline: none;}
     font-size: 0.9em;
 }
 
-.combo-content {
-    padding: 25px;
-}
+
 
 .combo-name {
     font-size: 1.3em;
@@ -1092,6 +1090,7 @@ input:focus{outline: none;}
     justify-content: space-between;
     align-items: center;
     gap: 15px;
+    pointer-events: auto;
 }
 
 .combo-price {
@@ -1112,7 +1111,7 @@ input:focus{outline: none;}
     color: var(--base);
 }
 
-.combo-btn-premium {
+.combo-btn-premiums {
     background: linear-gradient(135deg, #28a745, #20c997);
     color: white;
     border: none;
@@ -1122,9 +1121,12 @@ input:focus{outline: none;}
     cursor: pointer;
     transition: all 0.3s ease;
     white-space: nowrap;
+    /* position: relative; */
+    /* z-index: 10; */
+    /* pointer-events: auto; */
 }
 
-.combo-btn-premium:hover {
+.combo-btn-premiums:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 20px rgba(40, 167, 69, 0.3);
 }
@@ -1656,7 +1658,7 @@ input:focus{outline: none;}
         gap: 10px;
     }
 
-    .combo-btn-premium {
+    .combo-btn-premiums {
         width: 100%;
         text-align: center;
     }
@@ -1870,7 +1872,7 @@ a:focus, button:focus, input:focus, select:focus, textarea:focus {
    =========================================== */
 
 /* Botones deshabilitados */
-.combo-btn-premium:disabled,
+.combo-btn-premiums:disabled,
 .hero-btn:disabled,
 .view-all-btn:disabled {
     opacity: 0.6;
@@ -2401,16 +2403,6 @@ a:focus, button:focus, input:focus, select:focus, textarea:focus {
     overflow: hidden;
 }
 
-.grupo-carta-combos::after {
-    content: '✨';
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    font-size: 1.5em;
-    z-index: 10;
-    animation: sparkle 2s ease-in-out infinite;
-}
-
 @keyframes sparkle {
     0%, 100% { transform: scale(1) rotate(0deg); opacity: 0.7; }
     50% { transform: scale(1.2) rotate(180deg); opacity: 1; }
@@ -2424,21 +2416,11 @@ a:focus, button:focus, input:focus, select:focus, textarea:focus {
 }
 
 .combo-content {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
     padding: 20px;
-    z-index: 1;
 }
 
 .combo-icon {
     font-size: 5em;
-    margin-bottom: 10px;
-    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
 }
 
 .combo-title {
@@ -2447,8 +2429,8 @@ a:focus, button:focus, input:focus, select:focus, textarea:focus {
     color: white;
     margin: 0;
     text-transform: uppercase;
-    letter-spacing: 4px;
-    text-shadow: 0 3px 10px rgba(0,0,0,0.4);
+    letter-spacing: 2px;
+    
 }
 
 .combo-desc {
@@ -2893,9 +2875,6 @@ a:focus, button:focus, input:focus, select:focus, textarea:focus {
 }
 
 /* Contenido del combo */
-.combo-content {
-    padding: 25px;
-}
 
 .combo-header {
     display: flex;
@@ -7312,6 +7291,10 @@ a:focus, button:focus, input:focus, select:focus, textarea:focus {
     position: relative;
 }
 
+.product-image-container .img-wrapper{
+    height: 150px;
+}
+
 .product-image {
     width: 150px;
     height: 150px;
@@ -7414,6 +7397,7 @@ a:focus, button:focus, input:focus, select:focus, textarea:focus {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 10px;
 }
 
 .price-label {

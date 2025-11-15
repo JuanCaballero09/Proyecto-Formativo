@@ -114,6 +114,7 @@ en:
       pagooo: "Secure payment"
       multiple_metodo: "Multiple payment methods available"
       producto_selecionado: "Selected products"
+      pedir_ahora: "Order now"
 
     order:
       irpago: "Go to payment"
