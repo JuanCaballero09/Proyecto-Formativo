@@ -1,8 +1,8 @@
 # ============================================================================
-# 🌱 SEEDS - RESTAURANTE ARTESANAL
+# SEEDS - RESTAURANTE ARTESANAL
 # ============================================================================
 
-puts "🗑️  Limpiando base de datos..."
+puts "Limpiando base de datos..."
 
 # Destruir en orden correcto para evitar problemas de dependencias
 begin
@@ -27,9 +27,9 @@ begin
   Grupo.destroy_all
   User.destroy_all
 
-  puts "✅ Datos eliminados correctamente"
+  puts "[OK] Datos eliminados correctamente"
 rescue => e
-  puts "⚠️ Error durante la limpieza: #{e.message}"
+  puts "[ADVERTENCIA] Error durante la limpieza: #{e.message}"
   puts "Intentando limpieza alternativa..."
 
   # Método alternativo: desactivar temporalmente las restricciones
@@ -39,29 +39,29 @@ rescue => e
       begin
         model.destroy_all if defined?(model)
       rescue => model_error
-        puts "⚠️  Error al limpiar #{model}: #{model_error.message}"
+        puts "[ERROR] Error al limpiar #{model}: #{model_error.message}"
       end
     end
   end
 end
 
 # Reset secuencias de IDs
-puts "🔄 Reseteando secuencias..."
+puts "Reseteando secuencias..."
 %w[grupos users products ingredientes coupons combos banners orders order_items carritos carrito_items coupon_usages payments].each do |table|
   begin
     ActiveRecord::Base.connection.reset_pk_sequence!(table)
   rescue => e
-    puts "⚠️  No se pudo resetear secuencia de #{table}: #{e.message}"
+    puts "[ADVERTENCIA] No se pudo resetear secuencia de #{table}: #{e.message}"
   end
 end
 
-puts "✅ Base de datos limpia\n"
+puts "[OK] Base de datos limpia\n"
 
 # ============================================================================
-# 👥 USUARIOS
+# USUARIOS
 # ============================================================================
 
-puts "👥 Creando usuarios..."
+puts "Creando usuarios..."
 
 # Admin principal
 User.create!(
@@ -91,33 +91,33 @@ clientes = []
   clientes << cliente
 end
 
-puts "✅ Usuarios creados: #{User.count}\n"
+puts "[OK] Usuarios creados: #{User.count}\n"
 
 # ============================================================================
-# 🍽️ GRUPOS DE PRODUCTOS
+# GRUPOS DE PRODUCTOS
 # ============================================================================
 
-puts "🍽️ Creando grupos de productos..."
+puts "Creando grupos de productos..."
 
 grupos_data = [
   {
-    nombre: "🍔 Hamburguesas",
+    nombre: "Hamburguesas",
     descripcion: "Jugosas hamburguesas artesanales con ingredientes frescos y pan recién horneado"
   },
   {
-    nombre: "🍟 Salchipapas",
+    nombre: "Salchipapas",
     descripcion: "Papas doradas con variedad de carnes y salsas especiales de la casa"
   },
   {
-    nombre: "🍕 Pizzas",
+    nombre: "Pizzas",
     descripcion: "Pizzas al horno de leña con masa artesanal y ingredientes premium"
   },
   {
-    nombre: "🥤 Bebidas",
+    nombre: "Bebidas",
     descripcion: "Refrescantes bebidas naturales y gaseosas para acompañar tu comida"
   },
   {
-    nombre: "🍰 Postres",
+    nombre: "Postres",
     descripcion: "Deliciosos postres caseros para cerrar con broche de oro"
   }
 ]
@@ -125,16 +125,16 @@ grupos_data = [
 grupos = {}
 grupos_data.each do |data|
   grupo = Grupo.create!(data)
-  grupos[data[:nombre].split.last] = grupo # Guarda sin emoji para fácil acceso
+  grupos[data[:nombre]] = grupo
 end
 
-puts "✅ Grupos creados: #{Grupo.count}\n"
+puts "[OK] Grupos creados: #{Grupo.count}\n"
 
 # ============================================================================
-# 🥬 INGREDIENTES
+# INGREDIENTES
 # ============================================================================
 
-puts "🥬 Creando ingredientes..."
+puts "Creando ingredientes..."
 
 ingredientes_data = [
   # Proteínas
@@ -172,70 +172,71 @@ ingredientes_data.each do |nombre|
   ingredientes[nombre] = Ingrediente.create!(nombre: nombre)
 end
 
-puts "✅ Ingredientes creados: #{Ingrediente.count}\n"
+puts "[OK] Ingredientes creados: #{Ingrediente.count}\n"
 
 # ============================================================================
-# 🍔 PRODUCTOS
+# PRODUCTOS
 # ============================================================================
 
-puts "🍔 Creando productos..."
-
-# Rutas de imágenes
-imagenes = {
-  hamburguesas: Rails.root.join("db", "seeds", "hamburguesas.png"),
-  salchipapas: Rails.root.join("db", "seeds", "Salchipapa.jpg"),
-  pizzas: Rails.root.join("db", "seeds", "pizzas.jpg")
-}
+puts "Creando productos..."
 
 # === HAMBURGUESAS ===
 hamburguesas_data = [
   {
-    nombre: "Clásica Deluxe",
+    nombre: "Hamburguesa 1",
     precio: 16500,
     descripcion: "Nuestra hamburguesa insignia con carne premium, quesos selectos y vegetales frescos",
-    ingredientes: [ "Carne de res premium", "Queso cheddar", "Lechuga fresca", "Tomate maduro", "Pan de hamburguesa artesanal", "Salsa rosada casera" ]
+    ingredientes: [ "Carne de res premium", "Queso cheddar", "Lechuga fresca", "Tomate maduro", "Pan de hamburguesa artesanal", "Salsa rosada casera" ],
+    imagen: "ham1.png"
   },
   {
-    nombre: "BBQ Ahumada",
+    nombre: "Hamburguesa 2",
     precio: 18000,
     descripcion: "Explosión de sabor ahumado con tocineta crujiente y cebolla caramelizada",
-    ingredientes: [ "Carne de res premium", "Tocineta ahumada", "Queso mozzarella", "Cebolla caramelizada", "Pan de hamburguesa artesanal", "Salsa BBQ ahumada" ]
+    ingredientes: [ "Carne de res premium", "Tocineta ahumada", "Queso mozzarella", "Cebolla caramelizada", "Pan de hamburguesa artesanal", "Salsa BBQ ahumada" ],
+    imagen: "ham2.jpg"
   },
   {
-    nombre: "Pollo Gourmet",
+    nombre: "Hamburguesa 3",
     precio: 17000,
     descripcion: "Jugoso pollo desmechado con guacamole casero y vegetales frescos",
-    ingredientes: [ "Pollo desmechado", "Lechuga fresca", "Tomate maduro", "Pan de hamburguesa artesanal", "Guacamole", "Aguacate" ]
+    ingredientes: [ "Pollo desmechado", "Lechuga fresca", "Tomate maduro", "Pan de hamburguesa artesanal", "Guacamole", "Aguacate" ],
+    imagen: "ham3.jpg"
   },
   {
-    nombre: "Mexicana Picante",
+    nombre: "Hamburguesa 4",
     precio: 17500,
     descripcion: "Sabor azteca con ajo, guacamole y un toque picante que despierta tus sentidos",
-    ingredientes: [ "Carne de res premium", "Ajo triturado", "Guacamole", "Jalapeños", "Pan de hamburguesa artesanal", "Salsa picante" ]
+    ingredientes: [ "Carne de res premium", "Ajo triturado", "Guacamole", "Jalapeños", "Pan de hamburguesa artesanal", "Salsa picante" ],
+    imagen: "ham4.webp"
   },
   {
-    nombre: "Doble Tentación",
+    nombre: "Hamburguesa 5",
     precio: 22000,
     descripcion: "Para los más hambrientos: doble carne, doble queso, doble satisfacción",
-    ingredientes: [ "Carne de res premium", "Carne de res premium", "Queso cheddar", "Queso mozzarella", "Pan de hamburguesa artesanal", "Salsa rosada casera" ]
+    ingredientes: [ "Carne de res premium", "Carne de res premium", "Queso cheddar", "Queso mozzarella", "Pan de hamburguesa artesanal", "Salsa rosada casera" ],
+    imagen: "ham5.png"
   },
   {
-    nombre: "Hawaiana Tropical",
+    nombre: "Hamburguesa 6",
     precio: 18500,
     descripcion: "Fusión perfecta de jamón serrano, piña fresca y queso derretido",
-    ingredientes: [ "Carne de res premium", "Jamón serrano", "Piña fresca", "Queso mozzarella", "Pan de hamburguesa artesanal" ]
+    ingredientes: [ "Carne de res premium", "Jamón serrano", "Piña fresca", "Queso mozzarella", "Pan de hamburguesa artesanal" ],
+    imagen: "ham6.jpg"
   },
   {
-    nombre: "Criolla Tradicional",
+    nombre: "Hamburguesa 7",
     precio: 17000,
     descripcion: "Sabor casero con huevo, queso y el toque criollo que te recuerda a casa",
-    ingredientes: [ "Carne de res premium", "Huevo", "Queso mozzarella", "Cebolla blanca", "Pan de hamburguesa artesanal" ]
+    ingredientes: [ "Carne de res premium", "Huevo", "Queso mozzarella", "Cebolla blanca", "Pan de hamburguesa artesanal" ],
+    imagen: "ham7.jpg"
   },
   {
-    nombre: "Veggie Deluxe",
+    nombre: "Hamburguesa 8",
     precio: 15500,
     descripcion: "Opción vegetariana llena de sabor con champiñones, queso de cabra y rúcula",
-    ingredientes: [ "Champiñones", "Queso de cabra", "Rúcula", "Tomate maduro", "Pan de hamburguesa artesanal", "Pesto casero" ]
+    ingredientes: [ "Champiñones", "Queso de cabra", "Rúcula", "Tomate maduro", "Pan de hamburguesa artesanal", "Pesto casero" ],
+    imagen: "ham8.jpeg"
   }
 ]
 
@@ -253,19 +254,20 @@ hamburguesas_data.each_with_index do |data, index|
       if ingredientes[ing_nombre]
         producto.ingredientes << ingredientes[ing_nombre]
       else
-        puts "  ⚠️  Ingrediente no encontrado: #{ing_nombre}"
+        puts "  [ADVERTENCIA] Ingrediente no encontrado: #{ing_nombre}"
       end
     end
 
-    if File.exist?(imagenes[:hamburguesas])
+    imagen_path = Rails.root.join("db", "seeds", data[:imagen])
+    if File.exist?(imagen_path)
       producto.imagen.attach(
-        io: File.open(imagenes[:hamburguesas]),
-        filename: "hamburguesas.png",
-        content_type: "image/png"
+        io: File.open(imagen_path),
+        filename: data[:imagen],
+        content_type: "image/#{File.extname(data[:imagen])[1..-1]}"
       )
     end
   rescue => e
-    puts "❌ Error creando hamburguesa #{data[:nombre]}: #{e.message}"
+    puts "[ERROR] Error creando hamburguesa #{data[:nombre]}: #{e.message}"
     puts "   Detalles: #{e.record.errors.full_messages.join(', ')}" if e.respond_to?(:record) && e.record.errors.any?
   end
 end
@@ -273,28 +275,32 @@ end
 # === SALCHIPAPAS ===
 salchipapas_data = [
   {
-    nombre: "Clásica Original",
+    nombre: "Salchipapa 1",
     precio: 12500,
     descripcion: "La receta tradicional que nunca pasa de moda",
-    ingredientes: [ "Papas a la francesa", "Salchicha premium", "Salsa rosada casera", "Salsa tártara" ]
+    ingredientes: [ "Papas a la francesa", "Salchicha premium", "Salsa rosada casera", "Salsa tártara" ],
+    imagen: "sal1.jpg"
   },
   {
-    nombre: "Mixta Suprema",
+    nombre: "Salchipapa 2",
     precio: 15000,
     descripcion: "Combinación perfecta de carnes con queso derretido",
-    ingredientes: [ "Papas a la francesa", "Chorizo artesanal", "Salchicha premium", "Queso cheddar", "Salsa BBQ ahumada" ]
+    ingredientes: [ "Papas a la francesa", "Chorizo artesanal", "Salchicha premium", "Queso cheddar", "Salsa BBQ ahumada" ],
+    imagen: "sal2.jpg"
   },
   {
-    nombre: "Rústica Premium",
+    nombre: "Salchipapa 3",
     precio: 16000,
     descripcion: "Papas rústicas con tocineta y quesos selectos",
-    ingredientes: [ "Papas rústicas", "Tocineta ahumada", "Queso mozzarella", "Queso cheddar", "Mayonesa de ajo" ]
+    ingredientes: [ "Papas rústicas", "Tocineta ahumada", "Queso mozzarella", "Queso cheddar", "Mayonesa de ajo" ],
+    imagen: "sal3.webp"
   },
   {
-    nombre: "Mexicana Picante",
+    nombre: "Salchipapa 4",
     precio: 14500,
     descripcion: "Con jalapeños y salsa picante para los valientes",
-    ingredientes: [ "Papas a la francesa", "Chorizo artesanal", "Jalapeños", "Queso cheddar", "Salsa picante", "Guacamole" ]
+    ingredientes: [ "Papas a la francesa", "Chorizo artesanal", "Jalapeños", "Queso cheddar", "Salsa picante", "Guacamole" ],
+    imagen: "sal4.jpeg"
   }
 ]
 
@@ -312,19 +318,20 @@ salchipapas_data.each_with_index do |data, index|
       if ingredientes[ing_nombre]
         producto.ingredientes << ingredientes[ing_nombre]
       else
-        puts "  ⚠️  Ingrediente no encontrado: #{ing_nombre}"
+        puts "  [ADVERTENCIA] Ingrediente no encontrado: #{ing_nombre}"
       end
     end
 
-    if File.exist?(imagenes[:salchipapas])
+    imagen_path = Rails.root.join("db", "seeds", data[:imagen])
+    if File.exist?(imagen_path)
       producto.imagen.attach(
-        io: File.open(imagenes[:salchipapas]),
-        filename: "Salchipapa.jpg",
-        content_type: "image/jpeg"
+        io: File.open(imagen_path),
+        filename: data[:imagen],
+        content_type: "image/#{File.extname(data[:imagen])[1..-1]}"
       )
     end
   rescue => e
-    puts "❌ Error creando salchipapa #{data[:nombre]}: #{e.message}"
+    puts "[ERROR] Error creando salchipapa #{data[:nombre]}: #{e.message}"
     puts "   Detalles: #{e.record.errors.full_messages.join(', ')}" if e.respond_to?(:record) && e.record.errors.any?
   end
 end
@@ -332,34 +339,39 @@ end
 # === PIZZAS ===
 pizzas_data = [
   {
-    nombre: "Hawaiana Clásica",
+    nombre: "Pizza 1",
     precio: 19000,
     descripcion: "La combinación perfecta de jamón serrano y piña fresca",
-    ingredientes: [ "Masa de pizza artesanal", "Queso mozzarella", "Jamón serrano", "Piña fresca", "Salsa de tomate", "Orégano fresco" ]
+    ingredientes: [ "Masa de pizza artesanal", "Queso mozzarella", "Jamón serrano", "Piña fresca", "Salsa de tomate", "Orégano fresco" ],
+    imagen: "piz1.jpg"
   },
   {
-    nombre: "Carne Premium",
+    nombre: "Pizza 2",
     precio: 21000,
     descripcion: "Para los amantes de la carne con cebolla caramelizada",
-    ingredientes: [ "Masa de pizza artesanal", "Carne de res premium", "Queso mozzarella", "Cebolla caramelizada", "Salsa de tomate", "Orégano fresco" ]
+    ingredientes: [ "Masa de pizza artesanal", "Carne de res premium", "Queso mozzarella", "Cebolla caramelizada", "Salsa de tomate", "Orégano fresco" ],
+    imagen: "piz2.jpg"
   },
   {
-    nombre: "Vegetariana Gourmet",
+    nombre: "Pizza 3",
     precio: 18500,
     descripcion: "Jardín de vegetales frescos con queso de cabra",
-    ingredientes: [ "Masa de pizza artesanal", "Queso mozzarella", "Queso de cabra", "Tomate cherry", "Cebolla morada", "Maíz tierno", "Pimentón rojo", "Orégano fresco" ]
+    ingredientes: [ "Masa de pizza artesanal", "Queso mozzarella", "Queso de cabra", "Tomate cherry", "Cebolla morada", "Maíz tierno", "Pimentón rojo", "Orégano fresco" ],
+    imagen: "piz3.webp"
   },
   {
-    nombre: "Pepperoni Suprema",
+    nombre: "Pizza 4",
     precio: 20000,
     descripcion: "Clásica pepperoni con queso extra y hierbas frescas",
-    ingredientes: [ "Masa de pizza artesanal", "Pepperoni", "Queso mozzarella", "Salsa de tomate", "Albahaca", "Orégano fresco" ]
+    ingredientes: [ "Masa de pizza artesanal", "Pepperoni", "Queso mozzarella", "Salsa de tomate", "Albahaca", "Orégano fresco" ],
+    imagen: "piz4.webp"
   },
   {
-    nombre: "Cuatro Quesos",
+    nombre: "Pizza 5",
     precio: 22000,
     descripcion: "Para los amantes del queso: mozzarella, cheddar, parmesano y azul",
-    ingredientes: [ "Masa de pizza artesanal", "Queso mozzarella", "Queso cheddar", "Queso parmesano", "Queso azul", "Orégano fresco" ]
+    ingredientes: [ "Masa de pizza artesanal", "Queso mozzarella", "Queso cheddar", "Queso parmesano", "Queso azul", "Orégano fresco" ],
+    imagen: "piz5.jpg"
   }
 ]
 
@@ -377,76 +389,96 @@ pizzas_data.each_with_index do |data, index|
       if ingredientes[ing_nombre]
         producto.ingredientes << ingredientes[ing_nombre]
       else
-        puts "  ⚠️  Ingrediente no encontrado: #{ing_nombre}"
+        puts "  [ADVERTENCIA] Ingrediente no encontrado: #{ing_nombre}"
       end
     end
 
-    if File.exist?(imagenes[:pizzas])
+    imagen_path = Rails.root.join("db", "seeds", data[:imagen])
+    if File.exist?(imagen_path)
       producto.imagen.attach(
-        io: File.open(imagenes[:pizzas]),
-        filename: "pizzas.jpg",
-        content_type: "image/jpeg"
+        io: File.open(imagen_path),
+        filename: data[:imagen],
+        content_type: "image/#{File.extname(data[:imagen])[1..-1]}"
       )
     end
   rescue => e
-    puts "❌ Error creando pizza #{data[:nombre]}: #{e.message}"
+    puts "[ERROR] Error creando pizza #{data[:nombre]}: #{e.message}"
     puts "   Detalles: #{e.record.errors.full_messages.join(', ')}" if e.respond_to?(:record) && e.record.errors.any?
   end
 end
 
 # === BEBIDAS ===
 bebidas_data = [
-  { nombre: "Coca Cola", precio: 3500, descripcion: "Refrescante bebida gaseosa original" },
-  { nombre: "Coca Cola Zero", precio: 3500, descripcion: "Todo el sabor, cero azúcar" },
-  { nombre: "Sprite", precio: 3500, descripcion: "Limón lima refrescante" },
-  { nombre: "Jugo Natural de Naranja", precio: 4500, descripcion: "Recién exprimido con pulpa natural" },
-  { nombre: "Agua", precio: 2500, descripcion: "Agua cristalina purificada" },
-  { nombre: "Limonada Natural", precio: 4000, descripcion: "Refrescante limonada casera con hierba buena" }
+  { nombre: "Bebida 1", precio: 3500, descripcion: "Refrescante bebida gaseosa original", imagen: "beb1.webp" },
+  { nombre: "Bebida 2", precio: 3500, descripcion: "Todo el sabor, cero azúcar", imagen: "beb2.webp" },
+  { nombre: "Bebida 3", precio: 3500, descripcion: "Limón lima refrescante", imagen: "beb3.jpg" },
+  { nombre: "Bebida 4", precio: 4500, descripcion: "Recién exprimido con pulpa natural", imagen: "beb4.jpg" },
+  { nombre: "Bebida 5", precio: 2500, descripcion: "Agua cristalina purificada", imagen: "beb5.jpg" },
+  { nombre: "Bebida 6", precio: 4000, descripcion: "Refrescante limonada casera con hierba buena", imagen: "beb6.webp" }
 ]
 
 bebidas_data.each do |data|
   begin
-    Product.create!(
+    producto = Product.create!(
       nombre: data[:nombre],
       precio: data[:precio],
       descripcion: data[:descripcion],
       disponible: true,
       grupo: grupos["Bebidas"]
     )
+
+    imagen_path = Rails.root.join("db", "seeds", data[:imagen])
+    if File.exist?(imagen_path)
+      producto.imagen.attach(
+        io: File.open(imagen_path),
+        filename: data[:imagen],
+        content_type: "image/#{File.extname(data[:imagen])[1..-1]}"
+      )
+    end
   rescue => e
-    puts "❌ Error creando bebida #{data[:nombre]}: #{e.message}"
+    puts "[ERROR] Error creando bebida #{data[:nombre]}: #{e.message}"
   end
 end
 
 # === POSTRES ===
 postres_data = [
-  { nombre: "Brownie con Helado", precio: 8500, descripcion: "Brownie caliente con helado de vainilla" },
-  { nombre: "Cheesecake", precio: 7500, descripcion: "Cremoso cheesecake con frutos rojos" },
-  { nombre: "Tres Leches", precio: 7000, descripcion: "Tradicional torta tres leches casera" },
-  { nombre: "Flan Napolitano", precio: 6500, descripcion: "Suave flan con caramelo casero" }
+  { nombre: "Postre 1", precio: 8500, descripcion: "Brownie caliente con helado de vainilla", imagen: "pos1.png" },
+  { nombre: "Postre 2", precio: 7500, descripcion: "Cremoso cheesecake con frutos rojos", imagen: "pos2.webp" },
+  { nombre: "Postre 3", precio: 7000, descripcion: "Tradicional torta tres leches casera", imagen: "pos3.jpg" },
+  { nombre: "Postre 4", precio: 6500, descripcion: "Suave flan con caramelo casero", imagen: "pos4.jpg" },
+  { nombre: "Postre 5", precio: 9000, descripcion: "Delicioso postre especial de la casa", imagen: "pos5.jpg" }
 ]
 
 postres_data.each do |data|
   begin
-    Product.create!(
+    producto = Product.create!(
       nombre: data[:nombre],
       precio: data[:precio],
       descripcion: data[:descripcion],
       disponible: true,
       grupo: grupos["Postres"]
     )
+
+    imagen_path = Rails.root.join("db", "seeds", data[:imagen])
+    if File.exist?(imagen_path)
+      producto.imagen.attach(
+        io: File.open(imagen_path),
+        filename: data[:imagen],
+        content_type: "image/#{File.extname(data[:imagen])[1..-1]}"
+      )
+    end
   rescue => e
-    puts "❌ Error creando postre #{data[:nombre]}: #{e.message}"
+    puts "[ERROR] Error creando postre #{data[:nombre]}: #{e.message}"
   end
 end
 
-puts "✅ Productos creados: #{Product.count}\n"
+puts "[OK] Productos creados: #{Product.count}\n"
 
 # ============================================================================
-# 🎫 CUPONES
+# CUPONES
 # ============================================================================
 
-puts "🎫 Creando cupones promocionales..."
+puts "Creando cupones promocionales..."
 
 cupones_data = [
   {
@@ -511,65 +543,65 @@ cupones_data.each do |data|
   begin
     Coupon.create!(data)
   rescue => e
-    puts "❌ Error creando cupón #{data[:codigo]}: #{e.message}"
+    puts "[ERROR] Error creando cupón #{data[:codigo]}: #{e.message}"
     puts "   Detalles: #{e.record.errors.full_messages.join(', ')}" if e.respond_to?(:record) && e.record.errors.any?
   end
 end
 
-puts "✅ Cupones creados: #{Coupon.count}\n"
+puts "[OK] Cupones creados: #{Coupon.count}\n"
 
 
 
 # ============================================================================
-# 🖼️ BANNERS PROMOCIONALES
+# BANNERS PROMOCIONALES
 # ============================================================================
 
 if defined?(Banner)
-  puts "🖼️ Creando banners promocionales..."
-  puts "⚠️  Modelo Banner detectado pero requiere configuración de campos"
-  puts "✅ Banners creados: 0\n"
+  puts "Creando banners promocionales..."
+  puts "[INFO] Modelo Banner detectado pero requiere configuración de campos"
+  puts "[OK] Banners creados: 0\n"
 end
 
 # ============================================================================
-# 📊 RESUMEN FINAL
+# RESUMEN FINAL
 # ============================================================================
 
-puts "\n" + "="*60
-puts "🎉 SEED COMPLETADO EXITOSAMENTE"
-puts "="*60
-puts "👥 Usuarios creados: #{User.count}"
-puts "   • #{User.where(rol: :admin).count} administrador(es)"
-puts "   • #{User.where(rol: :cliente).count} cliente(s)"
+puts "\n" + "="*70
+puts "SEED COMPLETADO EXITOSAMENTE"
+puts "="*70
+puts "Usuarios creados: #{User.count}"
+puts "  - Administradores: #{User.where(rol: :admin).count}"
+puts "  - Clientes: #{User.where(rol: :cliente).count}"
 puts ""
-puts "🍽️ Grupos creados: #{Grupo.count}"
-puts "🥬 Ingredientes creados: #{Ingrediente.count}"
-puts "🍔 Productos creados: #{Product.count}"
+puts "Grupos creados: #{Grupo.count}"
+puts "Ingredientes creados: #{Ingrediente.count}"
+puts "Productos creados: #{Product.count}"
 grupos.each do |nombre, grupo|
   count = grupo.products.count
-  puts "   • #{nombre}: #{count} productos"
+  puts "  - #{nombre}: #{count} productos"
 end
 puts ""
-puts "🎫 Cupones creados: #{Coupon.count}"
-puts "   • #{Coupon.where(activo: true).count} activos"
-puts "   • #{Coupon.where(activo: false).count} inactivos"
+puts "Cupones creados: #{Coupon.count}"
+puts "  - Activos: #{Coupon.where(activo: true).count}"
+puts "  - Inactivos: #{Coupon.where(activo: false).count}"
 puts ""
 
 if defined?(Banner)
-  puts "🖼️ Banners creados: #{Banner.count}"
+  puts "Banners creados: #{Banner.count}"
   puts ""
 end
 
-puts "🔗 Relaciones ingrediente-producto: #{IngredienteProducto.count}"
-puts "="*60
-puts "✅ ¡Tu restaurante está listo para funcionar!"
-puts "="*60
+puts "Relaciones ingrediente-producto: #{IngredienteProducto.count}"
+puts "="*70
+puts "Tu restaurante esta listo para funcionar"
+puts "="*70
 
 # Mostrar información de login
-puts "\n🔑 CREDENCIALES DE ACCESO:"
-puts "📧 Email: admin@admin.com"
-puts "🔒 Password: rasdix-jePjor-kohsy6"
-puts "\n💡 CUPONES DE PRUEBA:"
+puts "\nCREDENCIALES DE ACCESO:"
+puts "Email: admin@admin.com"
+puts "Password: rasdix-jePjor-kohsy6"
+puts "\nCUPONES DE PRUEBA:"
 Coupon.where(activo: true).limit(3).each do |cupon|
-  puts "   • #{cupon.codigo} - #{cupon.tipo_descuento} #{cupon.valor}#{'%' if cupon.tipo_descuento == 'porcentaje'}"
+  puts "  - #{cupon.codigo} - #{cupon.tipo_descuento} #{cupon.valor}#{'%' if cupon.tipo_descuento == 'porcentaje'}"
 end
-puts "\n🚀 ¡Disfruta probando tu aplicación!"
+puts "\nDisfruta probando tu aplicacion!"

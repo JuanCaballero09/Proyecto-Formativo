@@ -16,6 +16,11 @@ class Grupo < ApplicationRecord
     end
   end
 
+  def imagen_resized
+    return unless imagen.attached?
+    imagen.variant(resize_to_fill: [ 300, 300 ]).processed
+  end
+
   private
 
   def asignar_id_menor

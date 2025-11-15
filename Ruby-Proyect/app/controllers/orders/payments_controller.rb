@@ -37,6 +37,8 @@ class  Orders::PaymentsController < ApplicationController
       process_card_payment(service)
     when "nequi"
       process_nequi_payment(service)
+    when "cash"
+      process_cash_payment
     else
       redirect_to new_order_payments_path(@order), alert: "Método de pago no válido" and return
     end
@@ -178,10 +180,25 @@ class  Orders::PaymentsController < ApplicationController
         status: :pending
       )
 
-      redirect_to status_order_payments_path(@order) and return
+      redirect_to root_path, notice: "Solicitud de pago enviada. Revisa tu app de Nequi para aprobar la transacción. Una vez apruebes el pago, comenzaremos a preparar tu pedido." and return
     else
       error_message = response["error"] ? response["error"]["messages"].values.flatten.join(", ") : "Error desconocido"
       redirect_to new_order_payments_path(@order), alert: error_message and return
     end
+  end
+
+  def process_cash_payment
+    # Crear el pago en efectivo con status pending
+    @order.payments.create!(
+      payment_method: :cash,
+      amount: @order.total,
+      status: :pending
+    )
+
+    # Actualizar orden a pendiente (esperando preparación y entrega)
+    @order.update(status: :pendiente)
+
+    # Redirigir a página de confirmación
+    redirect_to root_path, notice: "¡Pedido confirmado! Pagarás en efectivo al recibir tu orden. Total a pagar: #{ActionController::Base.helpers.number_to_currency(@order.total, unit: 'COP ', separator: ',', delimiter: '.')}"
   end
 end

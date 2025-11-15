@@ -13,7 +13,7 @@ class Dashboard::IngredientesController < ApplicationController
     else
       @ingredientes = Ingrediente.order(:id)
     end
-    @ingredientes_paginado = Ingrediente.order(:id).page(params[:page]).per(10)
+    @ingredientes_paginado = Ingrediente.order(:id).page(params[:page]).per(8)
   end
 
   def new

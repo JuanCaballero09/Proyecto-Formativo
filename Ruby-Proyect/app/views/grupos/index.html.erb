@@ -16,18 +16,15 @@
         <div class="grupo-carta grupo-carta-combos">
           <% link_url = combos_group ? grupo_products_path(combos_group) : "/combos" %>
           <%= link_to link_url, class: "grupo-carta-link" do %>
-            <div class="grupo-imagen">
-              <div class="combo-collage">
-                <% combos_disponibles.limit(4).each_with_index do |combo, index| %>
-                  <div class="combo-mini combo-<%= index + 1 %>">
-                    <%= image_tag(combo.imagen.attached? ? combo.imagen : 'LogoLogo.svg', alt: combo.nombre) %>
-                  </div>
-                <% end %>
+            <div class="grupo-imagen combo-imagen-especial">
+              <div class="combo-content">
+                <div class="combo-icon">🎁</div>
+                <h2 class="combo-title">COMBOS</h2>
+                <p class="combo-desc">Ofertas Especiales</p>
               </div>
               <div class="grupo-overlay">
                 <div class="combo-badge">
-                  <span class="combo-icon">🎉</span>
-                  <span class="combo-text"><%= t("home.categoria.combos_especiales")%></span>
+                  <span class="combo-count-badge"><%= combos_disponibles.count %> <%= combos_disponibles.count == 1 ? 'combo' : 'combos' %></span>
                 </div>
               </div>
             </div>
@@ -51,11 +48,17 @@
           <div class="grupo-carta">
             <%= link_to grupo_products_path(grupo), class: "grupo-carta-link" do %>
               <div class="grupo-imagen">
-                <% if grupo.imagen.attached? %>
-                  <%= image_tag url_for(grupo.imagen), alt: grupo.nombre, class: "grupo-imagen-principal" %>
-                <% else %>
-                  <%= image_tag 'LogoLogo.svg', alt: grupo.nombre, class: "grupo-imagen-principal" %>
-                <% end %>
+                <div class="img-wrapper shimmer">
+                  <div class="img-loader"></div>
+                  <img
+                    src="<%= grupo.imagen.attached? ? url_for(grupo.imagen_resized) : asset_path('LogoLogoText2.svg') %>"
+                    alt="<%= grupo.nombre %>"
+                    class="carta-imagen"
+                    style="outline-offset: 0;"
+                    onload="imageLoaded(this)"
+                    onerror="imageError(this)"
+                  >
+                </div>
                 <div class="grupo-overlay">
                   <div class="productos-count">
                     <span class="count-number"><%= productos_disponibles.count %></span>

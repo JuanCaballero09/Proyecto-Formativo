@@ -13,15 +13,26 @@
     <% end %>
   </div>
 
-  <!-- Sección de Combos -->
+  <!-- Sección de Combos (siempre primero) -->
   <% if @combos.present? %>
     <div style="margin-bottom: 40px;">
-      <h3 style="color: #e74c3c; border-bottom: 2px solid #e74c3c; padding-bottom: 10px;">COMBOS</h3>
+      <h3 style="color: #e74c3c; border-bottom: 2px solid #e74c3c; padding-bottom: 10px; display: flex; align-items: center; gap: 10px;">
+        <span>🎉</span> COMBOS & PROMOCIONES
+      </h3>
       <div class="productss">
         <% @combos.each do |combo| %>
-          <div class="product-card" data-nombre="<%= I18n.transliterate(combo.nombre.downcase) %>">
-            <h3><%= combo.nombre %> <span style="font-size: 0.8em; color: #e74c3c;">(COMBO)</span></h3>
-            <%= image_tag(combo.imagen.attached? ? combo.imagen : "LogoLogoText2.svg") %>
+          <div class="product-card" id="product-card-<%= combo.id %>" data-nombre="<%= I18n.transliterate(combo.nombre.downcase) %>">
+            <h3><%= combo.nombre %></h3>
+            <div class="img-wrapper shimmer">
+              <div class="img-loader"></div>
+              <img
+                src="<%= combo.imagen.attached? ? url_for(combo.imagen_resized2) : asset_path('LogoLogoText2.svg') %>"
+                alt="<%= combo.nombre %>"
+                class="carta-imagen"
+                onload="imageLoaded(this)"
+                onerror="imageError(this)"
+              >
+            </div>
             <p><strong>ID:</strong> <%= combo.id %></p>
 
             <% if combo.respond_to?(:combo_items) && combo.combo_items.any? %>
@@ -30,7 +41,7 @@
               </p>
             <% end %>
 
-            <p><strong>Descripción:</strong> <%= combo.descripcion %></p>
+            <p><strong>Descripción:</strong> <%= truncate(combo.descripcion, length: 100) %></p>
             <p><strong>Precio:</strong> <%= number_to_currency(combo.precio, unit: "COP ", separator: ",", delimiter: ".", precision: 0) %></p>
 
             <div id="estado-<%= combo.id %>">
@@ -39,9 +50,11 @@
 
             <div style="display: flex; gap: 6px; justify-content: center;">
               <%= link_to 'Editar', edit_dashboard_product_path(combo), class: 'btn btn-secondary' %>
-              <%= link_to 'Eliminar', dashboard_product_path(combo),
-                    data: { turbo_method: :delete, turbo_confirm: '¿Estás seguro?' },
-                    class: 'btn btn-danger' %>
+              <%= form_with url: dashboard_product_path(combo), method: :delete, local: true, 
+                    data: { turbo: false }, 
+                    onsubmit: "return confirm('¿Estás seguro de eliminar este combo?');" do |f| %>
+                <%= f.submit 'Eliminar', class: 'btn-eliminar' %>
+              <% end %>
             </div>
           </div>
         <% end %>
@@ -51,18 +64,26 @@
 
   <!-- Sección de Productos por Grupo -->
   <% @productos_por_grupo&.each do |grupo, productos| %>
-     <% productos_paginados = productos.select { |p| @products_paginado.include?(p) } %>
-    <% if productos_paginados.any? %>
+    <% if productos.any? %>
       <div style="margin-bottom: 40px;">
         <h3 style="color: var(--base); border-bottom: 2px solid var(--base-oscuro); padding-bottom: 5px; margin-bottom: 10px;">
           <%= grupo&.nombre || "Sin Categoría" %>
         </h3>
 
         <div class="productss">
-          <% productos_paginados.each do |product| %>
-            <div class="product-card" data-nombre="<%= I18n.transliterate(product.nombre.downcase) %>">
+          <% productos.each do |product| %>
+            <div class="product-card" id="product-card-<%= product.id %>" data-nombre="<%= I18n.transliterate(product.nombre.downcase) %>">
               <h3><%= product.nombre %></h3>
-              <%= image_tag(product.imagen.attached? ? product.imagen : "LogoLogoText2.svg") %>
+              <div class="img-wrapper shimmer">
+                <div class="img-loader"></div>
+                <img
+                  src="<%= product.imagen.attached? ? url_for(product.imagen_resized2) : asset_path('LogoLogoText2.svg') %>"
+                  alt="<%= product.nombre %>"
+                  class="carta-imagen"
+                  onload="imageLoaded(this)"
+                  onerror="imageError(this)"
+                >
+              </div>
               <p><strong>ID:</strong> <%= product.id %></p>
               <p><strong>Ingredientes:</strong> <%= product.ingredientes.map(&:nombre).join(", ") %></p>
               <p><strong>Descripción:</strong> <%= product.descripcion %></p>
@@ -74,9 +95,11 @@
 
               <div style="display: flex; gap: 6px; justify-content: center;">
                 <%= link_to 'Editar', edit_dashboard_product_path(product), class: 'btn btn-secondary' %>
-                <%= link_to 'Eliminar', dashboard_product_path(product),
-                      data: { turbo_method: :delete, turbo_confirm: '¿Estás seguro?' },
-                      class: 'btn btn-danger' %>
+                <%= form_with url: dashboard_product_path(product), method: :delete, local: true, 
+                      data: { turbo: false }, 
+                      onsubmit: "return confirm('¿Estás seguro de eliminar este producto?');" do |f| %>
+                  <%= f.submit 'Eliminar', class: 'btn-eliminar' %>
+                <% end %>
               </div>
             </div>
           <% end %>
@@ -84,5 +107,4 @@
       </div>
     <% end %>
   <% end %>
-  <%= paginate @products_paginado %>
 </section>

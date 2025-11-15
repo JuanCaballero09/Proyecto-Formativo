@@ -22,6 +22,26 @@ document.addEventListener("turbo:load", function(){
   });
 });
 
+// ===========================================
+// IMAGE LOADING HANDLERS
+// ===========================================
+window.imageLoaded = function(img) {
+  const wrapper = img.parentElement;
+  img.style.display = "none";
+  wrapper.classList.remove("shimmer"); // quitar efecto shimmer
+  wrapper.querySelector(".img-loader").style.display = "none";
+  img.style.display = "block";
+  img.style.height = "auto";
+  wrapper.style.height = "auto";
+}
+
+window.imageError = function(img) {
+  const wrapper = img.parentElement;
+  wrapper.querySelector(".img-loader").style.display = "none";
+  img.style.display = "block";
+  img.src = "/images/LogoLogoText2.svg"; // fallback
+}
+
 // ========================================
 // 💵 Ajuste valor segun porcentaje o fijo (show)
 // ========================================

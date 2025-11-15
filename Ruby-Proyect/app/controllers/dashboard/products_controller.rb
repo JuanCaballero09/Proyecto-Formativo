@@ -17,17 +17,12 @@ class Dashboard::ProductsController < ApplicationController
                                        .sort_by { |grupo, _| grupo&.id || 0 }
     else
       @combos = Product.where(type: "Combo").order(:id)
-        @productos_por_grupo = Product.where(type: [ nil, "" ])
+      @productos_por_grupo = Product.where(type: [ nil, "" ])
                                     .includes(:grupo)
+                                    .order(:id)
                                     .group_by(&:grupo)
                                     .sort_by { |grupo, _| grupo&.id || 0 }
-                                                            
     end
-    @products_paginado = Product.where(type: [nil, ""])
-                                      .includes(:grupo)
-                                      .order(:id)
-                                      .page(params[:page])
-                                      .per(10)
   end
 
   def new
@@ -56,8 +51,48 @@ class Dashboard::ProductsController < ApplicationController
 
   def destroy
     @product = Product.find(params[:id])
-    @product.destroy
-    redirect_to dashboard_products_path, notice: "Producto eliminado exitosamente."
+
+    begin
+      @product.destroy!
+      respond_to do |format|
+        format.html { redirect_to dashboard_products_path, notice: "Producto eliminado exitosamente." }
+        format.turbo_stream {
+          flash.now[:notice] = "Producto eliminado exitosamente."
+          render turbo_stream: turbo_stream.remove("product-card-#{@product.id}")
+        }
+      end
+    rescue ActiveRecord::InvalidForeignKey => e
+      respond_to do |format|
+        format.html { redirect_to dashboard_products_path, alert: "No se puede eliminar este producto porque está siendo usado en pedidos activos." }
+        format.turbo_stream {
+          flash.now[:alert] = "No se puede eliminar este producto porque está siendo usado en pedidos activos."
+          head :unprocessable_entity
+        }
+      end
+    rescue ActiveRecord::RecordNotDestroyed => e
+      error_msg = if @product.order_items.any?
+                    "No se puede eliminar porque está en pedidos existentes."
+      elsif @product.combo_items.any?
+                    "No se puede eliminar porque es componente de combos: #{@product.combo_items.map { |ci| ci.combo.nombre }.join(', ')}."
+      else
+                    "No se puede eliminar: #{e.message}"
+      end
+      respond_to do |format|
+        format.html { redirect_to dashboard_products_path, alert: error_msg }
+        format.turbo_stream {
+          flash.now[:alert] = error_msg
+          head :unprocessable_entity
+        }
+      end
+    rescue => e
+      respond_to do |format|
+        format.html { redirect_to dashboard_products_path, alert: "Error al eliminar el producto: #{e.message}" }
+        format.turbo_stream {
+          flash.now[:alert] = "Error al eliminar el producto: #{e.message}"
+          head :unprocessable_entity
+        }
+      end
+    end
   end
 
   def create

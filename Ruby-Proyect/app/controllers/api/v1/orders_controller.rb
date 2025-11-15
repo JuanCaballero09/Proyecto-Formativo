@@ -122,7 +122,7 @@ class Api::V1::OrdersController < ApplicationController
       if @order.coupon.present? && @current_user.present?
         resultado = @order.coupon.apply_to(@current_user)
         unless resultado == "Cupón aplicado con éxito"
-          render json: { errors: ["No se pudo aplicar el cupón: #{resultado}"] }, status: :unprocessable_entity
+          render json: { errors: ["No se pudo aplicar el cupón: #{resultado}"] }, status: :unprocessable_entity # rubocop:disable Layout/SpaceInsideArrayLiteralBrackets
           raise ActiveRecord::Rollback
           return
         end

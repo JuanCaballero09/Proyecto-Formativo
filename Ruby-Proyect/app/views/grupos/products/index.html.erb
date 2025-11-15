@@ -16,9 +16,16 @@
         <div class="producto-card-page">
           <%= link_to grupo_product_path(@grupo, producto), class: "producto-link-page" do %>
             <div class="producto-imagen-container">
-              <%= image_tag(producto.imagen.attached? ? producto.imagen : "LogoLogoText2.svg", 
-                           class: "producto-imagen-page", 
-                           alt: producto.nombre) %>
+              <div class="img-wrapper shimmer">
+                <div class="img-loader"></div>
+                <img
+                  src="<%= producto.imagen.attached? ? url_for(producto.imagen_resized2) : asset_path('LogoLogoText2.svg') %>"
+                  alt="<%= producto.nombre %>"
+                  class="producto-imagen-page"
+                  onload="imageLoaded(this)"
+                  onerror="imageError(this)"
+                >
+               </div>
             </div>
             <div class="producto-info-page">
               <h4 class="producto-nombre-page"><%= producto.nombre %></h4> 

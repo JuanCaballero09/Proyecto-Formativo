@@ -2,6 +2,7 @@ import "@hotwired/turbo-rails"
 import "script"
 import "chart"
 
+
 // ===========================================
 // DASHBOARD CAROUSEL FUNCTIONALITY
 // ===========================================

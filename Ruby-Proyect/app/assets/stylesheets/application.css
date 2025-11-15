@@ -1028,7 +1028,7 @@ input:focus{outline: none;}
 
 .combo-image-container {
     position: relative;
-    height: 220px;
+    height: 300px;
     overflow: hidden;
 }
 
@@ -1075,11 +1075,12 @@ input:focus{outline: none;}
 .combo-items-preview {
     background: var(--base-claro);
     color: white;
-    padding: 8px 15px;
-    border-radius: 15px;
     font-size: 0.9em;
-    margin-bottom: 20px;
     text-align: center;
+    width: fit-content;
+    margin: 15px auto;
+    padding: 15px 15px;
+    border-radius: 200px;
 }
 
 .combo-footer {
@@ -1270,6 +1271,7 @@ input:focus{outline: none;}
     padding: 40px;
     border-radius: 20px;
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    height: 100%;
 }
 
 .map-header {
@@ -2410,6 +2412,60 @@ a:focus, button:focus, input:focus, select:focus, textarea:focus {
     50% { transform: scale(1.2) rotate(180deg); opacity: 1; }
 }
 
+/* Diseño especial para imagen de combos */
+.combo-imagen-especial {
+    background: linear-gradient(135deg, var(--base) 0%, var(--base-oscuro) 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.combo-content {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 1;
+}
+
+.combo-icon {
+    font-size: 5em;
+    margin-bottom: 10px;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+}
+
+.combo-title {
+    font-size: 2.5em;
+    font-weight: bold;
+    color: white;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    text-shadow: 0 3px 10px rgba(0,0,0,0.4);
+}
+
+.combo-desc {
+    font-size: 1.1em;
+    color: rgba(255, 255, 255, 0.95);
+    margin: 8px 0 0 0;
+    font-weight: 500;
+    text-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
+
+.combo-count-badge {
+    background: rgba(255, 255, 255, 0.95);
+    color: var(--base);
+    padding: 8px 16px;
+    border-radius: 30px;
+    font-weight: bold;
+    font-size: 0.95em;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
 .grupo-imagen {
     position: relative;
     height: 250px;
@@ -2417,6 +2473,10 @@ a:focus, button:focus, input:focus, select:focus, textarea:focus {
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.grupo-imagen .img-wrapper {
+    position: static;
 }
 
 .grupo-imagen-principal {
@@ -2429,38 +2489,6 @@ a:focus, button:focus, input:focus, select:focus, textarea:focus {
 .grupo-carta:hover .grupo-imagen-principal {
     transform: scale(1.1);
 }
-
-/* Collage de combos */
-.combo-collage {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr 1fr;
-    gap: 2px;
-}
-
-.combo-mini {
-    overflow: hidden;
-    position: relative;
-}
-
-.combo-mini img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.3s ease;
-}
-
-.grupo-carta-combos:hover .combo-mini img {
-    transform: scale(1.1);
-}
-
-.combo-1 { transform: rotate(-2deg); }
-.combo-2 { transform: rotate(2deg); }
-.combo-3 { transform: rotate(1deg); }
-.combo-4 { transform: rotate(-1deg); }
 
 /* Overlay */
 .grupo-overlay {
@@ -5246,12 +5274,12 @@ a:focus, button:focus, input:focus, select:focus, textarea:focus {
 .carousel-slide {
   min-width: 100%;
   transition: transform 3.0s ease;
-  height: 500px;
+  /* height: 500px; */
 }
 
 .carousel-image {
   width: 100%;
-  height: 500px;
+  /* height: 500px; */
   object-fit: cover;
   display: block;
   border-radius: 8px;
@@ -8645,4 +8673,55 @@ a:focus, button:focus, input:focus, select:focus, textarea:focus {
 
 .pagination .current {
     color: #007bff;
+}
+
+/* ===========================================
+   ESTILOS CARGA IMAGEN CON SHIMMER
+   =========================================== */
+.img-wrapper {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 3 / 2;
+    border-radius: 15px;
+}
+
+/* Loader oscuro con shimmer */
+.img-loader {
+    position: absolute;
+    inset: 0;
+    background: #cfcfcf; /* más oscuro */
+    overflow: hidden;
+    border-radius: 15px;
+}
+
+.img-loader::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -150%;
+    width: 150%;
+    height: 100%;
+    background: linear-gradient(
+        110deg,
+        rgba(70, 70, 70, 0) 0%,
+        rgba(240, 240, 240, 0.55) 50%, /* luz más oscura */
+        rgba(70, 70, 70, 0) 100%
+    );
+    animation: shimmer-slide 1.2s infinite;
+}
+
+@keyframes shimmer-slide {
+    0% {
+        left: -150%;
+    }
+    100% {
+        left: 150%;
+    }
+}
+
+.img-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: none;
 }
