@@ -272,5 +272,58 @@ class _MenuPageState extends State<MenuPage> {
     }
     return [Colors.grey[400]!, Colors.grey[700]!];
   }
+
+  Widget _categoryCardLayout({
+    required BuildContext context,
+    required String title,
+    required Widget imageWidget,
+  }) {
+    final theme = Theme.of(context);
+    final textColor = theme.textTheme.bodyLarge?.color;
+
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16),
+        child: Column(
+          children: [
+            Expanded(
+              flex: 3,
+              child: imageWidget,
+            ),
+            Expanded(
+              flex: 1,
+              child: Container(
+                width: double.infinity,
+                color: theme.cardColor,
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                child: Center(
+                  child: Text(
+                    title,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: textColor,
+                    ),
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
