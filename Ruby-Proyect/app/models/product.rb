@@ -1,10 +1,13 @@
 class Product < ApplicationRecord
-  belongs_to :grupo
+  belongs_to :grupo, optional: true
 
   has_many :ingrediente_productos, dependent: :destroy
   has_many :ingredientes, through: :ingrediente_productos
-  has_many :carrito_items
+  has_many :carrito_items, dependent: :destroy
   has_many :carritos, through: :carrito_items
+  has_many :order_items, dependent: :restrict_with_error
+  has_many :orders, through: :order_items
+  has_many :combo_items, foreign_key: :product_id, dependent: :restrict_with_error
 
   validates :nombre, :descripcion, :precio, presence: true
 
@@ -19,6 +22,18 @@ class Product < ApplicationRecord
     else
       nil
     end
+  end
+
+  def imagen_resized
+    return unless imagen.attached?
+
+    imagen.variant(resize_to_fill: [ 300, 200 ]).processed
+  end
+
+  def imagen_resized2
+    return unless imagen.attached?
+
+    imagen.variant(resize_to_fill: [ 400, 300 ]).processed
   end
 
   private

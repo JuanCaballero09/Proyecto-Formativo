@@ -1,3 +1,8 @@
+<script>
+  // Pasar productos disponibles a JavaScript
+  window.availableProductsForCombo = <%= raw (@products_for_combo || []).map { |p| { id: p.id, nombre: p.nombre } }.to_json %>;
+</script>
+
 <%= form_with model: [:dashboard, @product], local: true, html: { class: "dashboard-form", id: "product-form" } do |f| %>
   <div>
     <%= f.label :nombre %>
@@ -66,7 +71,7 @@
     <%= f.text_area :descripcion, required: true %>
   </div>
 
-  <div id="grupo-section">
+  <div id="grupo-section" style="<%= 'display: none;' if @product.type == 'Combo' %>">
     <%= f.label :grupo_id, "Grupo" %>
     <%= f.collection_select :grupo_id, Grupo.all, :id, :nombre, { prompt: "Seleccionar grupo" }, { required: false, id: "grupo-select" } %>
   </div>
@@ -99,227 +104,153 @@
 <% end %>
 
 <script>
-document.addEventListener("turbo:load", function () {
-  const typeSelect = document.getElementById("product-type");
-  const ingredientesSection = document.getElementById("ingredientes-section");
-  const comboSection = document.getElementById("combo-section");
-  const addComboButton = document.getElementById("add-combo-item");
-  const comboItemsContainer = document.getElementById("combo-items");
+(function() {
+  'use strict';
 
-  // Agregar estilos CSS para animaciones
-  const style = document.createElement('style');
-  style.textContent = `
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    
-    @keyframes pulse {
-      0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(40,167,69,0.7); }
-      50% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(40,167,69,0); }
-      100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(40,167,69,0); }
-    }
-    
-    .combo-item {
-      transition: all 0.3s ease;
-    }
-    
-    .combo-item:hover {
-      box-shadow: 0 2px 8px rgba(0,123,255,0.15);
-      transform: translateY(-1px);
-    }
-    
-    .remove-combo-item:hover {
-      transform: scale(1.1);
-      background-color: #dc3545 !important;
-    }
-    
-    #add-combo-item:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(40,167,69,0.3);
-    }
-  `;
-  document.head.appendChild(style);
+  const ProductFormManager = {
+    form: null,
+    typeSelect: null,
+    ingredientesSection: null,
+    comboSection: null,
+    addComboButton: null,
+    comboItemsContainer: null,
+    grupoSelect: null,
+    availableProducts: window.availableProductsForCombo || [],
+    initialized: false,
 
-  // Productos disponibles para combos
-  const availableProducts = [
-    <% if @products_for_combo&.any? %>
-      <% @products_for_combo.each do |product| %>
-        { id: <%= product.id %>, nombre: "<%= j(product.nombre) %>" },
-      <% end %>
-    <% end %>
-  ];
+    init: function() {
+      if (this.initialized) return;
 
-  // Manejar cambio de tipo
-  if (typeSelect) {
-    const grupoSelect = document.getElementById("grupo-select");
-    
-    function toggleSections() {
-      if (typeSelect.value === "Combo") {
-        ingredientesSection.style.display = "none";
-        comboSection.style.display = "block";
-        // Para combos, el grupo es opcional
-        if (grupoSelect) {
-          grupoSelect.required = false;
+      this.form = document.getElementById("product-form");
+      if (!this.form) return;
+
+      this.typeSelect = document.getElementById("product-type");
+      this.ingredientesSection = document.getElementById("ingredientes-section");
+      this.comboSection = document.getElementById("combo-section");
+      this.addComboButton = document.getElementById("add-combo-item");
+      this.comboItemsContainer = document.getElementById("combo-items");
+      this.grupoSelect = document.getElementById("grupo-select");
+
+      if (!this.typeSelect || !this.addComboButton || !this.comboItemsContainer) return;
+
+      this.attachEvents();
+      this.toggleSections();
+      this.initialized = true;
+    },
+
+    attachEvents: function() {
+      const self = this;
+
+      this.typeSelect.addEventListener("change", function() {
+        self.toggleSections();
+      });
+
+      this.addComboButton.addEventListener("click", function() {
+        self.createComboItem();
+      });
+
+      this.form.addEventListener("submit", function(event) {
+        self.validateCombo(event);
+      });
+
+      document.addEventListener("click", function(e) {
+        if (e.target.classList.contains("remove-combo-item")) {
+          self.removeComboItem(e.target);
         }
+      });
+    },
+
+    toggleSections: function() {
+      if (this.typeSelect.value === "Combo") {
+        this.ingredientesSection.style.display = "none";
+        this.comboSection.style.display = "block";
+        document.getElementById("grupo-section").style.display = "none";
+        this.grupoSelect.required = false;
       } else {
-        ingredientesSection.style.display = "block";
-        comboSection.style.display = "none";
-        // Para productos normales, el grupo es requerido
-        if (grupoSelect) {
-          grupoSelect.required = true;
-        }
+        this.ingredientesSection.style.display = "block";
+        this.comboSection.style.display = "none";
+        document.getElementById("grupo-section").style.display = "block";
+        this.grupoSelect.required = true;
       }
-    }
-    
-    // Ejecutar al cargar la página
-    toggleSections();
-    
-    // Ejecutar cuando cambie el tipo
-    typeSelect.addEventListener("change", toggleSections);
-  }
+    },
 
-  // Agregar nuevo componente de combo
-  if (addComboButton) {
-    addComboButton.addEventListener("click", function() {
-      const timestamp = new Date().getTime();
-      
-      const productsOptions = availableProducts.map(product => 
-        `<option value="${product.id}">${product.nombre}</option>`
-      ).join('');
-      
-      const newItem = document.createElement('div');
-      newItem.className = 'combo-item';
-      newItem.style.cssText = 'display: flex; gap: 10px; margin-bottom: 10px; align-items: center; padding: 10px; background-color: #f8f9fa; border-radius: 5px; border: 1px solid #dee2e6; animation: fadeIn 0.3s ease-in;';
+    createComboItem: function() {
+      const timestamp = Date.now();
+      const newItem = document.createElement("div");
+      newItem.className = "combo-item";
+      newItem.style.cssText = "display:flex;gap:10px;margin-bottom:10px;align-items:center;padding:10px;background:#f8f9fa;border-radius:5px;border:1px solid #dee2e6;";
+
+      const optionsHtml = this.availableProducts
+        .map(p => `<option value="${p.id}">${p.nombre}</option>`)
+        .join("");
+
       newItem.innerHTML = `
-        <select name="product[combo_items_attributes][${timestamp}][product_id]" class="form-control" style="flex: 1;" required>
+        <select name="product[combo_items_attributes][${timestamp}][product_id]" class="form-control" style="flex:1;">
           <option value="">Seleccionar producto</option>
-          ${productsOptions}
+          ${optionsHtml}
         </select>
-        <div style="display: flex; align-items: center; gap: 5px;">
-          <label style="margin: 0; font-size: 0.9em; color: #6c757d;">Cant:</label>
-          <input type="number" name="product[combo_items_attributes][${timestamp}][cantidad]" min="1" step="1" value="1" class="form-control" style="width: 80px;" required>
+        <div style="display:flex;align-items:center;gap:5px;">
+          <label style="margin:0;font-size:0.9em;color:#6c757d;">Cant:</label>
+          <input type="number"
+            name="product[combo_items_attributes][${timestamp}][cantidad]"
+            min="1" value="1"
+            class="form-control"
+            style="width:80px;">
         </div>
-        <input type="hidden" name="product[combo_items_attributes][${timestamp}][_destroy]" value="false">
+        <input type="hidden"
+          name="product[combo_items_attributes][${timestamp}][_destroy]"
+          value="false">
         <button type="button" class="btn btn-danger btn-sm remove-combo-item" title="Quitar componente">🗑️</button>
       `;
-      comboItemsContainer.appendChild(newItem);
-      
-      // Agregar efecto visual
-      setTimeout(() => {
-        newItem.style.transform = 'scale(1.02)';
-        setTimeout(() => {
-          newItem.style.transform = 'scale(1)';
-        }, 200);
-      }, 100);
-      
-      // Enfocar el select del nuevo elemento
-      const newSelect = newItem.querySelector('select');
-      if (newSelect) {
-        newSelect.focus();
-      }
-    });
-  }
 
-  // Quitar componente de combo
-  document.addEventListener("click", function(e) {
-    if (e.target.classList.contains("remove-combo-item")) {
-      const item = e.target.closest(".combo-item");
+      this.comboItemsContainer.appendChild(newItem);
+    },
+
+    removeComboItem: function(btn) {
+      const item = btn.closest(".combo-item");
+      if (!item) return;
+
       const destroyField = item.querySelector('input[name*="_destroy"]');
-      
-      // Confirmación antes de eliminar
-      const productSelect = item.querySelector('select');
-      const selectedProduct = productSelect.options[productSelect.selectedIndex];
-      const productName = selectedProduct && selectedProduct.value ? selectedProduct.text : "este componente";
-      
-      if (confirm(`¿Estás seguro de que quieres quitar ${productName} del combo?`)) {
-        if (destroyField) {
-          // Para elementos existentes, marcar para destrucción
-          destroyField.value = "true";
-          item.style.opacity = "0.5";
-          item.style.transform = "scale(0.95)";
-          item.style.pointerEvents = "none";
-          
-          // Agregar texto de eliminación
-          const removeLabel = document.createElement('div');
-          removeLabel.innerHTML = '<small style="color: #dc3545; font-weight: bold;">⚠️ Se eliminará al guardar</small>';
-          item.appendChild(removeLabel);
-        } else {
-          // Para elementos nuevos, remover directamente
-          item.style.transition = "all 0.3s ease";
-          item.style.opacity = "0";
-          item.style.transform = "translateX(-100%)";
-          setTimeout(() => {
-            item.remove();
-          }, 300);
-        }
+
+      if (destroyField) {
+        destroyField.value = "true";
+        item.style.opacity = "0.5";
+        item.style.pointerEvents = "none";
+        item.style.display = "none";
+      } else {
+        item.remove();
+      }
+    },
+
+    validateCombo: function(event) {
+      if (this.typeSelect.value !== "Combo") return;
+
+      const items = Array.from(document.querySelectorAll(".combo-item"));
+      const validItems = items.filter(item => {
+        const destroyField = item.querySelector('input[name*="_destroy"]');
+        const destroyed = destroyField && destroyField.value === "true";
+        const productSelect = item.querySelector("select");
+        const qtyInput = item.querySelector("input[type=number]");
+        const product = productSelect ? productSelect.value : "";
+        const qty = qtyInput ? Number(qtyInput.value) : 0;
+
+        return (!destroyed && product && qty > 0);
+      });
+
+      if (validItems.length === 0) {
+        event.preventDefault();
+        alert("⚠️ El combo necesita al menos un componente.");
       }
     }
-  });
-  
-  // Validación antes de enviar el formulario
-  const form = document.getElementById("product-form");
-  if (form) {
-    form.addEventListener("submit", function(e) {
-      const typeSelect = document.getElementById("product-type");
-      
-      if (typeSelect && typeSelect.value === "Combo") {
-        // Verificar que tenga al menos un componente válido
-        const comboItems = document.querySelectorAll('.combo-item');
-        let validItems = 0;
-        
-        comboItems.forEach(item => {
-          const isDestroyed = item.querySelector('input[name*="_destroy"]')?.value === "true";
-          const hasProduct = item.querySelector('select')?.value;
-          const hasQuantity = parseInt(item.querySelector('input[type="number"]')?.value) > 0;
-          
-          if (!isDestroyed && hasProduct && hasQuantity) {
-            validItems++;
-          }
-        });
-        
-        if (validItems === 0) {
-          e.preventDefault();
-          alert("⚠️ Error: Un combo debe tener al menos un componente.\n\nPor favor, agrega al menos un producto al combo antes de guardar.");
-          
-          // Enfocar el botón de agregar componente
-          if (addComboButton) {
-            addComboButton.focus();
-            addComboButton.style.animation = "pulse 0.5s ease-in-out 3";
-          }
-          return false;
-        }
-        
-        // Mostrar resumen antes de guardar
-        if (validItems > 0) {
-          const itemNames = [];
-          comboItems.forEach(item => {
-            const isDestroyed = item.querySelector('input[name*="_destroy"]')?.value === "true";
-            const productSelect = item.querySelector('select');
-            const quantity = item.querySelector('input[type="number"]')?.value;
-            
-            if (!isDestroyed && productSelect.value && quantity > 0) {
-              const productName = productSelect.options[productSelect.selectedIndex].text;
-              itemNames.push(`${quantity}x ${productName}`);
-            }
-          });
-          
-          console.log(`✅ Combo creado con ${validItems} componente(s): ${itemNames.join(', ')}`);
-        }
-      }
-    });
-  }
+  };
 
-  // Validación de imagen
-  const input = document.getElementById("imagen-input");
-  if (input) {
-    input.addEventListener("change", function () {
-      const file = this.files[0];
-      if (file && !file.type.startsWith("image/")) {
-        alert("Por favor selecciona solo archivos de imagen.");
-        this.value = "";
-      }
+  // Inicializar cuando el DOM esté listo
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() {
+      ProductFormManager.init();
     });
+  } else {
+    ProductFormManager.init();
   }
-});
+})();
 </script>

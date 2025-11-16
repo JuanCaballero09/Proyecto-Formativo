@@ -14,7 +14,9 @@ class Dashboard::OrdersController < ApplicationController
   end
 
   def employee
-    @orders = Order.includes(:user, :order_items).order(created_at: :asc)
+    @orders = Order.includes(:user, :order_items)
+                   .where(status: [ :pagado, :en_preparacion, :enviado ])
+                   .order(created_at: :asc)
   end
 
   def cambiar_estado
@@ -44,6 +46,23 @@ class Dashboard::OrdersController < ApplicationController
         format.html { redirect_to employee_dashboard_orders_path, alert: "No se pudo cancelar la orden" }
         format.turbo_stream { render turbo_stream: turbo_stream.replace(@order, partial: "orders/order", locals: { order: @order }) }
       end
+    end
+  end
+
+  def finalizar
+    @order = Order.find_by!(code: params[:id])
+    payment = @order.payments.last
+
+    # Aprobar el pago si existe y está pendiente
+    if payment && payment.pending?
+      payment.update!(status: :approved)
+    end
+
+    # Marcar orden como finalizada
+    if @order.update(status: :finalizado)
+      redirect_to dashboard_orders_path, notice: "✅ Orden finalizada exitosamente"
+    else
+      redirect_to dashboard_orders_path, alert: "⚠️ No se pudo finalizar la orden"
     end
   end
 

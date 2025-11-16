@@ -9,6 +9,29 @@
     <p><strong><%= t("home.order.cliente")%></strong> <%= @order.customer_name %></p>
     <p class="<%= "status-#{@order.status}" %>"><strong><%= t("home.order.estado")%></strong> <span><%= @order.status.humanize %></span></p>
     <p><strong><%= t("home.order.dirección")%>:</strong> <%= @order.direccion %></p>
+    <% payment = @order.payments.last %>
+    <% if payment.present? %>
+      <p style="display: flex; align-items: center; justify-content: center; gap: 5px;">
+        <strong>Método de pago:</strong> 
+        <span style="display: inline-flex; align-items: center; gap: 6px;">
+          <% case payment.payment_method %>
+          <% when 'card' %>
+            💳 Tarjeta <%= payment.type_card == 'credit' ? 'de Crédito' : 'Débito' %>
+            <% if payment.installment.present? && payment.installment > 1 %>
+              (<%= payment.installment %> cuotas)
+            <% end %>
+          <% when 'nequi' %>
+            <img src="/NequiLogo.png" alt="Nequi Logo" style="width: 26px; height: 26px; border-radius: 0; "> Nequi
+          <% when 'pse' %>
+            🏦 PSE
+          <% when 'cash' %>
+            💵 Efectivo
+          <% else %>
+            <%= payment.payment_method.humanize %>
+          <% end %>
+        </span>
+      </p>
+    <% end %>
     <div class="qr-code-container">
         <h3>Código QR de la Orden</h3>
         <div class="qr-code">

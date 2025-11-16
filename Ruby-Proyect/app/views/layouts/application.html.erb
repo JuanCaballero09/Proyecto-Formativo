@@ -87,7 +87,9 @@
               <% end %>
 
               <div class="btn-user">
-                <%= link_to t("home.navbar.iniciar_sesion"), new_user_session_path%>
+                <%= link_to new_user_session_path, class: "btn-user-login" do%>
+                  <%= image_tag("icons/user-solid.svg", alt: "Perfil") %>
+                <% end %>
               </div>
             </div>
           <% end %>

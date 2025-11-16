@@ -1,48 +1,53 @@
 <section class="dashboard-home-modern">
-  <!-- Hero Section con Carousel Mejorado -->
+  <!-- Hero Section con Bootstrap Carousel -->
   <section class="hero-carousel">
-    <div class="carousel-container">
-      <div class="carousel-track" id="carouselTrack">
+    <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="3000">
+      <div class="carousel-inner">
         <% if Banner.any? %>
           <% Banner.order(:id).each_with_index do |banner, index| %>
             <% if banner.imagen.attached? %>
-              <div class="carousel-slide <%= 'active' if index == 0 %>">
-                <%= image_tag banner.imagen, class: "carousel-image", alt: "Banner #{index + 1}" %>
-                <div class="carousel-overlay">
-                  <div class="carousel-content">
-                    <h1 class="hero-title">Bienvenido a Bitevia</h1>
-                    <p class="hero-subtitle">Descubre los sabores más deliciosos</p>
-                    <%= link_to "Ver Menú", grupos_path, class: "hero-btn" %>
-                  </div>
-                </div>
+              <div class="carousel-item <%= 'active' if index == 0 %>">
+                <%= image_tag banner.imagen, class: "d-block w-100 carousel-image", alt: "Banner #{index + 1}" %>
               </div>
             <% end %>
           <% end %>
         <% else %>
-          <div class="carousel-slide active">
-            <%= image_tag "LogoLogoText.svg", class: "carousel-image", alt: "Banner por defecto" %>
-            <div class="carousel-overlay">
-              <div class="carousel-content">
-                <h1 class="hero-title">Bitevia</h1>
-                <p class="hero-subtitle"><%= t("home.navbar.restaurante")%></p>
-                <%= link_to t("home.navbar.explorar"), grupos_path, class: "hero-btn" %>
-              </div>
-            </div>
+          <div class="carousel-item active">
+            <%= image_tag "LogoLogoText.svg", class: "d-block w-100 carousel-image", alt: "Banner por defecto" %>
           </div>
         <% end %>
       </div>
       
-      <!-- Indicadores del carousel -->
+      <!-- Contenido fijo del carousel -->
+      <div class="carousel-overlay-fixed">
+        <div class="carousel-content">
+          <h1 class="hero-title">Bienvenido a Bitevia</h1>
+          <p class="hero-subtitle">Descubre los sabores más deliciosos</p>
+          <%= link_to "Ver Menú", grupos_path, class: "hero-btn" %>
+        </div>
+      </div>
+      
+      <!-- Indicadores de Bootstrap -->
       <div class="carousel-indicators">
         <% banner_count = Banner.any? ? Banner.count : 1 %>
         <% banner_count.times do |i| %>
-          <button class="indicator <%= 'active' if i == 0 %>" data-slide="<%= i %>"></button>
+          <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="<%= i %>" 
+                  class="<%= 'active' if i == 0 %>" aria-current="<%= 'true' if i == 0 %>" 
+                  aria-label="Slide <%= i + 1 %>"></button>
         <% end %>
       </div>
       
-      <!-- Controles del carousel -->
-      <button class="carousel-control prev" id="prevBtn">‹</button>
-      <button class="carousel-control next" id="nextBtn">›</button>
+      <!-- Controles de Bootstrap -->
+      <% if Banner.count > 1 %>
+        <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Anterior</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Siguiente</span>
+        </button>
+      <% end %>
     </div>
   </section>
 
@@ -51,7 +56,7 @@
     <div class="container">
       <div class="section-header">
         <div class="header-content">
-          <span class="section-badge">🎉 <%= t("home.section.ofertas")%></span>
+          <span class="section-badge"><%= t("home.section.ofertas")%></span>
           <h2 class="section-title"><%= t("home.section.combos_exclusivos")%></h2>
           <p class="section-subtitle"><%= t("home.section.ahorra")%></p>
         </div>
@@ -65,12 +70,18 @@
           <% @combos.each_with_index do |combo, index| %>
             <div class="combo-card-premium" data-aos="fade-up" data-aos-delay="<%= index * 100 %>">
               <div class="combo-image-container">
-                <%= image_tag(combo.imagen.attached? ? combo.imagen : 'LogoLogoAPP.svg', 
-                             alt: combo.nombre, 
-                             class: "combo-image") %>
-                <div class="combo-badge">
-                  <span class="discount">-15%</span>
-                </div>
+                <div class="img-wrapper shimmer">
+                    <div class="img-loader"></div>
+                    <img
+                      src="<%= combo.imagen.attached? ? url_for(combo.imagen_resized) : asset_path('LogoLogoText2.svg') %>"
+                      alt="<%= combo.nombre %>"
+                      class="product-image"
+                      style="outline-offset: 0;"
+                      onload="imageLoaded(this)"
+                      onerror="imageError(this)"
+                    >
+                  </div>
+                
               </div>
               
               <div class="combo-content">
@@ -90,11 +101,11 @@
                     <span class="price-label">Solo</span>
                     <span class="price-value"><%= number_to_currency(combo.precio, unit: "COP $", separator: ",", delimiter: ".", precision: 0) %></span>
                   </div>
-                  
-                  <%= button_to "🛒 Pedir Ahora", carrito_items_path(product_id: combo.id), 
-                               method: :post, 
-                               class: "combo-btn-premium",
-                               data: { turbo_frame: "_top" } %>
+
+                  <%= button_to t("home.carrito.pedir_ahora"), carrito_items_path(product_id: combo.id), 
+                    method: :post, 
+                    class: "combo-btn-premiums",
+                    data: { turbo_frame: "_top" } %>
                 </div>
               </div>
             </div>

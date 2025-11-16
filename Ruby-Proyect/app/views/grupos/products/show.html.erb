@@ -3,11 +3,16 @@
     <!-- Sidebar con imagen y acciones -->
     <aside class="producto-sidebar">
       <div class="producto-imagen-main">
-        <% if @product.imagen.attached? %>
-          <%= image_tag(@product.imagen, alt: @product.nombre, class: "imagen-principal") %>
-        <% else %>
-          <%= image_tag('LogoLogoText2.svg', alt: 'Producto sin imagen', class: "imagen-principal") %>
-        <% end %>
+        <div class="img-wrapper shimmer">
+          <div class="img-loader"></div>
+          <img
+            src="<%= @product.imagen.attached? ? url_for(@product.imagen_resized2) : asset_path('LogoLogoText2.svg') %>"
+            alt="<%= @product.nombre %>"
+            class="producto-imagen-page"
+            onload="imageLoaded(this)"
+            onerror="imageError(this)"
+          >
+          </div>
       </div>
 
       <div class="producto-precio-card">
@@ -19,17 +24,17 @@
         </div>
       </div>
 
-      <div class="producto-rating">
-        <h3>Calificación</h3>
-        <div class="stars">
-          <span class="star filled">★</span>
-          <span class="star filled">★</span>
-          <span class="star filled">★</span>
-          <span class="star filled">★</span>
-          <span class="star">★</span>
-          <span class="rating-number">(4.0)</span>
-        </div>
-      </div>
+      <%# <div class="producto-rating"> %>
+        <%# <h3>Calificación</h3> %>
+        <%# <div class="stars"> %>
+          <%# <span class="star filled">★</span> %>
+          <%# <span class="star filled">★</span> %>
+          <%# <span class="star filled">★</span> %>
+          <%# <span class="star filled">★</span> %>
+          <%# <span class="star">★</span> %>
+          <%# <span class="rating-number">(4.0)</span> %>
+        <%# </div> %>
+      <%# </div> %>
 
       <div class="producto-acciones">
         <%= button_to t("home.carrito.agregar_carrito"), 
@@ -55,37 +60,70 @@
       </div>
 
       <div class="producto-detalles-grid">
-        <div class="detalle-card">
-          <h3 class="card-titulo">
-            <span class="icono">🌿</span>
-            <%= t("home.dashboard.ingredientes")%>
-          </h3>
-          <ul class="ingredientes-lista">
-            <% @product.ingredientes.each do |ingrediente| %>
-              <li class="ingrediente-item">
-                <span class="ingrediente-bullet">•</span>
-                <%= ingrediente.nombre %>
-              </li>
-            <% end %>
-          </ul>
-        </div>
-
-        <div class="detalle-card">
-          <h3 class="card-titulo">
-            <span class="icono">💬</span>
-            <%= t("home.show-vista.opiniones")%>
-          </h3>
-          <div class="opiniones-lista">
-            <div class="opinion-item">
-              <div class="opinion-texto"><%= t("home.categoria.comentario_uno")%></div>
-              <div class="opinion-autor">— Ana</div>
-            </div>
-            <div class="opinion-item">
-              <div class="opinion-texto"><%= t("home.categoria.comentario_dos")%></div>
-              <div class="opinion-autor">— Luis</div>
-            </div>
+        <% if @product.type == "Combo" %>
+          <div class="detalle-card">
+            <h3 class="card-titulo">
+              <span class="icono">🎁</span>
+              Componentes del combo
+            </h3>
+            <ul class="ingredientes-lista">
+              <% if @product.respond_to?(:combo_items) && @product.combo_items.any? %>
+                <% @product.combo_items.includes(:product).each do |combo_item| %>
+                  <li class="ingrediente-item">
+                    <span class="ingrediente-bullet">•</span>
+                    <%= combo_item.cantidad %>x 
+                    <%= link_to grupo_product_path(combo_item.product.grupo, combo_item.product),
+                                style: "color: var(--base); text-decoration: none; font-weight: 600; font-size: 1.1em; display: inline-flex; align-items: center; gap: 5px;",
+                                onmouseover: "this.style.color='var(--base-oscuro)'; this.style.transform='translateX(3px)'; this.style.transition='all 0.2s'",
+                                onmouseout: "this.style.color='var(--base)'; this.style.transform='translateX(0)'" do %>
+                      <%= combo_item.product.nombre %>
+                      <span style="font-size: 1.2em;">🔗</span>
+                    <% end %>
+                  </li>
+                <% end %>
+              <% else %>
+                <li class="ingrediente-item">
+                  <span class="ingrediente-bullet">•</span>
+                  Sin componentes definidos
+                </li>
+              <% end %>
+            </ul>
           </div>
-        </div>
+        <% else %>
+          <% if @product.ingredientes.any? %>
+            <div class="detalle-card">
+              <h3 class="card-titulo">
+                <span class="icono">🌿</span>
+                <%= t("home.dashboard.ingredientes")%>
+              </h3>
+              <ul class="ingredientes-lista">
+                <% @product.ingredientes.each do |ingrediente| %>
+                  <li class="ingrediente-item">
+                    <span class="ingrediente-bullet">•</span>
+                    <%= ingrediente.nombre %>
+                  </li>
+                <% end %>
+              </ul>
+            </div>
+          <% end %>
+        <% end %>
+
+        <%# <div class="detalle-card"> %>
+          <%# <h3 class="card-titulo"> %>
+            <%# <span class="icono">💬</span> %>
+            <%# <%= t("home.show-vista.opiniones")%>
+          <%# </h3> %>
+          <%# <div class="opiniones-lista"> %>
+            <%# <div class="opinion-item"> %>
+              <%# <div class="opinion-texto"><%= t("home.categoria.comentario_uno")%>
+              <%# <div class="opinion-autor">— Ana</div> %>
+            <%# </div> %>
+            <%# <div class="opinion-item"> %>
+              <%# <div class="opinion-texto"><%= t("home.categoria.comentario_dos")%>
+              <%# <div class="opinion-autor">— Luis</div> %>
+            <%# </div> %>
+          <%# </div> %>
+        <%# </div> %>
       </div>
     </main>
   </div>

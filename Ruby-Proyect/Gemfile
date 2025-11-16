@@ -1,5 +1,8 @@
 source "https://rubygems.org"
 
+
+# image processing library for Active Storage variants
+gem "image_processing"
 # PDF generation from HTML templates
 gem "wicked_pdf"
 gem "wkhtmltopdf-binary"

@@ -22,9 +22,17 @@
             <% productos.each do |producto| %>
               <div class="carta">
                 <%= link_to grupo_product_path(producto.grupo, producto), class: "carta-link" do %>
-                  <%= image_tag(producto.imagen.attached? ? producto.imagen : "LogoLogoText2.svg", 
-                               class: "carta-imagen", 
-                               alt: producto.nombre) %>
+                  <div class="img-wrapper shimmer">
+                    <div class="img-loader"></div>
+                    <img
+                      src="<%= producto.imagen.attached? ? url_for(producto.imagen_resized) : asset_path('LogoLogoText2.svg') %>"
+                      alt="<%= producto.nombre %>"
+                      class="carta-imagen"
+                      onload="imageLoaded(this)"
+                      onerror="imageError(this)"
+                    >
+                  </div>
+
                   <div class="carta-info">
                     <h4 class="carta-nombre"><%= producto.nombre %></h4>
                     <p class="carta-precio"><strong class="precio-unitario" data-precio="<%= producto.precio %>" data-locale="<%= I18n.locale %>">$</strong></p>

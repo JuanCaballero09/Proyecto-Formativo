@@ -13,11 +13,16 @@
     <% @grupos.each do |grupo| %>
       <div class="dashboard-grupo" data-nombre="<%= I18n.transliterate(grupo.nombre.downcase) %>">
         <div class="grupo-imagen" style="height: fit-content; padding: 10px;">
-          <% if grupo.imagen.attached? %>
-            <%= image_tag url_for(grupo.imagen), alt: grupo.nombre %>
-          <% else %>
-            <%= image_tag 'LogoLogo.svg', alt: grupo.nombre %>
-          <% end %>
+          <div class="img-wrapper shimmer">
+            <div class="img-loader"></div>
+            <img
+              src="<%= grupo.imagen.attached? ? url_for(grupo.imagen_resized) : asset_path('LogoLogoText2.svg') %>"
+              alt="<%= grupo.nombre %>"
+              class="carta-imagen"
+              onload="imageLoaded(this)"
+              onerror="imageError(this)"
+            >
+          </div>
         </div>
 
         <div class="grupo-info-dashboard">
