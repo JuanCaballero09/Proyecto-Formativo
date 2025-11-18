@@ -11,7 +11,12 @@ abstract class SearchState extends Equatable {
 
 /// Estado inicial
 class SearchInitial extends SearchState {
-  const SearchInitial();
+  final List<String> searchHistory;
+
+  const SearchInitial({this.searchHistory = const []});
+
+  @override
+  List<Object?> get props => [searchHistory];
 }
 
 /// Estado mientras se está buscando
@@ -23,19 +28,38 @@ class SearchLoading extends SearchState {
 class SearchLoaded extends SearchState {
   final List<SearchResult> results;
   final String query;
+  final List<String> searchHistory;
 
-  const SearchLoaded(this.results, this.query);
+  const SearchLoaded(
+    this.results,
+    this.query, {
+    this.searchHistory = const [],
+  });
 
   @override
-  List<Object?> get props => [results, query];
+  List<Object?> get props => [results, query, searchHistory];
 }
 
 /// Estado cuando ocurre un error
 class SearchError extends SearchState {
   final String message;
+  final List<String> searchHistory;
 
-  const SearchError(this.message);
+  const SearchError(
+    this.message, {
+    this.searchHistory = const [],
+  });
 
   @override
-  List<Object?> get props => [message];
+  List<Object?> get props => [message, searchHistory];
+}
+
+/// Estado cuando se carga el historial
+class SearchHistoryLoaded extends SearchState {
+  final List<String> history;
+
+  const SearchHistoryLoaded(this.history);
+
+  @override
+  List<Object?> get props => [history];
 }
