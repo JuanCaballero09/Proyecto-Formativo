@@ -6,8 +6,11 @@ import '../../service/api_service.dart';
 import '../../models/search_result.dart';
 
 /// BLoC para manejar la búsqueda de productos y categorías
+/// Incluye gestión de historial y estados mejorados para accesibilidad
 class SearchBloc extends Bloc<SearchEvent, SearchState> {
   final ApiService apiService;
+  final List<String> _searchHistory = [];
+  static const int maxHistoryItems = 10;
 
   SearchBloc(this.apiService) : super(const SearchInitial()) {
     // Usar restartable para cancelar búsquedas anteriores cuando llega una nueva
@@ -17,7 +20,12 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     );
     on<ClearSearch>(_onClearSearch);
     on<LoadSearchHistory>(_onLoadSearchHistory);
+    on<AddToSearchHistory>(_onAddToSearchHistory);
+    on<RemoveFromSearchHistory>(_onRemoveFromSearchHistory);
   }
+
+  /// Obtiene el historial actual de búsquedas
+  List<String> get searchHistory => List.unmodifiable(_searchHistory);
 
   /// Maneja el cambio en la consulta de búsqueda
   Future<void> _onSearchQueryChanged(
@@ -28,11 +36,11 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
 
     // Si la búsqueda está vacía, volver al estado inicial
     if (query.isEmpty) {
-      emit(const SearchInitial());
+      emit(SearchInitial(searchHistory: _searchHistory));
       return;
     }
 
-    // Mostrar estado de carga
+    // Mostrar estado de carga (SIEMPRE, para resetear estado anterior)
     emit(const SearchLoading());
 
     try {
@@ -43,35 +51,87 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
       final List<SearchResult> results = [];
 
       // Agregar productos a los resultados
-      if (searchData['productos'] != null) {
-        for (var product in searchData['productos']) {
-          results.add(SearchResult.fromProductJson(product));
+      final productos = searchData['productos'];
+      if (productos != null && productos is List) {
+        for (var product in productos) {
+          try {
+            results.add(SearchResult.fromProductJson(product));
+          } catch (e) {
+            // Ignorar productos malformados
+            print('Error procesando producto: $e');
+          }
         }
       }
 
       // Agregar categorías a los resultados (transformado desde 'grupos')
-      if (searchData['categorias'] != null) {
-        for (var category in searchData['categorias']) {
-          results.add(SearchResult.fromCategoryJson(category));
+      final categorias = searchData['categorias'] ?? searchData['grupos'];
+      if (categorias != null && categorias is List) {
+        for (var category in categorias) {
+          try {
+            results.add(SearchResult.fromCategoryJson(category));
+          } catch (e) {
+            // Ignorar categorías malformadas
+            print('Error procesando categoría: $e');
+          }
         }
       }
       
-      // Emitir estado con resultados
-      emit(SearchLoaded(results, query));
+      // Agregar a historial
+      _addToHistory(query);
+      
+      // Emitir estado con resultados y historial
+      emit(SearchLoaded(
+        results,
+        query,
+        searchHistory: _searchHistory,
+      ));
     } catch (e) {
-      // Emitir estado de error
-      emit(SearchError('Error al buscar: ${e.toString()}'));
+      // Emitir estado de error con historial
+      print('Error en búsqueda: $e');
+      emit(SearchError(
+        'Error al buscar: ${e.toString()}',
+        searchHistory: _searchHistory,
+      ));
     }
   }
 
   /// Limpia la búsqueda
   void _onClearSearch(ClearSearch event, Emitter<SearchState> emit) {
-    emit(const SearchInitial());
+    emit(SearchInitial(searchHistory: _searchHistory));
   }
 
-  /// Carga el historial de búsquedas (opcional, para implementar después)
+  /// Carga el historial de búsquedas
   void _onLoadSearchHistory(LoadSearchHistory event, Emitter<SearchState> emit) {
-    // TODO: Implementar carga de historial desde SharedPreferences
-    emit(const SearchInitial());
+    emit(SearchHistoryLoaded(_searchHistory));
+  }
+
+  /// Agrega una búsqueda al historial
+  void _onAddToSearchHistory(
+    AddToSearchHistory event,
+    Emitter<SearchState> emit,
+  ) {
+    _addToHistory(event.query);
+    emit(SearchHistoryLoaded(_searchHistory));
+  }
+
+  /// Elimina una búsqueda del historial
+  void _onRemoveFromSearchHistory(
+    RemoveFromSearchHistory event,
+    Emitter<SearchState> emit,
+  ) {
+    _searchHistory.removeWhere((item) => item == event.query);
+    emit(SearchHistoryLoaded(_searchHistory));
+  }
+
+  /// Agrega un elemento al historial (evita duplicados y respeta límite)
+  void _addToHistory(String query) {
+    // Remover duplicado si existe
+    _searchHistory.removeWhere((item) => item == query);
+    // Agregar al inicio
+    _searchHistory.insert(0, query);
+    // Limitar tamaño del historial
+    if (_searchHistory.length > maxHistoryItems) {
+      _searchHistory.removeLast();
+    }
   }
 }

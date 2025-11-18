@@ -27,3 +27,23 @@ class ClearSearch extends SearchEvent {
 class LoadSearchHistory extends SearchEvent {
   const LoadSearchHistory();
 }
+
+/// Evento para agregar una búsqueda al historial
+class AddToSearchHistory extends SearchEvent {
+  final String query;
+
+  const AddToSearchHistory(this.query);
+
+  @override
+  List<Object?> get props => [query];
+}
+
+/// Evento para eliminar un item del historial
+class RemoveFromSearchHistory extends SearchEvent {
+  final String query;
+
+  const RemoveFromSearchHistory(this.query);
+
+  @override
+  List<Object?> get props => [query];
+}

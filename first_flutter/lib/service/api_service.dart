@@ -343,8 +343,16 @@ class ApiService {
           .timeout(const Duration(seconds: 10));
 
       _handleHttpResponse(response, 'búsqueda de productos');
-
+      
       final data = jsonDecode(response.body);
+      
+      // Validar estructura de respuesta
+      if (data is! Map) {
+        throw DataException(
+          message: 'Formato de respuesta inválido',
+          code: 'INVALID_FORMAT',
+        );
+      }
 
       // 🔄 TRANSFORMAR: grupos → categorias y grupo_id → categoria_id
       return {

@@ -7,9 +7,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
 import '../l10n/app_localizations.dart';
-import '../bloc/search/search_bloc.dart';
-import '../bloc/search/search_event.dart';
-import '../bloc/search/search_state.dart';
 import '../models/product.dart';
 import '../bloc/categorias/categorias_bloc.dart';
 import 'LogoLoading_page.dart';
@@ -19,6 +16,7 @@ import '../bloc/base_state.dart';
 import '../bloc/cart/cart_bloc.dart';
 import '../models/cart_model.dart';
 import 'product_detail_page.dart';
+import 'search_results_page.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 class HomePage extends StatefulWidget {
@@ -41,8 +39,6 @@ class _HomePageState extends State<HomePage>
   int _currentIndex = 0;
   Timer? _timer;
   bool _isPageViewReady = false;
-  bool _isSearchVisible = false;
-  final TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
@@ -85,31 +81,7 @@ class _HomePageState extends State<HomePage>
     _pageController.dispose();
     _scrollController.dispose();
     _popularScrollController.dispose();
-    _searchController.dispose();
     super.dispose();
-  }
-
-  Widget _buildSearchBar(BuildContext context) {
-    final theme = Theme.of(context);
-    return TextField(
-      controller: _searchController,
-      onChanged: (query) {
-        context.read<SearchBloc>().add(SearchQueryChanged(query));
-      },
-      style: TextStyle(color: theme.textTheme.bodyMedium?.color),
-      decoration: InputDecoration(
-        hintText: 'Buscar productos...',
-        hintStyle: TextStyle(color: theme.hintColor),
-        prefixIcon: Icon(Icons.search, color: theme.iconTheme.color),
-        filled: true,
-        fillColor: theme.inputDecorationTheme.fillColor ?? theme.cardColor,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide.none,
-        ),
-        contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 16),
-      ),
-    );
   }
 
   @override
@@ -147,9 +119,12 @@ class _HomePageState extends State<HomePage>
                     IconButton(
                       icon: Icon(Icons.search, color: theme.iconTheme.color),
                       onPressed: () {
-                        setState(() {
-                          _isSearchVisible = !_isSearchVisible;
-                        });
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (c) => SearchResultsPage(),
+                          ),
+                        );
                       },
                     ),
                     IconButton(
@@ -176,92 +151,6 @@ class _HomePageState extends State<HomePage>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (_isSearchVisible)
-                  Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16.0, vertical: 8.0),
-                        child: _buildSearchBar(context),
-                      ),
-                      BlocBuilder<SearchBloc, SearchState>(
-                        builder: (context, state) {
-                          if (state is SearchLoading) {
-                            return const Center(
-                                child: CircularProgressIndicator());
-                          } else if (state is SearchLoaded) {
-                            return state.results.isEmpty
-                                ? const Center(
-                                    child: Text('No se encontraron resultados'))
-                                : ListView.builder(
-                                    shrinkWrap: true,
-                                    physics:
-                                        const NeverScrollableScrollPhysics(),
-                                    itemCount: state.results.length,
-                                    itemBuilder: (context, index) {
-                                      final result = state.results[index];
-                                      return ListTile(
-                                        leading: result.image != null
-                                            ? ClipRRect(
-                                                borderRadius:
-                                                    BorderRadius.circular(8),
-                                                child: Image.network(
-                                                  result.image!,
-                                                  width: 50,
-                                                  height: 50,
-                                                  fit: BoxFit.cover,
-                                                  errorBuilder: (_, __, ___) =>
-                                                      Container(
-                                                    width: 50,
-                                                    height: 50,
-                                                    decoration: BoxDecoration(
-                                                      color: theme.cardColor,
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              8),
-                                                    ),
-                                                    child: Icon(Icons.fastfood,
-                                                        color: theme
-                                                            .iconTheme.color),
-                                                  ),
-                                                ),
-                                              )
-                                            : Container(
-                                                width: 50,
-                                                height: 50,
-                                                decoration: BoxDecoration(
-                                                  color: theme.cardColor,
-                                                  borderRadius:
-                                                      BorderRadius.circular(8),
-                                                ),
-                                                child: Icon(Icons.fastfood,
-                                                    color:
-                                                        theme.iconTheme.color),
-                                              ),
-                                        title: Text(
-                                          result.name,
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: theme
-                                                .textTheme.bodyMedium?.color,
-                                          ),
-                                        ),
-                                        subtitle: Text(
-                                          result.description ?? '',
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                          style:
-                                              TextStyle(color: theme.hintColor),
-                                        ),
-                                      );
-                                    },
-                                  );
-                          }
-                          return const SizedBox.shrink();
-                        },
-                      ),
-                    ],
-                  ),
                 _buildSectionTitle(
                     AppLocalizations.of(context)!.todaysOffers, theme),
                 _buildPromotionsCarousel(theme),
