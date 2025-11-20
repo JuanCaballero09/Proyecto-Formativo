@@ -78,7 +78,7 @@ class _AuthScaffoldState extends State<AuthScaffold> with TickerProviderStateMix
                     children: [
                       const Icon(Icons.arrow_back_ios_new_rounded, size: 18, color: Colors.black87),
                       const SizedBox(width: 4),
-                      Text(AppLocalizations.of(context)?.back ?? 'Atrás', style: const TextStyle(fontSize: 16, color: Colors.black87)),
+                      Text(AppLocalizations.of(context)!.back, style: const TextStyle(fontSize: 16, color: Colors.black87)),
                     ],
                   ),
                 ),
@@ -98,7 +98,7 @@ class _AuthScaffoldState extends State<AuthScaffold> with TickerProviderStateMix
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(18),
                     boxShadow: [
-                      BoxShadow(color: Colors.black.withOpacity(0.18), blurRadius: 14, offset: const Offset(0, 8)),
+                      BoxShadow(color: Colors.black.withValues(alpha: 0.18), blurRadius: 14, offset: const Offset(0, 8)),
                     ],
                   ),
                   child: widget.cardChild,
@@ -169,7 +169,7 @@ class _RegisterPageState extends State<RegisterPage> {
 TextField(
   controller: nameCtrl,
   decoration: InputDecoration(
-    labelText: AppLocalizations.of(context)?.firstName ?? 'Nombre de usuario',
+    labelText: AppLocalizations.of(context)!.firstName,
     prefixIcon: const Icon(Icons.person_outline, color: kOrange),
     filled: true,
     fillColor: Colors.white,
@@ -185,7 +185,7 @@ TextField(
   controller: emailCtrl,
   keyboardType: TextInputType.emailAddress,
   decoration: InputDecoration(
-    labelText: AppLocalizations.of(context)?.email ?? 'Correo electrónico',
+    labelText: AppLocalizations.of(context)!.email,
     prefixIcon: const Icon(Icons.email_outlined, color: kOrange),
     filled: true,
     fillColor: Colors.white,
@@ -201,7 +201,7 @@ TextField(
   controller: passCtrl,
   obscureText: obscure,
   decoration: InputDecoration(
-    labelText: AppLocalizations.of(context)?.password ?? 'Contraseña',
+    labelText: AppLocalizations.of(context)!.password,
     prefixIcon: const Icon(Icons.lock_outline, color: kOrange),
     filled: true,
     fillColor: Colors.white,
@@ -224,7 +224,7 @@ const SizedBox(height: 14),
             Row(
               children: [
                 Checkbox(value: agree, onChanged: (v) => setState(() => agree = v ?? false), activeColor: kOrange),
-                  Expanded(child: Text(AppLocalizations.of(context)?.termsConditions ?? 'Acepto los Términos y Condiciones', style: const TextStyle(fontSize: 13))),
+                  Expanded(child: Text(AppLocalizations.of(context)!.termsConditions, style: const TextStyle(fontSize: 13))),
               ],
             ),
 
@@ -236,10 +236,10 @@ const SizedBox(height: 14),
                 onPressed: agree ? () {} : null,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: kOrange,
-                  disabledBackgroundColor: kOrange.withOpacity(0.45),
+                  disabledBackgroundColor: kOrange.withValues(alpha: 0.45),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(26)),
                 ),
-                child: Text(AppLocalizations.of(context)?.register ?? 'Registrarse', style: GoogleFonts.poppins(fontSize: 16, color: Colors.white, fontWeight: FontWeight.w600)),
+                child: Text(AppLocalizations.of(context)!.register, style: GoogleFonts.poppins(fontSize: 16, color: Colors.white, fontWeight: FontWeight.w600)),
               ),
             ),
 
@@ -248,7 +248,7 @@ const SizedBox(height: 14),
               onPressed: () {
                 Navigator.pop(context); // Vuelve a la pantalla anterior (Login)
               },
-              child: Text(AppLocalizations.of(context)?.alreadyHaveAccount ?? '¿Ya tienes una cuenta? Inicia sesión', style: GoogleFonts.poppins(color: kOrange, fontWeight: FontWeight.w600)),
+              child: Text(AppLocalizations.of(context)!.alreadyHaveAccount, style: GoogleFonts.poppins(color: kOrange, fontWeight: FontWeight.w600)),
               
             ),
 

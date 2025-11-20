@@ -30,7 +30,7 @@ class PerfilPage extends StatelessWidget {
               backgroundColor: Colors.white,
               elevation: 1,
               title: Text(
-                AppLocalizations.of(context)?.profile ?? "Mi Perfil",
+                AppLocalizations.of(context)!.profile,
                 style: const TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
@@ -49,7 +49,7 @@ class PerfilPage extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.08),
+                        color: Colors.black.withValues(alpha: 0.08),
                         blurRadius: 10,
                         offset: const Offset(0, 2),
                       ),
@@ -102,7 +102,7 @@ class PerfilPage extends StatelessWidget {
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              AppLocalizations.of(context)?.activeAccount ?? 'Cuenta Activa ✓',
+                              AppLocalizations.of(context)!.activeAccount,
                               style: const TextStyle(
                                 fontSize: 12,
                                 color: Colors.green,
@@ -118,7 +118,7 @@ class PerfilPage extends StatelessWidget {
                           // TODO: Navegar a editar perfil
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text(AppLocalizations.of(context)?.comingSoon ?? 'Próximamente'),
+                              content: Text(AppLocalizations.of(context)!.comingSoon),
                               duration: const Duration(seconds: 2),
                             ),
                           );
@@ -137,14 +137,14 @@ class PerfilPage extends StatelessWidget {
                 // Selector de idioma
                 _buildPreferenceRow(
                   icon: Icons.language,
-                  label: AppLocalizations.of(context)?.language ?? 'Idioma',
+                  label: AppLocalizations.of(context)!.language,
                   widget: const LanguageSelector(),
                 ),
 
                 // Selector de tema
                 _buildPreferenceRow(
                   icon: Icons.brightness_6,
-                  label: AppLocalizations.of(context)?.theme ?? 'Theme',
+                  label: AppLocalizations.of(context)!.theme,
                   widget: const ThemeSelector(),
                 ),
 
@@ -157,7 +157,7 @@ class PerfilPage extends StatelessWidget {
                 _buildMenuTile(
                   context,
                   icon: Icons.receipt_long,
-                  label: AppLocalizations.of(context)?.orders ?? 'Mis Pedidos',
+                  label: AppLocalizations.of(context)!.orders,
                   onTap: () {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
@@ -172,7 +172,7 @@ class PerfilPage extends StatelessWidget {
                 _buildMenuTile(
                   context,
                   icon: Icons.location_on,
-                  label: AppLocalizations.of(context)?.addresses ?? 'Mis Direcciones',
+                  label: AppLocalizations.of(context)!.addresses,
                   onTap: () {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
@@ -187,7 +187,7 @@ class PerfilPage extends StatelessWidget {
                 _buildMenuTile(
                   context,
                   icon: Icons.receipt,
-                  label: AppLocalizations.of(context)?.billingDetails ?? 'Datos de Facturación',
+                  label: AppLocalizations.of(context)!.billingDetails,
                   onTap: () {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
@@ -207,7 +207,7 @@ class PerfilPage extends StatelessWidget {
                 _buildMenuTile(
                   context,
                   icon: Icons.help_outline,
-                  label: AppLocalizations.of(context)?.helpSupport ?? 'Ayuda y Soporte',
+                  label: AppLocalizations.of(context)!.helpSupport,
                   onTap: () {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
@@ -222,7 +222,7 @@ class PerfilPage extends StatelessWidget {
                 _buildMenuTile(
                   context,
                   icon: Icons.privacy_tip,
-                  label: AppLocalizations.of(context)?.privacyPolicy ?? 'Política de Privacidad',
+                  label: AppLocalizations.of(context)!.privacyPolicy,
                   onTap: () {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
@@ -237,7 +237,7 @@ class PerfilPage extends StatelessWidget {
                 _buildMenuTile(
                   context,
                   icon: Icons.article,
-                  label: AppLocalizations.of(context)?.termsConditions ?? 'Términos y Condiciones',
+                  label: AppLocalizations.of(context)!.termsConditions,
                   onTap: () {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
@@ -345,7 +345,7 @@ class PerfilPage extends StatelessWidget {
                       AppLocalizations.of(context)?.guestAuthPrompt ?? 'Inicia sesión o regístrate para continuar',
                       textAlign: TextAlign.center,
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.textTheme.bodyMedium?.color?.withOpacity(0.7),
+                        color: theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.7),
                       ),
                     ),
                     const SizedBox(height: 30),

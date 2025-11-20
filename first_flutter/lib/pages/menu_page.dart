@@ -52,7 +52,7 @@ class _MenuPageState extends State<MenuPage> {
               child: Text(
                 AppLocalizations.of(context)!.selectCategoryToSeeProducts,
                 style: theme.textTheme.bodyMedium?.copyWith(
-                  color: textColor?.withOpacity(0.7), // 👈 texto dinámico más suave
+                  color: textColor?.withValues(alpha: 0.7), // 👈 texto dinámico más suave
                   height: 1.2,
                 ),
               ),

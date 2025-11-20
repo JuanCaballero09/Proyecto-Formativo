@@ -90,8 +90,8 @@ class DomicilioPageState extends State<DomicilioPage> {
               controller: _emailController,
               keyboardType: TextInputType.emailAddress,
               decoration: InputDecoration(
-                labelText: AppLocalizations.of(context)?.email ?? 'Email',
-                hintText: AppLocalizations.of(context)?.emailHint ?? 'correo@ejemplo.com',
+                labelText: AppLocalizations.of(context)!.email,
+                hintText: AppLocalizations.of(context)!.emailHint,
                 border: const OutlineInputBorder(),
                 prefixIcon: const Icon(Icons.email),
               ),
@@ -198,7 +198,7 @@ class DomicilioPageState extends State<DomicilioPage> {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: statusColor.withOpacity(0.1),
+                  color: statusColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(

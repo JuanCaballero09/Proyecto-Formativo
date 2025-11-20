@@ -16,7 +16,7 @@ class ThemeSelector extends StatelessWidget {
           onChanged: (bool value) {
             context.read<ThemeBloc>().add(ToggleTheme()); // 👈 evento correcto
           },
-          activeColor: const Color.fromRGBO(237, 88, 33, 1),
+          activeThumbColor: const Color.fromRGBO(237, 88, 33, 1),
         );
       },
     );

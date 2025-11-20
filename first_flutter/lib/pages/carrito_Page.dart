@@ -120,7 +120,7 @@ class CarritoPageState extends State<CarritoPage> {
                       TextField(
                       controller: _direccionController,
                       decoration: InputDecoration(
-                        hintText: AppLocalizations.of(context)?.exampleAddress ?? 'Ej: Calle 123 #45-67, Bogotá',
+                        hintText: AppLocalizations.of(context)!.exampleAddress,
                         border: const OutlineInputBorder(),
                         isDense: true,
                       ),
@@ -163,8 +163,8 @@ class CarritoPageState extends State<CarritoPage> {
                         controller: _emailController,
                         keyboardType: TextInputType.emailAddress,
                         decoration: InputDecoration(
-                          labelText: AppLocalizations.of(context)?.email ?? 'Email',
-                          hintText: AppLocalizations.of(context)?.emailHint ?? 'correo@ejemplo.com',
+                          labelText: AppLocalizations.of(context)!.email,
+                          hintText: AppLocalizations.of(context)!.emailHint,
                           border: const OutlineInputBorder(),
                           isDense: true,
                           prefixIcon: const Icon(Icons.email, size: 20),

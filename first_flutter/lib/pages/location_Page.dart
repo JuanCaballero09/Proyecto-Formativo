@@ -79,7 +79,7 @@ class _DeliveryLocationPageState extends State<DeliveryLocationPage> {
       if (!hasPermission) return;
 
       final position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high
+        locationSettings: const LocationSettings(accuracy: LocationAccuracy.high)
       );
 
       setState(() {

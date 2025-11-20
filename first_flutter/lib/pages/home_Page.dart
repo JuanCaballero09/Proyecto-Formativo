@@ -311,7 +311,7 @@ class _HomePageState extends State<HomePage>
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               color:
-                                  theme.colorScheme.secondary.withOpacity(0.5),
+                                  theme.colorScheme.secondary.withValues(alpha: 0.5),
                             ),
                           ),
                         ),
@@ -365,7 +365,7 @@ class _HomePageState extends State<HomePage>
                       )
                     : Container(
                         height: 110,
-                        color: theme.disabledColor.withOpacity(0.2),
+                        color: theme.disabledColor.withValues(alpha: 0.2),
                         child:
                             const Center(child: Icon(Icons.fastfood, size: 60)),
                       ),

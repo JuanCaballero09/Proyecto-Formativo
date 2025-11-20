@@ -1603,50 +1603,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Track your order in real-time from preparation to delivery'**
   String get slide3Subtitle;
-
-  // Additional keys referenced across the app
-  String get productsLabel;
-  String get exampleAddress;
-  String get emailHint;
-  String get invalidAddress;
-  String get completeAllFields;
-  String get loadingOrdersError;
-  String get searchOrdersTitle;
-  String get searchOrdersPrompt;
-  String get guestMode;
-  String get noOrders;
-  String get searchWithAnotherEmail;
-  String get orderCancelled;
-  String get statusPending;
-  String get statusPaid;
-  String get statusInPreparation;
-  String get statusSent;
-  String get statusDelivered;
-  String get statusCancelled;
-  String get statusUnknown;
-  String get locationServicesDisabled;
-  String get locationPermissionsDenied;
-  String get locationPermissionsPermanentlyDenied;
-  String get errorGettingLocation;
-  String get couldNotGetAddress;
-  String get selectedAddress;
-  String get distanceLabel;
-  String get codeLabel;
-  String get authenticationError;
-  String get activeAccount;
-  String get comingSoon;
-  String get theme;
-  String get billingDetails;
-  String get logoutConfirmation;
-  String get guestAuthPrompt;
-  String get spanish;
-  String get english;
-  String get description;
-  String get typeToSearch;
-  String get noResultsFound;
-  String get categorySelected;
-  String get product;
-  String get viewProductsOfThisCategory;
 }
 
 class _AppLocalizationsDelegate

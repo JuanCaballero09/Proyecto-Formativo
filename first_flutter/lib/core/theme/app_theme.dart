@@ -26,7 +26,6 @@ class AppTheme {
     colorScheme: ColorScheme.fromSeed(
       seedColor: const Color.fromRGBO(237, 88, 33, 1),
       brightness: Brightness.dark,
-      background: const Color(0xFF1E1E1E), // gris oscuro, no negro total
       surface: const Color(0xFF2C2C2C),    // un poco más claro para las tarjetas
     ),
     scaffoldBackgroundColor: const Color(0xFF1E1E1E),

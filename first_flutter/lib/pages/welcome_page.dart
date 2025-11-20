@@ -25,14 +25,14 @@ class WelcomePage extends StatelessWidget {
 
               // Texto del título
               Text(
-                AppLocalizations.of(context)?.welcomeTitle ?? 'Bienvenido A Bitevia',
+                AppLocalizations.of(context)!.welcomeTitle,
                 textAlign: TextAlign.center,
                 style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily:'Arial', color: Colors.white),
               ),
   
 
               Text(
-                AppLocalizations.of(context)?.welcomeSubtitle ?? '¡Disfruta De Una Experiencia Única!',
+                AppLocalizations.of(context)!.welcomeSubtitle,
                 textAlign: TextAlign.center,
                 style: const TextStyle(fontSize: 16, fontWeight: FontWeight.normal, fontFamily:'Arial', color: Colors.white),
               ),
@@ -56,7 +56,7 @@ class WelcomePage extends StatelessWidget {
                     ),
                   ),
                   child: Text(
-                    AppLocalizations.of(context)?.login ?? 'Iniciar Sesión',
+                    AppLocalizations.of(context)!.login,
                     style: const TextStyle(fontSize: 18, color: Colors.white),
                   ),
                 ),
@@ -80,7 +80,7 @@ class WelcomePage extends StatelessWidget {
                     ),
                   ),
                   child: Text(
-                    AppLocalizations.of(context)?.register ?? 'Registrarse',
+                    AppLocalizations.of(context)!.register,
                     style: const TextStyle(fontSize: 18),
                   ),
                 ),

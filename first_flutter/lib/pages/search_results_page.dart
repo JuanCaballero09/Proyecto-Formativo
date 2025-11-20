@@ -147,7 +147,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
                           Icon(
                             Icons.search,
                             size: 64,
-                            color: theme.iconTheme.color?.withOpacity(0.3),
+                            color: theme.iconTheme.color?.withValues(alpha: 0.3),
                           ),
                           const SizedBox(height: 16),
                           Text(
@@ -201,7 +201,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
                             Icon(
                               Icons.inbox,
                               size: 64,
-                              color: theme.iconTheme.color?.withOpacity(0.3),
+                              color: theme.iconTheme.color?.withValues(alpha: 0.3),
                             ),
                             const SizedBox(height: 16),
                             Text(
@@ -272,7 +272,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
                         result.type == 'product'
                             ? Icons.shopping_bag
                             : Icons.category,
-                        color: theme.iconTheme.color?.withOpacity(0.5),
+                        color: theme.iconTheme.color?.withValues(alpha: 0.5),
                       ),
                     );
                   },
@@ -287,7 +287,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
                 ),
                 child: Icon(
                   result.type == 'product' ? Icons.shopping_bag : Icons.category,
-                  color: theme.iconTheme.color?.withOpacity(0.5),
+                  color: theme.iconTheme.color?.withValues(alpha: 0.5),
                 ),
               ),
         title: Text(
@@ -321,7 +321,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
         ),
         trailing: Icon(
           Icons.chevron_right,
-          color: theme.iconTheme.color?.withOpacity(0.5),
+          color: theme.iconTheme.color?.withValues(alpha: 0.5),
         ),
         onTap: () {
           if (result.type == 'product' && result.rawData != null) {

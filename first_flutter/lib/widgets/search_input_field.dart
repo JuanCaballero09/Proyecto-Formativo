@@ -96,7 +96,7 @@ class _SearchInputFieldState extends State<SearchInputField> {
         disabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(
-            color: theme.dividerColor.withOpacity(0.5),
+            color: theme.dividerColor.withValues(alpha: 0.5),
             width: 1,
           ),
         ),
