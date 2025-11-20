@@ -769,4 +769,70 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get slide3Subtitle =>
       'Rastrea tu pedido en tiempo real desde la preparación hasta la entrega';
+
+    @override
+    String get spanish => 'Español';
+
+    @override
+    String get english => 'English';
+
+    @override
+    String get guestMode => 'Modo Invitado';
+
+    @override
+    String get searchOrdersTitle => 'Buscar mis órdenes';
+
+    @override
+    String get searchOrdersPrompt => 'Ingresa el email que usaste al hacer tu pedido:';
+
+    @override
+    String get searchWithAnotherEmail => 'Buscar con otro email';
+
+    @override
+    String get noOrders => 'No tienes órdenes';
+
+    @override
+    String get orderCancelled => 'Orden cancelada exitosamente';
+
+    @override
+    String get productsLabel => 'Productos:';
+
+    @override
+    String get statusPending => 'Pendiente';
+
+    @override
+    String get statusPaid => 'Pagado';
+
+    @override
+    String get statusInPreparation => 'En Preparación';
+
+    @override
+    String get statusSent => 'Enviado';
+
+    @override
+    String get statusDelivered => 'Entregado';
+
+    @override
+    String get statusCancelled => 'Cancelado';
+
+    @override
+    String get statusUnknown => 'Desconocido';
+
+    @override
+    String get comingSoon => 'Próximamente';
+
+    @override
+    String get activeAccount => 'Cuenta Activa ✓';
+
+    @override
+    String get theme => 'Tema';
+
+    @override
+    String get billingDetails => 'Datos de Facturación';
+
+    @override
+    String get logoutConfirmation => '¿Estás seguro de que deseas cerrar sesión?';
+
+    @override
+    String get guestAuthPrompt => 'Inicia sesión o regístrate para continuar';
 }

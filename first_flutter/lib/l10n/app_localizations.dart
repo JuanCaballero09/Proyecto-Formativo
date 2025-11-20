@@ -980,6 +980,42 @@ abstract class AppLocalizations {
   /// **'Logout'**
   String get logout;
 
+  /// No description provided for @comingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Coming soon'**
+  String get comingSoon;
+
+  /// No description provided for @activeAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Account active ✓'**
+  String get activeAccount;
+
+  /// No description provided for @theme.
+  ///
+  /// In en, this message translates to:
+  /// **'Theme'**
+  String get theme;
+
+  /// No description provided for @billingDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Billing details'**
+  String get billingDetails;
+
+  /// No description provided for @logoutConfirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to logout?'**
+  String get logoutConfirmation;
+
+  /// No description provided for @guestAuthPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in or register to continue'**
+  String get guestAuthPrompt;
+
   /// No description provided for @editProfile.
   ///
   /// In en, this message translates to:
@@ -1603,6 +1639,69 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Track your order in real-time from preparation to delivery'**
   String get slide3Subtitle;
+
+  /// No description provided for @spanish.
+  ///
+  /// In en, this message translates to:
+  /// **'Español'**
+  String get spanish;
+
+  /// No description provided for @english.
+  ///
+  /// In en, this message translates to:
+  /// **'English'**
+  String get english;
+
+  /// No description provided for @guestMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Guest Mode'**
+  String get guestMode;
+
+  /// No description provided for @searchOrdersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Search my orders'**
+  String get searchOrdersTitle;
+
+  /// No description provided for @searchOrdersPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the email you used when placing the order:'**
+  String get searchOrdersPrompt;
+
+  /// No description provided for @searchWithAnotherEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Search with another email'**
+  String get searchWithAnotherEmail;
+
+  /// No description provided for @noOrders.
+  ///
+  /// In en, this message translates to:
+  /// **'You have no orders'**
+  String get noOrders;
+
+  /// No description provided for @orderCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Order cancelled successfully'**
+  String get orderCancelled;
+
+  /// No description provided for @productsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Products:'**
+  String get productsLabel;
+
+  /// Status translations
+  String get statusPending;
+  String get statusPaid;
+  String get statusInPreparation;
+  String get statusSent;
+  String get statusDelivered;
+  String get statusCancelled;
+  String get statusUnknown;
 }
 
 class _AppLocalizationsDelegate

@@ -766,4 +766,70 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get slide3Subtitle =>
       'Track your order in real-time from preparation to delivery';
+
+    @override
+    String get spanish => 'Español';
+
+    @override
+    String get english => 'English';
+
+    @override
+    String get guestMode => 'Guest Mode';
+
+    @override
+    String get searchOrdersTitle => 'Search my orders';
+
+    @override
+    String get searchOrdersPrompt => 'Enter the email you used when placing the order:';
+
+    @override
+    String get searchWithAnotherEmail => 'Search with another email';
+
+    @override
+    String get noOrders => 'You have no orders';
+
+    @override
+    String get orderCancelled => 'Order cancelled successfully';
+
+    @override
+    String get productsLabel => 'Products:';
+
+    @override
+    String get statusPending => 'Pending';
+
+    @override
+    String get statusPaid => 'Paid';
+
+    @override
+    String get statusInPreparation => 'In Preparation';
+
+    @override
+    String get statusSent => 'Sent';
+
+    @override
+    String get statusDelivered => 'Delivered';
+
+    @override
+    String get statusCancelled => 'Cancelled';
+
+    @override
+    String get statusUnknown => 'Unknown';
+
+    @override
+    String get comingSoon => 'Coming soon';
+
+    @override
+    String get activeAccount => 'Account active ✓';
+
+    @override
+    String get theme => 'Theme';
+
+    @override
+    String get billingDetails => 'Billing details';
+
+    @override
+    String get logoutConfirmation => 'Are you sure you want to logout?';
+
+    @override
+    String get guestAuthPrompt => 'Sign in or register to continue';
 }

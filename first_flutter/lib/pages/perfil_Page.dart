@@ -101,9 +101,9 @@ class PerfilPage extends StatelessWidget {
                               overflow: TextOverflow.ellipsis,
                             ),
                             const SizedBox(height: 4),
-                            const Text(
-                              'Cuenta Activa ✓',
-                              style: TextStyle(
+                            Text(
+                              AppLocalizations.of(context)?.activeAccount ?? 'Cuenta Activa ✓',
+                              style: const TextStyle(
                                 fontSize: 12,
                                 color: Colors.green,
                                 fontWeight: FontWeight.w500,
@@ -117,9 +117,9 @@ class PerfilPage extends StatelessWidget {
                         onPressed: () {
                           // TODO: Navegar a editar perfil
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Editar perfil - Próximamente'),
-                              duration: Duration(seconds: 2),
+                            SnackBar(
+                              content: Text(AppLocalizations.of(context)?.comingSoon ?? 'Próximamente'),
+                              duration: const Duration(seconds: 2),
                             ),
                           );
                         },
@@ -132,7 +132,7 @@ class PerfilPage extends StatelessWidget {
                 const SizedBox(height: 8),
 
                 // 🔹 Sección Preferencias
-                _buildSectionTitle(context, 'Preferencias'),
+                _buildSectionTitle(context, AppLocalizations.of(context)!.settings),
 
                 // Selector de idioma
                 _buildPreferenceRow(
@@ -144,14 +144,14 @@ class PerfilPage extends StatelessWidget {
                 // Selector de tema
                 _buildPreferenceRow(
                   icon: Icons.brightness_6,
-                  label: 'Tema',
+                  label: AppLocalizations.of(context)?.theme ?? 'Theme',
                   widget: const ThemeSelector(),
                 ),
 
                 const SizedBox(height: 12),
 
                 // 🔹 Sección Cuenta
-                _buildSectionTitle(context, 'Cuenta'),
+                _buildSectionTitle(context, AppLocalizations.of(context)!.accountSettings),
 
                 // Pedidos
                 _buildMenuTile(
@@ -160,9 +160,9 @@ class PerfilPage extends StatelessWidget {
                   label: AppLocalizations.of(context)?.orders ?? 'Mis Pedidos',
                   onTap: () {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Mis Pedidos - Próximamente'),
-                        duration: Duration(seconds: 2),
+                      SnackBar(
+                        content: Text(AppLocalizations.of(context)?.comingSoon ?? 'Coming soon'),
+                        duration: const Duration(seconds: 2),
                       ),
                     );
                   },
@@ -175,9 +175,9 @@ class PerfilPage extends StatelessWidget {
                   label: AppLocalizations.of(context)?.addresses ?? 'Mis Direcciones',
                   onTap: () {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Mis Direcciones - Próximamente'),
-                        duration: Duration(seconds: 2),
+                      SnackBar(
+                        content: Text(AppLocalizations.of(context)?.comingSoon ?? 'Coming soon'),
+                        duration: const Duration(seconds: 2),
                       ),
                     );
                   },
@@ -187,12 +187,12 @@ class PerfilPage extends StatelessWidget {
                 _buildMenuTile(
                   context,
                   icon: Icons.receipt,
-                  label: 'Datos de Facturación',
+                  label: AppLocalizations.of(context)?.billingDetails ?? 'Datos de Facturación',
                   onTap: () {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Datos de Facturación - Próximamente'),
-                        duration: Duration(seconds: 2),
+                      SnackBar(
+                        content: Text(AppLocalizations.of(context)?.comingSoon ?? 'Coming soon'),
+                        duration: const Duration(seconds: 2),
                       ),
                     );
                   },
@@ -201,7 +201,7 @@ class PerfilPage extends StatelessWidget {
                 const SizedBox(height: 12),
 
                 // 🔹 Sección Legal e Información
-                _buildSectionTitle(context, 'Información'),
+                _buildSectionTitle(context, AppLocalizations.of(context)!.aboutUs),
 
                 // Ayuda y Soporte
                 _buildMenuTile(
@@ -210,9 +210,9 @@ class PerfilPage extends StatelessWidget {
                   label: AppLocalizations.of(context)?.helpSupport ?? 'Ayuda y Soporte',
                   onTap: () {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Ayuda y Soporte - Próximamente'),
-                        duration: Duration(seconds: 2),
+                      SnackBar(
+                        content: Text(AppLocalizations.of(context)?.comingSoon ?? 'Coming soon'),
+                        duration: const Duration(seconds: 2),
                       ),
                     );
                   },
@@ -225,9 +225,9 @@ class PerfilPage extends StatelessWidget {
                   label: AppLocalizations.of(context)?.privacyPolicy ?? 'Política de Privacidad',
                   onTap: () {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Política de Privacidad - Próximamente'),
-                        duration: Duration(seconds: 2),
+                      SnackBar(
+                        content: Text(AppLocalizations.of(context)?.comingSoon ?? 'Coming soon'),
+                        duration: const Duration(seconds: 2),
                       ),
                     );
                   },
@@ -240,9 +240,9 @@ class PerfilPage extends StatelessWidget {
                   label: AppLocalizations.of(context)?.termsConditions ?? 'Términos y Condiciones',
                   onTap: () {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Términos y Condiciones - Próximamente'),
-                        duration: Duration(seconds: 2),
+                      SnackBar(
+                        content: Text(AppLocalizations.of(context)?.comingSoon ?? 'Coming soon'),
+                        duration: const Duration(seconds: 2),
                       ),
                     );
                   },
@@ -261,16 +261,16 @@ class PerfilPage extends StatelessWidget {
                         final confirmed = await showDialog<bool>(
                           context: context,
                           builder: (context) => AlertDialog(
-                            title: const Text('Cerrar sesión'),
-                            content: const Text('¿Estás seguro de que deseas cerrar sesión?'),
+                            title: Text(AppLocalizations.of(context)!.logout),
+                            content: Text(AppLocalizations.of(context)?.logoutConfirmation ?? 'Are you sure you want to logout?'),
                             actions: [
                               TextButton(
                                 onPressed: () => Navigator.pop(context, false),
-                                child: const Text('Cancelar'),
+                                child: Text(AppLocalizations.of(context)!.cancel),
                               ),
                               TextButton(
                                 onPressed: () => Navigator.pop(context, true),
-                                child: const Text('Cerrar sesión', style: TextStyle(color: Colors.red)),
+                                child: Text(AppLocalizations.of(context)!.logout, style: const TextStyle(color: Colors.red)),
                               ),
                             ],
                           ),
@@ -286,13 +286,13 @@ class PerfilPage extends StatelessWidget {
                       borderRadius: BorderRadius.circular(8),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                        child: Row(
-                          children: const [
-                            Icon(Icons.logout, color: Colors.red, size: 22),
-                            SizedBox(width: 16),
+                          child: Row(
+                          children: [
+                            const Icon(Icons.logout, color: Colors.red, size: 22),
+                            const SizedBox(width: 16),
                             Text(
-                              'Cerrar Sesión',
-                              style: TextStyle(
+                              AppLocalizations.of(context)!.logout,
+                              style: const TextStyle(
                                 color: Colors.red,
                                 fontSize: 16,
                                 fontWeight: FontWeight.w500,
@@ -335,14 +335,14 @@ class PerfilPage extends StatelessWidget {
                     Image.asset("assets/loogo.jpg", width: 120, height: 120),
                     const SizedBox(height: 20),
                     Text(
-                      "Bienvenido a Bitevia",
+                      AppLocalizations.of(context)?.welcomeTitle ?? 'Bienvenido a Bitevia',
                       style: theme.textTheme.headlineSmall?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     const SizedBox(height: 10),
                     Text(
-                      "Inicia sesión o regístrate para continuar",
+                      AppLocalizations.of(context)?.guestAuthPrompt ?? 'Inicia sesión o regístrate para continuar',
                       textAlign: TextAlign.center,
                       style: theme.textTheme.bodyMedium?.copyWith(
                         color: theme.textTheme.bodyMedium?.color?.withOpacity(0.7),
@@ -362,9 +362,9 @@ class PerfilPage extends StatelessWidget {
                             borderRadius: BorderRadius.circular(10),
                           ),
                         ),
-                        child: const Text(
-                          'Iniciar Sesión',
-                          style: TextStyle(fontSize: 18, color: Colors.white),
+                        child: Text(
+                          AppLocalizations.of(context)?.login ?? 'Iniciar Sesión',
+                          style: const TextStyle(fontSize: 18, color: Colors.white),
                         ),
                       ),
                     ),
@@ -382,7 +382,7 @@ class PerfilPage extends StatelessWidget {
                             borderRadius: BorderRadius.circular(10),
                           ),
                         ),
-                        child: const Text('Registrarse', style: TextStyle(fontSize: 18)),
+                        child: Text(AppLocalizations.of(context)?.register ?? 'Registrarse', style: const TextStyle(fontSize: 18)),
                       ),
                     ),
 
@@ -392,9 +392,9 @@ class PerfilPage extends StatelessWidget {
                       onPressed: () {
                         Navigator.pushNamed(context, "/forgot-password");
                       },
-                      child: const Text(
-                        "¿Olvidaste tu contraseña?",
-                        style: TextStyle(color: Colors.blueAccent),
+                      child: Text(
+                        AppLocalizations.of(context)?.forgotPassword ?? '¿Olvidaste tu contraseña?',
+                        style: const TextStyle(color: Colors.blueAccent),
                       ),
                     ),
                   ],

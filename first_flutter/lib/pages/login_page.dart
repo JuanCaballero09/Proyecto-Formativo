@@ -6,6 +6,7 @@ import '../bloc/auth/auth_bloc.dart';
 import '../bloc/auth/auth_event.dart';
 import '../bloc/auth/auth_state.dart';
 import 'product_catalog_page.dart';
+import '../l10n/app_localizations.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -65,7 +66,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Error',
+                    AppLocalizations.of(context)!.error,
                     style: GoogleFonts.poppins(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
@@ -78,7 +79,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                   ),
                   if (errorCode != null)
                     Text(
-                      'Código: $errorCode',
+                      'Code: $errorCode',
                       style: GoogleFonts.poppins(
                         fontSize: 11,
                         color: Colors.white70,
@@ -222,7 +223,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                             const Icon(Icons.arrow_back_ios_new_rounded,
                                 size: 18, color: Colors.black87),
                             const SizedBox(width: 4),
-                            Text('Atrás',
+                            Text(AppLocalizations.of(context)!.back,
                                 style: GoogleFonts.poppins(
                                     fontSize: 14, color: Colors.black87)),
                           ],
@@ -265,20 +266,19 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                 color: Colors.orange.shade50,
                                 borderRadius: BorderRadius.circular(16),
                               ),
-                              child: Image.asset('assets/loogo.jpg',
-                                  height: 80, width: 80),
+                              child: Image.asset('assets/loogo.jpg', height: 80, width: 80),
                             ),
                             const SizedBox(height: 20),
 
                             // Títulos
-                            Text('¡Bienvenido!',
+                            Text(AppLocalizations.of(context)!.welcome,
                                 style: GoogleFonts.poppins(
                                   fontSize: 32,
                                   fontWeight: FontWeight.w700,
                                   color: Colors.black87,
                                 )),
                             const SizedBox(height: 8),
-                            Text('Inicia sesión en tu cuenta',
+                            Text(AppLocalizations.of(context)!.signIn,
                                 style: GoogleFonts.poppins(
                                   fontSize: 15,
                                   color: Colors.black54,
@@ -290,46 +290,36 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                               controller: userController,
                               keyboardType: TextInputType.emailAddress,
                               decoration: InputDecoration(
-                                labelText: 'Correo electrónico',
+                                labelText: AppLocalizations.of(context)!.email,
                                 labelStyle: GoogleFonts.poppins(
                                   color: Colors.black54,
                                 ),
-                                prefixIcon: const Icon(Icons.email_outlined,
-                                    color: kOrange),
+                                prefixIcon: const Icon(Icons.email_outlined, color: kOrange),
                                 filled: true,
                                 fillColor: Colors.grey.shade50,
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(14),
-                                  borderSide: const BorderSide(
-                                    color: Colors.grey,
-                                  ),
+                                  borderSide: const BorderSide(color: Colors.grey),
                                 ),
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(14),
-                                  borderSide: BorderSide(
-                                    color: Colors.grey.shade300,
-                                  ),
+                                  borderSide: BorderSide(color: Colors.grey.shade300),
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(14),
-                                  borderSide: const BorderSide(
-                                    color: kOrange,
-                                    width: 2,
-                                  ),
+                                  borderSide: const BorderSide(color: kOrange, width: 2),
                                 ),
                                 errorBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(14),
-                                  borderSide: const BorderSide(
-                                    color: Colors.red,
-                                  ),
+                                  borderSide: const BorderSide(color: Colors.red),
                                 ),
                               ),
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
-                                  return 'Por favor ingresa tu correo';
+                                  return AppLocalizations.of(context)!.fieldRequired;
                                 }
                                 if (!_isValidEmail(value)) {
-                                  return 'Ingresa un correo válido';
+                                  return AppLocalizations.of(context)!.enterValidEmail;
                                 }
                                 return null;
                               },
@@ -341,55 +331,40 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                               controller: passController,
                               obscureText: _obscurePassword,
                               decoration: InputDecoration(
-                                labelText: 'Contraseña',
+                                labelText: AppLocalizations.of(context)!.password,
                                 labelStyle: GoogleFonts.poppins(
                                   color: Colors.black54,
                                 ),
-                                prefixIcon: const Icon(Icons.lock_outline,
-                                    color: kOrange),
+                                prefixIcon: const Icon(Icons.lock_outline, color: kOrange),
                                 suffixIcon: IconButton(
                                   onPressed: _togglePassword,
-                                  icon: Icon(
-                                    _obscurePassword
-                                        ? Icons.visibility
-                                        : Icons.visibility_off,
-                                    color: kOrange,
-                                  ),
+                                  icon: Icon(_obscurePassword ? Icons.visibility : Icons.visibility_off, color: kOrange),
                                 ),
                                 filled: true,
                                 fillColor: Colors.grey.shade50,
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(14),
-                                  borderSide: const BorderSide(
-                                    color: Colors.grey,
-                                  ),
+                                  borderSide: const BorderSide(color: Colors.grey),
                                 ),
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(14),
-                                  borderSide: BorderSide(
-                                    color: Colors.grey.shade300,
-                                  ),
+                                  borderSide: BorderSide(color: Colors.grey.shade300),
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(14),
-                                  borderSide: const BorderSide(
-                                    color: kOrange,
-                                    width: 2,
-                                  ),
+                                  borderSide: const BorderSide(color: kOrange, width: 2),
                                 ),
                                 errorBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(14),
-                                  borderSide: const BorderSide(
-                                    color: Colors.red,
-                                  ),
+                                  borderSide: const BorderSide(color: Colors.red),
                                 ),
                               ),
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
-                                  return 'Por favor ingresa tu contraseña';
+                                  return AppLocalizations.of(context)!.fieldRequired;
                                 }
                                 if (value.length < 6) {
-                                  return 'La contraseña debe tener al menos 6 caracteres';
+                                  return AppLocalizations.of(context)!.passwordTooShort;
                                 }
                                 return null;
                               },
@@ -402,7 +377,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                 onPressed: () {
                                   // Implementar recuperación de contraseña
                                 },
-                                child: Text('¿Olvidaste tu contraseña?',
+                                child: Text(AppLocalizations.of(context)!.forgotPassword,
                                     style: GoogleFonts.poppins(
                                       fontSize: 13,
                                       color: kOrange,
@@ -437,7 +412,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                               strokeWidth: 3,
                                             ),
                                           )
-                                        : Text('Ingresar',
+                                        : Text(AppLocalizations.of(context)!.login,
                                             style: GoogleFonts.poppins(
                                               fontSize: 16,
                                               fontWeight: FontWeight.w600,
@@ -454,7 +429,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Text('¿No tienes una cuenta?',
+                                Text(AppLocalizations.of(context)!.dontHaveAccount,
                                     style: GoogleFonts.poppins(
                                       fontSize: 14,
                                       color: Colors.black54,
@@ -463,11 +438,10 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                   onPressed: () {
                                     Navigator.push(
                                       context,
-                                      MaterialPageRoute(
-                                          builder: (_) => const RegisterPage()),
+                                      MaterialPageRoute(builder: (_) => const RegisterPage()),
                                     );
                                   },
-                                  child: Text('Regístrate aquí',
+                                  child: Text(AppLocalizations.of(context)!.signUp,
                                       style: GoogleFonts.poppins(
                                         fontSize: 14,
                                         color: kOrange,
