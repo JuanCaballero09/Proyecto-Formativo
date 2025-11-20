@@ -79,7 +79,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                   ),
                   if (errorCode != null)
                     Text(
-                      'Code: $errorCode',
+                      '${AppLocalizations.of(context)!.codeLabel} $errorCode',
                       style: GoogleFonts.poppins(
                         fontSize: 11,
                         color: Colors.white70,
@@ -138,7 +138,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  "¡Bienvenido!",
+                  AppLocalizations.of(context)!.welcome,
                   textAlign: TextAlign.center,
                   style: GoogleFonts.poppins(
                     fontSize: 22,
@@ -148,7 +148,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  "Inicio de sesión exitoso",
+                  AppLocalizations.of(context)!.loginSuccess,
                   textAlign: TextAlign.center,
                   style: GoogleFonts.poppins(
                     fontSize: 14,

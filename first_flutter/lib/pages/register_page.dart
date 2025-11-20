@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:first_flutter/l10n/app_localizations.dart';
 
 const kOrange = Color.fromRGBO(237, 88, 33, 1);
 
@@ -74,10 +75,10 @@ class _AuthScaffoldState extends State<AuthScaffold> with TickerProviderStateMix
                   onTap: () => Navigator.pop(context),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
-                    children: const [
-                      Icon(Icons.arrow_back_ios_new_rounded, size: 18, color: Colors.black87),
-                      SizedBox(width: 4),
-                      Text('Atrás', style: TextStyle(fontSize: 16, color: Colors.black87)),
+                    children: [
+                      const Icon(Icons.arrow_back_ios_new_rounded, size: 18, color: Colors.black87),
+                      const SizedBox(width: 4),
+                      Text(AppLocalizations.of(context)?.back ?? 'Atrás', style: const TextStyle(fontSize: 16, color: Colors.black87)),
                     ],
                   ),
                 ),
@@ -168,7 +169,7 @@ class _RegisterPageState extends State<RegisterPage> {
 TextField(
   controller: nameCtrl,
   decoration: InputDecoration(
-    labelText: 'Nombre de usuario',
+    labelText: AppLocalizations.of(context)?.firstName ?? 'Nombre de usuario',
     prefixIcon: const Icon(Icons.person_outline, color: kOrange),
     filled: true,
     fillColor: Colors.white,
@@ -184,7 +185,7 @@ TextField(
   controller: emailCtrl,
   keyboardType: TextInputType.emailAddress,
   decoration: InputDecoration(
-    labelText: 'Correo electrónico',
+    labelText: AppLocalizations.of(context)?.email ?? 'Correo electrónico',
     prefixIcon: const Icon(Icons.email_outlined, color: kOrange),
     filled: true,
     fillColor: Colors.white,
@@ -200,7 +201,7 @@ TextField(
   controller: passCtrl,
   obscureText: obscure,
   decoration: InputDecoration(
-    labelText: 'Contraseña',
+    labelText: AppLocalizations.of(context)?.password ?? 'Contraseña',
     prefixIcon: const Icon(Icons.lock_outline, color: kOrange),
     filled: true,
     fillColor: Colors.white,
@@ -223,7 +224,7 @@ const SizedBox(height: 14),
             Row(
               children: [
                 Checkbox(value: agree, onChanged: (v) => setState(() => agree = v ?? false), activeColor: kOrange),
-                const Expanded(child: Text('Acepto los Términos y Condiciones', style: TextStyle(fontSize: 13))),
+                  Expanded(child: Text(AppLocalizations.of(context)?.termsConditions ?? 'Acepto los Términos y Condiciones', style: const TextStyle(fontSize: 13))),
               ],
             ),
 
@@ -238,7 +239,7 @@ const SizedBox(height: 14),
                   disabledBackgroundColor: kOrange.withOpacity(0.45),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(26)),
                 ),
-                child: Text('Registrarse', style: GoogleFonts.poppins(fontSize: 16, color: Colors.white, fontWeight: FontWeight.w600)),
+                child: Text(AppLocalizations.of(context)?.register ?? 'Registrarse', style: GoogleFonts.poppins(fontSize: 16, color: Colors.white, fontWeight: FontWeight.w600)),
               ),
             ),
 
@@ -247,7 +248,7 @@ const SizedBox(height: 14),
               onPressed: () {
                 Navigator.pop(context); // Vuelve a la pantalla anterior (Login)
               },
-              child: Text('¿Ya tienes una cuenta? Inicia sesión', style: GoogleFonts.poppins(color: kOrange, fontWeight: FontWeight.w600)),
+              child: Text(AppLocalizations.of(context)?.alreadyHaveAccount ?? '¿Ya tienes una cuenta? Inicia sesión', style: GoogleFonts.poppins(color: kOrange, fontWeight: FontWeight.w600)),
               
             ),
 

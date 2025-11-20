@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:first_flutter/l10n/app_localizations.dart';
 import 'login_page.dart';
 
 
@@ -23,17 +24,17 @@ class WelcomePage extends StatelessWidget {
               ),
 
               // Texto del título
-              const Text(
-                'Bienvenido A Bitevia',
+              Text(
+                AppLocalizations.of(context)?.welcomeTitle ?? 'Bienvenido A Bitevia',
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily:'Arial', color: Colors.white),
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily:'Arial', color: Colors.white),
               ),
   
 
-              const Text(
-                '¡Disfruta De Una Experiencia Única!',
+              Text(
+                AppLocalizations.of(context)?.welcomeSubtitle ?? '¡Disfruta De Una Experiencia Única!',
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal, fontFamily:'Arial', color: Colors.white),
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.normal, fontFamily:'Arial', color: Colors.white),
               ),
               const SizedBox(height: 15),
 
@@ -54,9 +55,9 @@ class WelcomePage extends StatelessWidget {
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
-                  child: const Text(
-                    'Iniciar Sesión',
-                    style: TextStyle(fontSize: 18, color: Colors.white),
+                  child: Text(
+                    AppLocalizations.of(context)?.login ?? 'Iniciar Sesión',
+                    style: const TextStyle(fontSize: 18, color: Colors.white),
                   ),
                 ),
               ),
@@ -78,9 +79,9 @@ class WelcomePage extends StatelessWidget {
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
-                  child: const Text(
-                    'Registrarse',
-                    style: TextStyle(fontSize: 18),
+                  child: Text(
+                    AppLocalizations.of(context)?.register ?? 'Registrarse',
+                    style: const TextStyle(fontSize: 18),
                   ),
                 ),
               ),

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/auth/auth_bloc.dart';
 import '../bloc/auth/auth_state.dart';
+import 'package:first_flutter/l10n/app_localizations.dart';
 
 class PerfilWrapper extends StatelessWidget {
   const PerfilWrapper({super.key});
@@ -20,9 +21,9 @@ class PerfilWrapper extends StatelessWidget {
         } else if (state is Unauthenticated) {
           return const PerfilPage();
         } else {
-          return const Scaffold(
-            body: Center(child: Text("Error de autenticación")),
-          );
+            return Scaffold(
+              body: Center(child: Text(AppLocalizations.of(context)!.authenticationError)),
+            );
         }
       },
     );

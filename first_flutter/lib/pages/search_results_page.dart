@@ -110,14 +110,14 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
       onPopInvokedWithResult: (didPop, result) {},
       child: Scaffold(
         backgroundColor: theme.scaffoldBackgroundColor,
-        appBar: AppBar(
+          appBar: AppBar(
           backgroundColor: theme.appBarTheme.backgroundColor,
           elevation: 2,
           title: Text(localizations.searchResults),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () => Navigator.pop(context),
-            tooltip: 'Volver',
+            tooltip: localizations.back,
           ),
           centerTitle: true,
         ),
@@ -151,7 +151,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
                           ),
                           const SizedBox(height: 16),
                           Text(
-                            'Escribe para buscar',
+                            localizations.typeToSearch,
                             style: theme.textTheme.bodyLarge?.copyWith(
                               color: theme.hintColor,
                             ),
@@ -205,7 +205,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
                             ),
                             const SizedBox(height: 16),
                             Text(
-                              'No se encontraron resultados',
+                              localizations.noResultsFound,
                               style: theme.textTheme.bodyLarge?.copyWith(
                                 color: theme.hintColor,
                               ),
@@ -336,7 +336,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
           } else if (result.type == 'category') {
             // Navegar a categoría o mostrar productos de categoría
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Categoría seleccionada')),
+              SnackBar(content: Text(AppLocalizations.of(context)!.categorySelected)),
             );
           }
         },

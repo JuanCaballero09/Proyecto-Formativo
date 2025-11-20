@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter/foundation.dart';
 import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'search_event.dart';
 import 'search_state.dart';
@@ -58,7 +59,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
             results.add(SearchResult.fromProductJson(product));
           } catch (e) {
             // Ignorar productos malformados
-            print('Error procesando producto: $e');
+            debugPrint('Error procesando producto: $e');
           }
         }
       }
@@ -71,7 +72,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
             results.add(SearchResult.fromCategoryJson(category));
           } catch (e) {
             // Ignorar categorías malformadas
-            print('Error procesando categoría: $e');
+            debugPrint('Error procesando categoría: $e');
           }
         }
       }
@@ -87,7 +88,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
       ));
     } catch (e) {
       // Emitir estado de error con historial
-      print('Error en búsqueda: $e');
+      debugPrint('Error en búsqueda: $e');
       emit(SearchError(
         'Error al buscar: ${e.toString()}',
         searchHistory: _searchHistory,

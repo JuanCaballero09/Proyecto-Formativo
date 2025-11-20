@@ -61,7 +61,7 @@ class DomicilioPageState extends State<DomicilioPage> {
       _showError(e.message);
       setState(() => _isLoading = false);
     } catch (e) {
-      _showError('Error al cargar \u00f3rdenes: $e');
+      _showError('${AppLocalizations.of(context)!.loadingOrdersError}: $e');
       setState(() => _isLoading = false);
     }
   }
@@ -89,11 +89,11 @@ class DomicilioPageState extends State<DomicilioPage> {
             TextField(
               controller: _emailController,
               keyboardType: TextInputType.emailAddress,
-              decoration: const InputDecoration(
-                labelText: 'Email',
-                hintText: 'correo@ejemplo.com',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.email),
+              decoration: InputDecoration(
+                labelText: AppLocalizations.of(context)?.email ?? 'Email',
+                hintText: AppLocalizations.of(context)?.emailHint ?? 'correo@ejemplo.com',
+                border: const OutlineInputBorder(),
+                prefixIcon: const Icon(Icons.email),
               ),
             ),
           ],
@@ -243,7 +243,7 @@ class DomicilioPageState extends State<DomicilioPage> {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      '${order['items']?.length ?? 0} producto(s)',
+                      '${order['items']?.length ?? 0} ${AppLocalizations.of(context)!.productsLabel}',
                       style: TextStyle(
                         color: Colors.grey[600],
                         fontSize: 12,

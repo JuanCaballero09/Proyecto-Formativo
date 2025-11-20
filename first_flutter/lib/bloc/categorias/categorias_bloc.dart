@@ -23,7 +23,7 @@ class CategoriasBloc extends Bloc<CategoriasEvent, CategoriasState> {
           
           emit(CategoriasLoadedState(categorias));
         } else {
-          emit(CategoriasErrorState('No se pudieron cargar las categorías'));
+          emit(CategoriasErrorState('Failed to load categories'));
         }
       } catch (e) {
         emit(CategoriasErrorState('Error: ${e.toString()}'));

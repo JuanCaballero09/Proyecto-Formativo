@@ -326,7 +326,7 @@ class _HomePageState extends State<HomePage>
           return Container(
             height: 270,
             alignment: Alignment.center,
-            child: const Text('Error cargando productos'),
+            child: Text(AppLocalizations.of(context)!.loadingProductsError),
           );
         }
       },
@@ -424,7 +424,7 @@ class _HomePageState extends State<HomePage>
                               description: product.description,
                             )));
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Añadido al carrito')),
+                          SnackBar(content: Text(AppLocalizations.of(context)!.addedToCart)),
                         );
                       },
                       child: const Icon(Icons.add_shopping_cart,

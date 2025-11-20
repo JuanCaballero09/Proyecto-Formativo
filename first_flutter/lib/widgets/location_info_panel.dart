@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../l10n/app_localizations.dart';
 
 /// Widget que muestra la información de ubicación y distancia
 /// 
@@ -27,9 +28,9 @@ class LocationInfoPanel extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Text(
-            'Dirección seleccionada:',
-            style: TextStyle(
+          Text(
+            AppLocalizations.of(context)!.selectedAddress,
+            style: const TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 16,
             ),
@@ -41,9 +42,9 @@ class LocationInfoPanel extends StatelessWidget {
           ),
           if (distance != null) ...[
             const SizedBox(height: 16),
-            const Text(
-              'Distancia:',
-              style: TextStyle(
+            Text(
+              AppLocalizations.of(context)!.distanceLabel,
+              style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 16,
               ),

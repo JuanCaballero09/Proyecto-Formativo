@@ -43,8 +43,8 @@ class _DeliveryLocationPageState extends State<DeliveryLocationPage> {
 
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('Los servicios de ubicación están desactivados. Por favor actívalos.'),
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(AppLocalizations.of(context)!.locationServicesDisabled),
       ));
       return false;
     }
@@ -53,17 +53,16 @@ class _DeliveryLocationPageState extends State<DeliveryLocationPage> {
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text('Los permisos de ubicación fueron denegados'),
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(AppLocalizations.of(context)!.locationPermissionsDenied),
         ));
         return false;
       }
     }
 
     if (permission == LocationPermission.deniedForever) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text(
-          'Los permisos de ubicación están permanentemente denegados, no podemos solicitar permisos.'),
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(AppLocalizations.of(context)!.locationPermissionsPermanentlyDenied),
       ));
       return false;
     }
@@ -96,8 +95,8 @@ class _DeliveryLocationPageState extends State<DeliveryLocationPage> {
       await _getAddressFromLatLng(_currentPosition);
       
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('Error al obtener la ubicación actual'),
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(AppLocalizations.of(context)!.errorGettingLocation),
       ));
     } finally {
       setState(() => _isLoadingLocation = false);
@@ -151,7 +150,7 @@ class _DeliveryLocationPageState extends State<DeliveryLocationPage> {
       }
     } catch (e) {
       setState(() {
-        _currentAddress = 'No se pudo obtener la dirección';
+        _currentAddress = AppLocalizations.of(context)!.couldNotGetAddress;
       });
     }
   }
@@ -289,9 +288,9 @@ class _DeliveryLocationPageState extends State<DeliveryLocationPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text(
-              'Dirección seleccionada:',
-              style: TextStyle(
+            Text(
+              AppLocalizations.of(context)!.selectedAddress,
+              style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 16,
               ),
@@ -303,9 +302,9 @@ class _DeliveryLocationPageState extends State<DeliveryLocationPage> {
             ),
             if (_distance != null) ...[
               const SizedBox(height: 16),
-              const Text(
-                'Distancia:',
-                style: TextStyle(
+              Text(
+                AppLocalizations.of(context)!.distanceLabel,
+                style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 16,
                 ),

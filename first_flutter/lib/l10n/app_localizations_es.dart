@@ -771,31 +771,40 @@ class AppLocalizationsEs extends AppLocalizations {
       'Rastrea tu pedido en tiempo real desde la preparación hasta la entrega';
 
     @override
-    String get spanish => 'Español';
+    String get productsLabel => 'Productos:';
 
     @override
-    String get english => 'English';
+    String get exampleAddress => 'Ej: Calle Falsa 123, Ciudad';
+
+    @override
+    String get emailHint => 'correo@ejemplo.com';
+
+    @override
+    String get invalidAddress => 'Por favor ingresa una dirección válida (mínimo 5 caracteres)';
+
+    @override
+    String get completeAllFields => 'Por favor completa todos los campos requeridos';
+
+    @override
+    String get loadingOrdersError => 'Error al cargar pedidos';
+
+    @override
+    String get searchOrdersTitle => 'Buscar mis pedidos';
+
+    @override
+    String get searchOrdersPrompt => 'Ingresa el correo que usaste al realizar el pedido:';
 
     @override
     String get guestMode => 'Modo Invitado';
 
     @override
-    String get searchOrdersTitle => 'Buscar mis órdenes';
+    String get noOrders => 'No tienes pedidos';
 
     @override
-    String get searchOrdersPrompt => 'Ingresa el email que usaste al hacer tu pedido:';
+    String get searchWithAnotherEmail => 'Buscar con otro correo';
 
     @override
-    String get searchWithAnotherEmail => 'Buscar con otro email';
-
-    @override
-    String get noOrders => 'No tienes órdenes';
-
-    @override
-    String get orderCancelled => 'Orden cancelada exitosamente';
-
-    @override
-    String get productsLabel => 'Productos:';
+    String get orderCancelled => 'Pedido cancelado exitosamente';
 
     @override
     String get statusPending => 'Pendiente';
@@ -819,20 +828,71 @@ class AppLocalizationsEs extends AppLocalizations {
     String get statusUnknown => 'Desconocido';
 
     @override
-    String get comingSoon => 'Próximamente';
+    String get locationServicesDisabled => 'Los servicios de ubicación están desactivados. Por favor actívalos.';
 
     @override
-    String get activeAccount => 'Cuenta Activa ✓';
+    String get locationPermissionsDenied => 'Permisos de ubicación denegados';
+
+    @override
+    String get locationPermissionsPermanentlyDenied => 'Permisos de ubicación denegados permanentemente. No podemos solicitarlos.';
+
+    @override
+    String get errorGettingLocation => 'Error al obtener la ubicación actual';
+
+    @override
+    String get couldNotGetAddress => 'No se pudo obtener la dirección';
+
+    @override
+    String get selectedAddress => 'Dirección seleccionada:';
+
+    @override
+    String get distanceLabel => 'Distancia:';
+
+    @override
+    String get codeLabel => 'Código:';
+
+    @override
+    String get authenticationError => 'Error de autenticación';
+
+    @override
+    String get activeAccount => 'Cuenta activa ✓';
+
+    @override
+    String get comingSoon => 'Próximamente';
 
     @override
     String get theme => 'Tema';
 
     @override
-    String get billingDetails => 'Datos de Facturación';
+    String get billingDetails => 'Detalles de facturación';
 
     @override
-    String get logoutConfirmation => '¿Estás seguro de que deseas cerrar sesión?';
+    String get logoutConfirmation => '¿Estás seguro que quieres cerrar sesión?';
 
     @override
     String get guestAuthPrompt => 'Inicia sesión o regístrate para continuar';
+
+    @override
+    String get spanish => 'Español';
+
+    @override
+    String get english => 'Inglés';
+
+    @override
+    String get description => 'Descripción';
+
+    @override
+    String get typeToSearch => 'Escribe para buscar';
+
+    @override
+    String get noResultsFound => 'No se encontraron resultados';
+
+    @override
+    String get categorySelected => 'Categoría seleccionada';
+
+    @override
+    String get product => 'Producto';
+
+    @override
+    String get viewProductsOfThisCategory => 'Ver productos de esta categoría';
 }

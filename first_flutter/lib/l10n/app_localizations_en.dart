@@ -768,13 +768,22 @@ class AppLocalizationsEn extends AppLocalizations {
       'Track your order in real-time from preparation to delivery';
 
     @override
-    String get spanish => 'Español';
+    String get productsLabel => 'Products:';
 
     @override
-    String get english => 'English';
+    String get exampleAddress => 'Eg: 123 Main St, City';
 
     @override
-    String get guestMode => 'Guest Mode';
+    String get emailHint => 'email@example.com';
+
+    @override
+    String get invalidAddress => 'Please enter a valid address (min 5 characters)';
+
+    @override
+    String get completeAllFields => 'Please complete all required fields';
+
+    @override
+    String get loadingOrdersError => 'Error loading orders';
 
     @override
     String get searchOrdersTitle => 'Search my orders';
@@ -783,16 +792,16 @@ class AppLocalizationsEn extends AppLocalizations {
     String get searchOrdersPrompt => 'Enter the email you used when placing the order:';
 
     @override
-    String get searchWithAnotherEmail => 'Search with another email';
+    String get guestMode => 'Guest Mode';
 
     @override
     String get noOrders => 'You have no orders';
 
     @override
-    String get orderCancelled => 'Order cancelled successfully';
+    String get searchWithAnotherEmail => 'Search with another email';
 
     @override
-    String get productsLabel => 'Products:';
+    String get orderCancelled => 'Order cancelled successfully';
 
     @override
     String get statusPending => 'Pending';
@@ -816,10 +825,37 @@ class AppLocalizationsEn extends AppLocalizations {
     String get statusUnknown => 'Unknown';
 
     @override
-    String get comingSoon => 'Coming soon';
+    String get locationServicesDisabled => 'Location services are disabled. Please enable them.';
+
+    @override
+    String get locationPermissionsDenied => 'Location permissions were denied';
+
+    @override
+    String get locationPermissionsPermanentlyDenied => 'Location permissions are permanently denied. We cannot request permissions.';
+
+    @override
+    String get errorGettingLocation => 'Error getting current location';
+
+    @override
+    String get couldNotGetAddress => 'Could not retrieve address';
+
+    @override
+    String get selectedAddress => 'Selected address:';
+
+    @override
+    String get distanceLabel => 'Distance:';
+
+    @override
+    String get codeLabel => 'Code:';
+
+    @override
+    String get authenticationError => 'Authentication error';
 
     @override
     String get activeAccount => 'Account active ✓';
+
+    @override
+    String get comingSoon => 'Coming soon';
 
     @override
     String get theme => 'Theme';
@@ -832,4 +868,28 @@ class AppLocalizationsEn extends AppLocalizations {
 
     @override
     String get guestAuthPrompt => 'Sign in or register to continue';
+
+    @override
+    String get spanish => 'Español';
+
+    @override
+    String get english => 'English';
+
+    @override
+    String get description => 'Description';
+
+    @override
+    String get typeToSearch => 'Type to search';
+
+    @override
+    String get noResultsFound => 'No results found';
+
+    @override
+    String get categorySelected => 'Category selected';
+
+    @override
+    String get product => 'Product';
+
+    @override
+    String get viewProductsOfThisCategory => 'View products of this category';
 }

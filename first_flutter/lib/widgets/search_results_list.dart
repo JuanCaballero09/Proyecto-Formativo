@@ -112,7 +112,7 @@ class SearchResultsList extends StatelessWidget {
                   ),
                   const SizedBox(width: 4),
                   Text(
-                    isProduct ? 'Producto' : 'Categoría',
+                    isProduct ? AppLocalizations.of(context)!.product : AppLocalizations.of(context)!.category,
                     style: Theme.of(context).textTheme.labelSmall?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: Theme.of(context).colorScheme.onPrimary),
@@ -178,7 +178,7 @@ class SearchResultsList extends StatelessWidget {
                   ),
                   const SizedBox(width: 4),
                   Text(
-                    'Ver productos de esta categoría',
+                    AppLocalizations.of(context)!.viewProductsOfThisCategory,
                     style: TextStyle(
                       fontSize: 12,
                       color: Colors.blue[600],

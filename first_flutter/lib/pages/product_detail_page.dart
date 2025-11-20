@@ -13,14 +13,7 @@ class ProductDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('=== DEBUG: ProductDetailPage recibió ===');
-    print('ID: ${product.id}');
-    print('Nombre: ${product.name}');
-    print('Categoría: ${product.category}');
-    print('Precio: ${product.price}');
-    print('Descripción: ${product.description}');
-    print('Ingredientes: ${product.ingredients}');
-    print('==========================================');
+    // Debug prints removed - avoid logging user-facing details in production
 
     // El tema se maneja vía ThemeData; los estilos de texto usan textTheme
 
@@ -82,7 +75,7 @@ class ProductDetailPage extends StatelessWidget {
                   const Icon(Icons.description, color: Colors.amber),
                   const SizedBox(width: 8),
                   Text(
-                    'Descripción',
+                    AppLocalizations.of(context)!.description,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.bold,
                           color: Colors.amber[800],
@@ -196,7 +189,7 @@ class ProductDetailPage extends StatelessWidget {
                       SnackBar(
                         content: Center(
                           child: Text(
-                            'Añadido Con Éxito',
+                            AppLocalizations.of(context)!.addedToCart,
                             style: Theme.of(context)
                                 .textTheme
                                 .bodyMedium

@@ -57,7 +57,7 @@ class CarritoPageState extends State<CarritoPage> {
                   const Icon(Icons.shopping_bag,
                       color: Color.fromRGBO(237, 88, 33, 1)),
                   const SizedBox(width: 8),
-                  const Text('Finalizar Pedido'),
+                  Text(AppLocalizations.of(context)!.proceedToCheckout),
                 ],
               ),
               content: SingleChildScrollView(
@@ -77,14 +77,14 @@ class CarritoPageState extends State<CarritoPage> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Row(
+                                Row(
                                 children: [
                                   const Icon(Icons.shopping_cart, size: 20),
                                   const SizedBox(width: 8),
                                   Text(
-                                    '${state.cart.items.length} productos',
+                                    '${state.cart.items.length} ${AppLocalizations.of(context)!.productsLabel}',
                                     style: const TextStyle(
-                                        fontWeight: FontWeight.bold),
+                                    fontWeight: FontWeight.bold),
                                   ),
                                   const Spacer(),
                                   Container(
@@ -114,14 +114,14 @@ class CarritoPageState extends State<CarritoPage> {
                     const SizedBox(height: 16),
 
                     // Dirección de entrega (TODOS)
-                    const Text('📍 Dirección de Entrega',
-                        style: TextStyle(fontWeight: FontWeight.bold)),
+                    Text('📍 ${AppLocalizations.of(context)!.deliveryAddress}',
+                      style: const TextStyle(fontWeight: FontWeight.bold)),
                     const SizedBox(height: 8),
-                    TextField(
+                      TextField(
                       controller: _direccionController,
-                      decoration: const InputDecoration(
-                        hintText: 'Ej: Calle 123 #45-67, Bogotá',
-                        border: OutlineInputBorder(),
+                      decoration: InputDecoration(
+                        hintText: AppLocalizations.of(context)?.exampleAddress ?? 'Ej: Calle 123 #45-67, Bogotá',
+                        border: const OutlineInputBorder(),
                         isDense: true,
                       ),
                       maxLines: 2,
@@ -130,17 +130,17 @@ class CarritoPageState extends State<CarritoPage> {
 
                     // Datos del invitado (solo si NO está autenticado)
                     if (!isAuthenticated) ...[
-                      const Text('👤 Información Personal',
-                          style: TextStyle(fontWeight: FontWeight.bold)),
+                        Text('👤 ${AppLocalizations.of(context)!.personalInfo}',
+                          style: const TextStyle(fontWeight: FontWeight.bold)),
                       const SizedBox(height: 8),
                       Row(
                         children: [
                           Expanded(
                             child: TextField(
                               controller: _nombreController,
-                              decoration: const InputDecoration(
-                                labelText: 'Nombre',
-                                border: OutlineInputBorder(),
+                              decoration: InputDecoration(
+                                labelText: AppLocalizations.of(context)?.firstName ?? 'Nombre',
+                                border: const OutlineInputBorder(),
                                 isDense: true,
                               ),
                             ),
@@ -149,9 +149,9 @@ class CarritoPageState extends State<CarritoPage> {
                           Expanded(
                             child: TextField(
                               controller: _apellidoController,
-                              decoration: const InputDecoration(
-                                labelText: 'Apellido',
-                                border: OutlineInputBorder(),
+                              decoration: InputDecoration(
+                                labelText: AppLocalizations.of(context)?.lastName ?? 'Apellido',
+                                border: const OutlineInputBorder(),
                                 isDense: true,
                               ),
                             ),
@@ -162,24 +162,24 @@ class CarritoPageState extends State<CarritoPage> {
                       TextField(
                         controller: _emailController,
                         keyboardType: TextInputType.emailAddress,
-                        decoration: const InputDecoration(
-                          labelText: 'Email',
-                          hintText: 'correo@ejemplo.com',
-                          border: OutlineInputBorder(),
+                        decoration: InputDecoration(
+                          labelText: AppLocalizations.of(context)?.email ?? 'Email',
+                          hintText: AppLocalizations.of(context)?.emailHint ?? 'correo@ejemplo.com',
+                          border: const OutlineInputBorder(),
                           isDense: true,
-                          prefixIcon: Icon(Icons.email, size: 20),
+                          prefixIcon: const Icon(Icons.email, size: 20),
                         ),
                       ),
                       const SizedBox(height: 8),
                       TextField(
                         controller: _telefonoController,
                         keyboardType: TextInputType.phone,
-                        decoration: const InputDecoration(
-                          labelText: 'Teléfono',
+                        decoration: InputDecoration(
+                          labelText: AppLocalizations.of(context)?.phoneNumber ?? 'Teléfono',
                           hintText: '3001234567',
-                          border: OutlineInputBorder(),
+                          border: const OutlineInputBorder(),
                           isDense: true,
-                          prefixIcon: Icon(Icons.phone, size: 20),
+                          prefixIcon: const Icon(Icons.phone, size: 20),
                         ),
                       ),
                       const SizedBox(height: 16),
@@ -191,7 +191,7 @@ class CarritoPageState extends State<CarritoPage> {
                 TextButton(
                   onPressed:
                       _isProcessing ? null : () => Navigator.pop(context),
-                  child: const Text('Cancelar'),
+                  child: Text(AppLocalizations.of(context)!.cancel),
                 ),
                 ElevatedButton(
                   onPressed: _isProcessing
@@ -212,7 +212,7 @@ class CarritoPageState extends State<CarritoPage> {
                               color: Theme.of(context).colorScheme.onPrimary,
                               strokeWidth: 2),
                         )
-                      : Text('Confirmar Pedido',
+                      : Text(AppLocalizations.of(context)!.placeOrder,
                           style: TextStyle(
                               color: Theme.of(context).colorScheme.onPrimary)),
                 ),
@@ -231,26 +231,25 @@ class CarritoPageState extends State<CarritoPage> {
 
     // Validar dirección
     if (_direccionController.text.trim().length < 5) {
-      _showError(dialogContext,
-          'Por favor ingresa una dirección válida (mínimo 5 caracteres)');
+      _showError(dialogContext, AppLocalizations.of(context)!.invalidAddress);
       return;
     }
 
     // Validar datos de invitado si no está autenticado
     if (!isAuthenticated) {
-      if (_nombreController.text.trim().isEmpty ||
+        if (_nombreController.text.trim().isEmpty ||
           _apellidoController.text.trim().isEmpty ||
           _emailController.text.trim().isEmpty ||
           _telefonoController.text.trim().isEmpty) {
         _showError(
-            dialogContext, 'Por favor completa todos los campos requeridos');
+            dialogContext, AppLocalizations.of(context)!.completeAllFields);
         return;
       }
 
       // Validar formato de email
       final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
-      if (!emailRegex.hasMatch(_emailController.text.trim())) {
-        _showError(dialogContext, 'Por favor ingresa un email válido');
+        if (!emailRegex.hasMatch(_emailController.text.trim())) {
+        _showError(dialogContext, AppLocalizations.of(context)!.enterValidEmail);
         return;
       }
     }
@@ -294,7 +293,7 @@ class CarritoPageState extends State<CarritoPage> {
               Icon(Icons.check_circle,
                   color: Theme.of(context).colorScheme.secondary, size: 32),
               const SizedBox(width: 8),
-              Text('¡Pedido Confirmado!',
+              Text(AppLocalizations.of(context)!.orderPlaced,
                   style: Theme.of(context).textTheme.titleLarge),
             ],
           ),
@@ -302,13 +301,13 @@ class CarritoPageState extends State<CarritoPage> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Código de orden: ${orderData['code']}'),
+              Text('${AppLocalizations.of(context)!.orderNumber}: ${orderData['code']}'),
               const SizedBox(height: 8),
               Text(
                   'Total: \$${NumberFormat('#,###', 'es_CO').format(orderData['total'])}'),
               const SizedBox(height: 8),
               Text(
-                'Tu pedido ha sido registrado exitosamente. Recibirás confirmación pronto.',
+                  AppLocalizations.of(context)!.thankYou,
                 style: Theme.of(context)
                     .textTheme
                     .bodySmall
@@ -319,7 +318,7 @@ class CarritoPageState extends State<CarritoPage> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Aceptar'),
+              child: Text(AppLocalizations.of(context)!.ok),
             ),
           ],
         ),
@@ -329,7 +328,7 @@ class CarritoPageState extends State<CarritoPage> {
     } on NetworkException catch (e) {
       _showError(dialogContext, e.message);
     } catch (e) {
-      _showError(dialogContext, 'Error inesperado: $e');
+      _showError(dialogContext, '${AppLocalizations.of(context)!.unknownError}: $e');
     }
   }
 
@@ -556,12 +555,12 @@ class CarritoPageState extends State<CarritoPage> {
                     minimumSize: const Size(double.infinity, 50),
                   ),
                   child: Text(
-                    'Proceder al Pago',
+                    AppLocalizations.of(context)!.proceedToCheckout,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Theme.of(context).colorScheme.onPrimary,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold),
-                  ),
+                      color: Theme.of(context).colorScheme.onPrimary,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold),
+                    ),
                 ),
               ],
             ),
