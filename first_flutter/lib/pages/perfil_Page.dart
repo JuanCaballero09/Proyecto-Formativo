@@ -19,7 +19,6 @@ class PerfilPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context); // 👈 accedemos al tema actual
-    final isDark = theme.brightness == Brightness.dark;
 
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, state) {
