@@ -5,6 +5,7 @@ import '../l10n/app_localizations.dart';
 import '../models/product.dart';
 import '../bloc/cart/cart_bloc.dart';
 import '../models/cart_model.dart';
+import 'product_catalog_page.dart';
 
 class ProductDetailPage extends StatelessWidget {
   final Product product;
@@ -209,6 +210,111 @@ class ProductDetailPage extends StatelessWidget {
                     );
                   },
                 ),
+              ),
+            ],
+          ),
+        ),
+      ),
+      bottomNavigationBar: BottomAppBar(
+        color: const Color.fromRGBO(237, 88, 33, 1),
+        child: SizedBox(
+          height: 70,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              InkWell(
+                onTap: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (_) => const ProductCatalogPage(initialIndex: 1)),
+                  );
+                },
+                child: SizedBox(
+                  width: 60,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.restaurant_menu,
+                        color: Colors.white,
+                        size: 24,
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        AppLocalizations.of(context)!.menu,
+                        style: const TextStyle(color: Colors.white, fontSize: 11),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              BlocBuilder<CartBloc, CartState>(
+                builder: (context, state) {
+                  final cartCount = state.cart.items.fold<int>(0, (sum, item) => sum + item.quantity);
+                  return InkWell(
+                    onTap: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (_) => const ProductCatalogPage(initialIndex: 2)),
+                      );
+                    },
+                    child: SizedBox(
+                      width: 60,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Stack(
+                            clipBehavior: Clip.none,
+                            children: [
+                              const Icon(Icons.shopping_cart, color: Colors.white, size: 24),
+                              if (cartCount > 0)
+                                Positioned(
+                                  right: -6,
+                                  top: -6,
+                                  child: Container(
+                                    padding: const EdgeInsets.all(3),
+                                    decoration: BoxDecoration(color: Colors.red, borderRadius: BorderRadius.circular(10)),
+                                    constraints: const BoxConstraints(minWidth: 16, minHeight: 16),
+                                    child: Text('$cartCount', style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold)),
+                                  ),
+                                ),
+                            ],
+                          ),
+                          const SizedBox(height: 2),
+                          Text(AppLocalizations.of(context)!.cart, style: const TextStyle(color: Colors.white, fontSize: 11)),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+              InkWell(
+                onTap: () {
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const ProductCatalogPage(initialIndex: 0)));
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 5),
+                  decoration: BoxDecoration(color: const Color.fromRGBO(237, 231, 220, 1), borderRadius: BorderRadius.circular(12), boxShadow: [BoxShadow(color: Colors.black, blurRadius: 4, offset: const Offset(0, 2))]),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.home, size: 28, color: Colors.black),
+                      Text(AppLocalizations.of(context)!.home, style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12)),
+                    ],
+                  ),
+                ),
+              ),
+              InkWell(
+                onTap: () {
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const ProductCatalogPage(initialIndex: 4)));
+                },
+                child: SizedBox(width: 60, child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [Icon(Icons.delivery_dining, color: Colors.white, size: 24), const SizedBox(height: 2), Text(AppLocalizations.of(context)!.delivery, style: const TextStyle(color: Colors.white, fontSize: 11))])),
+              ),
+              InkWell(
+                onTap: () {
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const ProductCatalogPage(initialIndex: 3)));
+                },
+                child: SizedBox(width: 60, child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [Icon(Icons.person, color: Colors.white, size: 24), const SizedBox(height: 2), Text(AppLocalizations.of(context)!.profile, style: const TextStyle(color: Colors.white, fontSize: 11))])),
               ),
             ],
           ),

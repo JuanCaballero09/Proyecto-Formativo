@@ -18,50 +18,60 @@ class PerfilPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context); // 👈 accedemos al tema actual
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    // 🎨 PALETA PERSONALIZADA SOLO PARA ESTA PÁGINA
+    final bgColor = isDark ? const Color(0xFF121212) : kLightGray;
+    final cardColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
+    final textColor = isDark ? Colors.white : kDarkGray;
+    final subtitleColor = isDark ? Colors.white70 : Colors.black54;
+    final iconColor = isDark ? Colors.white70 : kOrange;
+    final arrowColor = isDark ? Colors.white38 : Colors.black26;
 
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, state) {
         if (state is Authenticated) {
           return Scaffold(
-            backgroundColor: kLightGray,
+            backgroundColor: bgColor,
             appBar: AppBar(
-              backgroundColor: Colors.white,
+              backgroundColor: cardColor,
               elevation: 1,
               title: Text(
                 AppLocalizations.of(context)!.profile,
                 style: const TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
-                  color: kDarkGray,
+                  color: textColor,
                 ),
               ),
               centerTitle: false,
             ),
             body: ListView(
               children: [
-                // 🔹 Encabezado del perfil mejorado
+                // 🔹 Encabezado del perfil
                 Container(
                   margin: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: cardColor,
                     borderRadius: BorderRadius.circular(12),
                     boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.08),
-                        blurRadius: 10,
-                        offset: const Offset(0, 2),
-                      ),
+                      if (!isDark)
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.08),
+                          blurRadius: 10,
+                          offset: const Offset(0, 2),
+                        ),
                     ],
                   ),
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
                   child: Row(
                     children: [
-                      // Avatar con fondo gradiente
+                      // Avatar con gradiente
                       Container(
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                           shape: BoxShape.circle,
-                          gradient: const LinearGradient(
+                          gradient: LinearGradient(
                             colors: [kOrange, Color(0xFFFF6E40)],
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
@@ -73,18 +83,19 @@ class PerfilPage extends StatelessWidget {
                           child: Icon(Icons.person, color: Colors.white, size: 42),
                         ),
                       ),
+
                       const SizedBox(width: 16),
-                      // Información del usuario
+
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
                               state.user.name,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
-                                color: kDarkGray,
+                                color: textColor,
                               ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
@@ -92,9 +103,9 @@ class PerfilPage extends StatelessWidget {
                             const SizedBox(height: 6),
                             Text(
                               state.user.email,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 13,
-                                color: Colors.black54,
+                                color: subtitleColor,
                               ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
@@ -111,10 +122,9 @@ class PerfilPage extends StatelessWidget {
                           ],
                         ),
                       ),
-                      // Botón Editar Perfil
+
                       IconButton(
                         onPressed: () {
-                          // TODO: Navegar a editar perfil
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text(AppLocalizations.of(context)!.comingSoon),
@@ -122,7 +132,7 @@ class PerfilPage extends StatelessWidget {
                             ),
                           );
                         },
-                        icon: const Icon(Icons.edit, color: kOrange),
+                        icon: Icon(Icons.edit, color: iconColor),
                       ),
                     ],
                   ),
@@ -133,18 +143,22 @@ class PerfilPage extends StatelessWidget {
                 // 🔹 Sección Preferencias
                 _buildSectionTitle(context, AppLocalizations.of(context)!.settings),
 
-                // Selector de idioma
                 _buildPreferenceRow(
                   icon: Icons.language,
                   label: AppLocalizations.of(context)!.language,
                   widget: const LanguageSelector(),
+                  cardColor: cardColor,
+                  textColor: textColor,
+                  iconColor: iconColor,
                 ),
 
-                // Selector de tema
                 _buildPreferenceRow(
                   icon: Icons.brightness_6,
                   label: AppLocalizations.of(context)!.theme,
                   widget: const ThemeSelector(),
+                  cardColor: cardColor,
+                  textColor: textColor,
+                  iconColor: iconColor,
                 ),
 
                 const SizedBox(height: 12),
@@ -152,49 +166,37 @@ class PerfilPage extends StatelessWidget {
                 // 🔹 Sección Cuenta
                 _buildSectionTitle(context, AppLocalizations.of(context)!.accountSettings),
 
-                // Pedidos
                 _buildMenuTile(
                   context,
                   icon: Icons.receipt_long,
-                  label: AppLocalizations.of(context)!.orders,
-                  onTap: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(AppLocalizations.of(context)?.comingSoon ?? 'Coming soon'),
-                        duration: const Duration(seconds: 2),
-                      ),
-                    );
-                  },
+                  label: "Mis Pedidos",
+                  onTap: () {},
+                  cardColor: cardColor,
+                  textColor: textColor,
+                  iconColor: iconColor,
+                  arrowColor: arrowColor,
                 ),
 
-                // Direcciones
                 _buildMenuTile(
                   context,
                   icon: Icons.location_on,
-                  label: AppLocalizations.of(context)!.addresses,
-                  onTap: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(AppLocalizations.of(context)?.comingSoon ?? 'Coming soon'),
-                        duration: const Duration(seconds: 2),
-                      ),
-                    );
-                  },
+                  label: "Mis Direcciones",
+                  onTap: () {},
+                  cardColor: cardColor,
+                  textColor: textColor,
+                  iconColor: iconColor,
+                  arrowColor: arrowColor,
                 ),
 
-                // Datos de facturación
                 _buildMenuTile(
                   context,
                   icon: Icons.receipt,
-                  label: AppLocalizations.of(context)!.billingDetails,
-                  onTap: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(AppLocalizations.of(context)?.comingSoon ?? 'Coming soon'),
-                        duration: const Duration(seconds: 2),
-                      ),
-                    );
-                  },
+                  label: "Datos de Facturación",
+                  onTap: () {},
+                  cardColor: cardColor,
+                  textColor: textColor,
+                  iconColor: iconColor,
+                  arrowColor: arrowColor,
                 ),
 
                 const SizedBox(height: 12),
@@ -202,37 +204,28 @@ class PerfilPage extends StatelessWidget {
                 // 🔹 Sección Legal e Información
                 _buildSectionTitle(context, AppLocalizations.of(context)!.aboutUs),
 
-                // Ayuda y Soporte
                 _buildMenuTile(
                   context,
                   icon: Icons.help_outline,
-                  label: AppLocalizations.of(context)!.helpSupport,
-                  onTap: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(AppLocalizations.of(context)?.comingSoon ?? 'Coming soon'),
-                        duration: const Duration(seconds: 2),
-                      ),
-                    );
-                  },
+                  label: "Ayuda y Soporte",
+                  onTap: () {},
+                  cardColor: cardColor,
+                  textColor: textColor,
+                  iconColor: iconColor,
+                  arrowColor: arrowColor,
                 ),
 
-                // Política de Privacidad
                 _buildMenuTile(
                   context,
                   icon: Icons.privacy_tip,
-                  label: AppLocalizations.of(context)!.privacyPolicy,
-                  onTap: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(AppLocalizations.of(context)?.comingSoon ?? 'Coming soon'),
-                        duration: const Duration(seconds: 2),
-                      ),
-                    );
-                  },
+                  label: "Política de Privacidad",
+                  onTap: () {},
+                  cardColor: cardColor,
+                  textColor: textColor,
+                  iconColor: iconColor,
+                  arrowColor: arrowColor,
                 ),
 
-                // Términos y Condiciones
                 _buildMenuTile(
                   context,
                   icon: Icons.article,
@@ -245,10 +238,16 @@ class PerfilPage extends StatelessWidget {
                       ),
                     );
                   },
+                  label: "Términos y Condiciones",
+                  onTap: () {},
+                  cardColor: cardColor,
+                  textColor: textColor,
+                  iconColor: iconColor,
+                  arrowColor: arrowColor,
                 ),
 
                 const SizedBox(height: 16),
-                const Divider(height: 1),
+                Divider(color: arrowColor, height: 1),
 
                 // 🔹 Cerrar sesión
                 Padding(
@@ -285,7 +284,7 @@ class PerfilPage extends StatelessWidget {
                       borderRadius: BorderRadius.circular(8),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                          child: Row(
+                        child: Row(
                           children: [
                             const Icon(Icons.logout, color: Colors.red, size: 22),
                             const SizedBox(width: 16),
@@ -304,14 +303,14 @@ class PerfilPage extends StatelessWidget {
                   ),
                 ),
 
-                // Versión de la app
+                // Versión
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 24.0),
                   child: Center(
                     child: Text(
                       'v4.3.3',
                       style: TextStyle(
-                        color: Colors.black38,
+                        color: subtitleColor,
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
                       ),
@@ -366,26 +365,32 @@ class PerfilPage extends StatelessWidget {
                           style: const TextStyle(fontSize: 18, color: Colors.white),
                         ),
                       ),
+                      child: const Text(
+                        'Iniciar Sesión',
+                        style: TextStyle(fontSize: 18, color: Colors.white),
+                      ),
                     ),
-                    const SizedBox(height: 12),
+                  ),
 
-                    // Botón Registrarse
-                    SizedBox(
-                      width: 220,
-                      height: 50,
-                      child: OutlinedButton(
-                        onPressed: () => Navigator.pushNamed(context, "/register"),
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: theme.textTheme.bodyLarge?.color,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
+                  const SizedBox(height: 12),
+
+                  SizedBox(
+                    width: 220,
+                    height: 50,
+                    child: OutlinedButton(
+                      onPressed: () => Navigator.pushNamed(context, "/register"),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: theme.textTheme.bodyLarge?.color,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
                         ),
                         child: Text(AppLocalizations.of(context)?.register ?? 'Registrarse', style: const TextStyle(fontSize: 18)),
                       ),
+                      child: const Text('Registrarse', style: TextStyle(fontSize: 18)),
                     ),
+                  ),
 
-                    const SizedBox(height: 20),
+                  const SizedBox(height: 20),
 
                     TextButton(
                       onPressed: () {
@@ -396,59 +401,59 @@ class PerfilPage extends StatelessWidget {
                         style: const TextStyle(color: Colors.blueAccent),
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
-          );
-        }
+          ),
+        );
       },
     );
   }
 
-  // 🔹 Métodos auxiliares para construir widgets reutilizables
-
-  /// Construye un título de sección
-  Widget _buildSectionTitle(BuildContext context, String title) {
+  // 🔹 Título de sección
+  Widget _buildSectionTitle(BuildContext context, String title, Color textColor) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Text(
         title,
-        style: const TextStyle(
+        style: TextStyle(
           fontSize: 14,
           fontWeight: FontWeight.bold,
-          color: Colors.black54,
+          color: textColor.withOpacity(0.7),
           letterSpacing: 0.5,
         ),
       ),
     );
   }
 
-  /// Construye una fila de preferencia
+  // 🔹 Preferencias
   Widget _buildPreferenceRow({
     required IconData icon,
     required String label,
     required Widget widget,
+    required Color cardColor,
+    required Color textColor,
+    required Color iconColor,
   }) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 4),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: cardColor,
           borderRadius: BorderRadius.circular(8),
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           child: Row(
             children: [
-              Icon(icon, color: kOrange, size: 20),
+              Icon(icon, color: iconColor, size: 20),
               const SizedBox(width: 16),
               Text(
                 label,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 15,
-                  color: kDarkGray,
+                  color: textColor,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -461,12 +466,16 @@ class PerfilPage extends StatelessWidget {
     );
   }
 
-  /// Construye un elemento de menú con ícono y navegación
+  // 🔹 Elemento del menú
   Widget _buildMenuTile(
     BuildContext context, {
     required IconData icon,
     required String label,
     required VoidCallback onTap,
+    required Color cardColor,
+    required Color textColor,
+    required Color iconColor,
+    required Color arrowColor,
   }) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
@@ -477,29 +486,29 @@ class PerfilPage extends StatelessWidget {
           borderRadius: BorderRadius.circular(8),
           child: Container(
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: cardColor,
               borderRadius: BorderRadius.circular(8),
             ),
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               child: Row(
                 children: [
-                  Icon(icon, color: kOrange, size: 20),
+                  Icon(icon, color: iconColor, size: 20),
                   const SizedBox(width: 16),
                   Expanded(
                     child: Text(
                       label,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 15,
-                        color: kDarkGray,
+                        color: textColor,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
                   ),
-                  const Icon(
+                  Icon(
                     Icons.arrow_forward_ios,
                     size: 16,
-                    color: Colors.black26,
+                    color: arrowColor,
                   ),
                 ],
               ),
@@ -510,3 +519,4 @@ class PerfilPage extends StatelessWidget {
     );
   }
 }
+
