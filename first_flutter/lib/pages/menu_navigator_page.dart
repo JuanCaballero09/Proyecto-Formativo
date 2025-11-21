@@ -1,3 +1,4 @@
+import 'package:first_flutter/pages/search_results_page.dart';
 import 'package:flutter/material.dart';
 import 'menu_page.dart';
 
@@ -8,9 +9,26 @@ class MenuNavigator extends StatelessWidget {
   Widget build(BuildContext context) {
     return Navigator(
       onGenerateRoute: (settings) {
+        Widget page;
+
+        switch (settings.name){
+
+          case '/search':
+          page = const SearchResultsPage();
+          break;
+
+          case '/menu':
+
+          default:
+          page = const MenuPage();
+
+        }
+
         return MaterialPageRoute(
-          builder: (context) => const MenuPage(),
-        );
+          builder: (context) => page,
+          settings: settings,
+          );
+        
       },
     );
   }

@@ -18,7 +18,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   final TextEditingController userController = TextEditingController();
   final TextEditingController passController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  
+
   bool _obscurePassword = true;
   late AnimationController _animController;
   late Animation<double> _fadeAnimation;
@@ -33,11 +33,13 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
       vsync: this,
       duration: const Duration(milliseconds: 900),
     );
-    _fadeAnimation =
-        CurvedAnimation(parent: _animController, curve: Curves.easeIn);
+    _fadeAnimation = CurvedAnimation(parent: _animController, curve: Curves.easeIn);
     _slideAnimation = Tween<Offset>(
-            begin: const Offset(0, .2), end: Offset.zero)
-        .animate(CurvedAnimation(parent: _animController, curve: Curves.easeOut));
+      begin: const Offset(0, .2),
+      end: Offset.zero,
+    ).animate(
+      CurvedAnimation(parent: _animController, curve: Curves.easeOut),
+    );
     _animController.forward();
   }
 
@@ -49,9 +51,9 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     super.dispose();
   }
 
-  void _togglePassword() =>
-      setState(() => _obscurePassword = !_obscurePassword);
+  void _togglePassword() => setState(() => _obscurePassword = !_obscurePassword);
 
+  // 🔴 SNACKBAR DE ERROR (SIN CAMBIOS)
   void _showErrorMessage(BuildContext context, String message, String? errorCode) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -74,15 +76,12 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                   ),
                   Text(
                     message,
-                    style: GoogleFonts.poppins(fontSize: 13),
+                    style: GoogleFonts.poppins(fontSize: 13, color: Colors.white),
                   ),
                   if (errorCode != null)
                     Text(
                       'Código: $errorCode',
-                      style: GoogleFonts.poppins(
-                        fontSize: 11,
-                        color: Colors.white70,
-                      ),
+                      style: GoogleFonts.poppins(fontSize: 11, color: Colors.white70),
                     ),
                 ],
               ),
@@ -101,9 +100,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   }
 
   Future<void> _login() async {
-    if (!_formKey.currentState!.validate()) {
-      return;
-    }
+    if (!_formKey.currentState!.validate()) return;
 
     final user = userController.text.trim();
     final pass = passController.text.trim();
@@ -111,13 +108,17 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     context.read<AuthBloc>().add(LoginRequested(user, pass, userName: user));
   }
 
+  // ✅ POPUP DE ÉXITO CON TEXTO BLANCO EN MODO OSCURO
   void _showSuccessDialog() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (context) {
         return Dialog(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          backgroundColor: isDark ? const Color(0xFF1E1E1E) : Colors.white,
           child: Padding(
             padding: const EdgeInsets.all(24),
             child: Column(
@@ -125,8 +126,9 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
               children: [
                 Container(
                   padding: const EdgeInsets.all(12),
-                  decoration: const BoxDecoration(
-                    color: Color(0xFFE8F5E9),
+                  decoration: BoxDecoration(
+                    color:
+                        isDark ? Colors.green.withOpacity(0.15) : const Color(0xFFE8F5E9),
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(
@@ -142,7 +144,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                   style: GoogleFonts.poppins(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
-                    color: Colors.black87,
+                    color: isDark ? Colors.white : Colors.black87,
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -151,7 +153,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                   textAlign: TextAlign.center,
                   style: GoogleFonts.poppins(
                     fontSize: 14,
-                    color: Colors.black54,
+                    color: isDark ? Colors.white70 : Colors.black54,
                   ),
                 ),
               ],
@@ -187,7 +189,6 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
           opacity: _fadeAnimation,
           child: Stack(
             children: [
-              // Degradado superior
               Positioned(
                 top: -120,
                 right: -120,
@@ -205,7 +206,6 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                 ),
               ),
 
-              // Botón Atrás
               SafeArea(
                 child: Padding(
                   padding: const EdgeInsets.only(left: 12, top: 12),
@@ -233,7 +233,6 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                 ),
               ),
 
-              // Formulario principal
               Center(
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -258,7 +257,6 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            // Logo
                             Container(
                               padding: const EdgeInsets.all(12),
                               decoration: BoxDecoration(
@@ -270,7 +268,6 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                             ),
                             const SizedBox(height: 20),
 
-                            // Títulos
                             Text('¡Bienvenido!',
                                 style: GoogleFonts.poppins(
                                   fontSize: 32,
@@ -285,43 +282,34 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                 )),
                             const SizedBox(height: 28),
 
-                            // Email Field
+                            // ✅ CAMPO EMAIL CON TEXTO SIEMPRE NEGRO
                             TextFormField(
                               controller: userController,
                               keyboardType: TextInputType.emailAddress,
+                              style: const TextStyle(color: Colors.black),
                               decoration: InputDecoration(
                                 labelText: 'Correo electrónico',
-                                labelStyle: GoogleFonts.poppins(
-                                  color: Colors.black54,
-                                ),
+                                labelStyle:
+                                    GoogleFonts.poppins(color: Colors.black54),
+                                hintText: "ejemplo@gmail.com",
+                                hintStyle: const TextStyle(color: Colors.black54),
                                 prefixIcon: const Icon(Icons.email_outlined,
                                     color: kOrange),
                                 filled: true,
                                 fillColor: Colors.grey.shade50,
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(14),
-                                  borderSide: const BorderSide(
-                                    color: Colors.grey,
-                                  ),
                                 ),
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(14),
-                                  borderSide: BorderSide(
-                                    color: Colors.grey.shade300,
-                                  ),
+                                  borderSide:
+                                      BorderSide(color: Colors.grey.shade300),
                                 ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(14),
-                                  borderSide: const BorderSide(
-                                    color: kOrange,
-                                    width: 2,
-                                  ),
-                                ),
-                                errorBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(14),
-                                  borderSide: const BorderSide(
-                                    color: Colors.red,
-                                  ),
+                                focusedBorder: const OutlineInputBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(14)),
+                                  borderSide:
+                                      BorderSide(color: kOrange, width: 2),
                                 ),
                               ),
                               validator: (value) {
@@ -334,19 +322,22 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                 return null;
                               },
                             ),
+
                             const SizedBox(height: 18),
 
-                            // Password Field
+                            // ✅ CAMPO CONTRASEÑA TEXTO SIEMPRE NEGRO
                             TextFormField(
                               controller: passController,
                               obscureText: _obscurePassword,
+                              style: const TextStyle(color: Colors.black),
                               decoration: InputDecoration(
                                 labelText: 'Contraseña',
-                                labelStyle: GoogleFonts.poppins(
-                                  color: Colors.black54,
-                                ),
-                                prefixIcon: const Icon(Icons.lock_outline,
-                                    color: kOrange),
+                                labelStyle:
+                                    GoogleFonts.poppins(color: Colors.black54),
+                                hintText: "••••••••",
+                                hintStyle: const TextStyle(color: Colors.black54),
+                                prefixIcon:
+                                    const Icon(Icons.lock_outline, color: kOrange),
                                 suffixIcon: IconButton(
                                   onPressed: _togglePassword,
                                   icon: Icon(
@@ -360,28 +351,17 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                 fillColor: Colors.grey.shade50,
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(14),
-                                  borderSide: const BorderSide(
-                                    color: Colors.grey,
-                                  ),
                                 ),
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(14),
-                                  borderSide: BorderSide(
-                                    color: Colors.grey.shade300,
-                                  ),
+                                  borderSide:
+                                      BorderSide(color: Colors.grey.shade300),
                                 ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(14),
-                                  borderSide: const BorderSide(
-                                    color: kOrange,
-                                    width: 2,
-                                  ),
-                                ),
-                                errorBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(14),
-                                  borderSide: const BorderSide(
-                                    color: Colors.red,
-                                  ),
+                                focusedBorder: const OutlineInputBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(14)),
+                                  borderSide:
+                                      BorderSide(color: kOrange, width: 2),
                                 ),
                               ),
                               validator: (value) {
@@ -399,30 +379,31 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                             Align(
                               alignment: Alignment.centerRight,
                               child: TextButton(
-                                onPressed: () {
-                                  // Implementar recuperación de contraseña
-                                },
-                                child: Text('¿Olvidaste tu contraseña?',
-                                    style: GoogleFonts.poppins(
-                                      fontSize: 13,
-                                      color: kOrange,
-                                      fontWeight: FontWeight.w600,
-                                    )),
+                                onPressed: () {},
+                                child: Text(
+                                  '¿Olvidaste tu contraseña?',
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 13,
+                                    color: kOrange,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
                               ),
                             ),
                             const SizedBox(height: 24),
 
-                            // Botón Ingresar
                             BlocBuilder<AuthBloc, AuthState>(
                               builder: (context, state) {
                                 return SizedBox(
                                   width: double.infinity,
                                   height: 56,
                                   child: ElevatedButton(
-                                    onPressed: state is AuthLoading ? null : _login,
+                                    onPressed:
+                                        state is AuthLoading ? null : _login,
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: kOrange,
-                                      disabledBackgroundColor: Colors.grey.shade400,
+                                      disabledBackgroundColor:
+                                          Colors.grey.shade400,
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(28),
                                       ),
@@ -437,12 +418,14 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                               strokeWidth: 3,
                                             ),
                                           )
-                                        : Text('Ingresar',
+                                        : Text(
+                                            'Ingresar',
                                             style: GoogleFonts.poppins(
                                               fontSize: 16,
                                               fontWeight: FontWeight.w600,
                                               color: Colors.white,
-                                            )),
+                                            ),
+                                          ),
                                   ),
                                 );
                               },
@@ -450,7 +433,6 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
 
                             const SizedBox(height: 24),
 
-                            // Registro
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -467,12 +449,14 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                           builder: (_) => const RegisterPage()),
                                     );
                                   },
-                                  child: Text('Regístrate aquí',
-                                      style: GoogleFonts.poppins(
-                                        fontSize: 14,
-                                        color: kOrange,
-                                        fontWeight: FontWeight.w700,
-                                      )),
+                                  child: Text(
+                                    'Regístrate aquí',
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 14,
+                                      color: kOrange,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
                                 ),
                               ],
                             ),
@@ -491,9 +475,8 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   }
 
   bool _isValidEmail(String email) {
-    final emailRegex = RegExp(
-      r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
-    );
+    final emailRegex =
+        RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
     return emailRegex.hasMatch(email);
   }
 }

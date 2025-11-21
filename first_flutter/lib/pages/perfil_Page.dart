@@ -18,51 +18,60 @@ class PerfilPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context); // 👈 accedemos al tema actual
+    final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+
+    // 🎨 PALETA PERSONALIZADA SOLO PARA ESTA PÁGINA
+    final bgColor = isDark ? const Color(0xFF121212) : kLightGray;
+    final cardColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
+    final textColor = isDark ? Colors.white : kDarkGray;
+    final subtitleColor = isDark ? Colors.white70 : Colors.black54;
+    final iconColor = isDark ? Colors.white70 : kOrange;
+    final arrowColor = isDark ? Colors.white38 : Colors.black26;
 
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, state) {
         if (state is Authenticated) {
           return Scaffold(
-            backgroundColor: kLightGray,
+            backgroundColor: bgColor,
             appBar: AppBar(
-              backgroundColor: Colors.white,
+              backgroundColor: cardColor,
               elevation: 1,
               title: Text(
                 AppLocalizations.of(context)?.profile ?? "Mi Perfil",
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
-                  color: kDarkGray,
+                  color: textColor,
                 ),
               ),
               centerTitle: false,
             ),
             body: ListView(
               children: [
-                // 🔹 Encabezado del perfil mejorado
+                // 🔹 Encabezado del perfil
                 Container(
                   margin: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: cardColor,
                     borderRadius: BorderRadius.circular(12),
                     boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.08),
-                        blurRadius: 10,
-                        offset: const Offset(0, 2),
-                      ),
+                      if (!isDark)
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.08),
+                          blurRadius: 10,
+                          offset: const Offset(0, 2),
+                        ),
                     ],
                   ),
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
                   child: Row(
                     children: [
-                      // Avatar con fondo gradiente
+                      // Avatar con gradiente
                       Container(
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                           shape: BoxShape.circle,
-                          gradient: const LinearGradient(
+                          gradient: LinearGradient(
                             colors: [kOrange, Color(0xFFFF6E40)],
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
@@ -74,18 +83,19 @@ class PerfilPage extends StatelessWidget {
                           child: Icon(Icons.person, color: Colors.white, size: 42),
                         ),
                       ),
+
                       const SizedBox(width: 16),
-                      // Información del usuario
+
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
                               state.user.name,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
-                                color: kDarkGray,
+                                color: textColor,
                               ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
@@ -93,9 +103,9 @@ class PerfilPage extends StatelessWidget {
                             const SizedBox(height: 6),
                             Text(
                               state.user.email,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 13,
-                                color: Colors.black54,
+                                color: subtitleColor,
                               ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
@@ -112,10 +122,9 @@ class PerfilPage extends StatelessWidget {
                           ],
                         ),
                       ),
-                      // Botón Editar Perfil
+
                       IconButton(
                         onPressed: () {
-                          // TODO: Navegar a editar perfil
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
                               content: Text('Editar perfil - Próximamente'),
@@ -123,7 +132,7 @@ class PerfilPage extends StatelessWidget {
                             ),
                           );
                         },
-                        icon: const Icon(Icons.edit, color: kOrange),
+                        icon: Icon(Icons.edit, color: iconColor),
                       ),
                     ],
                   ),
@@ -131,125 +140,105 @@ class PerfilPage extends StatelessWidget {
 
                 const SizedBox(height: 8),
 
-                // 🔹 Sección Preferencias
-                _buildSectionTitle(context, 'Preferencias'),
+                // 🔹 Preferencias
+                _buildSectionTitle(context, "Preferencias", textColor),
 
-                // Selector de idioma
                 _buildPreferenceRow(
                   icon: Icons.language,
-                  label: AppLocalizations.of(context)?.language ?? 'Idioma',
+                  label: AppLocalizations.of(context)?.language ?? "Idioma",
                   widget: const LanguageSelector(),
+                  cardColor: cardColor,
+                  textColor: textColor,
+                  iconColor: iconColor,
                 ),
 
-                // Selector de tema
                 _buildPreferenceRow(
                   icon: Icons.brightness_6,
                   label: 'Tema',
                   widget: const ThemeSelector(),
+                  cardColor: cardColor,
+                  textColor: textColor,
+                  iconColor: iconColor,
                 ),
 
                 const SizedBox(height: 12),
 
-                // 🔹 Sección Cuenta
-                _buildSectionTitle(context, 'Cuenta'),
+                // 🔹 Cuenta
+                _buildSectionTitle(context, "Cuenta", textColor),
 
-                // Pedidos
                 _buildMenuTile(
                   context,
                   icon: Icons.receipt_long,
-                  label: AppLocalizations.of(context)?.orders ?? 'Mis Pedidos',
-                  onTap: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Mis Pedidos - Próximamente'),
-                        duration: Duration(seconds: 2),
-                      ),
-                    );
-                  },
+                  label: "Mis Pedidos",
+                  onTap: () {},
+                  cardColor: cardColor,
+                  textColor: textColor,
+                  iconColor: iconColor,
+                  arrowColor: arrowColor,
                 ),
 
-                // Direcciones
                 _buildMenuTile(
                   context,
                   icon: Icons.location_on,
-                  label: AppLocalizations.of(context)?.addresses ?? 'Mis Direcciones',
-                  onTap: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Mis Direcciones - Próximamente'),
-                        duration: Duration(seconds: 2),
-                      ),
-                    );
-                  },
+                  label: "Mis Direcciones",
+                  onTap: () {},
+                  cardColor: cardColor,
+                  textColor: textColor,
+                  iconColor: iconColor,
+                  arrowColor: arrowColor,
                 ),
 
-                // Datos de facturación
                 _buildMenuTile(
                   context,
                   icon: Icons.receipt,
-                  label: 'Datos de Facturación',
-                  onTap: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Datos de Facturación - Próximamente'),
-                        duration: Duration(seconds: 2),
-                      ),
-                    );
-                  },
+                  label: "Datos de Facturación",
+                  onTap: () {},
+                  cardColor: cardColor,
+                  textColor: textColor,
+                  iconColor: iconColor,
+                  arrowColor: arrowColor,
                 ),
 
                 const SizedBox(height: 12),
 
-                // 🔹 Sección Legal e Información
-                _buildSectionTitle(context, 'Información'),
+                // 🔹 Información
+                _buildSectionTitle(context, "Información", textColor),
 
-                // Ayuda y Soporte
                 _buildMenuTile(
                   context,
                   icon: Icons.help_outline,
-                  label: AppLocalizations.of(context)?.helpSupport ?? 'Ayuda y Soporte',
-                  onTap: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Ayuda y Soporte - Próximamente'),
-                        duration: Duration(seconds: 2),
-                      ),
-                    );
-                  },
+                  label: "Ayuda y Soporte",
+                  onTap: () {},
+                  cardColor: cardColor,
+                  textColor: textColor,
+                  iconColor: iconColor,
+                  arrowColor: arrowColor,
                 ),
 
-                // Política de Privacidad
                 _buildMenuTile(
                   context,
                   icon: Icons.privacy_tip,
-                  label: AppLocalizations.of(context)?.privacyPolicy ?? 'Política de Privacidad',
-                  onTap: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Política de Privacidad - Próximamente'),
-                        duration: Duration(seconds: 2),
-                      ),
-                    );
-                  },
+                  label: "Política de Privacidad",
+                  onTap: () {},
+                  cardColor: cardColor,
+                  textColor: textColor,
+                  iconColor: iconColor,
+                  arrowColor: arrowColor,
                 ),
 
-                // Términos y Condiciones
                 _buildMenuTile(
                   context,
                   icon: Icons.article,
-                  label: AppLocalizations.of(context)?.termsConditions ?? 'Términos y Condiciones',
-                  onTap: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Términos y Condiciones - Próximamente'),
-                        duration: Duration(seconds: 2),
-                      ),
-                    );
-                  },
+                  label: "Términos y Condiciones",
+                  onTap: () {},
+                  cardColor: cardColor,
+                  textColor: textColor,
+                  iconColor: iconColor,
+                  arrowColor: arrowColor,
                 ),
 
                 const SizedBox(height: 16),
-                const Divider(height: 1),
+                Divider(color: arrowColor, height: 1),
 
                 // 🔹 Cerrar sesión
                 Padding(
@@ -287,9 +276,9 @@ class PerfilPage extends StatelessWidget {
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                         child: Row(
-                          children: const [
-                            Icon(Icons.logout, color: Colors.red, size: 22),
-                            SizedBox(width: 16),
+                          children: [
+                            const Icon(Icons.logout, color: Colors.red, size: 22),
+                            const SizedBox(width: 16),
                             Text(
                               'Cerrar Sesión',
                               style: TextStyle(
@@ -305,14 +294,14 @@ class PerfilPage extends StatelessWidget {
                   ),
                 ),
 
-                // Versión de la app
+                // Versión
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 24.0),
                   child: Center(
                     child: Text(
                       'v4.3.3',
                       style: TextStyle(
-                        color: Colors.black38,
+                        color: subtitleColor,
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
                       ),
@@ -322,134 +311,134 @@ class PerfilPage extends StatelessWidget {
               ],
             ),
           );
-        } else {
-          // 🔸 Vista sin sesión
-          return Scaffold(
-            backgroundColor: theme.scaffoldBackgroundColor,
-            body: Center(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Image.asset("assets/loogo.jpg", width: 120, height: 120),
-                    const SizedBox(height: 20),
-                    Text(
-                      "Bienvenido a Bitevia",
-                      style: theme.textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    Text(
-                      "Inicia sesión o regístrate para continuar",
-                      textAlign: TextAlign.center,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.textTheme.bodyMedium?.color?.withOpacity(0.7),
-                      ),
-                    ),
-                    const SizedBox(height: 30),
+        }
 
-                    // Botón Iniciar Sesión
-                    SizedBox(
-                      width: 220,
-                      height: 50,
-                      child: ElevatedButton(
-                        onPressed: () => Navigator.pushNamed(context, "/login"),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color.fromRGBO(237, 88, 33, 1),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                        child: const Text(
-                          'Iniciar Sesión',
-                          style: TextStyle(fontSize: 18, color: Colors.white),
+        // 🔸 Vista sin sesión (no hace falta modo oscuro)
+        return Scaffold(
+          backgroundColor: theme.scaffoldBackgroundColor,
+          body: Center(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset("assets/loogo.jpg", width: 120, height: 120),
+                  const SizedBox(height: 20),
+                  Text(
+                    "Bienvenido a Bitevia",
+                    style: theme.textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    "Inicia sesión o regístrate para continuar",
+                    textAlign: TextAlign.center,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.textTheme.bodyMedium?.color?.withOpacity(0.7),
+                    ),
+                  ),
+                  const SizedBox(height: 30),
+
+                  // Botón Iniciar Sesión
+                  SizedBox(
+                    width: 220,
+                    height: 50,
+                    child: ElevatedButton(
+                      onPressed: () => Navigator.pushNamed(context, "/login"),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color.fromRGBO(237, 88, 33, 1),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 12),
-
-                    // Botón Registrarse
-                    SizedBox(
-                      width: 220,
-                      height: 50,
-                      child: OutlinedButton(
-                        onPressed: () => Navigator.pushNamed(context, "/register"),
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: theme.textTheme.bodyLarge?.color,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                        child: const Text('Registrarse', style: TextStyle(fontSize: 18)),
-                      ),
-                    ),
-
-                    const SizedBox(height: 20),
-
-                    TextButton(
-                      onPressed: () {
-                        Navigator.pushNamed(context, "/forgot-password");
-                      },
                       child: const Text(
-                        "¿Olvidaste tu contraseña?",
-                        style: TextStyle(color: Colors.blueAccent),
+                        'Iniciar Sesión',
+                        style: TextStyle(fontSize: 18, color: Colors.white),
                       ),
                     ),
-                  ],
-                ),
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  SizedBox(
+                    width: 220,
+                    height: 50,
+                    child: OutlinedButton(
+                      onPressed: () => Navigator.pushNamed(context, "/register"),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: theme.textTheme.bodyLarge?.color,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      child: const Text('Registrarse', style: TextStyle(fontSize: 18)),
+                    ),
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pushNamed(context, "/forgot-password");
+                    },
+                    child: const Text(
+                      "¿Olvidaste tu contraseña?",
+                      style: TextStyle(color: Colors.blueAccent),
+                    ),
+                  ),
+                ],
               ),
             ),
-          );
-        }
+          ),
+        );
       },
     );
   }
 
-  // 🔹 Métodos auxiliares para construir widgets reutilizables
-
-  /// Construye un título de sección
-  Widget _buildSectionTitle(BuildContext context, String title) {
+  // 🔹 Título de sección
+  Widget _buildSectionTitle(BuildContext context, String title, Color textColor) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Text(
         title,
-        style: const TextStyle(
+        style: TextStyle(
           fontSize: 14,
           fontWeight: FontWeight.bold,
-          color: Colors.black54,
+          color: textColor.withOpacity(0.7),
           letterSpacing: 0.5,
         ),
       ),
     );
   }
 
-  /// Construye una fila de preferencia
+  // 🔹 Preferencias
   Widget _buildPreferenceRow({
     required IconData icon,
     required String label,
     required Widget widget,
+    required Color cardColor,
+    required Color textColor,
+    required Color iconColor,
   }) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 4),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: cardColor,
           borderRadius: BorderRadius.circular(8),
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           child: Row(
             children: [
-              Icon(icon, color: kOrange, size: 20),
+              Icon(icon, color: iconColor, size: 20),
               const SizedBox(width: 16),
               Text(
                 label,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 15,
-                  color: kDarkGray,
+                  color: textColor,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -462,12 +451,16 @@ class PerfilPage extends StatelessWidget {
     );
   }
 
-  /// Construye un elemento de menú con ícono y navegación
+  // 🔹 Elemento del menú
   Widget _buildMenuTile(
     BuildContext context, {
     required IconData icon,
     required String label,
     required VoidCallback onTap,
+    required Color cardColor,
+    required Color textColor,
+    required Color iconColor,
+    required Color arrowColor,
   }) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
@@ -478,29 +471,29 @@ class PerfilPage extends StatelessWidget {
           borderRadius: BorderRadius.circular(8),
           child: Container(
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: cardColor,
               borderRadius: BorderRadius.circular(8),
             ),
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               child: Row(
                 children: [
-                  Icon(icon, color: kOrange, size: 20),
+                  Icon(icon, color: iconColor, size: 20),
                   const SizedBox(width: 16),
                   Expanded(
                     child: Text(
                       label,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 15,
-                        color: kDarkGray,
+                        color: textColor,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
                   ),
-                  const Icon(
+                  Icon(
                     Icons.arrow_forward_ios,
                     size: 16,
-                    color: Colors.black26,
+                    color: arrowColor,
                   ),
                 ],
               ),
@@ -511,3 +504,4 @@ class PerfilPage extends StatelessWidget {
     );
   }
 }
+
