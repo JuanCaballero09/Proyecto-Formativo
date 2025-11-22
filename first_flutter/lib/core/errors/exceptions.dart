@@ -19,7 +19,7 @@ abstract class AppException implements Exception {
 /// Exception for network related errors
 class NetworkException extends AppException {
   NetworkException({
-    String message = 'Error de conexión',
+    String message = 'Network connection error',
     String code = 'NET_ERR',
     dynamic originalError,
     StackTrace? stackTrace,
@@ -27,21 +27,21 @@ class NetworkException extends AppException {
 
   factory NetworkException.timeout() {
     return NetworkException(
-      message: 'La solicitud tardó demasiado. Intenta de nuevo.',
+      message: 'Request timed out. Please try again.',
       code: 'TIMEOUT',
     );
   }
 
   factory NetworkException.noInternet() {
-    return NetworkException(
-      message: 'No hay conexión a internet.',
+      return NetworkException(
+      message: 'No internet connection.',
       code: 'NO_INTERNET',
     );
   }
 
   factory NetworkException.serverError() {
-    return NetworkException(
-      message: 'Error del servidor. Intenta más tarde.',
+      return NetworkException(
+      message: 'Server error. Please try again later.',
       code: 'SERVER_ERROR',
     );
   }
@@ -50,36 +50,36 @@ class NetworkException extends AppException {
 /// Exception for authentication related errors
 class AuthException extends AppException {
   AuthException({
-    String message = 'Error de autenticación',
+    String message = 'Authentication error',
     String code = 'AUTH_ERR',
     dynamic originalError,
     StackTrace? stackTrace,
   }) : super(message, code, originalError, stackTrace);
 
   factory AuthException.invalidCredentials() {
-    return AuthException(
-      message: 'Correo o contraseña inválidos.',
+      return AuthException(
+      message: 'Invalid email or password.',
       code: 'INVALID_CREDENTIALS',
     );
   }
 
   factory AuthException.userNotFound() {
-    return AuthException(
-      message: 'El usuario no existe.',
+      return AuthException(
+      message: 'User not found.',
       code: 'USER_NOT_FOUND',
     );
   }
 
   factory AuthException.accountDisabled() {
-    return AuthException(
-      message: 'Esta cuenta ha sido desactivada.',
+      return AuthException(
+      message: 'This account has been disabled.',
       code: 'ACCOUNT_DISABLED',
     );
   }
 
   factory AuthException.sessionExpired() {
-    return AuthException(
-      message: 'Tu sesión ha expirado. Por favor inicia sesión de nuevo.',
+      return AuthException(
+      message: 'Your session has expired. Please log in again.',
       code: 'SESSION_EXPIRED',
     );
   }
@@ -88,22 +88,22 @@ class AuthException extends AppException {
 /// Exception for data processing related errors
 class DataException extends AppException {
   DataException({
-    String message = 'Error en los datos',
+    String message = 'Data error',
     String code = 'DATA_ERR',
     dynamic originalError,
     StackTrace? stackTrace,
   }) : super(message, code, originalError, stackTrace);
 
   factory DataException.parseError() {
-    return DataException(
-      message: 'Error al procesar los datos.',
+      return DataException(
+      message: 'Error processing data.',
       code: 'PARSE_ERR',
     );
   }
 
   factory DataException.emptyData() {
-    return DataException(
-      message: 'No hay datos disponibles.',
+      return DataException(
+      message: 'No data available.',
       code: 'EMPTY_DATA',
     );
   }
@@ -112,43 +112,43 @@ class DataException extends AppException {
 /// Exception for validation related errors
 class ValidationException extends AppException {
   ValidationException({
-    String message = 'Error de validación',
+    String message = 'Validation error',
     String code = 'VAL_ERR',
     dynamic originalError,
     StackTrace? stackTrace,
   }) : super(message, code, originalError, stackTrace);
 
   factory ValidationException.emptyEmail() {
-    return ValidationException(
-      message: 'Por favor ingresa tu correo electrónico.',
+      return ValidationException(
+      message: 'Please enter your email address.',
       code: 'EMPTY_EMAIL',
     );
   }
 
   factory ValidationException.invalidEmail() {
-    return ValidationException(
-      message: 'Ingresa un correo electrónico válido.',
+      return ValidationException(
+      message: 'Enter a valid email address.',
       code: 'INVALID_EMAIL',
     );
   }
 
   factory ValidationException.emptyPassword() {
-    return ValidationException(
-      message: 'Por favor ingresa tu contraseña.',
+      return ValidationException(
+      message: 'Please enter your password.',
       code: 'EMPTY_PASSWORD',
     );
   }
 
   factory ValidationException.weakPassword() {
-    return ValidationException(
-      message: 'La contraseña debe tener al menos 6 caracteres.',
+      return ValidationException(
+      message: 'Password must be at least 6 characters.',
       code: 'WEAK_PASSWORD',
     );
   }
 
   factory ValidationException.passwordMismatch() {
-    return ValidationException(
-      message: 'Las contraseñas no coinciden.',
+      return ValidationException(
+      message: 'Passwords do not match.',
       code: 'PASSWORD_MISMATCH',
     );
   }
@@ -157,7 +157,7 @@ class ValidationException extends AppException {
 /// Exception for operation related errors
 class OperationException extends AppException {
   OperationException({
-    String message = 'Error en la operación',
+    String message = 'Operation error',
     String code = 'OPERATION_ERR',
     dynamic originalError,
     StackTrace? stackTrace,

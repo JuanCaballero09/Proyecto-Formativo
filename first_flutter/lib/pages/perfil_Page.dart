@@ -38,8 +38,8 @@ class PerfilPage extends StatelessWidget {
               backgroundColor: cardColor,
               elevation: 1,
               title: Text(
-                AppLocalizations.of(context)?.profile ?? "Mi Perfil",
-                style: TextStyle(
+                AppLocalizations.of(context)!.profile,
+                style: const TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
                   color: textColor,
@@ -111,9 +111,9 @@ class PerfilPage extends StatelessWidget {
                               overflow: TextOverflow.ellipsis,
                             ),
                             const SizedBox(height: 4),
-                            const Text(
-                              'Cuenta Activa ✓',
-                              style: TextStyle(
+                            Text(
+                              AppLocalizations.of(context)!.activeAccount,
+                              style: const TextStyle(
                                 fontSize: 12,
                                 color: Colors.green,
                                 fontWeight: FontWeight.w500,
@@ -126,9 +126,9 @@ class PerfilPage extends StatelessWidget {
                       IconButton(
                         onPressed: () {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Editar perfil - Próximamente'),
-                              duration: Duration(seconds: 2),
+                            SnackBar(
+                              content: Text(AppLocalizations.of(context)!.comingSoon),
+                              duration: const Duration(seconds: 2),
                             ),
                           );
                         },
@@ -140,12 +140,12 @@ class PerfilPage extends StatelessWidget {
 
                 const SizedBox(height: 8),
 
-                // 🔹 Preferencias
-                _buildSectionTitle(context, "Preferencias", textColor),
+                // 🔹 Sección Preferencias
+                _buildSectionTitle(context, AppLocalizations.of(context)!.settings),
 
                 _buildPreferenceRow(
                   icon: Icons.language,
-                  label: AppLocalizations.of(context)?.language ?? "Idioma",
+                  label: AppLocalizations.of(context)!.language,
                   widget: const LanguageSelector(),
                   cardColor: cardColor,
                   textColor: textColor,
@@ -154,7 +154,7 @@ class PerfilPage extends StatelessWidget {
 
                 _buildPreferenceRow(
                   icon: Icons.brightness_6,
-                  label: 'Tema',
+                  label: AppLocalizations.of(context)!.theme,
                   widget: const ThemeSelector(),
                   cardColor: cardColor,
                   textColor: textColor,
@@ -163,8 +163,8 @@ class PerfilPage extends StatelessWidget {
 
                 const SizedBox(height: 12),
 
-                // 🔹 Cuenta
-                _buildSectionTitle(context, "Cuenta", textColor),
+                // 🔹 Sección Cuenta
+                _buildSectionTitle(context, AppLocalizations.of(context)!.accountSettings),
 
                 _buildMenuTile(
                   context,
@@ -201,8 +201,8 @@ class PerfilPage extends StatelessWidget {
 
                 const SizedBox(height: 12),
 
-                // 🔹 Información
-                _buildSectionTitle(context, "Información", textColor),
+                // 🔹 Sección Legal e Información
+                _buildSectionTitle(context, AppLocalizations.of(context)!.aboutUs),
 
                 _buildMenuTile(
                   context,
@@ -229,6 +229,15 @@ class PerfilPage extends StatelessWidget {
                 _buildMenuTile(
                   context,
                   icon: Icons.article,
+                  label: AppLocalizations.of(context)!.termsConditions,
+                  onTap: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(AppLocalizations.of(context)?.comingSoon ?? 'Coming soon'),
+                        duration: const Duration(seconds: 2),
+                      ),
+                    );
+                  },
                   label: "Términos y Condiciones",
                   onTap: () {},
                   cardColor: cardColor,
@@ -250,16 +259,16 @@ class PerfilPage extends StatelessWidget {
                         final confirmed = await showDialog<bool>(
                           context: context,
                           builder: (context) => AlertDialog(
-                            title: const Text('Cerrar sesión'),
-                            content: const Text('¿Estás seguro de que deseas cerrar sesión?'),
+                            title: Text(AppLocalizations.of(context)!.logout),
+                            content: Text(AppLocalizations.of(context)?.logoutConfirmation ?? 'Are you sure you want to logout?'),
                             actions: [
                               TextButton(
                                 onPressed: () => Navigator.pop(context, false),
-                                child: const Text('Cancelar'),
+                                child: Text(AppLocalizations.of(context)!.cancel),
                               ),
                               TextButton(
                                 onPressed: () => Navigator.pop(context, true),
-                                child: const Text('Cerrar sesión', style: TextStyle(color: Colors.red)),
+                                child: Text(AppLocalizations.of(context)!.logout, style: const TextStyle(color: Colors.red)),
                               ),
                             ],
                           ),
@@ -280,8 +289,8 @@ class PerfilPage extends StatelessWidget {
                             const Icon(Icons.logout, color: Colors.red, size: 22),
                             const SizedBox(width: 16),
                             Text(
-                              'Cerrar Sesión',
-                              style: TextStyle(
+                              AppLocalizations.of(context)!.logout,
+                              style: const TextStyle(
                                 color: Colors.red,
                                 fontSize: 16,
                                 fontWeight: FontWeight.w500,
@@ -311,45 +320,49 @@ class PerfilPage extends StatelessWidget {
               ],
             ),
           );
-        }
-
-        // 🔸 Vista sin sesión (no hace falta modo oscuro)
-        return Scaffold(
-          backgroundColor: theme.scaffoldBackgroundColor,
-          body: Center(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Image.asset("assets/loogo.jpg", width: 120, height: 120),
-                  const SizedBox(height: 20),
-                  Text(
-                    "Bienvenido a Bitevia",
-                    style: theme.textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
+        } else {
+          // 🔸 Vista sin sesión
+          return Scaffold(
+            backgroundColor: theme.scaffoldBackgroundColor,
+            body: Center(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset("assets/loogo.jpg", width: 120, height: 120),
+                    const SizedBox(height: 20),
+                    Text(
+                      AppLocalizations.of(context)?.welcomeTitle ?? 'Bienvenido a Bitevia',
+                      style: theme.textTheme.headlineSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    "Inicia sesión o regístrate para continuar",
-                    textAlign: TextAlign.center,
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.textTheme.bodyMedium?.color?.withOpacity(0.7),
+                    const SizedBox(height: 10),
+                    Text(
+                      AppLocalizations.of(context)?.guestAuthPrompt ?? 'Inicia sesión o regístrate para continuar',
+                      textAlign: TextAlign.center,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.7),
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 30),
+                    const SizedBox(height: 30),
 
-                  // Botón Iniciar Sesión
-                  SizedBox(
-                    width: 220,
-                    height: 50,
-                    child: ElevatedButton(
-                      onPressed: () => Navigator.pushNamed(context, "/login"),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color.fromRGBO(237, 88, 33, 1),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
+                    // Botón Iniciar Sesión
+                    SizedBox(
+                      width: 220,
+                      height: 50,
+                      child: ElevatedButton(
+                        onPressed: () => Navigator.pushNamed(context, "/login"),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color.fromRGBO(237, 88, 33, 1),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        child: Text(
+                          AppLocalizations.of(context)?.login ?? 'Iniciar Sesión',
+                          style: const TextStyle(fontSize: 18, color: Colors.white),
                         ),
                       ),
                       child: const Text(
@@ -371,6 +384,7 @@ class PerfilPage extends StatelessWidget {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
+                        child: Text(AppLocalizations.of(context)?.register ?? 'Registrarse', style: const TextStyle(fontSize: 18)),
                       ),
                       child: const Text('Registrarse', style: TextStyle(fontSize: 18)),
                     ),
@@ -378,13 +392,14 @@ class PerfilPage extends StatelessWidget {
 
                   const SizedBox(height: 20),
 
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, "/forgot-password");
-                    },
-                    child: const Text(
-                      "¿Olvidaste tu contraseña?",
-                      style: TextStyle(color: Colors.blueAccent),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pushNamed(context, "/forgot-password");
+                      },
+                      child: Text(
+                        AppLocalizations.of(context)?.forgotPassword ?? '¿Olvidaste tu contraseña?',
+                        style: const TextStyle(color: Colors.blueAccent),
+                      ),
                     ),
                   ),
                 ],

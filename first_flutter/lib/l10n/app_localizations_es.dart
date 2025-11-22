@@ -769,4 +769,132 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get slide3Subtitle =>
       'Rastrea tu pedido en tiempo real desde la preparación hasta la entrega';
+
+  @override
+  String get productsLabel => 'productos';
+
+  @override
+  String get exampleAddress => 'Calle Principal 123, Apto 456';
+
+  @override
+  String get emailHint => 'ejemplo@correo.com';
+
+  @override
+  String get invalidAddress => 'La dirección no es válida';
+
+  @override
+  String get completeAllFields => 'Por favor completa todos los campos';
+
+  @override
+  String get loadingOrdersError => 'Error al cargar los pedidos';
+
+  @override
+  String get searchOrdersTitle => 'Buscar Pedidos';
+
+  @override
+  String get searchOrdersPrompt => 'Ingresa tu correo para buscar pedidos';
+
+  @override
+  String get guestMode => 'Modo Invitado';
+
+  @override
+  String get noOrders => 'No hay pedidos';
+
+  @override
+  String get searchWithAnotherEmail => 'Buscar con otro correo';
+
+  @override
+  String get orderCancelled => 'Pedido cancelado';
+
+  @override
+  String get statusPending => 'Pendiente';
+
+  @override
+  String get statusPaid => 'Pagado';
+
+  @override
+  String get statusInPreparation => 'En preparación';
+
+  @override
+  String get statusSent => 'Enviado';
+
+  @override
+  String get statusDelivered => 'Entregado';
+
+  @override
+  String get statusCancelled => 'Cancelado';
+
+  @override
+  String get statusUnknown => 'Desconocido';
+
+  @override
+  String get locationServicesDisabled =>
+      'Los servicios de ubicación están deshabilitados';
+
+  @override
+  String get locationPermissionsDenied => 'Permisos de ubicación denegados';
+
+  @override
+  String get locationPermissionsPermanentlyDenied =>
+      'Permisos de ubicación denegados permanentemente';
+
+  @override
+  String get errorGettingLocation => 'Error al obtener la ubicación';
+
+  @override
+  String get couldNotGetAddress => 'No se pudo obtener la dirección';
+
+  @override
+  String get selectedAddress => 'Dirección Seleccionada';
+
+  @override
+  String get distanceLabel => 'Distancia';
+
+  @override
+  String get codeLabel => 'Código';
+
+  @override
+  String get activeAccount => 'Cuenta Activa';
+
+  @override
+  String get comingSoon => 'Próximamente';
+
+  @override
+  String get theme => 'Tema';
+
+  @override
+  String get billingDetails => 'Detalles de Facturación';
+
+  @override
+  String get authenticationError => 'Error de autenticación';
+
+  @override
+  String get description => 'Descripción';
+
+  @override
+  String get typeToSearch => 'Escribe para buscar';
+
+  @override
+  String get noResultsFound => 'No se encontraron resultados';
+
+  @override
+  String get categorySelected => 'Categoría seleccionada';
+
+  @override
+  String get logoutConfirmation => '¿Estás seguro de que deseas cerrar sesión?';
+
+  @override
+  String get guestAuthPrompt => 'Inicia sesión o regístrate para continuar';
+
+  @override
+  String get product => 'Producto';
+
+  @override
+  String get viewProductsOfThisCategory => 'Ver productos de esta categoría';
+
+  @override
+  String get spanish => 'Español';
+
+  @override
+  String get english => 'English';
 }

@@ -766,4 +766,131 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get slide3Subtitle =>
       'Track your order in real-time from preparation to delivery';
+
+  @override
+  String get productsLabel => 'products';
+
+  @override
+  String get exampleAddress => '123 Main Street, Apt 456';
+
+  @override
+  String get emailHint => 'example@email.com';
+
+  @override
+  String get invalidAddress => 'Address is not valid';
+
+  @override
+  String get completeAllFields => 'Please complete all fields';
+
+  @override
+  String get loadingOrdersError => 'Error loading orders';
+
+  @override
+  String get searchOrdersTitle => 'Search Orders';
+
+  @override
+  String get searchOrdersPrompt => 'Enter your email to search for orders';
+
+  @override
+  String get guestMode => 'Guest Mode';
+
+  @override
+  String get noOrders => 'No orders';
+
+  @override
+  String get searchWithAnotherEmail => 'Search with another email';
+
+  @override
+  String get orderCancelled => 'Order cancelled';
+
+  @override
+  String get statusPending => 'Pending';
+
+  @override
+  String get statusPaid => 'Paid';
+
+  @override
+  String get statusInPreparation => 'In preparation';
+
+  @override
+  String get statusSent => 'Sent';
+
+  @override
+  String get statusDelivered => 'Delivered';
+
+  @override
+  String get statusCancelled => 'Cancelled';
+
+  @override
+  String get statusUnknown => 'Unknown';
+
+  @override
+  String get locationServicesDisabled => 'Location services are disabled';
+
+  @override
+  String get locationPermissionsDenied => 'Location permissions denied';
+
+  @override
+  String get locationPermissionsPermanentlyDenied =>
+      'Location permissions permanently denied';
+
+  @override
+  String get errorGettingLocation => 'Error getting location';
+
+  @override
+  String get couldNotGetAddress => 'Could not get address';
+
+  @override
+  String get selectedAddress => 'Selected Address';
+
+  @override
+  String get distanceLabel => 'Distance';
+
+  @override
+  String get codeLabel => 'Code';
+
+  @override
+  String get activeAccount => 'Active Account';
+
+  @override
+  String get comingSoon => 'Coming soon';
+
+  @override
+  String get theme => 'Theme';
+
+  @override
+  String get billingDetails => 'Billing Details';
+
+  @override
+  String get authenticationError => 'Authentication error';
+
+  @override
+  String get description => 'Description';
+
+  @override
+  String get typeToSearch => 'Type to search';
+
+  @override
+  String get noResultsFound => 'No results found';
+
+  @override
+  String get categorySelected => 'Category selected';
+
+  @override
+  String get logoutConfirmation => 'Are you sure you want to logout?';
+
+  @override
+  String get guestAuthPrompt => 'Login or register to continue';
+
+  @override
+  String get product => 'Product';
+
+  @override
+  String get viewProductsOfThisCategory => 'View products from this category';
+
+  @override
+  String get spanish => 'Español';
+
+  @override
+  String get english => 'English';
 }

@@ -1,5 +1,6 @@
 import 'exceptions.dart';
 import 'error_handler.dart';
+import 'package:flutter/foundation.dart';
 
 /// Ejemplos de uso del nuevo sistema de manejo de errores
 
@@ -12,10 +13,10 @@ class ErrorHandlingExamples {
       throw AuthException.invalidCredentials();
     } catch (error) {
       final message = ErrorHandler.getErrorMessage(error);
-      print(message); // Output: "Correo o contraseña inválidos."
+      debugPrint(message); // Output: "Correo o contraseña inválidos."
       
       final code = ErrorHandler.getErrorCode(error);
-      print(code); // Output: "INVALID_CREDENTIALS"
+      debugPrint(code); // Output: "INVALID_CREDENTIALS"
     }
   }
 
@@ -23,24 +24,24 @@ class ErrorHandlingExamples {
   static void example2_CreateSpecificExceptions() {
     // Network exceptions
     final noInternet = NetworkException.noInternet();
-    print(noInternet.message); // "No hay conexión a internet."
+    debugPrint(noInternet.message); // "No hay conexión a internet."
     
     final timeout = NetworkException.timeout();
-    print(timeout.message); // "La solicitud tardó demasiado. Intenta de nuevo."
+    debugPrint(timeout.message); // "La solicitud tardó demasiado. Intenta de nuevo."
     
     // Auth exceptions
     final invalidCreds = AuthException.invalidCredentials();
-    print(invalidCreds.message); // "Correo o contraseña inválidos."
+    debugPrint(invalidCreds.message); // "Correo o contraseña inválidos."
     
     final sessionExpired = AuthException.sessionExpired();
-    print(sessionExpired.message); // "Tu sesión ha expirado..."
+    debugPrint(sessionExpired.message); // "Tu sesión ha expirado..."
     
     // Validation exceptions
     final emptyEmail = ValidationException.emptyEmail();
-    print(emptyEmail.message); // "Por favor ingresa tu correo electrónico."
+    debugPrint(emptyEmail.message); // "Por favor ingresa tu correo electrónico."
     
     final weakPassword = ValidationException.weakPassword();
-    print(weakPassword.message); // "La contraseña debe tener al menos 6 caracteres."
+    debugPrint(weakPassword.message); // "La contraseña debe tener al menos 6 caracteres."
   }
 
   /// Ejemplo 6: Usar ErrorHandler para determinar criticidad
@@ -49,9 +50,9 @@ class ErrorHandlingExamples {
       throw NetworkException.noInternet();
     } catch (error) {
       if (ErrorHandler.isCriticalError(error)) {
-        print('Error crítico - mostrar dialog importante');
+        debugPrint('Error crítico - mostrar dialog importante');
       } else {
-        print('Error regular - mostrar snackbar');
+        debugPrint('Error regular - mostrar snackbar');
       }
     }
   }
@@ -77,16 +78,16 @@ class ErrorHandlingExamples {
       throw OperationException(message: 'Error desconocido', code: 'UNKNOWN_ERR');
       
     } on ValidationException catch (e) {
-      print('Validación fallida: ${e.message}');
+      debugPrint('Validación fallida: ${e.message}');
       // Mostrar en formulario
     } on AuthException catch (e) {
-      print('Autenticación fallida: ${e.message}');
+      debugPrint('Autenticación fallida: ${e.message}');
       // Mostrar dialog o snackbar
     } on NetworkException catch (e) {
-      print('Error de red: ${e.message}');
+      debugPrint('Error de red: ${e.message}');
       // Mostrar opción de reintentar
     } on AppException catch (e) {
-      print('Error: ${e.message}');
+      debugPrint('Error: ${e.message}');
     }
   }
 
@@ -100,13 +101,13 @@ class ErrorHandlingExamples {
     switch (statusCode) {
       case 401:
       case 403:
-        print(exception.message); // "Correo o contraseña inválidos."
+        debugPrint(exception.message); // "Correo o contraseña inválidos."
         break;
       case 404:
-        print(exception.message); // "El usuario no existe."
+        debugPrint(exception.message); // "El usuario no existe."
         break;
       case 500:
-        print(exception.message); // "Error del servidor..."
+        debugPrint(exception.message); // "Error del servidor..."
         break;
     }
   }
@@ -121,11 +122,11 @@ class ErrorHandlingExamples {
       );
     } catch (error) {
       if (error is AppException && error.originalError != null) {
-        print('Error original: ${error.originalError}');
+        debugPrint('Error original: ${error.originalError}');
       }
       
       // Mostrar al usuario
-      print('Error: ${ErrorHandler.getErrorMessage(error)}');
+      debugPrint('Error: ${ErrorHandler.getErrorMessage(error)}');
     }
   }
 }

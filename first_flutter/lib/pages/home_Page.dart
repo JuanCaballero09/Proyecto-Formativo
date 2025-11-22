@@ -311,7 +311,7 @@ class _HomePageState extends State<HomePage>
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               color:
-                                  theme.colorScheme.secondary.withOpacity(0.5),
+                                  theme.colorScheme.secondary.withValues(alpha: 0.5),
                             ),
                           ),
                         ),
@@ -326,7 +326,7 @@ class _HomePageState extends State<HomePage>
           return Container(
             height: 270,
             alignment: Alignment.center,
-            child: const Text('Error cargando productos'),
+            child: Text(AppLocalizations.of(context)!.loadingProductsError),
           );
         }
       },
@@ -365,7 +365,7 @@ class _HomePageState extends State<HomePage>
                       )
                     : Container(
                         height: 110,
-                        color: theme.disabledColor.withOpacity(0.2),
+                        color: theme.disabledColor.withValues(alpha: 0.2),
                         child:
                             const Center(child: Icon(Icons.fastfood, size: 60)),
                       ),
@@ -424,7 +424,7 @@ class _HomePageState extends State<HomePage>
                               description: product.description,
                             )));
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Añadido al carrito')),
+                          SnackBar(content: Text(AppLocalizations.of(context)!.addedToCart)),
                         );
                       },
                       child: const Icon(Icons.add_shopping_cart,

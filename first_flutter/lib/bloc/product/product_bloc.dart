@@ -15,7 +15,7 @@ class ProductBloc extends Bloc<ProductEvent, BaseState> {
     
     // Manejo del evento para obtener todos los productos
     on<FetchProducts>((event, emit) async {
-      emit(const LoadingState(message: 'Cargando productos...'));
+      emit(const LoadingState(message: 'Loading products...'));
       try {
         final products = await repository.getProducts();
         emit(SuccessState(products));
@@ -33,7 +33,7 @@ class ProductBloc extends Bloc<ProductEvent, BaseState> {
         ));
       } catch (e) {
         emit(ErrorState(
-          message: 'Error inesperado al cargar los productos',
+          message: 'Unexpected error loading products',
           onRetry: () => add(FetchProducts()),
         ));
       }
@@ -42,13 +42,13 @@ class ProductBloc extends Bloc<ProductEvent, BaseState> {
     // Manejo del evento para cargar productos por categoría (nombre)
     on<LoadProductsByCategory>((event, emit) async {
       emit(LoadingState(
-        message: 'Cargando productos de ${event.categoryName}...',
+        message: 'Loading products for ${event.categoryName}...',
       ));
       try {
         final products = await repository.getProductsByCategory(event.categoryName);
         if (products.isEmpty) {
           emit(const ErrorState(
-            message: 'No se encontraron productos en esta categoría',
+            message: 'No products found in this category',
           ));
           return;
         }
@@ -67,7 +67,7 @@ class ProductBloc extends Bloc<ProductEvent, BaseState> {
         ));
       } catch (e) {
         emit(ErrorState(
-          message: 'Error inesperado al cargar los productos de la categoría',
+          message: 'Unexpected error loading category products',
           onRetry: () => add(LoadProductsByCategory(event.categoryName)),
         ));
       }
@@ -76,7 +76,7 @@ class ProductBloc extends Bloc<ProductEvent, BaseState> {
     // Manejo del evento para cargar productos por ID de categoría
     on<LoadProductsByCategoryId>((event, emit) async {
       emit(LoadingState(
-        message: 'Cargando productos de categoría ${event.categoryId}...',
+        message: 'Loading products for category ${event.categoryId}...',
       ));
       try {
         // Verificar si el repositorio soporta API directa
@@ -85,7 +85,7 @@ class ProductBloc extends Bloc<ProductEvent, BaseState> {
           final products = await apiRepo.getProductsByCategoryId(event.categoryId);
           if (products.isEmpty) {
             emit(const ErrorState(
-              message: 'No se encontraron productos en esta categoría',
+              message: 'No products found in this category',
             ));
             return;
           }
@@ -109,7 +109,7 @@ class ProductBloc extends Bloc<ProductEvent, BaseState> {
         ));
       } catch (e) {
         emit(ErrorState(
-          message: 'Error inesperado al cargar los productos de la categoría',
+          message: 'Unexpected error loading category products',
           onRetry: () => add(LoadProductsByCategoryId(event.categoryId)),
         ));
       }
@@ -118,7 +118,7 @@ class ProductBloc extends Bloc<ProductEvent, BaseState> {
     // Manejo del evento para obtener producto específico por categoría y ID
     on<LoadProductByCategoryAndId>((event, emit) async {
       emit(LoadingState(
-        message: 'Cargando producto...',
+        message: 'Loading product...',
       ));
       try {
         // Verificar si el repositorio soporta obtener producto específico
@@ -131,7 +131,7 @@ class ProductBloc extends Bloc<ProductEvent, BaseState> {
           final products = await repository.getProductsByCategory(event.categoryName);
           final product = products.firstWhere(
             (p) => p.id == event.productId,
-            orElse: () => throw DataException(message: 'Producto no encontrado'),
+            orElse: () => throw DataException(message: 'Product not found'),
           );
           emit(SuccessState([product]));
         }
@@ -149,7 +149,7 @@ class ProductBloc extends Bloc<ProductEvent, BaseState> {
         ));
       } catch (e) {
         emit(ErrorState(
-          message: 'Error inesperado al cargar el producto',
+          message: 'Unexpected error loading product',
           onRetry: () => add(LoadProductByCategoryAndId(event.categoryName, event.productId)),
         ));
       }
@@ -158,7 +158,7 @@ class ProductBloc extends Bloc<ProductEvent, BaseState> {
     // Manejo del evento para obtener producto específico por IDs
     on<LoadProductByCategoryIdAndProductId>((event, emit) async {
       emit(LoadingState(
-        message: 'Cargando producto...',
+        message: 'Loading product...',
       ));
       try {
         // Verificar si el repositorio soporta API directa
@@ -185,7 +185,7 @@ class ProductBloc extends Bloc<ProductEvent, BaseState> {
         ));
       } catch (e) {
         emit(ErrorState(
-          message: 'Error inesperado al cargar el producto',
+          message: 'Unexpected error loading product',
           onRetry: () => add(LoadProductByCategoryIdAndProductId(event.categoryId, event.productId)),
         ));
       }

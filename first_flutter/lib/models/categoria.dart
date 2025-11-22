@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 class Categoria {
   final int id;
   final String nombre;
@@ -14,7 +16,7 @@ class Categoria {
   });
 
   factory Categoria.fromJson(Map<String, dynamic> json) {
-    print('🔍 DEBUG Categoria.fromJson - JSON recibido: $json');
+    debugPrint('🔍 DEBUG Categoria.fromJson - JSON recibido: $json');
     
     // Extraer la URL de la imagen de forma segura
     String? imageUrl;
@@ -28,14 +30,14 @@ class Categoria {
     if (imageField != null) {
       if (imageField is String) {
         imageUrl = imageField;
-        print('✅ Imagen encontrada (String): $imageUrl');
+        debugPrint('✅ Imagen encontrada (String): $imageUrl');
       } else if (imageField is Map) {
         // Si es un objeto, intentar extraer la URL
         imageUrl = imageField['url']?.toString();
-        print('✅ Imagen encontrada (Map): $imageUrl');
+        debugPrint('✅ Imagen encontrada (Map): $imageUrl');
       }
     } else {
-      print('⚠️ No se encontró imagen para la categoría ${json['nombre'] ?? json['name']}');
+      debugPrint('⚠️ No se encontró imagen para la categoría ${json['nombre'] ?? json['name']}');
     }
 
     final categoria = Categoria(
@@ -49,7 +51,7 @@ class Categoria {
                    0,
     );
     
-    print('✅ Categoría creada: $categoria');
+    debugPrint('✅ Categoría creada: $categoria');
     return categoria;
   }
 
@@ -67,33 +69,33 @@ class Categoria {
   String getDefaultImage() {
     final nombreLower = nombre.toLowerCase();
     
-    print('🔍 Buscando imagen por defecto para: "$nombre" (normalizado: "$nombreLower")');
+    debugPrint('🔍 Buscando imagen por defecto para: "$nombre" (normalizado: "$nombreLower")');
     
     // Buscar patrones específicos en el nombre (considerando emojis)
     if (nombreLower.contains('pizza')) {
-      print('✅ Imagen encontrada: Pizza Hawiana.jpg');
+      debugPrint('✅ Imagen encontrada: Pizza Hawiana.jpg');
       return 'assets/Pizza Hawiana.jpg';
     } else if (nombreLower.contains('hamburguesa') || nombreLower.contains('burger')) {
-      print('✅ Imagen encontrada: Hamburgesa Doble Queso.jpeg');
+      debugPrint('✅ Imagen encontrada: Hamburgesa Doble Queso.jpeg');
       return 'assets/Hamburgesa Doble Queso.jpeg';
     } else if (nombreLower.contains('salchipapa')) {
-      print('✅ Imagen encontrada: imagen1.jpeg');
+      debugPrint('✅ Imagen encontrada: imagen1.jpeg');
       return 'assets/imagen1.jpeg';
     } else if (nombreLower.contains('taco')) {
-      print('✅ Imagen encontrada: Tacos al Pastor.jpg');
+      debugPrint('✅ Imagen encontrada: Tacos al Pastor.jpg');
       return 'assets/Tacos al Pastor.jpg';
     } else if (nombreLower.contains('ensalada') || nombreLower.contains('salad')) {
-      print('✅ Imagen encontrada: Ensalada Cesar.jpg');
+      debugPrint('✅ Imagen encontrada: Ensalada Cesar.jpg');
       return 'assets/Ensalada Cesar.jpg';
     } else if (nombreLower.contains('bebida') || nombreLower.contains('drink')) {
-      print('✅ Imagen encontrada: bebida.jpg');
+      debugPrint('✅ Imagen encontrada: bebida.jpg');
       return 'assets/bebida.jpg';
     } else if (nombreLower.contains('postre') || nombreLower.contains('dessert')) {
-      print('✅ Imagen encontrada: imagen2.jpeg');
+      debugPrint('✅ Imagen encontrada: imagen2.jpeg');
       return 'assets/imagen2.jpeg';
     }
     
-    print('⚠️ No se encontró imagen específica, usando logoredondo.png');
+    debugPrint('⚠️ No se encontró imagen específica, usando logoredondo.png');
     return 'assets/logoredondo.png'; // Imagen por defecto
   }
 

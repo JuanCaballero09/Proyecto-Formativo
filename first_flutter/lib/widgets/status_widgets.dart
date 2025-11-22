@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../l10n/app_localizations.dart';
 
 /// A widget that displays a loading indicator with an optional message
 class LoadingWidget extends StatelessWidget {
@@ -63,7 +64,7 @@ class ErrorDisplayWidget extends StatelessWidget {
               ElevatedButton.icon(
                 onPressed: onRetry,
                 icon: const Icon(Icons.refresh),
-                label: const Text('Reintentar'),
+                label: Text(AppLocalizations.of(context)!.retry),
               ),
             ],
           ],
@@ -110,7 +111,7 @@ class EmptyStateWidget extends StatelessWidget {
             ElevatedButton.icon(
               onPressed: onRetry,
               icon: const Icon(Icons.refresh),
-              label: const Text('Reintentar'),
+              label: Text(AppLocalizations.of(context)!.retry),
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color.fromRGBO(237, 88, 33, 1),
               ),

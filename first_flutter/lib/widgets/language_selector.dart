@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/language/language_bloc.dart';
 import '../bloc/language/language_event.dart';
 import '../bloc/language/language_state.dart';
+import '../l10n/app_localizations.dart';
 
 class LanguageSelector extends StatelessWidget {
   const LanguageSelector({Key? key}) : super(key: key);
@@ -21,15 +22,15 @@ class LanguageSelector extends StatelessWidget {
             child: DropdownButtonHideUnderline(
               child: DropdownButton<String>(
                 value: state.locale.languageCode,
-                items: const [
+                items: [
                   DropdownMenuItem(
                     value: 'es',
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text('🇪🇸', style: TextStyle(fontSize: 20)),
-                        SizedBox(width: 8),
-                        Text('Español'),
+                        const Text('🇪🇸', style: TextStyle(fontSize: 20)),
+                        const SizedBox(width: 8),
+                        Text(AppLocalizations.of(context)!.spanish),
                       ],
                     ),
                   ),
@@ -38,9 +39,9 @@ class LanguageSelector extends StatelessWidget {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text('🇺🇸', style: TextStyle(fontSize: 20)),
-                        SizedBox(width: 8),
-                        Text('English'),
+                        const Text('🇺🇸', style: TextStyle(fontSize: 20)),
+                        const SizedBox(width: 8),
+                        Text(AppLocalizations.of(context)!.english),
                       ],
                     ),
                   ),
@@ -78,10 +79,6 @@ class LanguageSelectorDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // We'll use generated localizations once flutter build is complete
-    // For now, we'll use hardcoded strings
-    const String selectLanguageText = "Seleccionar Idioma";
-
     return AlertDialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       title: Row(
@@ -89,7 +86,7 @@ class LanguageSelectorDialog extends StatelessWidget {
           Icon(Icons.language, color: Colors.amber.shade600),
           const SizedBox(width: 12),
           Text(
-            selectLanguageText,
+            AppLocalizations.of(context)!.selectLanguage,
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -102,13 +99,13 @@ class LanguageSelectorDialog extends StatelessWidget {
         children: [
           _LanguageOption(
             flag: '🇪🇸',
-            language: 'Español',
+            language: AppLocalizations.of(context)!.spanish,
             code: 'es',
           ),
           const SizedBox(height: 12),
           _LanguageOption(
             flag: '🇺🇸',
-            language: 'English',
+            language: AppLocalizations.of(context)!.english,
             code: 'en',
           ),
         ],

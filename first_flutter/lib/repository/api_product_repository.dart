@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import '../models/product.dart';
 import '../service/api_service.dart';
 import 'product_repository.dart';
@@ -31,20 +32,17 @@ class ApiProductRepository implements ProductRepository {
           allProducts.addAll(categoryProducts);
         } catch (e) {
           // Si falla una categoría, continuar con las demás
-          // ignore: avoid_print
-          print("⚠️ Error al obtener productos de categoría $categoryId: $e");
+          debugPrint("⚠️ Error al obtener productos de categoría $categoryId: $e");
         }
       }
       
       // Filtrar productos inválidos (evitar mostrar elementos generados a partir de respuestas no válidas)
       final filtered = allProducts.where((p) => p.id > 0 && p.name.trim().isNotEmpty).toList();
-      // ignore: avoid_print
-      print("✅ Total de productos válidos obtenidos: ${filtered.length}");
+      debugPrint("✅ Total de productos válidos obtenidos: ${filtered.length}");
       return filtered;
 
     } catch (e) {
-      // ignore: avoid_print
-      print("❌ Error al obtener todos los productos: $e");
+      debugPrint("❌ Error al obtener todos los productos: $e");
       rethrow;
     }
   }
@@ -53,25 +51,23 @@ class ApiProductRepository implements ProductRepository {
   Future<List<Product>> getProductsByCategory(String categoryName) async {
     try {
       // Debug: Ver qué nombre de categoría llega
-      print("🔍 DEBUG: getProductsByCategory recibió: '$categoryName'");
+      debugPrint("🔍 DEBUG: getProductsByCategory recibió: '$categoryName'");
       
       // Mapear nombres de categorías a IDs
       final int categoryId = _getCategoryIdFromName(categoryName);
       
-      print("🔍 DEBUG: Categoría '$categoryName' mapeada a ID: $categoryId");
+      debugPrint("🔍 DEBUG: Categoría '$categoryName' mapeada a ID: $categoryId");
       
       // Obtener productos usando el ID de categoría
       final products = await _apiService.getProductsByCategory(categoryId);
       
       // Filtrar productos inválidos
       final filtered = products.where((p) => p.id > 0 && p.name.trim().isNotEmpty).toList();
-      // ignore: avoid_print
-      print("✅ Productos válidos obtenidos para categoría '$categoryName' (ID: $categoryId): ${filtered.length}");
+      debugPrint("✅ Productos válidos obtenidos para categoría '$categoryName' (ID: $categoryId): ${filtered.length}");
       return filtered;
 
     } catch (e) {
-      // ignore: avoid_print
-      print("❌ Error al obtener productos de categoría '$categoryName': $e");
+      debugPrint("❌ Error al obtener productos de categoría '$categoryName': $e");
       rethrow;
     }
   }
@@ -83,13 +79,11 @@ class ApiProductRepository implements ProductRepository {
       final products = await _apiService.getProductsByCategory(categoryId);
       // Filtrar productos inválidos
       final filtered = products.where((p) => p.id > 0 && p.name.trim().isNotEmpty).toList();
-      // ignore: avoid_print
-      print("✅ Productos válidos obtenidos para categoría ID $categoryId: ${filtered.length}");
+      debugPrint("✅ Productos válidos obtenidos para categoría ID $categoryId: ${filtered.length}");
       return filtered;
 
     } catch (e) {
-      // ignore: avoid_print
-      print("❌ Error al obtener productos de categoría ID $categoryId: $e");
+      debugPrint("❌ Error al obtener productos de categoría ID $categoryId: $e");
       rethrow;
     }
   }
@@ -101,13 +95,11 @@ class ApiProductRepository implements ProductRepository {
     try {
       final product = await _apiService.getProductByCategoryAndId(categoryId, productId);
       
-      // ignore: avoid_print
-      print("✅ Producto específico obtenido: ${product.name}");
+      debugPrint("✅ Producto específico obtenido: ${product.name}");
       return product;
 
     } catch (e) {
-      // ignore: avoid_print
-      print("❌ Error al obtener producto $productId de categoría ID $categoryId: $e");
+      debugPrint("❌ Error al obtener producto $productId de categoría ID $categoryId: $e");
       rethrow;
     }
   }
@@ -123,13 +115,11 @@ class ApiProductRepository implements ProductRepository {
       // Obtener producto específico
       final product = await _apiService.getProductByCategoryAndId(categoryId, productId);
       
-      // ignore: avoid_print
-      print("✅ Producto específico obtenido: ${product.name}");
+      debugPrint("✅ Producto específico obtenido: ${product.name}");
       return product;
 
     } catch (e) {
-      // ignore: avoid_print
-      print("❌ Error al obtener producto $productId de categoría '$categoryName': $e");
+      debugPrint("❌ Error al obtener producto $productId de categoría '$categoryName': $e");
       rethrow;
     }
   }
@@ -141,24 +131,24 @@ class ApiProductRepository implements ProductRepository {
     final String normalizedName = categoryName.toLowerCase().trim();
     
     // Debug: Ver el mapeo
-    print("🔍 DEBUG: Normalizando '$categoryName' → '$normalizedName'");
+    debugPrint("🔍 DEBUG: Normalizando '$categoryName' → '$normalizedName'");
     
     // Mapeo de nombres de categorías a IDs según la API
     switch (normalizedName) {
       case 'hamburguesas':
       case 'burgers':
       case 'hamburgesas': // Por si hay variaciones en el nombre
-        print("✅ DEBUG: Mapeado a Hamburguesas (ID: 1)");
+        debugPrint("✅ DEBUG: Mapeado a Hamburguesas (ID: 1)");
         return 1;
       
       case 'salchipapas':
       case 'salchipapa':
-        print("✅ DEBUG: Mapeado a Salchipapas (ID: 2)");
+        debugPrint("✅ DEBUG: Mapeado a Salchipapas (ID: 2)");
         return 2;
       
       case 'pizzas':
       case 'pizza':
-        print("✅ DEBUG: Mapeado a Pizzas (ID: 3)");
+        debugPrint("✅ DEBUG: Mapeado a Pizzas (ID: 3)");
         return 3;
       
       // Categorías adicionales que pueden existir en la UI
@@ -166,7 +156,7 @@ class ApiProductRepository implements ProductRepository {
       case 'taco':
         // Por ahora mapear tacos a hamburguesas (ID 1)
         // TODO: Actualizar cuando exista endpoint específico para tacos
-        print("⚠️ DEBUG: Tacos no tiene categoría propia, mapeando a Hamburguesas (ID: 1)");
+        debugPrint("⚠️ DEBUG: Tacos no tiene categoría propia, mapeando a Hamburguesas (ID: 1)");
         return 1;
       
       case 'ensaladas':
@@ -174,13 +164,12 @@ class ApiProductRepository implements ProductRepository {
       case 'ensalada':
         // Por ahora mapear ensaladas a salchipapas (ID 2)
         // TODO: Actualizar cuando exista endpoint específico para ensaladas
-        print("⚠️ DEBUG: Ensaladas no tiene categoría propia, mapeando a Salchipapas (ID: 2)");
+        debugPrint("⚠️ DEBUG: Ensaladas no tiene categoría propia, mapeando a Salchipapas (ID: 2)");
         return 2;
       
       default:
-        // ignore: avoid_print
-        print("❌ DEBUG: Categoría desconocida: '$categoryName' (normalizado: '$normalizedName')");
-        print("⚠️ DEBUG: Usando categoría por defecto Hamburguesas (ID: 1)");
+        debugPrint("❌ DEBUG: Categoría desconocida: '$categoryName' (normalizado: '$normalizedName')");
+        debugPrint("⚠️ DEBUG: Usando categoría por defecto Hamburguesas (ID: 1)");
         return 1; // Categoria por defecto: hamburguesas
     }
   }

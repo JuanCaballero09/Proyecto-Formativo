@@ -28,7 +28,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           emit(Unauthenticated());
         }
       } catch (e) {
-        emit(AuthError('Error al verificar sesión', errorCode: 'CHECK_AUTH_ERR'));
+        emit(AuthError('Error checking session', errorCode: 'CHECK_AUTH_ERR'));
       }
     });
     
@@ -38,23 +38,23 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         
         // Validar campos
         if (event.email.isEmpty) {
-          emit(AuthError('El correo no puede estar vacío', errorCode: 'EMPTY_EMAIL'));
+          emit(AuthError('Email cannot be empty', errorCode: 'EMPTY_EMAIL'));
           return;
         }
         if (event.password.isEmpty) {
-          emit(AuthError('La contraseña no puede estar vacía', errorCode: 'EMPTY_PASSWORD'));
+          emit(AuthError('Password cannot be empty', errorCode: 'EMPTY_PASSWORD'));
           return;
         }
         
         // Validar formato de email
         if (!_isValidEmail(event.email)) {
-          emit(AuthError('Ingresa un correo electrónico válido', errorCode: 'INVALID_EMAIL'));
+          emit(AuthError('Enter a valid email', errorCode: 'INVALID_EMAIL'));
           return;
         }
         
         // Validar longitud de contraseña
         if (event.password.length < 6) {
-          emit(AuthError('La contraseña debe tener al menos 6 caracteres', errorCode: 'SHORT_PASSWORD'));
+          emit(AuthError('Password must be at least 6 characters', errorCode: 'SHORT_PASSWORD'));
           return;
         }
         
@@ -65,7 +65,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         );
         emit(Authenticated(user));
       } catch (e) {
-        emit(AuthError('Error durante el login: ${e.toString()}', errorCode: 'LOGIN_ERR'));
+        emit(AuthError('Login error: ${e.toString()}', errorCode: 'LOGIN_ERR'));
       }
     });
 
@@ -74,7 +74,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         await _storage.deleteAll();
         emit(Unauthenticated());
       } catch (e) {
-        emit(AuthError('Error al cerrar sesión', errorCode: 'LOGOUT_ERR'));
+        emit(AuthError('Error logging out', errorCode: 'LOGOUT_ERR'));
       }
     });
 
