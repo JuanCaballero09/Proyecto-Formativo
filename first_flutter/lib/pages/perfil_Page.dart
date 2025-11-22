@@ -39,7 +39,7 @@ class PerfilPage extends StatelessWidget {
               elevation: 1,
               title: Text(
                 AppLocalizations.of(context)!.profile,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
                   color: textColor,
@@ -64,7 +64,8 @@ class PerfilPage extends StatelessWidget {
                         ),
                     ],
                   ),
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
                   child: Row(
                     children: [
                       // Avatar con gradiente
@@ -80,7 +81,8 @@ class PerfilPage extends StatelessWidget {
                         child: const CircleAvatar(
                           radius: 32,
                           backgroundColor: Colors.transparent,
-                          child: Icon(Icons.person, color: Colors.white, size: 42),
+                          child:
+                              Icon(Icons.person, color: Colors.white, size: 42),
                         ),
                       ),
 
@@ -127,7 +129,8 @@ class PerfilPage extends StatelessWidget {
                         onPressed: () {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text(AppLocalizations.of(context)!.comingSoon),
+                              content: Text(
+                                  AppLocalizations.of(context)!.comingSoon),
                               duration: const Duration(seconds: 2),
                             ),
                           );
@@ -141,7 +144,8 @@ class PerfilPage extends StatelessWidget {
                 const SizedBox(height: 8),
 
                 // 🔹 Sección Preferencias
-                _buildSectionTitle(context, AppLocalizations.of(context)!.settings),
+                _buildSectionTitle(
+                    context, AppLocalizations.of(context)!.settings, textColor),
 
                 _buildPreferenceRow(
                   icon: Icons.language,
@@ -164,7 +168,8 @@ class PerfilPage extends StatelessWidget {
                 const SizedBox(height: 12),
 
                 // 🔹 Sección Cuenta
-                _buildSectionTitle(context, AppLocalizations.of(context)!.accountSettings),
+                _buildSectionTitle(context,
+                    AppLocalizations.of(context)!.accountSettings, textColor),
 
                 _buildMenuTile(
                   context,
@@ -202,7 +207,8 @@ class PerfilPage extends StatelessWidget {
                 const SizedBox(height: 12),
 
                 // 🔹 Sección Legal e Información
-                _buildSectionTitle(context, AppLocalizations.of(context)!.aboutUs),
+                _buildSectionTitle(
+                    context, AppLocalizations.of(context)!.aboutUs, textColor),
 
                 _buildMenuTile(
                   context,
@@ -229,17 +235,17 @@ class PerfilPage extends StatelessWidget {
                 _buildMenuTile(
                   context,
                   icon: Icons.article,
-                  label: AppLocalizations.of(context)!.termsConditions,
+                  label: "Términos y Condiciones",
                   onTap: () {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text(AppLocalizations.of(context)?.comingSoon ?? 'Coming soon'),
+                        content: Text(
+                            AppLocalizations.of(context)?.comingSoon ??
+                                'Coming soon'),
                         duration: const Duration(seconds: 2),
                       ),
                     );
                   },
-                  label: "Términos y Condiciones",
-                  onTap: () {},
                   cardColor: cardColor,
                   textColor: textColor,
                   iconColor: iconColor,
@@ -251,7 +257,8 @@ class PerfilPage extends StatelessWidget {
 
                 // 🔹 Cerrar sesión
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   child: Material(
                     color: Colors.transparent,
                     child: InkWell(
@@ -260,15 +267,20 @@ class PerfilPage extends StatelessWidget {
                           context: context,
                           builder: (context) => AlertDialog(
                             title: Text(AppLocalizations.of(context)!.logout),
-                            content: Text(AppLocalizations.of(context)?.logoutConfirmation ?? 'Are you sure you want to logout?'),
+                            content: Text(AppLocalizations.of(context)
+                                    ?.logoutConfirmation ??
+                                'Are you sure you want to logout?'),
                             actions: [
                               TextButton(
                                 onPressed: () => Navigator.pop(context, false),
-                                child: Text(AppLocalizations.of(context)!.cancel),
+                                child:
+                                    Text(AppLocalizations.of(context)!.cancel),
                               ),
                               TextButton(
                                 onPressed: () => Navigator.pop(context, true),
-                                child: Text(AppLocalizations.of(context)!.logout, style: const TextStyle(color: Colors.red)),
+                                child: Text(
+                                    AppLocalizations.of(context)!.logout,
+                                    style: const TextStyle(color: Colors.red)),
                               ),
                             ],
                           ),
@@ -283,10 +295,12 @@ class PerfilPage extends StatelessWidget {
                       },
                       borderRadius: BorderRadius.circular(8),
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 16),
                         child: Row(
                           children: [
-                            const Icon(Icons.logout, color: Colors.red, size: 22),
+                            const Icon(Icons.logout,
+                                color: Colors.red, size: 22),
                             const SizedBox(width: 16),
                             Text(
                               AppLocalizations.of(context)!.logout,
@@ -333,17 +347,20 @@ class PerfilPage extends StatelessWidget {
                     Image.asset("assets/loogo.jpg", width: 120, height: 120),
                     const SizedBox(height: 20),
                     Text(
-                      AppLocalizations.of(context)?.welcomeTitle ?? 'Bienvenido a Bitevia',
+                      AppLocalizations.of(context)?.welcomeTitle ??
+                          'Bienvenido a Bitevia',
                       style: theme.textTheme.headlineSmall?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     const SizedBox(height: 10),
                     Text(
-                      AppLocalizations.of(context)?.guestAuthPrompt ?? 'Inicia sesión o regístrate para continuar',
+                      AppLocalizations.of(context)?.guestAuthPrompt ??
+                          'Inicia sesión o regístrate para continuar',
                       textAlign: TextAlign.center,
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.7),
+                        color: theme.textTheme.bodyMedium?.color
+                            ?.withValues(alpha: 0.7),
                       ),
                     ),
                     const SizedBox(height: 30),
@@ -361,58 +378,60 @@ class PerfilPage extends StatelessWidget {
                           ),
                         ),
                         child: Text(
-                          AppLocalizations.of(context)?.login ?? 'Iniciar Sesión',
-                          style: const TextStyle(fontSize: 18, color: Colors.white),
+                          AppLocalizations.of(context)?.login ??
+                              'Iniciar Sesión',
+                          style: const TextStyle(
+                              fontSize: 18, color: Colors.white),
                         ),
                       ),
-                      child: const Text(
-                        'Iniciar Sesión',
-                        style: TextStyle(fontSize: 18, color: Colors.white),
-                      ),
                     ),
-                  ),
 
-                  const SizedBox(height: 12),
+                    const SizedBox(height: 12),
 
-                  SizedBox(
-                    width: 220,
-                    height: 50,
-                    child: OutlinedButton(
-                      onPressed: () => Navigator.pushNamed(context, "/register"),
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: theme.textTheme.bodyLarge?.color,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
+                    SizedBox(
+                      width: 220,
+                      height: 50,
+                      child: OutlinedButton(
+                        onPressed: () =>
+                            Navigator.pushNamed(context, "/register"),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: theme.textTheme.bodyLarge?.color,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
                         ),
-                        child: Text(AppLocalizations.of(context)?.register ?? 'Registrarse', style: const TextStyle(fontSize: 18)),
+                        child: Text(
+                            AppLocalizations.of(context)?.register ??
+                                'Registrarse',
+                            style: const TextStyle(fontSize: 18)),
                       ),
-                      child: const Text('Registrarse', style: TextStyle(fontSize: 18)),
                     ),
-                  ),
 
-                  const SizedBox(height: 20),
+                    const SizedBox(height: 20),
 
                     TextButton(
                       onPressed: () {
                         Navigator.pushNamed(context, "/forgot-password");
                       },
                       child: Text(
-                        AppLocalizations.of(context)?.forgotPassword ?? '¿Olvidaste tu contraseña?',
+                        AppLocalizations.of(context)?.forgotPassword ??
+                            '¿Olvidaste tu contraseña?',
                         style: const TextStyle(color: Colors.blueAccent),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
-        );
+          );
+        }
       },
     );
   }
 
   // 🔹 Título de sección
-  Widget _buildSectionTitle(BuildContext context, String title, Color textColor) {
+  Widget _buildSectionTitle(
+      BuildContext context, String title, Color textColor) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Text(
@@ -420,7 +439,7 @@ class PerfilPage extends StatelessWidget {
         style: TextStyle(
           fontSize: 14,
           fontWeight: FontWeight.bold,
-          color: textColor.withOpacity(0.7),
+          color: textColor.withValues(alpha: 0.7),
           letterSpacing: 0.5,
         ),
       ),
@@ -519,4 +538,3 @@ class PerfilPage extends StatelessWidget {
     );
   }
 }
-
