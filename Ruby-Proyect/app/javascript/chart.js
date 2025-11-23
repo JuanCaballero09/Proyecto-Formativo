@@ -44,40 +44,53 @@ document.addEventListener("turbo:load", function () {
   });
 
   // === Crecimiento en línea ===
-  new Chart(document.getElementById("chartLineas"), {
+  window.salesGrowth = new Chart(document.getElementById("chartLineas"), {
     type: "line",
     data: {
       labels: window.salesGrowth.labels,
-      datasets: [{
-        label: "Crecimiento",
-        data: window.salesGrowth.data,
+      datasets: [
+      {
+        label: "Ventas",
+        data: window.salesGrowth.ventas,
         fill: true,
         backgroundColor: claro,
         borderColor: base,
         tension: 0.3,
         pointRadius: 4,
         pointHoverRadius: 6
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: {
-          labels: {
-            color: oscuro,
-            padding: 10
-          }
-        }
       },
-      layout: {
-        padding: {
-          top: 10,
-          bottom: 10
+      {
+        label: "Crecimiento",
+        data: window.salesGrowth.crecimiento,
+        fill: false,
+        borderColor: base,          
+        backgroundColor: oscuro,     
+        tension: 0.3,
+        pointRadius: 4,
+        pointHoverRadius: 6
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        labels: {
+          color: oscuro,
+          padding: 10
         }
       }
+    },
+    layout: {
+      padding: {
+        top: 10,
+        bottom: 10
+      }
     }
-  });
+  }
+});
+
 
   // === Distribución (Doughnut) ===
   new Chart(document.getElementById("chartTorta"), {
@@ -125,7 +138,7 @@ document.addEventListener("turbo:load", function () {
         borderColor: "#fff",
         borderWidth: 2
       }],
-     options: {
+      options: {
       responsive: true,
       maintainAspectRatio: false,
       plugins: {
@@ -148,7 +161,7 @@ document.addEventListener("turbo:load", function () {
   });
 
    // === Ventas dia, semana, mes === //
-   new Chart(document.getElementById("chartSales"), {
+  window.chartSales = new Chart(document.getElementById("chartSales"), {
     type: "line",
     data: {
       labels: window.Sales.labels,
@@ -156,22 +169,22 @@ document.addEventListener("turbo:load", function () {
         {
           label: "Dia",
           data: window.Sales.byDay,
-          backgroundColor: [base, claro, oscuro],
-          borderColor: "#fff",
+          backgroundColor: oscuro, // Linea
+          borderColor: oscuro,
           borderWidth: 2
         },
         {
           label: "Semana",
           data: window.Sales.byWeek,
-          backgroundColor: [base, claro, oscuro],
-          borderColor: "#fff",
+          backgroundColor: claro,
+          borderColor: claro,
           borderWidth: 2
         },
         {
           label: "Mes ",
           data: window.Sales.byMonth,
-          backgroundColor: [base, claro, oscuro],
-          borderColor: "#fff",
+          backgroundColor: base,
+          borderColor: base,
           borderWidth: 2
         }
       ]
@@ -189,7 +202,7 @@ document.addEventListener("turbo:load", function () {
         },
         title: {
           display: true,
-          Text: "Ventas"
+          text: "Ventas"
         }
       },
       layout: {
@@ -204,5 +217,5 @@ document.addEventListener("turbo:load", function () {
         }
       }
     }
-   });
+  });
 });

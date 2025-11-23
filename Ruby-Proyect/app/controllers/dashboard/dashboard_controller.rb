@@ -42,8 +42,20 @@ class Dashboard::DashboardController < ApplicationController
     @products_by_group = Product.joins(:grupo).group("grupos.nombre").count
     @grupos_growth = Grupo.group_by_month(:created_at, format: "%b %Y").count
     @top_products = OrderItem.joins(:product).group("products.nombre").order("SUM(order_items.quantity) DESC").limit(5).sum(:quantity)
-    @sales_by_day = Order.group("DATE(created_at)").sum(:total)
-    @sales_by_week = Order.group("DATE_TRUNC('Week', created_at)").sum(:total)
-    @sales_by_month = Order.group("DATE_TRUNC('month', created_at)").sum(:total)
+    @sales_by_day = Order.group("DATE(created_at)").sum(:total).sort.to_h
+    @sales_by_week = Order.group("DATE_TRUNC('Week', created_at)").sum(:total).sort.to_h
+    @sales_by_month = Order.group("DATE_TRUNC('month', created_at)").sum(:total).sort.to_h
+
+    meses = @sales_by_month.keys.sort
+    valores = meses.map { |m| @sales_by_month[m] }
+
+    crecimiento = valores.each_cons(2).map { |prev, actual| actual - prev }
+
+    crecimiento.unshift(0)
+
+    @growth_labels = meses.map { |m| m.strftime("%b") }
+    @sales_values = valores
+    @growth_values = crecimiento
+
   end
 end
