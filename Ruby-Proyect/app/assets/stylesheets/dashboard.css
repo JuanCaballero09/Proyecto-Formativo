@@ -1171,3 +1171,35 @@
     margin-top: 1.5rem;
     justify-content: flex-start;
 }
+
+#restrigido-movil-admin{
+    display: none;
+}
+
+@media screen and (max-width: 1024px) {
+    #admin-app {
+        display: flex !important; 
+    }
+
+    #restrigido-movil-admin{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        background-color: #e53935;
+        z-index: 9999;
+        padding: 20px;
+    }
+
+    .mensaje-restriccion p{
+        color: #fff;
+        font-size: xx-large;
+        text-align: center;
+    }
+}

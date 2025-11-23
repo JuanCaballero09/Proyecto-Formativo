@@ -1,4 +1,4 @@
-<section class= "perfil-cliente">
+<section class= "perfil-cliente container py-4">
     <div class="encabezado-perfil-cliente">
         <div class= "info-cliente">
             <%= image_tag('icons/user-solid.svg', class: "icono-usuario-perfil" )  %>
@@ -9,7 +9,7 @@
             <label for="btn-modal" class="boton-modal"><%= t("home.clientes.editar_datos")%></label>
             <%= button_to t("home.clientes.eliminar_cuenta"), registration_path(:user), class: "boton-modal" , method: :delete, data: { confirm: "¿Seguro que deseas eliminar tu cuenta?" } %>
         </div>
-           
+        
         <% content_for :modals do %> 
             <input type="checkbox" id="btn-modal">
             <div class="modal-contenido">
@@ -79,7 +79,7 @@
                                 <p class="precio-unitario" data-precio="<%= order.total %>" data-locale="<%= I18n.locale %>"style="color: #212529; font-size: 18px;">$</p>
                             </td>
                             <td>
-                           <%= link_to "Ver", order_path(order), class: "btn-eliminar", data: { order_id: order.id }, remote: true %>
+                            <%= link_to "Ver", order_path(order), class: "btn-eliminar", data: { order_id: order.id }, remote: true %>
                         </td>
                     </tr>
                 <% end %>
