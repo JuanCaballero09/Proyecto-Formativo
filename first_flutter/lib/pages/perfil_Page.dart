@@ -45,7 +45,9 @@ class PerfilPage extends StatelessWidget {
               backgroundColor: cardColor,
               elevation: 1,
               title: Text(
+
                 "Mi Perfil",
+
                 style: TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
@@ -72,9 +74,11 @@ class PerfilPage extends StatelessWidget {
                         ),
                     ],
                   ),
-                  padding: const EdgeInsets.symmetric(vertical: 30),
+
+                padding: const EdgeInsets.symmetric(vertical: 30),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
+
                     children: [
                       // Avatar centrado
                       Container(
@@ -90,11 +94,14 @@ class PerfilPage extends StatelessWidget {
                         child: const CircleAvatar(
                           radius: 48,
                           backgroundColor: Colors.transparent,
+
                           child: Icon(Icons.person, size: 55, color: Colors.white),
+
                         ),
                       ),
 
                       const SizedBox(height: 16),
+
 
                       // Nombre
                       Text(
@@ -143,6 +150,7 @@ class PerfilPage extends StatelessWidget {
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
+
                 ),
                 const SizedBox(height: 10),
               _buildOption(
@@ -192,7 +200,10 @@ _buildMenuTile(
 
 
 
+
+
                 const SizedBox(height: 20),
+
 
                 Divider(color: arrowColor),
 
@@ -200,6 +211,7 @@ _buildMenuTile(
                 //      CERRAR SESIÓN
                 // ===========================
                 Padding(
+
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   child: InkWell(
                     onTap: () async {
@@ -218,6 +230,7 @@ _buildMenuTile(
                               onPressed: () => Navigator.pop(context, true),
                               child: const Text('Cerrar sesión',
                                   style: TextStyle(color: Colors.red)),
+
                             ),
                           ],
                         ),
@@ -257,6 +270,7 @@ _buildMenuTile(
               ],
             ),
           );
+
         }
 
         // ==================================
@@ -285,28 +299,31 @@ _buildMenuTile(
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color:
                           theme.textTheme.bodyMedium?.color?.withOpacity(0.7),
-                    ),
-                  ),
-                  const SizedBox(height: 30),
 
-                  // Botón Iniciar Sesión
-                  SizedBox(
-                    width: 220,
-                    height: 50,
-                    child: ElevatedButton(
-                      onPressed: () => Navigator.pushNamed(context, "/login"),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color.fromRGBO(237, 88, 33, 1),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
+                    ),
+                    const SizedBox(height: 30),
+
+                    // Botón Iniciar Sesión
+                    SizedBox(
+                      width: 220,
+                      height: 50,
+                      child: ElevatedButton(
+                        onPressed: () => Navigator.pushNamed(context, "/login"),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color.fromRGBO(237, 88, 33, 1),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        child: Text(
+                          AppLocalizations.of(context)?.login ??
+                              'Iniciar Sesión',
+                          style: const TextStyle(
+                              fontSize: 18, color: Colors.white),
                         ),
                       ),
-                      child: const Text(
-                        'Iniciar Sesión',
-                        style: TextStyle(fontSize: 18, color: Colors.white),
-                      ),
                     ),
-                  ),
+
 
                   const SizedBox(height: 12),
 
@@ -320,32 +337,41 @@ _buildMenuTile(
                         foregroundColor: theme.textTheme.bodyLarge?.color,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
+
                         ),
+                        child: Text(
+                            AppLocalizations.of(context)?.register ??
+                                'Registrarse',
+                            style: const TextStyle(fontSize: 18)),
                       ),
+
                       child: const Text('Registrarse',
                           style: TextStyle(fontSize: 18)),
-                    ),
-                  ),
 
-                  const SizedBox(height: 20),
-
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, "/forgot-password");
-                    },
-                    child: const Text(
-                      "¿Olvidaste tu contraseña?",
-                      style: TextStyle(color: Colors.blueAccent),
                     ),
-                  ),
-                ],
+
+                    const SizedBox(height: 20),
+
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pushNamed(context, "/forgot-password");
+                      },
+                      child: Text(
+                        AppLocalizations.of(context)?.forgotPassword ??
+                            '¿Olvidaste tu contraseña?',
+                        style: const TextStyle(color: Colors.blueAccent),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-        );
+          );
+        }
       },
     );
   }
+
 
  // 🔹 MENÚ GENERAL (Mis pedidos, privacidad, etc.)
 Widget _buildMenuTile(
@@ -371,6 +397,7 @@ Widget _buildMenuTile(
             borderRadius: BorderRadius.circular(8),
           ),
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+
           child: Row(
             children: [
               Icon(icon, color: iconColor, size: 22),

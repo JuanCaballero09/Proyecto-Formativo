@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
 import '../core/config/api_config.dart';
 
 class Product extends Equatable {
@@ -22,8 +23,8 @@ class Product extends Equatable {
 
   factory Product.fromJson(Map<String, dynamic> json) {
     // Debug: Ver qué datos vienen del JSON
-    print('=== DEBUG: Product.fromJson ===');
-    print('JSON recibido: $json');
+    debugPrint('=== DEBUG: Product.fromJson ===');
+    debugPrint('JSON recibido: $json');
     
     List<String> ingredientsList = [];
     
@@ -111,9 +112,9 @@ class Product extends Equatable {
       ingredients: ingredientsList,
     );
     
-    print('Producto creado: ID=${producto.id}, Nombre=${producto.name}, Categoría=${producto.category}');
-    print('Imagen URL: ${producto.image}');
-    print('================================');
+    debugPrint('Producto creado: ID=${producto.id}, Nombre=${producto.name}, Categoría=${producto.category}');
+    debugPrint('Imagen URL: ${producto.image}');
+    debugPrint('================================');
     
     return producto;
   }

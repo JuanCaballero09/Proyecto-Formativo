@@ -1603,6 +1603,258 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Track your order in real-time from preparation to delivery'**
   String get slide3Subtitle;
+
+  /// No description provided for @productsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'products'**
+  String get productsLabel;
+
+  /// No description provided for @exampleAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'123 Main Street, Apt 456'**
+  String get exampleAddress;
+
+  /// No description provided for @emailHint.
+  ///
+  /// In en, this message translates to:
+  /// **'example@email.com'**
+  String get emailHint;
+
+  /// No description provided for @invalidAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Address is not valid'**
+  String get invalidAddress;
+
+  /// No description provided for @completeAllFields.
+  ///
+  /// In en, this message translates to:
+  /// **'Please complete all fields'**
+  String get completeAllFields;
+
+  /// No description provided for @loadingOrdersError.
+  ///
+  /// In en, this message translates to:
+  /// **'Error loading orders'**
+  String get loadingOrdersError;
+
+  /// No description provided for @searchOrdersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Search Orders'**
+  String get searchOrdersTitle;
+
+  /// No description provided for @searchOrdersPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your email to search for orders'**
+  String get searchOrdersPrompt;
+
+  /// No description provided for @guestMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Guest Mode'**
+  String get guestMode;
+
+  /// No description provided for @noOrders.
+  ///
+  /// In en, this message translates to:
+  /// **'No orders'**
+  String get noOrders;
+
+  /// No description provided for @searchWithAnotherEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Search with another email'**
+  String get searchWithAnotherEmail;
+
+  /// No description provided for @orderCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Order cancelled'**
+  String get orderCancelled;
+
+  /// No description provided for @statusPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get statusPending;
+
+  /// No description provided for @statusPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid'**
+  String get statusPaid;
+
+  /// No description provided for @statusInPreparation.
+  ///
+  /// In en, this message translates to:
+  /// **'In preparation'**
+  String get statusInPreparation;
+
+  /// No description provided for @statusSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Sent'**
+  String get statusSent;
+
+  /// No description provided for @statusDelivered.
+  ///
+  /// In en, this message translates to:
+  /// **'Delivered'**
+  String get statusDelivered;
+
+  /// No description provided for @statusCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get statusCancelled;
+
+  /// No description provided for @statusUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown'**
+  String get statusUnknown;
+
+  /// No description provided for @locationServicesDisabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Location services are disabled'**
+  String get locationServicesDisabled;
+
+  /// No description provided for @locationPermissionsDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Location permissions denied'**
+  String get locationPermissionsDenied;
+
+  /// No description provided for @locationPermissionsPermanentlyDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Location permissions permanently denied'**
+  String get locationPermissionsPermanentlyDenied;
+
+  /// No description provided for @errorGettingLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Error getting location'**
+  String get errorGettingLocation;
+
+  /// No description provided for @couldNotGetAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not get address'**
+  String get couldNotGetAddress;
+
+  /// No description provided for @selectedAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Selected Address'**
+  String get selectedAddress;
+
+  /// No description provided for @distanceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Distance'**
+  String get distanceLabel;
+
+  /// No description provided for @codeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Code'**
+  String get codeLabel;
+
+  /// No description provided for @activeAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Active Account'**
+  String get activeAccount;
+
+  /// No description provided for @comingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Coming soon'**
+  String get comingSoon;
+
+  /// No description provided for @theme.
+  ///
+  /// In en, this message translates to:
+  /// **'Theme'**
+  String get theme;
+
+  /// No description provided for @billingDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Billing Details'**
+  String get billingDetails;
+
+  /// No description provided for @authenticationError.
+  ///
+  /// In en, this message translates to:
+  /// **'Authentication error'**
+  String get authenticationError;
+
+  /// No description provided for @description.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get description;
+
+  /// No description provided for @typeToSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Type to search'**
+  String get typeToSearch;
+
+  /// No description provided for @noResultsFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No results found'**
+  String get noResultsFound;
+
+  /// No description provided for @categorySelected.
+  ///
+  /// In en, this message translates to:
+  /// **'Category selected'**
+  String get categorySelected;
+
+  /// No description provided for @logoutConfirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to logout?'**
+  String get logoutConfirmation;
+
+  /// No description provided for @guestAuthPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Login or register to continue'**
+  String get guestAuthPrompt;
+
+  /// No description provided for @product.
+  ///
+  /// In en, this message translates to:
+  /// **'Product'**
+  String get product;
+
+  /// No description provided for @viewProductsOfThisCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'View products from this category'**
+  String get viewProductsOfThisCategory;
+
+  /// No description provided for @spanish.
+  ///
+  /// In en, this message translates to:
+  /// **'Español'**
+  String get spanish;
+
+  /// No description provided for @english.
+  ///
+  /// In en, this message translates to:
+  /// **'English'**
+  String get english;
 }
 
 class _AppLocalizationsDelegate

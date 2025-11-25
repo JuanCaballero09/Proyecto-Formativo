@@ -79,6 +79,7 @@ Future<void> _showCheckoutDialog(BuildContext context) async {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+
                   BlocBuilder<CartBloc, CartState>(
                     builder: (context, state) {
                       return Container(
@@ -238,6 +239,7 @@ Future<void> _showCheckoutDialog(BuildContext context) async {
                       width: 2.5,
                     ),
                   ),
+
                 ),
               ),
             ),
@@ -314,6 +316,7 @@ Future<void> _showCheckoutDialog(BuildContext context) async {
                       );
                     },
                   ),
+
                 ],
               ),
             ),
@@ -329,6 +332,7 @@ Future<void> _showCheckoutDialog(BuildContext context) async {
                       fontSize: 16,
                       color: Colors.grey,
                       fontWeight: FontWeight.bold),
+
                 ),
               ),
 
@@ -427,26 +431,25 @@ Widget _buildInput({
 
     // Validar dirección
     if (_direccionController.text.trim().length < 5) {
-      _showError(dialogContext,
-          'Por favor ingresa una dirección válida (mínimo 5 caracteres)');
+      _showError(dialogContext, AppLocalizations.of(context)!.invalidAddress);
       return;
     }
 
     // Validar datos de invitado si no está autenticado
     if (!isAuthenticated) {
-      if (_nombreController.text.trim().isEmpty ||
+        if (_nombreController.text.trim().isEmpty ||
           _apellidoController.text.trim().isEmpty ||
           _emailController.text.trim().isEmpty ||
           _telefonoController.text.trim().isEmpty) {
         _showError(
-            dialogContext, 'Por favor completa todos los campos requeridos');
+            dialogContext, AppLocalizations.of(context)!.completeAllFields);
         return;
       }
 
       // Validar formato de email
       final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
-      if (!emailRegex.hasMatch(_emailController.text.trim())) {
-        _showError(dialogContext, 'Por favor ingresa un email válido');
+        if (!emailRegex.hasMatch(_emailController.text.trim())) {
+        _showError(dialogContext, AppLocalizations.of(context)!.enterValidEmail);
         return;
       }
     }
@@ -490,7 +493,7 @@ Widget _buildInput({
               Icon(Icons.check_circle,
                   color: Theme.of(context).colorScheme.secondary, size: 32),
               const SizedBox(width: 8),
-              Text('¡Pedido Confirmado!',
+              Text(AppLocalizations.of(context)!.orderPlaced,
                   style: Theme.of(context).textTheme.titleLarge),
             ],
           ),
@@ -498,13 +501,13 @@ Widget _buildInput({
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Código de orden: ${orderData['code']}'),
+              Text('${AppLocalizations.of(context)!.orderNumber}: ${orderData['code']}'),
               const SizedBox(height: 8),
               Text(
                   'Total: \$${NumberFormat('#,###', 'es_CO').format(orderData['total'])}'),
               const SizedBox(height: 8),
               Text(
-                'Tu pedido ha sido registrado exitosamente. Recibirás confirmación pronto.',
+                  AppLocalizations.of(context)!.thankYou,
                 style: Theme.of(context)
                     .textTheme
                     .bodySmall
@@ -515,7 +518,7 @@ Widget _buildInput({
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Aceptar'),
+              child: Text(AppLocalizations.of(context)!.ok),
             ),
           ],
         ),
@@ -525,7 +528,7 @@ Widget _buildInput({
     } on NetworkException catch (e) {
       _showError(dialogContext, e.message);
     } catch (e) {
-      _showError(dialogContext, 'Error inesperado: $e');
+      _showError(dialogContext, '${AppLocalizations.of(context)!.unknownError}: $e');
     }
   }
 
@@ -774,6 +777,7 @@ Widget _buildInput({
               color: Colors.redAccent.withOpacity(0.4),
               blurRadius: 10,
               offset: const Offset(0, 3),
+
             ),
           ],
         ),

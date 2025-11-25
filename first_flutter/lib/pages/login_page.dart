@@ -6,6 +6,7 @@ import '../bloc/auth/auth_bloc.dart';
 import '../bloc/auth/auth_event.dart';
 import '../bloc/auth/auth_state.dart';
 import 'product_catalog_page.dart';
+import '../l10n/app_localizations.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -67,7 +68,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Error',
+                    AppLocalizations.of(context)!.error,
                     style: GoogleFonts.poppins(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
@@ -80,8 +81,11 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                   ),
                   if (errorCode != null)
                     Text(
-                      'Código: $errorCode',
-                      style: GoogleFonts.poppins(fontSize: 11, color: Colors.white70),
+                      '${AppLocalizations.of(context)!.codeLabel} $errorCode',
+                      style: GoogleFonts.poppins(
+                        fontSize: 11,
+                        color: Colors.white70,
+                      ),
                     ),
                 ],
               ),
@@ -139,7 +143,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  "¡Bienvenido!",
+                  AppLocalizations.of(context)!.welcome,
                   textAlign: TextAlign.center,
                   style: GoogleFonts.poppins(
                     fontSize: 22,
@@ -149,7 +153,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  "Inicio de sesión exitoso",
+                  AppLocalizations.of(context)!.loginSuccess,
                   textAlign: TextAlign.center,
                   style: GoogleFonts.poppins(
                     fontSize: 14,
@@ -222,7 +226,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                             const Icon(Icons.arrow_back_ios_new_rounded,
                                 size: 18, color: Colors.black87),
                             const SizedBox(width: 4),
-                            Text('Atrás',
+                            Text(AppLocalizations.of(context)!.back,
                                 style: GoogleFonts.poppins(
                                     fontSize: 14, color: Colors.black87)),
                           ],
@@ -246,7 +250,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                         borderRadius: BorderRadius.circular(24),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
+                            color: Colors.black.withValues(alpha: 0.1),
                             blurRadius: 20,
                             offset: const Offset(0, 10),
                           ),
@@ -263,19 +267,19 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                 color: Colors.orange.shade50,
                                 borderRadius: BorderRadius.circular(16),
                               ),
-                              child: Image.asset('assets/loogo.jpg',
-                                  height: 80, width: 80),
+                              child: Image.asset('assets/loogo.jpg', height: 80, width: 80),
                             ),
                             const SizedBox(height: 20),
 
-                            Text('¡Bienvenido!',
+                            // Títulos
+                            Text(AppLocalizations.of(context)!.welcome,
                                 style: GoogleFonts.poppins(
                                   fontSize: 32,
                                   fontWeight: FontWeight.w700,
                                   color: Colors.black87,
                                 )),
                             const SizedBox(height: 8),
-                            Text('Inicia sesión en tu cuenta',
+                            Text(AppLocalizations.of(context)!.signIn,
                                 style: GoogleFonts.poppins(
                                   fontSize: 15,
                                   color: Colors.black54,
@@ -288,36 +292,36 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                               keyboardType: TextInputType.emailAddress,
                               style: const TextStyle(color: Colors.black),
                               decoration: InputDecoration(
-                                labelText: 'Correo electrónico',
-                                labelStyle:
-                                    GoogleFonts.poppins(color: Colors.black54),
-                                hintText: "ejemplo@gmail.com",
-                                hintStyle: const TextStyle(color: Colors.black54),
-                                prefixIcon: const Icon(Icons.email_outlined,
-                                    color: kOrange),
+                                labelText: AppLocalizations.of(context)!.email,
+                                labelStyle: GoogleFonts.poppins(
+                                  color: Colors.black54,
+                                ),
+                                prefixIcon: const Icon(Icons.email_outlined, color: kOrange),
                                 filled: true,
                                 fillColor: Colors.grey.shade50,
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(14),
+                                  borderSide: const BorderSide(color: Colors.grey),
                                 ),
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(14),
-                                  borderSide:
-                                      BorderSide(color: Colors.grey.shade300),
+                                  borderSide: BorderSide(color: Colors.grey.shade300),
                                 ),
-                                focusedBorder: const OutlineInputBorder(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(14)),
-                                  borderSide:
-                                      BorderSide(color: kOrange, width: 2),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(14),
+                                  borderSide: const BorderSide(color: kOrange, width: 2),
+                                ),
+                                errorBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(14),
+                                  borderSide: const BorderSide(color: Colors.red),
                                 ),
                               ),
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
-                                  return 'Por favor ingresa tu correo';
+                                  return AppLocalizations.of(context)!.fieldRequired;
                                 }
                                 if (!_isValidEmail(value)) {
-                                  return 'Ingresa un correo válido';
+                                  return AppLocalizations.of(context)!.enterValidEmail;
                                 }
                                 return null;
                               },
@@ -331,45 +335,40 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                               obscureText: _obscurePassword,
                               style: const TextStyle(color: Colors.black),
                               decoration: InputDecoration(
-                                labelText: 'Contraseña',
-                                labelStyle:
-                                    GoogleFonts.poppins(color: Colors.black54),
-                                hintText: "••••••••",
-                                hintStyle: const TextStyle(color: Colors.black54),
-                                prefixIcon:
-                                    const Icon(Icons.lock_outline, color: kOrange),
+                                labelText: AppLocalizations.of(context)!.password,
+                                labelStyle: GoogleFonts.poppins(
+                                  color: Colors.black54,
+                                ),
+                                prefixIcon: const Icon(Icons.lock_outline, color: kOrange),
                                 suffixIcon: IconButton(
                                   onPressed: _togglePassword,
-                                  icon: Icon(
-                                    _obscurePassword
-                                        ? Icons.visibility
-                                        : Icons.visibility_off,
-                                    color: kOrange,
-                                  ),
+                                  icon: Icon(_obscurePassword ? Icons.visibility : Icons.visibility_off, color: kOrange),
                                 ),
                                 filled: true,
                                 fillColor: Colors.grey.shade50,
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(14),
+                                  borderSide: const BorderSide(color: Colors.grey),
                                 ),
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(14),
-                                  borderSide:
-                                      BorderSide(color: Colors.grey.shade300),
+                                  borderSide: BorderSide(color: Colors.grey.shade300),
                                 ),
-                                focusedBorder: const OutlineInputBorder(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(14)),
-                                  borderSide:
-                                      BorderSide(color: kOrange, width: 2),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(14),
+                                  borderSide: const BorderSide(color: kOrange, width: 2),
+                                ),
+                                errorBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(14),
+                                  borderSide: const BorderSide(color: Colors.red),
                                 ),
                               ),
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
-                                  return 'Por favor ingresa tu contraseña';
+                                  return AppLocalizations.of(context)!.fieldRequired;
                                 }
                                 if (value.length < 6) {
-                                  return 'La contraseña debe tener al menos 6 caracteres';
+                                  return AppLocalizations.of(context)!.passwordTooShort;
                                 }
                                 return null;
                               },
@@ -379,15 +378,15 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                             Align(
                               alignment: Alignment.centerRight,
                               child: TextButton(
-                                onPressed: () {},
-                                child: Text(
-                                  '¿Olvidaste tu contraseña?',
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 13,
-                                    color: kOrange,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
+                                onPressed: () {
+                                  // Implementar recuperación de contraseña
+                                },
+                                child: Text(AppLocalizations.of(context)!.forgotPassword,
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 13,
+                                      color: kOrange,
+                                      fontWeight: FontWeight.w600,
+                                    )),
                               ),
                             ),
                             const SizedBox(height: 24),
@@ -418,8 +417,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                               strokeWidth: 3,
                                             ),
                                           )
-                                        : Text(
-                                            'Ingresar',
+                                        : Text(AppLocalizations.of(context)!.login,
                                             style: GoogleFonts.poppins(
                                               fontSize: 16,
                                               fontWeight: FontWeight.w600,
@@ -436,7 +434,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Text('¿No tienes una cuenta?',
+                                Text(AppLocalizations.of(context)!.dontHaveAccount,
                                     style: GoogleFonts.poppins(
                                       fontSize: 14,
                                       color: Colors.black54,
@@ -445,18 +443,15 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                   onPressed: () {
                                     Navigator.push(
                                       context,
-                                      MaterialPageRoute(
-                                          builder: (_) => const RegisterPage()),
+                                      MaterialPageRoute(builder: (_) => const RegisterPage()),
                                     );
                                   },
-                                  child: Text(
-                                    'Regístrate aquí',
-                                    style: GoogleFonts.poppins(
-                                      fontSize: 14,
-                                      color: kOrange,
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
+                                  child: Text(AppLocalizations.of(context)!.signUp,
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 14,
+                                        color: kOrange,
+                                        fontWeight: FontWeight.w700,
+                                      )),
                                 ),
                               ],
                             ),

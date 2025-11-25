@@ -49,24 +49,24 @@ class _SearchInputFieldState extends State<SearchInputField> {
         hintText: widget.hintText ?? localizations.search,
         hintStyle: theme.inputDecorationTheme.hintStyle,
         prefixIcon: Tooltip(
-          message: 'Buscar',
+          message: localizations.search,
           child: Icon(
             Icons.search,
             color: theme.iconTheme.color,
-            semanticLabel: 'Icono de búsqueda',
+            semanticLabel: localizations.search,
           ),
         ),
         suffixIcon: widget.controller.text.isNotEmpty
             ? Tooltip(
-                message: 'Limpiar búsqueda',
+                message: localizations.clearSearch,
                 child: IconButton(
                   icon: Icon(
                     Icons.clear,
                     color: theme.iconTheme.color,
-                    semanticLabel: 'Limpiar',
+                    semanticLabel: localizations.clearSearch,
                   ),
                   onPressed: widget.onClearPressed,
-                  tooltip: 'Limpiar búsqueda',
+                  tooltip: localizations.clearSearch,
                 ),
               )
             : null,
@@ -96,7 +96,7 @@ class _SearchInputFieldState extends State<SearchInputField> {
         disabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(
-            color: theme.dividerColor.withOpacity(0.5),
+            color: theme.dividerColor.withValues(alpha: 0.5),
             width: 1,
           ),
         ),

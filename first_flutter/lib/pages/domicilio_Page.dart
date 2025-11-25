@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import '../l10n/app_localizations.dart';
 import '../bloc/auth/auth_bloc.dart';
 import '../bloc/auth/auth_state.dart';
 import '../service/api_service.dart';
@@ -60,7 +61,7 @@ class DomicilioPageState extends State<DomicilioPage> {
       _showError(e.message);
       setState(() => _isLoading = false);
     } catch (e) {
-      _showError('Error al cargar \u00f3rdenes: $e');
+      _showError('${AppLocalizations.of(context)!.loadingOrdersError}: $e');
       setState(() => _isLoading = false);
     }
   }
@@ -76,23 +77,23 @@ class DomicilioPageState extends State<DomicilioPage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Buscar mis \u00f3rdenes'),
+        title: Text(AppLocalizations.of(context)!.searchOrdersTitle),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text(
-              'Ingresa el email que usaste al hacer tu pedido:',
-              style: TextStyle(fontSize: 14),
+            Text(
+              AppLocalizations.of(context)!.searchOrdersPrompt,
+              style: const TextStyle(fontSize: 14),
             ),
             const SizedBox(height: 16),
             TextField(
               controller: _emailController,
               keyboardType: TextInputType.emailAddress,
-              decoration: const InputDecoration(
-                labelText: 'Email',
-                hintText: 'correo@ejemplo.com',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.email),
+              decoration: InputDecoration(
+                labelText: AppLocalizations.of(context)!.email,
+                hintText: AppLocalizations.of(context)!.emailHint,
+                border: const OutlineInputBorder(),
+                prefixIcon: const Icon(Icons.email),
               ),
             ),
           ],
@@ -100,7 +101,7 @@ class DomicilioPageState extends State<DomicilioPage> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancelar'),
+            child: Text(AppLocalizations.of(context)!.cancel),
           ),
           ElevatedButton(
             onPressed: () {
@@ -113,7 +114,7 @@ class DomicilioPageState extends State<DomicilioPage> {
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color.fromRGBO(237, 88, 33, 1),
             ),
-            child: const Text('Buscar', style: TextStyle(color: Colors.white)),
+            child: Text(AppLocalizations.of(context)!.search, style: const TextStyle(color: Colors.white)),
           ),
         ],
       ),
@@ -129,13 +130,13 @@ class DomicilioPageState extends State<DomicilioPage> {
           children: [
             Icon(Icons.person_outline, size: 80, color: Colors.grey[400]),
             const SizedBox(height: 16),
-            const Text(
-              'Modo Invitado',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            Text(
+              AppLocalizations.of(context)!.guestMode,
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
             Text(
-              'Como tu cuenta es invitado, debes buscar tus \u00f3rdenes usando el correo que usaste al hacer el pedido.',
+              AppLocalizations.of(context)!.searchOrdersPrompt,
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 16, color: Colors.grey[600]),
             ),
@@ -143,7 +144,7 @@ class DomicilioPageState extends State<DomicilioPage> {
             ElevatedButton.icon(
               onPressed: _showEmailDialog,
               icon: const Icon(Icons.search, color: Colors.white),
-              label: const Text('Buscar mis \u00f3rdenes', style: TextStyle(color: Colors.white)),
+              label: Text(AppLocalizations.of(context)!.searchOrdersTitle, style: const TextStyle(color: Colors.white)),
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color.fromRGBO(237, 88, 33, 1),
                 padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
@@ -163,14 +164,14 @@ class DomicilioPageState extends State<DomicilioPage> {
           Icon(Icons.delivery_dining, size: 64, color: Colors.grey[400]),
           const SizedBox(height: 16),
           Text(
-            'No tienes \u00f3rdenes',
+            AppLocalizations.of(context)!.noOrders,
             style: TextStyle(fontSize: 18, color: Colors.grey[600]),
           ),
           if (!_isAuthenticated) ...[
             const SizedBox(height: 16),
             TextButton(
               onPressed: _showEmailDialog,
-              child: const Text('Buscar con otro email'),
+              child: Text(AppLocalizations.of(context)!.searchWithAnotherEmail),
             ),
           ],
         ],
@@ -197,7 +198,7 @@ class DomicilioPageState extends State<DomicilioPage> {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: statusColor.withOpacity(0.1),
+                  color: statusColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
@@ -242,7 +243,7 @@ class DomicilioPageState extends State<DomicilioPage> {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      '${order['items']?.length ?? 0} producto(s)',
+                      '${order['items']?.length ?? 0} ${AppLocalizations.of(context)!.productsLabel}',
                       style: TextStyle(
                         color: Colors.grey[600],
                         fontSize: 12,
@@ -263,17 +264,17 @@ class DomicilioPageState extends State<DomicilioPage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Orden #${order['code']}'),
+        title: Text('${AppLocalizations.of(context)!.orderNumber} #${order['code']}'),
         content: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildDetailRow('Estado', _getStatusText(order['status'] ?? 'pendiente')),
-              _buildDetailRow('Total', '\$${NumberFormat('#,###', 'es_CO').format(order['total'] ?? 0)}'),
-              _buildDetailRow('Direcci\u00f3n', order['direccion'] ?? 'N/A'),
+              _buildDetailRow(AppLocalizations.of(context)!.orderStatus, _getStatusText(order['status'] ?? 'pendiente')),
+              _buildDetailRow(AppLocalizations.of(context)!.totalPrice, '\$${NumberFormat('#,###', 'es_CO').format(order['total'] ?? 0)}'),
+              _buildDetailRow(AppLocalizations.of(context)!.deliveryAddress, order['direccion'] ?? 'N/A'),
               const Divider(),
-              const Text('Productos:', style: TextStyle(fontWeight: FontWeight.bold)),
+              Text(AppLocalizations.of(context)!.productsLabel, style: const TextStyle(fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
               ...(order['items'] as List? ?? []).map((item) {
                 return Padding(
@@ -291,11 +292,11 @@ class DomicilioPageState extends State<DomicilioPage> {
                 Navigator.pop(context);
                 await _cancelOrder(order['code']);
               },
-              child: const Text('Cancelar Orden', style: TextStyle(color: Colors.red)),
+              child: Text(AppLocalizations.of(context)!.cancel, style: const TextStyle(color: Colors.red)),
             ),
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cerrar'),
+            child: Text(AppLocalizations.of(context)!.close),
           ),
         ],
       ),
@@ -307,14 +308,14 @@ class DomicilioPageState extends State<DomicilioPage> {
       final api = ApiService();
       final email = _isAuthenticated ? null : _emailController.text.trim();
       await api.cancelOrder(code, guestEmail: email);
-      _showError('Orden cancelada exitosamente');
+      _showError(AppLocalizations.of(context)!.orderCancelled);
       await _loadOrders(guestEmail: email);
     } on DataException catch (e) {
       _showError(e.message);
     } on NetworkException catch (e) {
       _showError(e.message);
     } catch (e) {
-      _showError('Error al cancelar: $e');
+      _showError('${AppLocalizations.of(context)!.error}: $e');
     }
   }
 
@@ -378,19 +379,19 @@ class DomicilioPageState extends State<DomicilioPage> {
   String _getStatusText(String status) {
     switch (status) {
       case 'pendiente':
-        return 'Pendiente';
+        return AppLocalizations.of(context)!.statusPending;
       case 'pagado':
-        return 'Pagado';
+        return AppLocalizations.of(context)!.statusPaid;
       case 'en_preparacion':
-        return 'En Preparaci\u00f3n';
+        return AppLocalizations.of(context)!.statusInPreparation;
       case 'enviado':
-        return 'Enviado';
+        return AppLocalizations.of(context)!.statusSent;
       case 'entregado':
-        return 'Entregado';
+        return AppLocalizations.of(context)!.statusDelivered;
       case 'cancelado':
-        return 'Cancelado';
+        return AppLocalizations.of(context)!.statusCancelled;
       default:
-        return 'Desconocido';
+        return AppLocalizations.of(context)!.statusUnknown;
     }
   }
 
@@ -427,7 +428,7 @@ class DomicilioPageState extends State<DomicilioPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Mis Domicilios'),
+        title: Text(AppLocalizations.of(context)!.orders),
         backgroundColor: const Color.fromRGBO(237, 88, 33, 1),
         foregroundColor: Colors.white,
         actions: [
@@ -435,7 +436,7 @@ class DomicilioPageState extends State<DomicilioPage> {
             IconButton(
               icon: const Icon(Icons.refresh),
               onPressed: _showEmailDialog,
-              tooltip: 'Buscar con otro email',
+              tooltip: AppLocalizations.of(context)!.searchWithAnotherEmail,
             ),
         ],
       ),

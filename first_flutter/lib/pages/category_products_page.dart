@@ -66,8 +66,8 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                       colors: [
-                        Colors.black.withOpacity(0.3),
-                        Colors.black.withOpacity(0.6),
+                        Colors.black.withValues(alpha: 0.3),
+                        Colors.black.withValues(alpha: 0.6),
                       ],
                     ),
                   ),
@@ -76,7 +76,7 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
                   top: 40,
                   left: 16,
                   child: IconButton(
-                    icon: Icon(Icons.arrow_back_ios, color: Colors.white.withOpacity(0.9)),
+                    icon: Icon(Icons.arrow_back_ios, color: Colors.white.withValues(alpha: 0.9)),
                     onPressed: () => Navigator.pop(context),
                   ),
                 ),
@@ -210,7 +210,7 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
                                         return Icon(
                                           Icons.broken_image_outlined,
                                           size: 50,
-                                          color: theme.iconTheme.color?.withOpacity(0.6),
+                                          color: theme.iconTheme.color?.withValues(alpha: 0.6),
                                         );
                                       },
                                     ),
@@ -237,7 +237,7 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
                                           Text(
                                             product.description,
                                             style: theme.textTheme.bodySmall?.copyWith(
-                                              color: theme.textTheme.bodySmall?.color?.withOpacity(0.7),
+                                              color: theme.textTheme.bodySmall?.color?.withValues(alpha: 0.7),
                                             ),
                                             maxLines: 2,
                                             overflow: TextOverflow.ellipsis,
@@ -248,7 +248,7 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
                                             'Ingredientes: ${product.ingredients.take(3).join(", ")}${product.ingredients.length > 3 ? "..." : ""}',
                                             style: theme.textTheme.bodySmall?.copyWith(
                                               fontStyle: FontStyle.italic,
-                                              color: theme.textTheme.bodySmall?.color?.withOpacity(0.6),
+                                              color: theme.textTheme.bodySmall?.color?.withValues(alpha: 0.6),
                                             ),
                                             maxLines: 1,
                                             overflow: TextOverflow.ellipsis,
@@ -268,7 +268,7 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
                                             Container(
                                               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                                               decoration: BoxDecoration(
-                                                color: theme.colorScheme.primary.withOpacity(0.1),
+                                                color: theme.colorScheme.primary.withValues(alpha: 0.1),
                                                 borderRadius: BorderRadius.circular(12),
                                               ),
                                               child: Text(

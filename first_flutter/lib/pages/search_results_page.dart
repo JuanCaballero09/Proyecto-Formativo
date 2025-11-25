@@ -115,14 +115,14 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
       onWillPop: () async => true,
       child: Scaffold(
         backgroundColor: theme.scaffoldBackgroundColor,
-        appBar: AppBar(
+          appBar: AppBar(
           backgroundColor: theme.appBarTheme.backgroundColor,
           elevation: 2,
           title: Text(localizations.searchResults),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () => Navigator.pop(context),
-            tooltip: 'Volver',
+            tooltip: localizations.back,
           ),
           centerTitle: true,
         ),
@@ -152,11 +152,11 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
                           Icon(
                             Icons.search,
                             size: 64,
-                            color: theme.iconTheme.color?.withOpacity(0.3),
+                            color: theme.iconTheme.color?.withValues(alpha: 0.3),
                           ),
                           const SizedBox(height: 16),
                           Text(
-                            'Escribe para buscar',
+                            localizations.typeToSearch,
                             style: theme.textTheme.bodyLarge?.copyWith(
                               color: theme.hintColor,
                             ),
@@ -206,11 +206,11 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
                             Icon(
                               Icons.inbox,
                               size: 64,
-                              color: theme.iconTheme.color?.withOpacity(0.3),
+                              color: theme.iconTheme.color?.withValues(alpha: 0.3),
                             ),
                             const SizedBox(height: 16),
                             Text(
-                              'No se encontraron resultados',
+                              localizations.noResultsFound,
                               style: theme.textTheme.bodyLarge?.copyWith(
                                 color: theme.hintColor,
                               ),
@@ -445,7 +445,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
                         result.type == 'product'
                             ? Icons.shopping_bag
                             : Icons.category,
-                        color: theme.iconTheme.color?.withOpacity(0.5),
+                        color: theme.iconTheme.color?.withValues(alpha: 0.5),
                       ),
                     );
                   },
@@ -459,10 +459,8 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
                   color: theme.cardColor,
                 ),
                 child: Icon(
-                  result.type == 'product'
-                      ? Icons.shopping_bag
-                      : Icons.category,
-                  color: theme.iconTheme.color?.withOpacity(0.5),
+                  result.type == 'product' ? Icons.shopping_bag : Icons.category,
+                  color: theme.iconTheme.color?.withValues(alpha: 0.5),
                 ),
               ),
         title: Text(
@@ -496,7 +494,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
         ),
         trailing: Icon(
           Icons.chevron_right,
-          color: theme.iconTheme.color?.withOpacity(0.5),
+          color: theme.iconTheme.color?.withValues(alpha: 0.5),
         ),
         onTap: () {
           if (result.type == 'product' && result.rawData != null) {
@@ -511,7 +509,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
           } else if (result.type == 'category') {
             // Navegar a categoría o mostrar productos de categoría
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Categoría seleccionada')),
+              SnackBar(content: Text(AppLocalizations.of(context)!.categorySelected)),
             );
           }
         },

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../l10n/app_localizations.dart';
 
 class ErrorWidget extends StatelessWidget {
   final String message;
@@ -30,7 +31,7 @@ class ErrorWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.red.withOpacity(0.1),
+            color: Colors.red.withValues(alpha: 0.1),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -51,7 +52,7 @@ class ErrorWidget extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  'Error',
+                  AppLocalizations.of(context)!.error,
                   style: GoogleFonts.poppins(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
@@ -69,7 +70,7 @@ class ErrorWidget extends StatelessWidget {
                 if (errorCode != null) ...[
                   const SizedBox(height: 4),
                   Text(
-                    'Código: $errorCode',
+                    '${AppLocalizations.of(context)!.codeLabel} $errorCode',
                     style: GoogleFonts.poppins(
                       fontSize: 11,
                       color: Colors.red.shade600,
@@ -143,9 +144,9 @@ void showErrorSnackBar(
                 ScaffoldMessenger.of(context).hideCurrentSnackBar();
                 onRetry();
               },
-              child: const Text(
-                'Reintentar',
-                style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+              child: Text(
+                AppLocalizations.of(context)!.retry,
+                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
               ),
             ),
           ],
@@ -197,11 +198,11 @@ Future<void> showErrorDialog(
           color: Colors.black87,
         ),
       ),
-      actions: [
+        actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
           child: Text(
-            'Cerrar',
+            AppLocalizations.of(context)!.close,
             style: GoogleFonts.poppins(
               color: Colors.grey.shade600,
               fontWeight: FontWeight.w600,
@@ -215,7 +216,7 @@ Future<void> showErrorDialog(
               onRetry();
             },
             child: Text(
-              retryButtonText,
+              retryButtonText.isNotEmpty ? retryButtonText : AppLocalizations.of(context)!.retry,
               style: GoogleFonts.poppins(
                 color: const Color.fromRGBO(237, 88, 33, 1),
                 fontWeight: FontWeight.w600,

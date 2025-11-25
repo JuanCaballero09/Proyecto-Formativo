@@ -354,7 +354,7 @@ if (displayProducts.isEmpty) {
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               color:
-                                  theme.colorScheme.secondary.withOpacity(0.5),
+                                  theme.colorScheme.secondary.withValues(alpha: 0.5),
                             ),
                           ),
                         ),
@@ -369,7 +369,7 @@ if (displayProducts.isEmpty) {
           return Container(
             height: 270,
             alignment: Alignment.center,
-            child: const Text('Error cargando productos'),
+            child: Text(AppLocalizations.of(context)!.loadingProductsError),
           );
         }
       },
@@ -465,8 +465,11 @@ void showSimpleAddedDialog(BuildContext context) {
                         fit: BoxFit.cover,
                       )
                     : Container(
+
                         height: 300,
                         color: theme.disabledColor.withOpacity(0.2),
+
+                      
                         child:
                             const Center(child: Icon(Icons.fastfood, size: 60)),
                       ),
@@ -501,6 +504,7 @@ void showSimpleAddedDialog(BuildContext context) {
               Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 8.0, vertical: 6.0),
+
                 child:Row(
   mainAxisAlignment: MainAxisAlignment.spaceBetween,
   children: [
@@ -540,6 +544,7 @@ void showSimpleAddedDialog(BuildContext context) {
     ),
   ],
 )
+
               )
             ],
           ),
