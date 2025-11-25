@@ -193,15 +193,24 @@ class ProductDetailPage extends StatelessWidget {
                           Navigator.of(context).pop();
                         });
 
+                        final theme = Theme.of(context);
+                        final bool isDark = theme.brightness == Brightness.dark;
+                        final Color popupBg = theme
+                            .dialogBackgroundColor; // falls back to sensible dialog background
+                        final Color shadowColor =
+                            isDark ? Colors.black45 : Colors.black26;
+                        final Color circleColor = Colors.green.shade600;
+                        final Color textColor = theme.colorScheme.onSurface;
+
                         return Center(
                           child: Container(
                             padding: const EdgeInsets.all(25),
                             decoration: BoxDecoration(
-                              color: Colors.white,
+                              color: popupBg,
                               borderRadius: BorderRadius.circular(20),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black26,
+                                  color: shadowColor,
                                   blurRadius: 10,
                                   spreadRadius: 2,
                                 )
@@ -214,10 +223,10 @@ class ProductDetailPage extends StatelessWidget {
                                 Container(
                                   padding: const EdgeInsets.all(15),
                                   decoration: BoxDecoration(
-                                    color: Colors.green,
+                                    color: circleColor,
                                     shape: BoxShape.circle,
                                   ),
-                                  child: const Icon(
+                                  child: Icon(
                                     Icons.check,
                                     color: Colors.white,
                                     size: 40,
@@ -226,12 +235,12 @@ class ProductDetailPage extends StatelessWidget {
                                 const SizedBox(height: 15),
 
                                 // 🔤 TEXTO
-                                const Text(
+                                Text(
                                   "Añadido con éxito",
-                                  style: TextStyle(
+                                  style: theme.textTheme.titleMedium?.copyWith(
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.black87,
+                                    color: textColor,
                                   ),
                                 ),
                               ],
