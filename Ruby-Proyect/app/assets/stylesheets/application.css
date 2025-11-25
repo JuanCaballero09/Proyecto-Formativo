@@ -1286,7 +1286,7 @@ input:focus{outline: none;}
 }
 
 /* ===========================================
-   RESPONSIVE DESIGN PARA DASHBOARD
+    RESPONSIVE DESIGN PARA DASHBOARD
    =========================================== */
 
 @media (max-width: 768px) {
@@ -1352,12 +1352,12 @@ input:focus{outline: none;}
         width: 50px;
         height: 50px;
     }
-
+    
     .btn-user a, .btn-user button {
         font-size: 14px;
         padding: 10px 16px;
     }
-
+    
     /* Footer Responsive */
     .footer {
         padding: 40px 20px 25px;
@@ -1518,14 +1518,33 @@ input:focus{outline: none;}
         gap: 12px;
     }
 
-    .links {
+    .nav.navbar {
         gap: 15px;
         flex-direction: column;
+        justify-content: center !important; 
+        align-items: center !important;
     }
 
-    .links a {
+    nav.navbar .links {
         font-size: 13px;
         padding: 5px 10px;
+        justify-content: center !important; 
+        align-items: center !important;
+    }
+
+    .slide-collapse {
+        max-height: 0;
+        overflow: hidden;
+        transition: height .3s ease;
+    }
+
+    .slide-collapse.collapsing {
+        max-height: 0;
+        overflow: hidden;
+    }
+
+    .slide-collapse.show {
+        max-height: 800px;
     }
 
     .user {
@@ -8203,14 +8222,13 @@ a:focus, button:focus, input:focus, select:focus, textarea:focus {
 }
 
 /* ===========================================
-   ESTILOS vista usuarios
-   =========================================== */
+    ESTILOS vista usuarios
+=========================================== */
 
 /*Estilos modal vista cliente */
-.perfil-cliente {
+.perfil-cliente h2 {
     padding: 20px 50px; 
     background-color: #f7f7f7;
-  
 }
 
 .encabezado-perfil-cliente {
@@ -8227,9 +8245,9 @@ a:focus, button:focus, input:focus, select:focus, textarea:focus {
 
 /* Contenedor de botones */
 .acciones-cliente {
-  display: flex;
-  align-items: center;
-  gap: 10px; 
+    display: flex;
+    align-items: center;
+    gap: 10px; 
 }
 
 .info-cliente {
@@ -8287,127 +8305,227 @@ a:focus, button:focus, input:focus, select:focus, textarea:focus {
 }
 
 .historial-pedidos {
-  text-align: center;
-  margin: 30px auto;
-  max-width: 1600px;
-  background: #f9f9f9;
-  padding: 20px;
-  border-radius: 15px;
-  box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    text-align: center;
+    margin: 30px auto;
+    max-width: 1600px;
+    background: #f9f9f9;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.1);
 }
 
 .historial-pedidos h3 {
-  font-size: 1.6rem;
-  margin-bottom: 10px;
-  color: #ed5821;
+    font-size: 1.6rem;
+    margin-bottom: 10px;
+    color: #ed5821;
 }
 
 .total-pedidos {
-  font-size: 1rem;
-  color: #555;
+    font-size: 1rem;
+    color: #555;
 }
 
 /* Tabla de historial de pedidos */
 .tabla-pedidos {
-  width: 100%;
-  margin-top: 15px;
-  background-color: white;
+    width: 100%;
+    margin-top: 15px;
+    background-color: white;
+    border-collapse: collapse;
 }
 
 .tabla-pedidos th, .tabla-pedidos td {
-  border: 1px solid #ddd;
-  padding: 10px;
-  text-align: center;
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
 }
 .tabla-pedidos th {
-  background-color: #ed5821;
-  color: white;
+    background-color: #ed5821;
+    color: white;
 }
 
 .btn-detalle {
-  background-color: #007bff;
-  color: white;
-  padding: 6px 12px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background-color 0.3s;
+    background-color: #007bff;
+    color: white;
+    padding: 6px 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s;
 }
 
 #btn-modal {
-  display: none;
+    display: none;
 }
+
+@media (max-width: 768px) {
+
+    .encabezado-perfil-cliente {
+        flex-direction: column;
+        text-align: center;
+        gap: 15px;
+    }
+
+    .info-cliente {
+        flex-direction: column;
+    }
+
+    .acciones-cliente {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .acciones-cliente .boton-modal,
+    .acciones-cliente form button {
+        text-align: center;
+    }
+
+    .tabla-pedidos thead {
+        display: none;
+    }
+
+    .tabla-pedidos tr {
+        display: block;
+        margin-bottom: 15px;
+        border: 1px solid #ddd;
+        padding: 10px;
+    }
+
+    .tabla-pedidos td {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 5px;
+        font-size: 14px;
+    }
+
+    .tabla-pedidos td:before {
+        font-weight: bold;
+        color: #444;
+        content: attr(data-label);
+    }
+
+    .tabla-pedidos thead {
+        display: none; /* Quitamos el encabezado */
+    }
+
+    .tabla-pedidos tr {
+        display: block;
+        background: #fff;
+        margin-bottom: 15px;
+        padding: 12px;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .tabla-pedidos td {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 5px;
+        border: none !important;
+        font-size: 15px;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .tabla-pedidos td:last-child {
+        border-bottom: none !important;
+    }
+
+    .tabla-pedidos td:nth-child(1)::before {
+        content: "ID:";
+        font-weight: bold;
+    }
+    .tabla-pedidos td:nth-child(2)::before {
+        content: "Fecha:";
+        font-weight: bold;
+    }
+    .tabla-pedidos td:nth-child(3)::before {
+        content: "Estado:";
+        font-weight: bold;
+    }
+    .tabla-pedidos td:nth-child(4)::before {
+        content: "Total:";
+        font-weight: bold;
+    }
+    .tabla-pedidos td:nth-child(5)::before {
+        content: "Detalles:";
+        font-weight: bold;
+    }
+
+    .tabla-pedidos td:nth-child(5) {
+        align-items: center;
+    }
+}
+
+/* debo de modificar hasta este espacio */
 
 /* Modal de contenido del perfil */
 .modal-contenido {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.6);
-  display: flex;
-  
-  align-items: center;
-  z-index: 99999;
-  margin: auto;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    display: flex;  
+    align-items: center;
+    z-index: 99999;
+    margin: auto;
 }
 
 #btn-modal:checked ~ .modal-contenido {
-  opacity: 1;
-  visibility: visible;
+    opacity: 1;
+    visibility: visible;
 }
 
 /* Cuerpo del modal */
 .contenido-modal-body {
-  width: 400px;
-  background: #fff;
-  box-shadow: 1px 7px 25px rgba(0, 0, 0, 0.02);
-  border-radius: 10px;
-  height: auto;
-  max-height: 95vh;
-  overflow-y: auto;
-  overflow: hidden;
-  position: relative;
-  transform: none;
-  margin: auto;
+    width: 400px;
+    background: #fff;
+    box-shadow: 1px 7px 25px rgba(0, 0, 0, 0.02);
+    border-radius: 10px;
+    height: auto;
+    max-height: 95vh;
+    overflow-y: auto;
+    overflow: hidden;
+    position: relative;
+    transform: none;
+    margin: auto;
 }
 
 #btn-modal:checked ~ .modal-contenido .modal-contenido-body {
-   transform: translateY(0%)
+    transform: translateY(0%)
 }
 
 /* Encabezado */
 .contenido-modal-body h3 {
-  padding: 10px;
-  background-color: #cf5f35;
-  color: #fff;
-  margin: 0;
-  text-align: center;
+    padding: 10px;
+    background-color: #cf5f35;
+    color: #fff;
+    margin: 0;
+    text-align: center;
 }
 
 .contenido-modal-body form {
-  display: grid;
-  grid-template-columns: 1fr 1fr; 
-  gap: 15px 20px; 
-  padding: 20px;
-  box-sizing: border-box;
+    display: grid;
+    grid-template-columns: 1fr 1fr; 
+    gap: 15px 20px; 
+    padding: 20px;
+    box-sizing: border-box;
 }
 
 .contenido-modal-body label {
-  font-weight: bold;
-  display: block;
-  margin-bottom: 5px;
+    font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
 }
 
 .contenido-modal-body input[type="text"],
 .contenido-modal-body input[type="email"],
 .contenido-modal-body input[type="password"] {
-  width: 100%;
-  padding: 6px 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+    width: 100%;
+    padding: 6px 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
 }
 
 .contenido-modal-body input[type="submit"] {
-  background: linear-gradient(45deg, var(--base), var(--base-oscuro));
+    background: linear-gradient(45deg, var(--base), var(--base-oscuro));
     color: white;
     border: none;
     padding: 10px 20px;
@@ -8421,25 +8539,25 @@ a:focus, button:focus, input:focus, select:focus, textarea:focus {
 }
 
 .contenido-modal-body input[type="submit"]:hover {
-  background-color: #b44f2c;
+    background-color: #b44f2c;
 }
 
 
 /* Botón cerrar */
 .cerrar-modal{ 
-  position: absolute;
-  top: 10px;
-  right: 15px;
-  color: white;
-  background: none;
-  border: none;
-  font-size: 20px;
-  cursor: pointer;
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    color: white;
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
 }
 
 /* Botón que abre el modal */
 .boton-modal {
-  background: linear-gradient(45deg, var(--base), var(--base-oscuro));
+    background: linear-gradient(45deg, var(--base), var(--base-oscuro));
     color: white;
     border: none;
     padding: 10px 20px;
@@ -8453,7 +8571,7 @@ a:focus, button:focus, input:focus, select:focus, textarea:focus {
 }
 
 #btn-modal:not(:checked) ~ .modal-contenido {
-  display: none;
+    display: none;
 }
 
 /* Responsive para guest checkout */
@@ -8643,7 +8761,7 @@ a:focus, button:focus, input:focus, select:focus, textarea:focus {
 }
 
 /* ===========================================
-   ESTILOS CARGA IMAGEN CON SHIMMER
+    ESTILOS CARGA IMAGEN CON SHIMMER
    =========================================== */
 .img-wrapper {
     position: relative;

@@ -1,63 +1,74 @@
-<section>
-  <h2><%= t("home.dashboard.panel")%></h2>
+<div id="admin-app">
+  <section>
+    <h2><%= t("home.dashboard.panel")%></h2>
 
-  <div class="dashboard-grid" id="dashboard">
+    <div class="dashboard-grid" id="dashboard">
 
-    <!-- Estadísticas -->
-    <div class="card stat">
-      <h3><%= t("home.graficas.total_producto")%></h3>
-      <p><%= Product.count %></p>
+      <!-- Estadísticas -->
+      <div class="card stat">
+        <h3><%= t("home.graficas.total_producto")%></h3>
+        <p><%= Product.count %></p>
+      </div>
+
+      <div class="card stat">
+        <h3><%= t("home.graficas.productos_disponibles")%></h3>
+        <p><%= Product.where(disponible: true).count %></p>
+      </div>
+
+      <div class="card stat">
+        <h3><%= t("home.graficas.total_grupos")%></h3>
+        <p><%= Grupo.count %></p>
+      </div>
+
+      <div class="card stat">
+        <h3><%= t("home.graficas.ultimo_producto")%></h3>
+        <p><%= Product.last&.nombre || "Ninguno aún" %></p>
+      </div>
+
+      <div class="card stat">
+        <h3><%= t("home.graficas.ultimo_grupo")%></h3>
+        <p><%= Grupo.last&.nombre || "Ninguno aún" %></p>
+      </div>
+
+      <!-- Gráfico de barras -->
+      <div class="card chart normal">
+        <h3><%= t("home.graficas.producto_por_grupo")%></h3>
+        <canvas id="chartBarras"></canvas>
+      </div>
+
+      <!-- Gráfico tipo pie -->
+      <div class="card chart">
+        <h3><%= t("home.graficas.distribuccion")%></h3>
+        <canvas id="chartTorta"></canvas>
+      </div>
+
+      <!-- Gráfico en barras -->
+      <div class= "card chart normal">
+        <h3><%= t("home.graficas.producto_mas_vendido")%></h3>
+        <canvas id="chartTopOrders"></canvas>
+      </div>
+
+      <!-- Gráfico de líneas -->
+      <div class="card chart normal">
+        <h3><%= t("home.graficas.crecimiento")%></h3>
+        <canvas id="chartLineas"></canvas>
+      </div>
+      <div class="card chart big">
+        <h3><%= t("home.graficas.evolucion_ventas")%></h3>
+        <canvas id="chartSales"></canvas>
+      </div>
     </div>
 
-    <div class="card stat">
-      <h3><%= t("home.graficas.productos_disponibles")%></h3>
-      <p><%= Product.where(disponible: true).count %></p>
+    <!-- Aviso restringido uso en el celular -->
+    <div id= "restrigido-movil-admin">
+      <div class= "mensaje-restriccion">
+        <p>
+          Para garantizar la integridad de los datos y ofrecerte todas las funcionalidades de administración, este panel está optimizado exclusivamente para computadores. Por favor, ingresa desde un PC o Laptop.
+        </p>
+      </div>
     </div>
-
-    <div class="card stat">
-      <h3><%= t("home.graficas.total_grupos")%></h3>
-      <p><%= Grupo.count %></p>
-    </div>
-
-    <div class="card stat">
-      <h3><%= t("home.graficas.ultimo_producto")%></h3>
-      <p><%= Product.last&.nombre || "Ninguno aún" %></p>
-    </div>
-
-    <div class="card stat">
-      <h3><%= t("home.graficas.ultimo_grupo")%></h3>
-      <p><%= Grupo.last&.nombre || "Ninguno aún" %></p>
-    </div>
-
-    <!-- Gráfico de barras -->
-    <div class="card chart normal">
-      <h3><%= t("home.graficas.producto_por_grupo")%></h3>
-      <canvas id="chartBarras"></canvas>
-    </div>
-
-    <!-- Gráfico tipo pie -->
-    <div class="card chart">
-      <h3><%= t("home.graficas.distribuccion")%></h3>
-      <canvas id="chartTorta"></canvas>
-    </div>
-
-     <!-- Gráfico en barras -->
-    <div class= "card chart normal">
-      <h3><%= t("home.graficas.producto_mas_vendido")%></h3>
-      <canvas id="chartTopOrders"></canvas>
-    </div>
-
-    <!-- Gráfico de líneas -->
-    <div class="card chart normal">
-      <h3><%= t("home.graficas.crecimiento")%></h3>
-      <canvas id="chartLineas"></canvas>
-    </div>
-    <div class="card chart big">
-      <h3><%= t("home.graficas.evolucion_ventas")%></h3>
-      <canvas id="chartSales"></canvas>
-    </div>
-  </div>
-</section>
+  </section>
+</div>
 
 <script>
   window.ProductByGroup = {
@@ -68,8 +79,9 @@
 
   // crecimiento
   window.salesGrowth = {
-    labels: <%= raw @grupos_growth.keys.to_json %>,
-    data: <%= raw @grupos_growth.values.to_json %>
+    labels: <%= raw @growth_labels.to_json %>,
+    ventas: <%= raw @sales_values.to_json %>,
+    crecimiento: <%= raw @growth_values.to_json %>
   };
 
   // Producto más comprado
@@ -79,10 +91,10 @@
   }
 
    // ventas por dia, semena y mes
-   window.Sales = {
-    labels: <%= raw @sales_by_day.keys.map { |d| d.strftime ("%d %b")}.to_json %>,
-    byDay: <%= raw @sales_by_day.values.to_json %>,
-    byWeek: <%= raw @sales_by_week.values.to_json %>,
-    byMonth: <%= raw @sales_by_month.values.to_json %>
-   }
+    window.Sales = {
+      labels: <%= raw @sales_by_day.keys.map { |d| d.strftime ("%d %b")}.to_json %>,
+      byDay: <%= raw @sales_by_day.values.to_json %>,
+      byWeek: <%= raw @sales_by_week.values.to_json %>,
+      byMonth: <%= raw @sales_by_month.values.to_json %>
+    }
 </script>
