@@ -301,28 +301,29 @@ _buildMenuTile(
                           theme.textTheme.bodyMedium?.color?.withOpacity(0.7),
 
                     ),
-                    const SizedBox(height: 30),
+                  ),
+                  const SizedBox(height: 30),
 
-                    // Botón Iniciar Sesión
-                    SizedBox(
-                      width: 220,
-                      height: 50,
-                      child: ElevatedButton(
-                        onPressed: () => Navigator.pushNamed(context, "/login"),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color.fromRGBO(237, 88, 33, 1),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                        child: Text(
-                          AppLocalizations.of(context)?.login ??
-                              'Iniciar Sesión',
-                          style: const TextStyle(
-                              fontSize: 18, color: Colors.white),
+                  // Botón Iniciar Sesión
+                  SizedBox(
+                    width: 220,
+                    height: 50,
+                    child: ElevatedButton(
+                      onPressed: () => Navigator.pushNamed(context, "/login"),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color.fromRGBO(237, 88, 33, 1),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
                         ),
                       ),
+                      child: Text(
+                        AppLocalizations.of(context)?.login ??
+                            'Iniciar Sesión',
+                        style: const TextStyle(
+                            fontSize: 18, color: Colors.white),
+                      ),
                     ),
+                  ),
 
 
                   const SizedBox(height: 12),
@@ -339,36 +340,32 @@ _buildMenuTile(
                           borderRadius: BorderRadius.circular(10),
 
                         ),
-                        child: Text(
-                            AppLocalizations.of(context)?.register ??
-                                'Registrarse',
-                            style: const TextStyle(fontSize: 18)),
                       ),
 
                       child: const Text('Registrarse',
                           style: TextStyle(fontSize: 18)),
 
                     ),
+                  ),
 
-                    const SizedBox(height: 20),
+                  const SizedBox(height: 20),
 
-                    TextButton(
-                      onPressed: () {
-                        Navigator.pushNamed(context, "/forgot-password");
-                      },
-                      child: Text(
-                        AppLocalizations.of(context)?.forgotPassword ??
-                            '¿Olvidaste tu contraseña?',
-                        style: const TextStyle(color: Colors.blueAccent),
-                      ),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pushNamed(context, "/forgot-password");
+                    },
+                    child: Text(
+                      AppLocalizations.of(context)?.forgotPassword ??
+                          '¿Olvidaste tu contraseña?',
+                      style: const TextStyle(color: Colors.blueAccent),
                     ),
+                  ),
                   ],
                 ),
               ),
             ),
           );
         }
-      },
     );
   }
 
