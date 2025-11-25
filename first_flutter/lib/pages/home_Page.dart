@@ -106,16 +106,7 @@ class _HomePageState extends State<HomePage>
                 ),
                 Row(
                   children: [
-                    IconButton(
-                      icon: Icon(Icons.notifications_none,
-                          color: theme.iconTheme.color),
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (c) => NotificacionPage()));
-                      },
-                    ),
+                
                     IconButton(
                       icon: Icon(Icons.search, color: theme.iconTheme.color),
                       onPressed: () {
@@ -127,6 +118,7 @@ class _HomePageState extends State<HomePage>
                         );
                       },
                     ),
+                      
                     IconButton(
                       icon: Icon(Icons.location_on_outlined,
                           color: theme.iconTheme.color),
@@ -136,6 +128,7 @@ class _HomePageState extends State<HomePage>
                             MaterialPageRoute(
                                 builder: (c) => DeliveryLocationPage()));
                       },
+                      
                     ),
                   ],
                 ),
@@ -237,13 +230,63 @@ class _HomePageState extends State<HomePage>
           final displayProducts =
               products.length > 10 ? products.sublist(0, 10) : products;
 
-          if (displayProducts.isEmpty) {
-            return Container(
-              height: 270,
-              alignment: Alignment.center,
-              child: Text(AppLocalizations.of(context)!.noProductsFound),
-            );
-          }
+if (displayProducts.isEmpty) {
+  return Container(
+    height: 270,
+    alignment: Alignment.center,
+    padding: const EdgeInsets.all(32.0),
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(
+          Icons.wifi_off_outlined,       // 🔥 Ícono de internet caído
+          size: 60,
+          color: Colors.red[300],
+        ),
+        const SizedBox(height: 12),
+
+        // 🔥 Texto principal
+        Text(
+          "No hay conexión a internet",
+          style: const TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.red,
+          ),
+          textAlign: TextAlign.center,
+        ),
+
+        const SizedBox(height: 8),
+
+        // 🔥 Texto secundario
+        Text(
+          "Por favor verifica tu conexión e intenta nuevamente.",
+          style: TextStyle(
+            fontSize: 14,
+            color: Colors.grey[600],
+          ),
+          textAlign: TextAlign.center,
+        ),
+
+        const SizedBox(height: 24),
+
+        // 🔄 Botón Reintentar
+        ElevatedButton.icon(
+          onPressed: () {
+            context.read<ProductBloc>().add(FetchProducts());
+          },
+          icon: const Icon(Icons.refresh),
+          label: Text(AppLocalizations.of(context)!.retry),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.red[400],
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+
 
           return Column(
             children: [
@@ -332,6 +375,64 @@ class _HomePageState extends State<HomePage>
       },
     );
   }
+void showSimpleAddedDialog(BuildContext context) {
+  showGeneralDialog(
+    context: context,
+    barrierDismissible: false,
+    barrierColor: Colors.black.withOpacity(0.3),
+    transitionDuration: const Duration(milliseconds: 200),
+    pageBuilder: (_, __, ___) => const SizedBox.shrink(),
+    transitionBuilder: (context, animation, secondaryAnimation, child) {
+      return FadeTransition(
+        opacity: animation,
+        child: ScaleTransition(
+          scale: CurvedAnimation(
+            parent: animation,
+            curve: Curves.easeOutBack,
+          ),
+          child: Center(
+            child: Container(
+              width: 140,
+              padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 15),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(18),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.15),
+                    blurRadius: 15,
+                  )
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: const [
+                  Icon(Icons.check_circle,
+                      color: Colors.green, size: 55),
+                  SizedBox(height: 10),
+                  Text(
+                    "Añadido al carrito",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    textAlign: TextAlign.center,
+                  )
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+    },
+  );
+
+  Future.delayed(const Duration(milliseconds: 1200), () {
+    Navigator.of(context).pop();
+  });
+}
+
+
 
   Widget _productCardFromModel(Product product, ThemeData theme) {
     return GestureDetector(
@@ -364,8 +465,11 @@ class _HomePageState extends State<HomePage>
                         fit: BoxFit.cover,
                       )
                     : Container(
-                        height: 110,
-                        color: theme.disabledColor.withValues(alpha: 0.2),
+
+                        height: 300,
+                        color: theme.disabledColor.withOpacity(0.2),
+
+                      
                         child:
                             const Center(child: Icon(Icons.fastfood, size: 60)),
                       ),
@@ -400,38 +504,47 @@ class _HomePageState extends State<HomePage>
               Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 8.0, vertical: 6.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      '\$${NumberFormat('#,###', 'es_CO').format(product.price)}',
-                      style: const TextStyle(
-                          color: Colors.green, fontWeight: FontWeight.bold),
-                    ),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color.fromRGBO(237, 88, 33, 1),
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 8),
-                      ),
-                      onPressed: () {
-                        context.read<CartBloc>().add(AddToCart(CartItem(
-                              id: product.id.toString(),
-                              name: product.name,
-                              price: product.price,
-                              quantity: 1,
-                              image: product.image,
-                              description: product.description,
-                            )));
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(AppLocalizations.of(context)!.addedToCart)),
-                        );
-                      },
-                      child: const Icon(Icons.add_shopping_cart,
-                          size: 18, color: Colors.white),
-                    ),
-                  ],
-                ),
+
+                child:Row(
+  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  children: [
+    Text(
+      '\$${NumberFormat('#,###', 'es_CO').format(product.price)}',
+      style: const TextStyle(
+          color: Colors.green, fontWeight: FontWeight.bold),
+    ),
+
+    ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: const Color.fromRGBO(237, 88, 33, 1),
+        padding: const EdgeInsets.symmetric(
+          horizontal: 10,
+          vertical: 8,
+        ),
+      ),
+      onPressed: () {
+        context.read<CartBloc>().add(AddToCart(
+          CartItem(
+            id: product.id.toString(),
+            name: product.name,
+            price: product.price,
+            quantity: 1,
+            image: product.image,
+            description: product.description,
+          ),
+        ));
+
+         showSimpleAddedDialog(context);
+      },
+      child: const Icon(
+        Icons.add_shopping_cart,
+        size: 18,
+        color: Colors.white,
+      ),
+    ),
+  ],
+)
+
               )
             ],
           ),
@@ -439,4 +552,5 @@ class _HomePageState extends State<HomePage>
       ),
     );
   }
+  
 }

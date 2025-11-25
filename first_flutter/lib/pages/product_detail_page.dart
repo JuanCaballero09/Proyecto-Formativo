@@ -186,27 +186,64 @@ class ProductDetailPage extends StatelessWidget {
                           ),
                         );
 
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Center(
-                          child: Text(
-                            AppLocalizations.of(context)!.addedToCart,
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyMedium
-                                ?.copyWith(fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                        backgroundColor:
-                            const Color.fromARGB(255, 113, 219, 140),
-                        duration: const Duration(seconds: 3),
-                        behavior: SnackBarBehavior.floating,
-                        margin: const EdgeInsets.only(
-                            bottom: 10, left: 100, right: 100),
-                        shape: BeveledRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
+
+showDialog(
+  context: context,
+  barrierDismissible: false,
+  builder: (context) {
+    Future.delayed(const Duration(seconds: 1), () {
+      Navigator.of(context).pop();
+    });
+
+    return Center(
+      child: Container(
+        padding: const EdgeInsets.all(25),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black26,
+              blurRadius: 10,
+              spreadRadius: 2,
+            )
+          ],
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // 🔵 CÍRCULO
+            Container(
+              padding: const EdgeInsets.all(15),
+              decoration: BoxDecoration(
+                color: Colors.green,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.check,
+                color: Colors.white,
+                size: 40,
+              ),
+            ),
+            const SizedBox(height: 15),
+
+            // 🔤 TEXTO
+            const Text(
+              "Añadido con éxito",
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  },
+
+
+
                     );
                   },
                 ),

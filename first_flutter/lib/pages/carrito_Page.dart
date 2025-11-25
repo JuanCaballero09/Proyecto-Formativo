@@ -33,196 +33,396 @@ class CarritoPageState extends State<CarritoPage> {
     _telefonoController.dispose();
     super.dispose();
   }
+Future<void> _showCheckoutDialog(BuildContext context) async {
+  final authState = context.read<AuthBloc>().state;
+  final isAuthenticated = authState is Authenticated;
 
-  Future<void> _showCheckoutDialog(BuildContext context) async {
-    final authState = context.read<AuthBloc>().state;
-    final isAuthenticated = authState is Authenticated;
+  _direccionController.clear();
+  _nombreController.clear();
+  _apellidoController.clear();
+  _emailController.clear();
+  _telefonoController.clear();
 
-    // Limpiar controllers
-    _direccionController.clear();
-    _nombreController.clear();
-    _apellidoController.clear();
-    _emailController.clear();
-    _telefonoController.clear();
+  await showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (dialogContext) {
+      return StatefulBuilder(
+        builder: (context, setState) {
+          return AlertDialog(
+            backgroundColor: Colors.white,
+            insetPadding: const EdgeInsets.symmetric(horizontal: 10), // MÁS ANCHO
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
 
-    await showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (dialogContext) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return AlertDialog(
-              title: Row(
-                children: [
-                  const Icon(Icons.shopping_bag,
-                      color: Color.fromRGBO(237, 88, 33, 1)),
-                  const SizedBox(width: 8),
-                  Text(AppLocalizations.of(context)!.proceedToCheckout),
-                ],
-              ),
-              content: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Mostrar resumen del carrito
-                    BlocBuilder<CartBloc, CartState>(
-                      builder: (context, state) {
-                        return Container(
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: Colors.orange.shade50,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                                Row(
-                                children: [
-                                  const Icon(Icons.shopping_cart, size: 20),
-                                  const SizedBox(width: 8),
-                                  Text(
-                                    '${state.cart.items.length} ${AppLocalizations.of(context)!.productsLabel}',
-                                    style: const TextStyle(
-                                    fontWeight: FontWeight.bold),
-                                  ),
-                                  const Spacer(),
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 8, vertical: 4),
-                                    decoration: BoxDecoration(
-                                      color: Colors.orange,
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    child: Text(
-                                      '\$${NumberFormat('#,###', 'es_CO').format(state.cart.totalPrice)}',
-                                      style: TextStyle(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onPrimary,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-                    const SizedBox(height: 16),
+            titlePadding: const EdgeInsets.all(20),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
 
-                    // Dirección de entrega (TODOS)
-                    Text('📍 ${AppLocalizations.of(context)!.deliveryAddress}',
-                      style: const TextStyle(fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 8),
-                      TextField(
-                      controller: _direccionController,
-                      decoration: InputDecoration(
-                        hintText: AppLocalizations.of(context)!.exampleAddress,
-                        border: const OutlineInputBorder(),
-                        isDense: true,
-                      ),
-                      maxLines: 2,
-                    ),
-                    const SizedBox(height: 16),
-
-                    // Datos del invitado (solo si NO está autenticado)
-                    if (!isAuthenticated) ...[
-                        Text('👤 ${AppLocalizations.of(context)!.personalInfo}',
-                          style: const TextStyle(fontWeight: FontWeight.bold)),
-                      const SizedBox(height: 8),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: TextField(
-                              controller: _nombreController,
-                              decoration: InputDecoration(
-                                labelText: AppLocalizations.of(context)?.firstName ?? 'Nombre',
-                                border: const OutlineInputBorder(),
-                                isDense: true,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: TextField(
-                              controller: _apellidoController,
-                              decoration: InputDecoration(
-                                labelText: AppLocalizations.of(context)?.lastName ?? 'Apellido',
-                                border: const OutlineInputBorder(),
-                                isDense: true,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                      TextField(
-                        controller: _emailController,
-                        keyboardType: TextInputType.emailAddress,
-                        decoration: InputDecoration(
-                          labelText: AppLocalizations.of(context)!.email,
-                          hintText: AppLocalizations.of(context)!.emailHint,
-                          border: const OutlineInputBorder(),
-                          isDense: true,
-                          prefixIcon: const Icon(Icons.email, size: 20),
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      TextField(
-                        controller: _telefonoController,
-                        keyboardType: TextInputType.phone,
-                        decoration: InputDecoration(
-                          labelText: AppLocalizations.of(context)?.phoneNumber ?? 'Teléfono',
-                          hintText: '3001234567',
-                          border: const OutlineInputBorder(),
-                          isDense: true,
-                          prefixIcon: const Icon(Icons.phone, size: 20),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                    ],
-                  ],
-                ),
-              ),
-              actions: [
-                TextButton(
-                  onPressed:
-                      _isProcessing ? null : () => Navigator.pop(context),
-                  child: Text(AppLocalizations.of(context)!.cancel),
-                ),
-                ElevatedButton(
-                  onPressed: _isProcessing
-                      ? null
-                      : () async {
-                          setState(() => _isProcessing = true);
-                          await _processOrder(dialogContext);
-                          setState(() => _isProcessing = false);
-                        },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromRGBO(237, 88, 33, 1),
+            title: Row(
+              children: const [
+                Icon(Icons.shopping_bag,
+                    color: Color.fromRGBO(237, 88, 33, 1),
+                    size: 30),
+                SizedBox(width: 10),
+                Text(
+                  'Finalizar Pedido',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 22,
                   ),
-                  child: _isProcessing
-                      ? SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(
-                              color: Theme.of(context).colorScheme.onPrimary,
-                              strokeWidth: 2),
-                        )
-                      : Text(AppLocalizations.of(context)!.placeOrder,
-                          style: TextStyle(
-                              color: Theme.of(context).colorScheme.onPrimary)),
                 ),
               ],
-            );
-          },
-        );
-      },
-    );
-  }
+            ),
+
+            content: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+
+                  BlocBuilder<CartBloc, CartState>(
+                    builder: (context, state) {
+                      return Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(
+                            color: const Color.fromRGBO(237, 88, 33, 1),
+                            width: 1.5,
+                          ),
+                        ),
+                 child: Column(
+  crossAxisAlignment: CrossAxisAlignment.start,
+  children: [
+    Row(
+      children: [
+        const Icon(Icons.shopping_cart,
+            size: 26,
+            color: Color.fromRGBO(237, 88, 33, 1)),
+        const SizedBox(width: 10),
+        Text(
+          '${state.cart.items.length} productos',
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 17,
+          ),
+        ),
+      ],
+    ),
+
+    const SizedBox(height: 20),
+
+    // ⭐ FORMULARIO ENSANCHADO Y CORRECTO
+    Container(
+      width: MediaQuery.of(context).size.width * 0.85, // ⭐ MÁS ANCHO
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 10,
+          ),
+        ],
+      ),
+  child: Column(
+    mainAxisSize: MainAxisSize.min,
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+
+      // Dirección
+      const Text(
+        '📍 Dirección de Entrega',
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 18,
+        ),
+      ),
+      const SizedBox(height: 10),
+
+      TextField(
+        controller: _direccionController,
+        maxLines: 2,
+        decoration: InputDecoration(
+          hintText: 'Ej: Calle 123 #45-67, Bogotá',
+          filled: true,
+          fillColor: Colors.white,
+          contentPadding: const EdgeInsets.symmetric(
+            vertical: 18,
+            horizontal: 16,
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(14),
+            borderSide: const BorderSide(
+              color: Color.fromRGBO(237, 88, 33, 1),
+              width: 2,
+            ),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(14),
+            borderSide: const BorderSide(
+              color: Color.fromRGBO(237, 88, 33, 1),
+              width: 2.5,
+            ),
+          ),
+        ),
+      ),
+
+      const SizedBox(height: 20),
+
+      // SOLO INVITADOS
+      if (!isAuthenticated) ...[
+        const Text(
+          '👤 Información Personal',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+          ),
+        ),
+        const SizedBox(height: 10),
+
+        Row(
+          children: [
+            Expanded(
+              child: TextField(
+                controller: _nombreController,
+                decoration: InputDecoration(
+                  labelText: "Nombre",
+                  filled: true,
+                  fillColor: Colors.white,
+                  contentPadding: const EdgeInsets.symmetric(
+                    vertical: 18,
+                    horizontal: 16,
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(14),
+                    borderSide: const BorderSide(
+                      color: Color.fromRGBO(237, 88, 33, 1),
+                      width: 2,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(14),
+                    borderSide: const BorderSide(
+                      color: Color.fromRGBO(237, 88, 33, 1),
+                      width: 2.5,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: TextField(
+                controller: _apellidoController,
+                decoration: InputDecoration(
+                  labelText: "Apellido",
+                  filled: true,
+                  fillColor: Colors.white,
+                  contentPadding: const EdgeInsets.symmetric(
+                    vertical: 18,
+                    horizontal: 16,
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(14),
+                    borderSide: const BorderSide(
+                      color: Color.fromRGBO(237, 88, 33, 1),
+                      width: 2,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(14),
+                    borderSide: const BorderSide(
+                      color: Color.fromRGBO(237, 88, 33, 1),
+                      width: 2.5,
+                    ),
+                  ),
+
+                ),
+              ),
+            ),
+          ],
+        ),
+
+        const SizedBox(height: 14),
+
+        TextField(
+          controller: _emailController,
+          decoration: InputDecoration(
+            labelText: "Email",
+            filled: true,
+            fillColor: Colors.white,
+            prefixIcon: const Icon(Icons.email, size: 22),
+            contentPadding: const EdgeInsets.symmetric(
+              vertical: 18,
+              horizontal: 16,
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(14),
+              borderSide: const BorderSide(
+                color: Color.fromRGBO(237, 88, 33, 1),
+                width: 2,
+              ),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(14),
+              borderSide: const BorderSide(
+                color: Color.fromRGBO(237, 88, 33, 1),
+                width: 2.5,
+              ),
+            ),
+          ),
+        ),
+
+        const SizedBox(height: 14),
+
+        TextField(
+          controller: _telefonoController,
+          decoration: InputDecoration(
+            labelText: "Teléfono",
+            filled: true,
+            fillColor: Colors.white,
+            prefixIcon: const Icon(Icons.phone, size: 22),
+            contentPadding: const EdgeInsets.symmetric(
+              vertical: 18,
+              horizontal: 16,
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(14),
+              borderSide: const BorderSide(
+                color: Color.fromRGBO(237, 88, 33, 1),
+                width: 2,
+              ),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(14),
+              borderSide: const BorderSide(
+                color: Color.fromRGBO(237, 88, 33, 1),
+                width: 2.5,
+              ),
+            ),
+          ),
+        ),
+
+        const SizedBox(height: 18),
+      ],
+    ],
+  ),
+)
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+
+                ],
+              ),
+            ),
+            actionsPadding: const EdgeInsets.all(16),
+
+            actions: [
+              TextButton(
+                onPressed:
+                    _isProcessing ? null : () => Navigator.pop(context),
+                child: const Text(
+                  'Cancelar',
+                  style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.grey,
+                      fontWeight: FontWeight.bold),
+
+                ),
+              ),
+
+              ElevatedButton(
+                onPressed: _isProcessing
+                    ? null
+                    : () async {
+                        setState(() => _isProcessing = true);
+                        await _processOrder(dialogContext);
+                        setState(() => _isProcessing = false);
+                      },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color.fromRGBO(237, 88, 33, 1),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 26, vertical: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                child: _isProcessing
+                    ? const SizedBox(
+                        width: 22,
+                        height: 22,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      )
+                    : const Text(
+                        'Confirmar Pedido',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 17,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+              ),
+            ],
+          );
+        },
+      );
+    },
+  );
+}
+
+
+
+Widget _buildInput({
+  required TextEditingController controller,
+  String? label,
+  String? hint,
+  IconData? prefix,
+  int maxLines = 1,
+}) {
+  return TextField(
+    controller: controller,
+    maxLines: maxLines,
+    style: const TextStyle(fontSize: 17),
+    decoration: InputDecoration(
+      labelText: label,
+      labelStyle: const TextStyle(fontSize: 17),
+      hintText: hint,
+      hintStyle: const TextStyle(fontSize: 16, color: Colors.grey),
+      prefixIcon: prefix != null
+          ? Icon(prefix,
+              size: 24, color: Color.fromRGBO(237, 88, 33, 1))
+          : null,
+      filled: true,
+      fillColor: Colors.white,
+      contentPadding:
+          const EdgeInsets.symmetric(horizontal: 16, vertical: 14), // MÁS BAJITO
+      enabledBorder: OutlineInputBorder(
+        borderSide: const BorderSide(
+          color: Color.fromRGBO(237, 88, 33, 1),
+          width: 1.5,
+        ),
+        borderRadius: BorderRadius.circular(14),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderSide: const BorderSide(
+          color: Color.fromRGBO(237, 88, 33, 1),
+          width: 2,
+        ),
+        borderRadius: BorderRadius.circular(14),
+      ),
+    ),
+  );
+}
+
+
 
   Future<void> _processOrder(BuildContext dialogContext) async {
     final authState = context.read<AuthBloc>().state;
@@ -529,44 +729,125 @@ class CarritoPageState extends State<CarritoPage> {
           );
         },
       ),
-      bottomNavigationBar: BlocBuilder<CartBloc, CartState>(
-        builder: (context, state) {
-          final cartItems = state.cart.items;
+     bottomNavigationBar: BlocBuilder<CartBloc, CartState>(
+  builder: (context, state) {
+    final cartItems = state.cart.items;
 
-          if (cartItems.isEmpty) return const SizedBox.shrink();
+    if (cartItems.isEmpty) return const SizedBox.shrink();
 
-          return Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  '${AppLocalizations.of(context)!.total}: \$ ${NumberFormat('#,###', 'es_CO').format(state.cart.totalPrice)} COP',
-                  style: Theme.of(context)
-                      .textTheme
-                      .titleLarge
-                      ?.copyWith(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 10),
-                ElevatedButton(
-                  onPressed: () => _showCheckoutDialog(context),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromRGBO(237, 88, 33, 1),
-                    minimumSize: const Size(double.infinity, 50),
-                  ),
-                  child: Text(
-                    AppLocalizations.of(context)!.proceedToCheckout,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Theme.of(context).colorScheme.onPrimary,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold),
-                    ),
-                ),
-              ],
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            '${AppLocalizations.of(context)!.total}: \$ ${NumberFormat('#,###', 'es_CO').format(state.cart.totalPrice)} COP',
+            style: Theme.of(context)
+                .textTheme
+                .titleLarge
+                ?.copyWith(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+
+          const SizedBox(height: 14),
+
+          // ⭐ BOTONES (Vaciar y Proceder)
+          
+           Row(
+  children: [
+    // 🔴 BOTÓN MINI DE VACIAR
+    SizedBox(
+      height: 48,
+      child: ElevatedButton(
+        onPressed: () {
+          context.read<CartBloc>().add(ClearCart());
+         ScaffoldMessenger.of(context).showSnackBar(
+  SnackBar(
+    behavior: SnackBarBehavior.floating,
+    backgroundColor: Colors.transparent,
+    elevation: 0,
+    duration: const Duration(seconds: 2),
+    content: Center(
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+        decoration: BoxDecoration(
+          color: Colors.redAccent,
+          borderRadius: BorderRadius.circular(14),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.redAccent.withOpacity(0.4),
+              blurRadius: 10,
+              offset: const Offset(0, 3),
+
             ),
-          );
+          ],
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: const [
+            Icon(Icons.error_outline, color: Colors.white, size: 22),
+            SizedBox(width: 10),
+            Text(
+              'Carrito vacío',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+              ),
+            ),
+          ],
+        ),
+      ),
+    ),
+  ),
+);
+
+          
         },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.white,
+          foregroundColor: Colors.redAccent,
+          elevation: 2,
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+            side: const BorderSide(color: Colors.redAccent, width: 1.5),
+          ),
+        ),
+        child: const Icon(Icons.delete, size: 22, color: Colors.redAccent),
+      ),
+    ),
+
+    const SizedBox(width: 12),
+
+    // 🟠 BOTÓN PROCEDER AL PAGO (GRANDE)
+    Expanded(
+      child: ElevatedButton(
+        onPressed: () => _showCheckoutDialog(context),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: const Color.fromRGBO(237, 88, 33, 1),
+          padding: const EdgeInsets.symmetric(vertical: 14),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+        child: Text(
+          'Proceder al Pago',
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+        ),
+      ),
+    )
+  ],
+)
+        ],
       ),
     );
+  },
+),
+    );
   }
+
 }
