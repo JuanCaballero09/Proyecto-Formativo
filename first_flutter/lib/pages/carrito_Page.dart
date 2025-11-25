@@ -726,44 +726,124 @@ Widget _buildInput({
           );
         },
       ),
-      bottomNavigationBar: BlocBuilder<CartBloc, CartState>(
-        builder: (context, state) {
-          final cartItems = state.cart.items;
+     bottomNavigationBar: BlocBuilder<CartBloc, CartState>(
+  builder: (context, state) {
+    final cartItems = state.cart.items;
 
-          if (cartItems.isEmpty) return const SizedBox.shrink();
+    if (cartItems.isEmpty) return const SizedBox.shrink();
 
-          return Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  '${AppLocalizations.of(context)!.total}: \$ ${NumberFormat('#,###', 'es_CO').format(state.cart.totalPrice)} COP',
-                  style: Theme.of(context)
-                      .textTheme
-                      .titleLarge
-                      ?.copyWith(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 10),
-                ElevatedButton(
-                  onPressed: () => _showCheckoutDialog(context),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromRGBO(237, 88, 33, 1),
-                    minimumSize: const Size(double.infinity, 50),
-                  ),
-                  child: Text(
-                    'Proceder al Pago',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Theme.of(context).colorScheme.onPrimary,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ],
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            '${AppLocalizations.of(context)!.total}: \$ ${NumberFormat('#,###', 'es_CO').format(state.cart.totalPrice)} COP',
+            style: Theme.of(context)
+                .textTheme
+                .titleLarge
+                ?.copyWith(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+
+          const SizedBox(height: 14),
+
+          // ⭐ BOTONES (Vaciar y Proceder)
+          
+           Row(
+  children: [
+    // 🔴 BOTÓN MINI DE VACIAR
+    SizedBox(
+      height: 48,
+      child: ElevatedButton(
+        onPressed: () {
+          context.read<CartBloc>().add(ClearCart());
+         ScaffoldMessenger.of(context).showSnackBar(
+  SnackBar(
+    behavior: SnackBarBehavior.floating,
+    backgroundColor: Colors.transparent,
+    elevation: 0,
+    duration: const Duration(seconds: 2),
+    content: Center(
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+        decoration: BoxDecoration(
+          color: Colors.redAccent,
+          borderRadius: BorderRadius.circular(14),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.redAccent.withOpacity(0.4),
+              blurRadius: 10,
+              offset: const Offset(0, 3),
             ),
-          );
+          ],
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: const [
+            Icon(Icons.error_outline, color: Colors.white, size: 22),
+            SizedBox(width: 10),
+            Text(
+              'Carrito vacío',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+              ),
+            ),
+          ],
+        ),
+      ),
+    ),
+  ),
+);
+
+          
         },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.white,
+          foregroundColor: Colors.redAccent,
+          elevation: 2,
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+            side: const BorderSide(color: Colors.redAccent, width: 1.5),
+          ),
+        ),
+        child: const Icon(Icons.delete, size: 22, color: Colors.redAccent),
+      ),
+    ),
+
+    const SizedBox(width: 12),
+
+    // 🟠 BOTÓN PROCEDER AL PAGO (GRANDE)
+    Expanded(
+      child: ElevatedButton(
+        onPressed: () => _showCheckoutDialog(context),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: const Color.fromRGBO(237, 88, 33, 1),
+          padding: const EdgeInsets.symmetric(vertical: 14),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+        child: Text(
+          'Proceder al Pago',
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+        ),
+      ),
+    )
+  ],
+)
+        ],
       ),
     );
+  },
+),
+    );
   }
+
 }

@@ -1,5 +1,7 @@
 import 'package:first_flutter/bloc/auth/auth_event.dart';
 import 'package:first_flutter/l10n/app_localizations.dart';
+import 'package:first_flutter/pages/SettingsPage.dart';
+import 'package:first_flutter/pages/privacy_policy_page.dart';
 import 'package:first_flutter/service/api_service.dart';
 import 'package:first_flutter/widgets/language_selector.dart';
 import 'package:first_flutter/widgets/theme_selector.dart';
@@ -7,6 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/auth/auth_bloc.dart';
 import '../bloc/auth/auth_state.dart';
+
+
 
 // 🔹 Colores globales
 const kOrange = Color(0xFFFF9800);
@@ -129,11 +133,11 @@ class PerfilPage extends StatelessWidget {
 
                 const SizedBox(height: 20),
 
-                // ===========================
-                //          AJUSTES
+                 // ===========================
+                //         CUENTA
                 // ===========================
                 Text(
-                  "Ajustes",
+                  "Configuración",
                   style: TextStyle(
                     color: textColor,
                     fontSize: 18,
@@ -141,27 +145,23 @@ class PerfilPage extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 10),
-
-                _buildPreferenceRow(
-                  icon: Icons.language,
-                  label: "Idioma",
-                  widget: const LanguageSelector(),
+              _buildOption(
+                  icon: Icons.settings,
+                  label: "Ajustes",
+                  widget: Icon(Icons.chevron_right, color: arrowColor),
                   cardColor: cardColor,
                   textColor: textColor,
                   iconColor: iconColor,
-                ),
-
-                _buildPreferenceRow(
-                  icon: Icons.brightness_6,
-                  label: "Tema",
-                  widget: const ThemeSelector(),
-                  cardColor: cardColor,
-                  textColor: textColor,
-                  iconColor: iconColor,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const SettingsPage()),
+                    );
+                  },
                 ),
 
                 const SizedBox(height: 20),
-
+              
                 // ===========================
                 //         CUENTA
                 // ===========================
@@ -174,28 +174,23 @@ class PerfilPage extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 10),
+_buildMenuTile(
+  context,
+  icon: Icons.privacy_tip,
+  label: "Política de Privacidad",
+  onTap: () {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const PrivacyPolicyPage()),
+    );
+  },
+  cardColor: cardColor,
+  textColor: textColor,
+  iconColor: iconColor,
+  arrowColor: arrowColor,
+),
 
-                _buildMenuTile(
-                  context,
-                  icon: Icons.receipt_long,
-                  label: "Mis Pedidos",
-                  onTap: () {},
-                  cardColor: cardColor,
-                  textColor: textColor,
-                  iconColor: iconColor,
-                  arrowColor: arrowColor,
-                ),
 
-                _buildMenuTile(
-                  context,
-                  icon: Icons.privacy_tip,
-                  label: "Política de Privacidad",
-                  onTap: () {},
-                  cardColor: cardColor,
-                  textColor: textColor,
-                  iconColor: iconColor,
-                  arrowColor: arrowColor,
-                ),
 
                 const SizedBox(height: 20),
 
@@ -352,34 +347,85 @@ class PerfilPage extends StatelessWidget {
     );
   }
 
-  // 🔹 Preferencias
-  Widget _buildPreferenceRow({
-    required IconData icon,
-    required String label,
-    required Widget widget,
-    required Color cardColor,
-    required Color textColor,
-    required Color iconColor,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-      child: Container(
-        decoration: BoxDecoration(
-          color: cardColor,
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+ // 🔹 MENÚ GENERAL (Mis pedidos, privacidad, etc.)
+Widget _buildMenuTile(
+  BuildContext context, {
+  required IconData icon,
+  required String label,
+  required VoidCallback onTap,
+  required Color cardColor,
+  required Color textColor,
+  required Color iconColor,
+  required Color arrowColor,
+}) {
+  return Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+    child: Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(8),
+        child: Container(
+          decoration: BoxDecoration(
+            color: cardColor,
+            borderRadius: BorderRadius.circular(8),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           child: Row(
             children: [
-              Icon(icon, color: iconColor, size: 20),
+              Icon(icon, color: iconColor, size: 22),
               const SizedBox(width: 16),
               Text(
                 label,
                 style: TextStyle(
-                  fontSize: 15,
                   color: textColor,
+                  fontSize: 16,
                   fontWeight: FontWeight.w500,
+                ),
+              ),
+              const Spacer(),
+              Icon(Icons.chevron_right, color: arrowColor, size: 22),
+            ],
+          ),
+        ),
+      ),
+    ),
+  );
+}
+}
+// 🔹 Opción grande (Ajustes)
+Widget _buildOption({
+  required IconData icon,
+  required String label,
+  required Widget widget,
+  required Color cardColor,
+  required Color textColor,
+  required Color iconColor,
+  required VoidCallback onTap,
+}) {
+  return Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+    child: Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(8),
+        child: Container(
+          decoration: BoxDecoration(
+            color: cardColor,
+            borderRadius: BorderRadius.circular(8),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          child: Row(
+            children: [
+              Icon(icon, color: iconColor, size: 22),
+              const SizedBox(width: 16),
+              Text(
+                label,
+                style: TextStyle(
+                  color: textColor,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
               const Spacer(),
@@ -388,59 +434,6 @@ class PerfilPage extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-
-  // 🔹 Elemento del menú
-  Widget _buildMenuTile(
-    BuildContext context, {
-    required IconData icon,
-    required String label,
-    required VoidCallback onTap,
-    required Color cardColor,
-    required Color textColor,
-    required Color iconColor,
-    required Color arrowColor,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(8),
-          child: Container(
-            decoration: BoxDecoration(
-              color: cardColor,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              child: Row(
-                children: [
-                  Icon(icon, color: iconColor, size: 20),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Text(
-                      label,
-                      style: TextStyle(
-                        fontSize: 15,
-                        color: textColor,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                  Icon(
-                    Icons.arrow_forward_ios,
-                    size: 16,
-                    color: arrowColor,
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
+    ),
+  );
 }
