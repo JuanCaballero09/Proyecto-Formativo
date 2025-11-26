@@ -17,14 +17,14 @@ class SettingsPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildPreferenceRow(
+              context: context,
               icon: Icons.language,
               label: "Idioma",
               widget: const LanguageSelector(),
             ),
-
             const SizedBox(height: 15),
-
             _buildPreferenceRow(
+              context: context,
               icon: Icons.brightness_6,
               label: "Tema",
               widget: const ThemeSelector(),
@@ -36,29 +36,38 @@ class SettingsPage extends StatelessWidget {
   }
 
   Widget _buildPreferenceRow({
+    required BuildContext context,
     required IconData icon,
     required String label,
     required Widget widget,
   }) {
+    final theme = Theme.of(context);
+    final Color tileBg = theme.colorScheme.surface;
+    final Color iconColor = theme.iconTheme.color ??
+        (theme.brightness == Brightness.dark ? Colors.white70 : Colors.black87);
+    final TextStyle labelStyle = theme.textTheme.bodyLarge
+            ?.copyWith(fontSize: 16, fontWeight: FontWeight.w500) ??
+        TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+            color: theme.colorScheme.onSurface);
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
-        color: Colors.white,
+        color: tileBg,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Row(
             children: [
-              Icon(icon, color: Colors.grey[800]),
+              Icon(icon, color: iconColor),
               const SizedBox(width: 12),
               Text(
                 label,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                ),
+                style: labelStyle,
               )
             ],
           ),
