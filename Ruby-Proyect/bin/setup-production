@@ -1,0 +1,148 @@
+#!/usr/bin/env bash
+# encoding: UTF-8
+# Script para configurar PostgreSQL y preparar la base de datos de producción
+# Ejecutar UNA VEZ antes de iniciar el servidor en producción
+
+set -e
+
+echo ""
+echo "======================================================================"
+echo "           BITEVIA - Configuración de Producción"
+echo "======================================================================"
+echo ""
+
+# ============================================================
+# CONFIGURACIÓN - EDITA ESTOS VALORES
+# ============================================================
+
+# Usuario de PostgreSQL (el que se creará)
+PG_USER="bitevia"
+
+# Contraseña para el usuario de PostgreSQL
+# ⚠️ CAMBIA ESTO POR UNA CONTRASEÑA SEGURA
+PG_PASSWORD="09212006"
+
+# Nombre de la base de datos de desarrollo (para importar datos)
+DB_DEV="myapp_developmen"
+
+# Nombres de bases de datos de producción
+DB_PROD_PRIMARY="bitevia_backend_production"
+DB_PROD_CACHE="bitevia_backend_production_cache"
+DB_PROD_QUEUE="bitevia_backend_production_queue"
+DB_PROD_CABLE="bitevia_backend_production_cable"
+
+# ============================================================
+# NO EDITES DEBAJO DE ESTA LÍNEA
+# ============================================================
+
+echo "📋 Configuración:"
+echo "   Usuario PostgreSQL: $PG_USER"
+echo "   Base de datos dev:  $DB_DEV"
+echo "   Base de datos prod: $DB_PROD_PRIMARY"
+echo ""
+
+# Verificar si el usuario de PostgreSQL ya existe
+echo "🔍 Verificando usuario de PostgreSQL..."
+if sudo -u postgres psql -tAc "SELECT 1 FROM pg_roles WHERE rolname='$PG_USER'" | grep -q 1; then
+    echo "   ✅ Usuario '$PG_USER' ya existe"
+else
+    echo "   🔧 Creando usuario '$PG_USER'..."
+    sudo -u postgres createuser -s "$PG_USER"
+    echo "   ✅ Usuario creado"
+fi
+
+# Establecer contraseña
+echo "🔐 Configurando contraseña..."
+sudo -u postgres psql -c "ALTER USER $PG_USER WITH PASSWORD '$PG_PASSWORD';"
+echo "   ✅ Contraseña configurada"
+
+# Exportar variable de entorno
+echo "🌍 Exportando variable de entorno..."
+export RUBY_DATABASE_PASSWORD="$PG_PASSWORD"
+echo "   ✅ Variable exportada: RUBY_DATABASE_PASSWORD"
+
+# Crear bases de datos
+echo "🗄️  Creando bases de datos de producción..."
+for db in "$DB_PROD_PRIMARY" "$DB_PROD_CACHE" "$DB_PROD_QUEUE" "$DB_PROD_CABLE"; do
+    PGPASSWORD="$PG_PASSWORD" psql -U $PG_USER -h localhost -c "CREATE DATABASE $db;" 2>/dev/null || echo "   ℹ️  $db ya existe"
+done
+echo "   ✅ Todas las bases de datos listas"
+
+# Ejecutar migraciones
+echo "🔄 Ejecutando migraciones..."
+RAILS_ENV=production PGPASSWORD="$PG_PASSWORD" bin/rails db:migrate
+echo "   ✅ Migraciones completadas"
+
+# Preguntar si desea importar datos de desarrollo
+echo ""
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "📦 IMPORTACIÓN DE DATOS"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
+read -p "¿Deseas importar los datos de desarrollo a producción? (s/n): " -n 1 -r
+echo ""
+
+if [[ $REPLY =~ ^[SsYy]$ ]]; then
+    echo ""
+    echo "🔄 Exportando datos de desarrollo..."
+    
+    # Crear directorio temporal
+    mkdir -p tmp/db_backup
+    
+    # Exportar datos de desarrollo
+    echo "   📤 Exportando desde $DB_DEV..."
+    PGPASSWORD="$PG_PASSWORD" pg_dump -U $PG_USER -h localhost -Fc $DB_DEV > tmp/db_backup/development_backup.dump
+    echo "   ✅ Exportación completada"
+    
+    echo "   📥 Importando a producción..."
+    
+    # Importar usando pg_restore
+    echo "   🔄 Restaurando datos en $DB_PROD_PRIMARY..."
+    PGPASSWORD="$PG_PASSWORD" pg_restore -h localhost -U $PG_USER -d $DB_PROD_PRIMARY tmp/db_backup/development_backup.dump --clean --if-exists --no-owner --no-acl 2>/dev/null || true
+    
+    echo "   ✅ Importación completada"
+    echo "   🧹 Limpiando archivos temporales..."
+    rm -rf tmp/db_backup
+    echo "   ✅ Datos importados exitosamente"
+    
+    # Precargar imágenes optimizadas
+    echo ""
+    read -p "¿Deseas precargar las imágenes optimizadas (WebP)? (s/n): " -n 1 -r
+    echo ""
+    if [[ $REPLY =~ ^[SsYy]$ ]]; then
+        echo "   🖼️  Precargando imágenes optimizadas..."
+        RAILS_ENV=production bin/rails images:preload
+        echo "   ✅ Imágenes precargadas"
+    else
+        echo "   ⏭️  Saltando precarga de imágenes"
+        echo "   💡 Puedes hacerlo después con: RAILS_ENV=production rails images:preload"
+    fi
+else
+    echo ""
+    echo "   ⏭️  Saltando importación de datos"
+    echo ""
+    echo "   💡 Si quieres importar datos manualmente más tarde, ejecuta:"
+    echo "      export RUBY_DATABASE_PASSWORD='$PG_PASSWORD'"
+    echo "      pg_dump -U $PG_USER -h localhost -Fc $DB_DEV > backup.dump"
+    echo "      pg_restore -U $PG_USER -h localhost -d $DB_PROD_PRIMARY backup.dump --no-owner --no-acl"
+fi
+
+echo ""
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "✅ CONFIGURACIÓN COMPLETADA"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
+echo "📝 SIGUIENTE PASO:"
+echo ""
+echo "   Para iniciar el servidor en producción, ejecuta:"
+echo ""
+echo "   export RUBY_DATABASE_PASSWORD='$PG_PASSWORD'"
+echo "   RAILS_ENV=production ./bin/server"
+echo ""
+echo "   O agrega la variable al archivo ~/.bashrc para que persista:"
+echo ""
+echo "   echo \"export RUBY_DATABASE_PASSWORD='$PG_PASSWORD'\" >> ~/.bashrc"
+echo "   source ~/.bashrc"
+echo ""
+echo "======================================================================"
+echo ""

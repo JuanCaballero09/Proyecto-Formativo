@@ -5,7 +5,7 @@ class Dashboard::BannersController < ApplicationController
   before_action :check_admin
 
   def index
-    @banners = Banner.order(:id)
+    @banners = Banner.includes(imagen_attachment: :blob).order(:id)
   end
 
   def new

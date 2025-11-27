@@ -11,12 +11,12 @@ class BusquedaController < ApplicationController
       end
 
       # Coincidencia por partes (elimina tildes en SQL con ILIKE no es posible directamente)
-      @grupos = Grupo.all.select do |g|
+      @grupos = Grupo.includes(imagen_attachment: :blob).select do |g|
         normalizado = I18n.transliterate(g.nombre.downcase.strip)
         terms.all? { |t| normalizado.include?(t) }
       end.sort_by(&:id)
 
-      @productos = Product.all.select do |p|
+      @productos = Product.includes(imagen_attachment: :blob).select do |p|
         normalizado = I18n.transliterate(p.nombre.downcase.strip)
         terms.all? { |t| normalizado.include?(t) }
       end.sort_by(&:id)

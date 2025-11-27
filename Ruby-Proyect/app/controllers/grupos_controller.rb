@@ -8,9 +8,9 @@ class GruposController < ApplicationController
 
     # Excluir el grupo de combos de la lista regular de grupos
     if combos_group
-      @grupos = Grupo.where.not(id: combos_group.id).order(:id)
+      @grupos = Grupo.includes(imagen_attachment: :blob).where.not(id: combos_group.id).order(:id)
     else
-      @grupos = Grupo.order(:id)
+      @grupos = Grupo.includes(imagen_attachment: :blob).order(:id)
     end
 
     @combos_group = combos_group
