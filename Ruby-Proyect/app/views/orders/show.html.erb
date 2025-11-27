@@ -95,11 +95,18 @@
         </div>
       </div>
 
-      <!-- Botón de pago -->
-      <div class="payment-section">
-        <%= link_to clientes_path, class:"payment-button" do %>
-           <i class="back-icon">←</i>
-          <span><%= t("home.order.pagar")%></span>
+      <!-- Botones de acción -->
+      <div class="order-actions">
+        <% if @order.status.downcase == 'pendiente' %>
+          <%= link_to new_order_payments_path(@order), class: "btn btn-success btn-lg w-100 payment-button mb-3" do %>
+            <i class="payment-icon">💳</i>
+            <span><%= t("home.order.pagar") %></span>
+          <% end %>
+        <% end %>
+        
+        <%= link_to clientes_path, class: "btn btn-link text-secondary return-button-link" do %>
+          <i class="back-icon">←</i>
+          <span><%= t("home.order.volver") %></span>
         <% end %>
       </div>
     </div>

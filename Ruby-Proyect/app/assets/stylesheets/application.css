@@ -7603,17 +7603,22 @@ a:focus, button:focus, input:focus, select:focus, textarea:focus {
     font-size: 1.1rem;
 }
 
-/* Botón de pago */
-.payment-section {
-    text-align: center;
+/* Botones de acción */
+.order-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-top: 30px;
+    padding: 20px 0;
 }
 
 .payment-button {
     display: inline-flex;
     align-items: center;
-    gap: 15px;
-    background: linear-gradient(135deg, #28a745, #20c997);
-    color: white;
+    justify-content: center;
+    background: linear-gradient(135deg, #28a745, #20c997) !important;
+    color: white !important;
     padding: 20px 40px;
     border-radius: 25px;
     text-decoration: none;
@@ -7621,9 +7626,53 @@ a:focus, button:focus, input:focus, select:focus, textarea:focus {
     font-weight: 700;
     transition: all 0.3s ease;
     box-shadow: 0 8px 24px rgba(40, 167, 69, 0.3);
-    border: none;
+    border: none !important;
     text-transform: uppercase;
     letter-spacing: 1px;
+    width: 100%;
+    max-width: 350px;
+    margin: 0 auto;
+}
+
+.payment-button:hover {
+    background: linear-gradient(135deg, #218838, #1abc9c) !important;
+    transform: translateY(-3px);
+    box-shadow: 0 12px 32px rgba(40, 167, 69, 0.4);
+    color: white !important;
+}
+
+.return-button-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    text-decoration: none !important;
+    color: #6c757d !important;
+    transition: all 0.2s ease;
+    padding: 8px 16px;
+}
+
+.return-button-link:hover {
+    color: #495057 !important;
+    transform: translateX(-3px);
+}
+
+.back-icon {
+    font-size: 1rem;
+    font-style: normal;
+}
+
+.payment-icon {
+    font-size: 1.3rem;
+    font-style: normal;
+}
+
+.payment-section {
+    margin-top: 30px;
+    text-align: center;
+    padding: 20px 0;
 }
 
 .payment-button:hover {

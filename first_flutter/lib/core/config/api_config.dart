@@ -8,7 +8,7 @@ class ApiConfig {
   
   /// URL base por defecto para desarrollo local
   /// 🔧 CAMBIA ESTA URL según tu plataforma (ver comentario arriba)
-  static const String _defaultBaseUrl = "http://localhost:3000/api/v1";
+  static const String _defaultBaseUrl = "https://whole-tahr-stunning.ngrok-free.app/api/v1";
   
   /// URL base para producción (cambiar según necesidades)
   static const String _productionBaseUrl = "https://api.tudominio.com/api/v1";

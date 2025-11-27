@@ -128,8 +128,9 @@ en:
       detalles: "Order Details"
       informacion_orden: "Order Information"
       tootal_paga: "Total Pay"
-      pagar: "Return"
+      pagar: "Pay"
       regresar: "Return"
+      volver: "Back"
       codigo: "Code:"
       direccion_entrega: "Address"
   
