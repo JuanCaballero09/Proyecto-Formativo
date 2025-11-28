@@ -15,6 +15,8 @@ import 'bloc/language/language_event.dart';
 import 'bloc/language/language_state.dart';
 import 'bloc/categorias/categorias_bloc.dart';
 import 'bloc/search/search_bloc.dart';
+import 'bloc/banner/banner_bloc.dart';
+import 'bloc/combos/combos_cubit.dart';
 import 'repository/product_repository.dart';
 import 'repository/api_product_repository.dart';
 import 'pages/splash_page.dart';
@@ -52,6 +54,8 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (_) => CategoriasBloc(apiService)),
         BlocProvider(create: (_) => SearchBloc(apiService)),
         BlocProvider(create: (_) => ThemeBloc()),
+        BlocProvider(create: (_) => BannerCubit(apiService: apiService)..loadBanners()),
+        BlocProvider(create: (_) => CombosCubit(apiService: apiService)..loadCombos()),
       ],
       child: BlocBuilder<LanguageBloc, LanguageState>(
         builder: (context, languageState) {

@@ -5,8 +5,10 @@ class Api::V1::Grupos::ProductsController < Api::V1::BaseController
     producto = grupo.products.order(:id)
     render json: producto.map { |producto|
       producto.as_json.merge(
+        type: producto.type,
         imagen_url: producto.imagen.attached? ? url_for(producto.imagen) : nil,
-        ingredientes: producto.ingredientes.pluck(:nombre)
+        ingredientes: producto.ingredientes.pluck(:nombre),
+        sales_count: producto.order_items.sum(:quantity)
       )
     }
   end
@@ -16,8 +18,10 @@ class Api::V1::Grupos::ProductsController < Api::V1::BaseController
     producto = grupo.products.find(params[:id]) # busca el producto dentro del grupo
 
     render json: producto.as_json.merge(
+      type: producto.type,
       imagen_url: producto.imagen.attached? ? url_for(producto.imagen) : nil,
-      ingredientes: producto.ingredientes.pluck(:nombre)
+      ingredientes: producto.ingredientes.pluck(:nombre),
+      sales_count: producto.order_items.sum(:quantity)
     )
   end
 end

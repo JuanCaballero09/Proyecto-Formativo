@@ -9,7 +9,6 @@ import '../models/product.dart';
 import '../l10n/app_localizations.dart';
 import '../widgets/search_input_field.dart';
 import 'product_detail_page.dart';
-import 'menu_navigator_page.dart';
 import 'product_catalog_page.dart';
 import '../bloc/cart/cart_bloc.dart';
 

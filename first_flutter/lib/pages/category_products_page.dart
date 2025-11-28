@@ -47,18 +47,56 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
-      body: CustomScrollView(
-        slivers: [
+      body: SafeArea(
+        top: false, // Permitir que la imagen llegue hasta arriba
+        child: RefreshIndicator(
+          color: const Color.fromRGBO(237, 88, 33, 1),
+          onRefresh: () async {
+            if (widget.categoryId != null) {
+              context.read<ProductBloc>().add(LoadProductsByCategoryId(widget.categoryId!, forceRefresh: true));
+            } else {
+              context.read<ProductBloc>().add(LoadProductsByCategory(widget.categoryName, forceRefresh: true));
+            }
+            await Future.delayed(const Duration(milliseconds: 800));
+          },
+          child: CustomScrollView(
+            slivers: [
           // 🔹 Imagen superior con título y flecha
           SliverToBoxAdapter(
             child: Stack(
               children: [
-                Image.asset(
-                  widget.categoryImage,
-                  width: double.infinity,
-                  height: 180,
-                  fit: BoxFit.cover,
-                ),
+                // Mostrar imagen del backend si es URL, sino asset local
+                widget.categoryImage.startsWith('http')
+                    ? Image.network(
+                        widget.categoryImage,
+                        width: double.infinity,
+                        height: 180,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Image.asset(
+                            'assets/LogoText.png',
+                            width: double.infinity,
+                            height: 180,
+                            fit: BoxFit.cover,
+                          );
+                        },
+                      )
+                    : Image.asset(
+                        widget.categoryImage,
+                        width: double.infinity,
+                        height: 180,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Container(
+                            width: double.infinity,
+                            height: 180,
+                            color: Colors.orange[400],
+                            child: const Center(
+                              child: Icon(Icons.restaurant_menu, size: 60, color: Colors.white),
+                            ),
+                          );
+                        },
+                      ),
                 Container(
                   height: 180,
                   decoration: BoxDecoration(
@@ -73,11 +111,17 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
                   ),
                 ),
                 Positioned(
-                  top: 40,
-                  left: 16,
-                  child: IconButton(
-                    icon: Icon(Icons.arrow_back_ios, color: Colors.white.withValues(alpha: 0.9)),
-                    onPressed: () => Navigator.pop(context),
+                  top: MediaQuery.of(context).padding.top + 16,
+                  left: 8,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.black.withValues(alpha: 0.3),
+                      shape: BoxShape.circle,
+                    ),
+                    child: IconButton(
+                      icon: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 20),
+                      onPressed: () => Navigator.pop(context),
+                    ),
                   ),
                 ),
                 Positioned.fill(
@@ -315,6 +359,8 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
             ),
           ),
         ],
+      ),
+        ),
       ),
     );
   }

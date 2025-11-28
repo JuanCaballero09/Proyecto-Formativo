@@ -73,9 +73,12 @@ Rails.application.routes.draw do
   # API routes (outside locale scope)
   namespace :api do
     namespace :v1 do
+      get "health", to: "health#check"
       post "login",  to: "auth#login"
       post "logout", to: "auth#logout"
       get "buscar", to: "busqueda#index"
+      get "combos", to: "productos#combos"
+      resources :banners, only: [ :index ]
       resources :grupos, path: "categorias", only: [ :index, :show ] do
         resources :products, path: "productos", only: [ :index, :show ], module: :grupos
       end

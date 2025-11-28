@@ -3,8 +3,6 @@ import 'package:first_flutter/l10n/app_localizations.dart';
 import 'package:first_flutter/pages/SettingsPage.dart';
 import 'package:first_flutter/pages/privacy_policy_page.dart';
 import 'package:first_flutter/service/api_service.dart';
-import 'package:first_flutter/widgets/language_selector.dart';
-import 'package:first_flutter/widgets/theme_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/auth/auth_bloc.dart';

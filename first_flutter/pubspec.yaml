@@ -30,6 +30,8 @@ dependencies:
   geolocator: ^14.0.2
   loading_animation_widget: ^1.3.0
   add_to_cart_animation: ^2.0.1
+  shimmer: ^3.0.0
+  flutter_svg: ^2.0.10+1
 
 
 dev_dependencies:
@@ -42,38 +44,15 @@ flutter:
   uses-material-design: true
   generate: true
   assets:
-    - assets/imagen1.jpeg
-    - assets/imagen2.jpeg
-    - assets/imagen3.jpeg
-    - assets/imagen4.png
-    - assets/imagen5.png
-    - assets/imagen6.png
-    - assets/facebook.png
-    - assets/instagram.png
-    - assets/whatsapp.png
-    - assets/products.json
-    - assets/Hamburguesa sencilla.jpg
-    - assets/Hamburguesa BBQ.jpeg
-    - assets/Pizza margarita.jpg
-    - assets/Pizza pepperoni.jpg
-    - assets/Ensalada Cesar.jpg
-    - assets/Ensalada Mediterranea.jpg
-    - assets/Tacos al Pastor.jpg
-    - assets/Tacos de Pollo.jpg
-    - assets/Hamburgesa Doble Queso.jpeg
-    - assets/Pizza Hawiana.jpg
-    - assets/Ensalada de Atun.jpg
-    - assets/Tacos Veganos.jpg
-    - assets/domicilio moto.jpg
-    - assets/bebida.jpg
     - assets/carro_vacio.jpeg
-    - assets/logoredondo.png
-    - assets/imagen8.png
-    - assets/promocion1.webp
-    - assets/promocion2.jpg
-    - assets/promocion3.webp
-    - assets/loogo.jpg
+    - assets/Confirmado.png
+    - assets/instagram.png
     - assets/logobitevia.png
+    - assets/logoredondo.png
+    - assets/LogoTextNoFondo.png
+    - assets/LogoText.png
+    - assets/loogo.jpg
+    - assets/whatsapp.png
 
 flutter_launcher_icons:
   android: true

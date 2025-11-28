@@ -72,28 +72,8 @@ class Categoria {
     debugPrint('🔍 Buscando imagen por defecto para: "$nombre" (normalizado: "$nombreLower")');
     
     // Buscar patrones específicos en el nombre (considerando emojis)
-    if (nombreLower.contains('pizza')) {
-      debugPrint('✅ Imagen encontrada: Pizza Hawiana.jpg');
-      return 'assets/Pizza Hawiana.jpg';
-    } else if (nombreLower.contains('hamburguesa') || nombreLower.contains('burger')) {
-      debugPrint('✅ Imagen encontrada: Hamburgesa Doble Queso.jpeg');
-      return 'assets/Hamburgesa Doble Queso.jpeg';
-    } else if (nombreLower.contains('salchipapa')) {
-      debugPrint('✅ Imagen encontrada: imagen1.jpeg');
-      return 'assets/imagen1.jpeg';
-    } else if (nombreLower.contains('taco')) {
-      debugPrint('✅ Imagen encontrada: Tacos al Pastor.jpg');
-      return 'assets/Tacos al Pastor.jpg';
-    } else if (nombreLower.contains('ensalada') || nombreLower.contains('salad')) {
-      debugPrint('✅ Imagen encontrada: Ensalada Cesar.jpg');
-      return 'assets/Ensalada Cesar.jpg';
-    } else if (nombreLower.contains('bebida') || nombreLower.contains('drink')) {
-      debugPrint('✅ Imagen encontrada: bebida.jpg');
-      return 'assets/bebida.jpg';
-    } else if (nombreLower.contains('postre') || nombreLower.contains('dessert')) {
-      debugPrint('✅ Imagen encontrada: imagen2.jpeg');
-      return 'assets/imagen2.jpeg';
-    }
+    // Las imágenes de categorías se cargan desde la API
+    // Solo usamos imagen por defecto si no hay imagen disponible
     
     debugPrint('⚠️ No se encontró imagen específica, usando logoredondo.png');
     return 'assets/logoredondo.png'; // Imagen por defecto
