@@ -282,6 +282,7 @@
   "statusSent": "Sent",
   "statusDelivered": "Delivered",
   "statusCancelled": "Cancelled",
+  "statusFinished": "Finished",
   "statusUnknown": "Unknown",
   "locationServicesDisabled": "Location services are disabled",
   "locationPermissionsDenied": "Location permissions denied",

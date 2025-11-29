@@ -4,17 +4,23 @@
 
 class Api::V1::OrdersController < ApplicationController
   skip_before_action :verify_authenticity_token
-  before_action :authenticate_api_user!, except: [:create, :index]
-  before_action :set_order, only: [:show, :cancel]
+  before_action :authenticate_api_user!, except: [:create, :index, :update_address]
+  before_action :set_order, only: [:show, :cancel, :update_address]
 
   # GET /api/v1/orders
   # Obtiene todas las órdenes del usuario autenticado O de invitado por email
   def index
     if api_user_signed_in?
-      # Usuario autenticado: obtener todas sus órdenes
-      @orders = @current_user.orders
-                            .includes({ order_items: :product }, :coupon)
-                            .order(created_at: :desc)
+      # Usuario autenticado: obtener todas sus órdenes + órdenes de invitado con el mismo email
+      user_email = @current_user.email.strip.downcase
+      
+      @orders = Order.where(
+        "user_id = ? OR (user_id IS NULL AND LOWER(guest_email) = ?)",
+        @current_user.id,
+        user_email
+      )
+      .includes({ order_items: :product }, :coupon)
+      .order(created_at: :desc)
       
       render json: @orders.map { |order| order_json(order) }
     else
@@ -151,11 +157,55 @@ class Api::V1::OrdersController < ApplicationController
     end
   end
 
+  # PATCH /api/v1/orders/:code/update_address
+  # Actualiza la dirección de entrega (solo si está pendiente o pagado)
+  def update_address
+    # Solo permitir actualizar si está en pendiente o pagado
+    unless @order.pendiente? || @order.pagado?
+      render json: { 
+        error: "No se puede actualizar la dirección. La orden ya está en preparación o fue entregada." 
+      }, status: :unprocessable_entity
+      return
+    end
+
+    new_address = params[:direccion]&.strip
+
+    if new_address.blank?
+      render json: { error: "La dirección no puede estar vacía" }, status: :bad_request
+      return
+    end
+
+    if new_address.length < 5
+      render json: { error: "La dirección debe tener al menos 5 caracteres" }, status: :bad_request
+      return
+    end
+
+    if @order.update(direccion: new_address)
+      render json: {
+        success: true,
+        message: "Dirección actualizada exitosamente",
+        order: order_json(@order)
+      }
+    else
+      render json: { errors: @order.errors.full_messages }, status: :unprocessable_entity
+    end
+  end
+
   private
 
   def set_order
     if api_user_signed_in?
-      @order = @current_user.orders.includes({ order_items: :product }).find_by!(code: params[:code])
+      # Usuario autenticado: buscar en sus órdenes O en órdenes de invitado con su email
+      user_email = @current_user.email.strip.downcase
+      
+      @order = Order.includes({ order_items: :product })
+                   .where(
+                     "code = ? AND (user_id = ? OR (user_id IS NULL AND LOWER(guest_email) = ?))",
+                     params[:code],
+                     @current_user.id,
+                     user_email
+                   )
+                   .first!
     else
       # Permitir consultar órdenes de invitados por código + email
       email = params[:email] || request.headers["X-Guest-Email"]
