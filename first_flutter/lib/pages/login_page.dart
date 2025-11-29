@@ -57,73 +57,134 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     final user = userController.text.trim();
     final pass = passController.text.trim();
     if (user.isEmpty || pass.isEmpty) {
-      setState(() => errorMessage = 'Por favor ingresa usuario y contraseña');
+      _showAuthNotification(
+        context,
+        message: 'Por favor ingresa usuario y contraseña',
+        isSuccess: false,
+      );
       return;
     }
-    setState(() => isLoading = true);
-    await Future.delayed(const Duration(seconds: 1));
+    
+    // Validar formato de correo electrónico
+    if (!user.contains('@') || !user.contains('.')) {
+      _showAuthNotification(
+        context,
+        message: 'Por favor ingresa un correo electrónico válido',
+        isSuccess: false,
+      );
+      return;
+    }
+    
+    setState(() {
+      isLoading = true;
+      errorMessage = '';
+    });
     
     final api = ApiService();
-    final userData = await api.login(user, pass);
+    final response = await api.login(user, pass);
     
     if (!mounted) return;
 
-    // ✅ Mostrar popup en el centro
-    if (userData != null) {
-    showDialog(
-      context: context,
-      barrierDismissible: false, // no se cierra tocando afuera
-      builder: (context) {
-        return Dialog(
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20)),
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(Icons.check_circle,
-                    color: Colors.green, size: 80),
-                const SizedBox(height: 16),
-                const Text(
-                  "Inicio de sesión exitoso",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black87),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-
-    // ⏳ Esperar 1.5 seg y navegar
-    Future.delayed(const Duration(seconds: 2), () {
-      Navigator.pop(context); // cierra el dialog
-      
-      // Disparar evento con datos del usuario
-      final fullName = '${userData['nombre'] ?? ''} ${userData['apellido'] ?? ''}'.trim();
-      context.read<AuthBloc>().add(
-        LoginRequested(user, pass, userName: fullName.isEmpty ? 'Usuario' : fullName)
-      );
-      
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const ProductCatalogPage()),
-      );
-    });
-    } else {
-      setState(() => errorMessage = 'Credenciales inválidas');
-    }
     setState(() => isLoading = false);
+
+    // ✅ Verificar si el login fue exitoso
+    if (response['success'] == true) {
+      final userData = response['user'];
+      
+      // Mostrar popup de éxito
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) {
+          return Dialog(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            child: Container(
+              padding: const EdgeInsets.all(32),
+              decoration: BoxDecoration(
+                color: Theme.of(context).cardColor,
+                borderRadius: BorderRadius.circular(24),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.2),
+                    blurRadius: 20,
+                    offset: const Offset(0, 10),
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.green.withValues(alpha: 0.1),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.check_circle_rounded,
+                      color: Colors.green,
+                      size: 64,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  Text(
+                    "¡Inicio de sesión exitoso!",
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.poppins(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).textTheme.titleLarge?.color,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    "Bienvenido de nuevo",
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.poppins(
+                      fontSize: 14,
+                      color: Theme.of(context).textTheme.bodyMedium?.color?.withValues(alpha: 0.7),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      );
+
+      // ⏳ Esperar y navegar
+      Future.delayed(const Duration(seconds: 2), () {
+        Navigator.pop(context); // cierra el dialog
+        
+        // Disparar evento con datos del usuario
+        final fullName = '${userData['nombre'] ?? ''} ${userData['apellido'] ?? ''}'.trim();
+        context.read<AuthBloc>().add(
+          LoginRequested(user, pass, userName: fullName.isEmpty ? 'Usuario' : fullName)
+        );
+        
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const ProductCatalogPage()),
+        );
+      });
+    } else {
+      // ❌ Mostrar error con isla dinámica
+      _showAuthNotification(
+        context,
+        message: response['message'] ?? 'Error al iniciar sesión',
+        isSuccess: false,
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final brightness = Theme.of(context).brightness;
+    final isDark = brightness == Brightness.dark;
+    
     return Scaffold(
+      backgroundColor: isDark ? Colors.black : Colors.grey.shade100,
       body: FadeTransition(
         opacity: _fadeAnimation,
         child: Stack(
@@ -155,13 +216,13 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                   onTap: () => Navigator.pop(context),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
-                    children: const [
+                    children: [
                       Icon(Icons.arrow_back_ios_new_rounded,
-                          size: 18, color: Colors.black87),
-                      SizedBox(width: 4),
+                          size: 18, color: isDark ? Colors.white : Colors.black87),
+                      const SizedBox(width: 4),
                       Text('Atrás',
                           style:
-                              TextStyle(fontSize: 16, color: Colors.black87)),
+                              TextStyle(fontSize: 16, color: isDark ? Colors.white : Colors.black87)),
                     ],
                   ),
                 ),
@@ -178,13 +239,13 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                     constraints: const BoxConstraints(maxWidth: 460),
                     padding: const EdgeInsets.fromLTRB(24, 28, 24, 20),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: Theme.of(context).cardColor,
                       borderRadius: BorderRadius.circular(20),
-                      boxShadow: const [
+                      boxShadow: [
                         BoxShadow(
-                          color: Colors.black26,
+                          color: isDark ? Colors.black54 : Colors.black26,
                           blurRadius: 14,
-                          offset: Offset(0, 6),
+                          offset: const Offset(0, 6),
                         ),
                       ],
                     ),
@@ -192,20 +253,20 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         // Logo
-                        Image.asset('assets/loogo.jpg', height: 90),
+                        Image.asset('assets/logobitevia.png', height: 90),
                         const SizedBox(height: 16),
 
                         // Títulos
-                        Text('¡Hola!',
+                        Text('¡Bienvenido!',
                             style: GoogleFonts.poppins(
                               fontSize: 28,
                               fontWeight: FontWeight.w700,
-                              color: Colors.black87,
+                              color: Theme.of(context).textTheme.titleLarge?.color,
                             )),
                         Text('Inicia sesión en tu cuenta',
                             style: GoogleFonts.poppins(
                               fontSize: 15,
-                              color: Colors.black54,
+                              color: Theme.of(context).textTheme.bodyMedium?.color?.withValues(alpha: 0.7),
                             )),
                         const SizedBox(height: 22),
 
@@ -213,12 +274,16 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                         TextField(
                           controller: userController,
                           keyboardType: TextInputType.emailAddress,
+                          style: TextStyle(color: Theme.of(context).textTheme.bodyLarge?.color),
                           decoration: InputDecoration(
                             labelText: 'Correo electrónico',
+                            labelStyle: TextStyle(color: Theme.of(context).brightness == Brightness.dark ? Colors.white70 : Colors.black54),
                             prefixIcon:
                                 const Icon(Icons.email_outlined, color: kOrange),
                             filled: true,
-                            fillColor: Colors.white,
+                            fillColor: Theme.of(context).brightness == Brightness.dark 
+                                ? Colors.grey[800] 
+                                : Colors.white,
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
@@ -230,8 +295,10 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                         TextField(
                           controller: passController,
                           obscureText: _obscurePassword,
+                          style: TextStyle(color: Theme.of(context).textTheme.bodyLarge?.color),
                           decoration: InputDecoration(
                             labelText: 'Contraseña',
+                            labelStyle: TextStyle(color: Theme.of(context).brightness == Brightness.dark ? Colors.white70 : Colors.black54),
                             prefixIcon:
                                 const Icon(Icons.lock_outline, color: kOrange),
                             suffixIcon: IconButton(
@@ -244,7 +311,9 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                               ),
                             ),
                             filled: true,
-                            fillColor: Colors.white,
+                            fillColor: Theme.of(context).brightness == Brightness.dark 
+                                ? Colors.grey[800] 
+                                : Colors.white,
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
@@ -252,13 +321,32 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                         ),
 
                         const SizedBox(height: 10),
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: Text('¿Olvidaste tu contraseña?',
-                              style: GoogleFonts.poppins(
-                                  fontSize: 14, color: kOrange)),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pushNamed(context, '/resend-confirmation');
+                              },
+                              child: Text('Reenviar confirmación',
+                                  style: GoogleFonts.poppins(
+                                      fontSize: 13, 
+                                      color: kOrange,
+                                      fontWeight: FontWeight.w600)),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pushNamed(context, '/forgot-password');
+                              },
+                              child: Text('¿Olvidaste tu contraseña?',
+                                  style: GoogleFonts.poppins(
+                                      fontSize: 13, 
+                                      color: kOrange,
+                                      fontWeight: FontWeight.w600)),
+                            ),
+                          ],
                         ),
-                        const SizedBox(height: 18),
+                        const SizedBox(height: 8),
 
                         // Botón ingresar
                         SizedBox(
@@ -278,23 +366,9 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                 : const Text('Ingresar',
                                     style: TextStyle(
                                         fontSize: 18,
+                                        color: Colors.white,
                                         fontWeight: FontWeight.bold)),
                           ),
-                        ),
-
-                        const SizedBox(height: 18),
-                        Text('O ingresa con tus redes sociales',
-                            style: GoogleFonts.poppins(
-                                fontSize: 14, color: Colors.black54)),
-                        const SizedBox(height: 12),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: const [
-                            Icon(Icons.facebook, color: Colors.blue, size: 32),
-                            SizedBox(width: 26),
-                            Icon(Icons.alternate_email,
-                                color: Colors.lightBlue, size: 32),
-                          ],
                         ),
 
                         const SizedBox(height: 18),
@@ -318,13 +392,6 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                             ),
                           ],
                         ),
-
-                        if (errorMessage.isNotEmpty) ...[
-                          const SizedBox(height: 8),
-                          Text(errorMessage,
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(color: Colors.red)),
-                        ],
                       ],
                     ),
                   ),
@@ -335,5 +402,92 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
         ),
       ),
     );
+  }
+
+  void _showAuthNotification(BuildContext context, {required String message, required bool isSuccess}) {
+    final overlay = Overlay.of(context);
+    late OverlayEntry overlayEntry;
+
+    overlayEntry = OverlayEntry(
+      builder: (context) => Positioned(
+        top: MediaQuery.of(context).padding.top + 10,
+        left: 20,
+        right: 20,
+        child: Material(
+          color: Colors.transparent,
+          child: TweenAnimationBuilder<double>(
+            duration: const Duration(milliseconds: 400),
+            tween: Tween(begin: 0.0, end: 1.0),
+            curve: Curves.elasticOut,
+            builder: (context, value, child) {
+              return Transform.scale(
+                scale: value,
+                child: Opacity(
+                  opacity: value.clamp(0.0, 1.0),
+                  child: child,
+                ),
+              );
+            },
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: isSuccess
+                      ? [const Color(0xFF4CAF50), const Color(0xFF45A049)]
+                      : [const Color(0xFFEF5350), const Color(0xFFE53935)],
+                ),
+                borderRadius: BorderRadius.circular(30),
+                boxShadow: [
+                  BoxShadow(
+                    color: (isSuccess ? const Color(0xFF4CAF50) : const Color(0xFFEF5350))
+                        .withOpacity(0.4),
+                    blurRadius: 20,
+                    offset: const Offset(0, 8),
+                  ),
+                ],
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.3),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      isSuccess ? Icons.check_circle_rounded : Icons.error_rounded,
+                      color: Colors.white,
+                      size: 24,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      message,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 0.3,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    overlay.insert(overlayEntry);
+
+    Future.delayed(const Duration(milliseconds: 3000), () {
+      overlayEntry.remove();
+    });
   }
 }

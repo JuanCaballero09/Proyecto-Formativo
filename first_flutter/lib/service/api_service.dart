@@ -285,40 +285,214 @@ class ApiService {
     }
   }
 
-  Future<Map<String, dynamic>?> login(String email, String password) async {
-    final url = Uri.parse(ApiConfig.loginUrl);
+  Future<Map<String, dynamic>> login(String email, String password) async {
+    try {
+      final url = Uri.parse(ApiConfig.loginUrl);
 
-    final response = await http
-        .post(
-          url,
-          headers: ApiConfig.defaultHeaders,
-          body: jsonEncode({
-            'email': email, 
-            'password': password,
-          }),
-        )
-        .timeout(ApiConfig.connectionTimeout);
+      debugPrint("🔐 Attempting login for: $email");
 
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
+      final response = await http
+          .post(
+            url,
+            headers: ApiConfig.defaultHeaders,
+            body: jsonEncode({
+              'email': email, 
+              'password': password,
+            }),
+          )
+          .timeout(ApiConfig.connectionTimeout);
 
-      // Guardamos el token recibido en almacenamiento seguro
-      await storage.write(key: 'token', value: data['token']);
-      
-      // Guardamos también los datos del usuario
-      if (data['user'] != null) {
-        await storage.write(key: 'user_name', value: data['user']['nombre'] ?? '');
-        await storage.write(key: 'user_apellido', value: data['user']['apellido'] ?? '');
-        await storage.write(key: 'user_email', value: data['user']['email'] ?? '');
-        await storage.write(key: 'user_telefono', value: data['user']['telefono'] ?? '');
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+
+        // Guardamos el token recibido en almacenamiento seguro
+        await storage.write(key: 'token', value: data['token']);
+        
+        // Guardamos también los datos del usuario
+        if (data['user'] != null) {
+          await storage.write(key: 'user_name', value: data['user']['nombre'] ?? '');
+          await storage.write(key: 'user_apellido', value: data['user']['apellido'] ?? '');
+          await storage.write(key: 'user_email', value: data['user']['email'] ?? '');
+          await storage.write(key: 'user_telefono', value: data['user']['telefono'] ?? '');
+        }
+
+        debugPrint("✅ Login successful");
+        return {
+          'success': true,
+          'user': data['user'],
+          'token': data['token'],
+        };
+      } else {
+        final errorData = jsonDecode(response.body);
+        final errorMsg = errorData['error'] ?? 'Error al iniciar sesión';
+        debugPrint("❌ Login error: $errorMsg");
+        return {
+          'success': false,
+          'message': errorMsg,
+        };
       }
+    } on TimeoutException {
+      debugPrint("⏱️ Timeout during login");
+      return {
+        'success': false,
+        'message': 'Tiempo de espera agotado. Verifica tu conexión.',
+      };
+    } catch (e) {
+      debugPrint("❌ Error during login: $e");
+      return {
+        'success': false,
+        'message': 'Error de conexión al iniciar sesión',
+      };
+    }
+  }
 
-      debugPrint("✅ Login successful");
-      return data['user'];
-    } else {
+  Future<Map<String, dynamic>> register({
+    required String nombre,
+    required String apellido,
+    required String email,
+    required String telefono,
+    required String password,
+    required String passwordConfirmation,
+  }) async {
+    try {
+      final url = Uri.parse('$baseUrl/register');
 
-      debugPrint("❌ Login error: ${response.body}");
-      return null;
+      debugPrint("📝 Registering user: $email");
+
+      final response = await http
+          .post(
+            url,
+            headers: ApiConfig.defaultHeaders,
+            body: jsonEncode({
+              'user': {
+                'nombre': nombre,
+                'apellido': apellido,
+                'email': email,
+                'telefono': telefono,
+                'password': password,
+                'password_confirmation': passwordConfirmation,
+              }
+            }),
+          )
+          .timeout(ApiConfig.connectionTimeout);
+
+      if (response.statusCode == 201) {
+        final data = jsonDecode(response.body);
+        debugPrint("✅ Registration successful: ${data['message']}");
+        return {
+          'success': true,
+          'message': data['message'],
+          'user': data['user'],
+        };
+      } else {
+        final errorData = jsonDecode(response.body);
+        final errorMsg = errorData['errors']?.join(', ') ?? 
+                        errorData['error'] ?? 
+                        'Error al registrar usuario';
+        debugPrint("❌ Registration error: $errorMsg");
+        return {
+          'success': false,
+          'message': errorMsg,
+        };
+      }
+    } on TimeoutException {
+      debugPrint("⏱️ Timeout registering user");
+      return {
+        'success': false,
+        'message': 'Tiempo de espera agotado. Verifica tu conexión.',
+      };
+    } catch (e) {
+      debugPrint("❌ Error registering user: $e");
+      return {
+        'success': false,
+        'message': 'Error de conexión al registrar usuario',
+      };
+    }
+  }
+
+  Future<Map<String, dynamic>> forgotPassword(String email) async {
+    try {
+      final url = Uri.parse('$baseUrl/forgot_password');
+
+      debugPrint("📧 Sending password reset email to: $email");
+
+      final response = await http
+          .post(
+            url,
+            headers: ApiConfig.defaultHeaders,
+            body: jsonEncode({'email': email}),
+          )
+          .timeout(ApiConfig.connectionTimeout);
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        debugPrint("✅ Password reset email sent");
+        return {
+          'success': true,
+          'message': data['message'],
+        };
+      } else {
+        final errorData = jsonDecode(response.body);
+        final errorMsg = errorData['error'] ?? 'Error al enviar correo';
+        debugPrint("❌ Error sending reset email: $errorMsg");
+        return {
+          'success': false,
+          'message': errorMsg,
+        };
+      }
+    } on TimeoutException {
+      return {
+        'success': false,
+        'message': 'Tiempo de espera agotado',
+      };
+    } catch (e) {
+      return {
+        'success': false,
+        'message': 'Error de conexión',
+      };
+    }
+  }
+
+  Future<Map<String, dynamic>> resendConfirmation(String email) async {
+    try {
+      final url = Uri.parse('$baseUrl/resend_confirmation');
+
+      debugPrint("📧 Resending confirmation email to: $email");
+
+      final response = await http
+          .post(
+            url,
+            headers: ApiConfig.defaultHeaders,
+            body: jsonEncode({'email': email}),
+          )
+          .timeout(ApiConfig.connectionTimeout);
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        debugPrint("✅ Confirmation email resent");
+        return {
+          'success': true,
+          'message': data['message'],
+        };
+      } else {
+        final errorData = jsonDecode(response.body);
+        final errorMsg = errorData['error'] ?? 'Error al reenviar correo';
+        debugPrint("❌ Error resending confirmation: $errorMsg");
+        return {
+          'success': false,
+          'message': errorMsg,
+        };
+      }
+    } on TimeoutException {
+      return {
+        'success': false,
+        'message': 'Tiempo de espera agotado',
+      };
+    } catch (e) {
+      return {
+        'success': false,
+        'message': 'Error de conexión',
+      };
     }
   }
 

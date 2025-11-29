@@ -103,7 +103,7 @@ class _HomePageState extends State<HomePage>
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Image.asset(
-                  'assets/loogo.jpg',
+                  'assets/logobitevia.png',
                   width: 55,
                   height: 55,
                   fit: BoxFit.contain,

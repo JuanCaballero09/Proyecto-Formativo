@@ -205,7 +205,7 @@ _buildMenuTile(
       context: context,
       applicationName: "Bitevia",
       applicationVersion: "4.3.3",
-      applicationIcon: Image.asset("assets/loogo.jpg", width: 60, height: 60),
+      applicationIcon: Image.asset("assets/logobitevia.png", width: 60, height: 60),
       children: [
         const Text("Sistema de pedidos y delivery para restaurantes."),
         const SizedBox(height: 10),
@@ -482,7 +482,7 @@ _buildMenuTile(
                     context: context,
                     applicationName: "Bitevia",
                     applicationVersion: "4.3.3",
-                    applicationIcon: Image.asset("assets/loogo.jpg", width: 60, height: 60),
+                    applicationIcon: Image.asset("assets/logobitevia.png", width: 60, height: 60),
                     children: [
                       const Text("Sistema de pedidos y delivery para restaurantes."),
                       const SizedBox(height: 10),

@@ -3,6 +3,8 @@ import 'package:first_flutter/pages/carrito_Page.dart';
 import 'package:first_flutter/pages/login_page.dart';
 import 'package:first_flutter/pages/menu_page.dart';
 import 'package:first_flutter/pages/register_page.dart';
+import 'package:first_flutter/pages/forgot_password_page.dart';
+import 'package:first_flutter/pages/resend_confirmation_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -88,6 +90,8 @@ class MyApp extends StatelessWidget {
                   "wrapper": (context) => const PerfilWrapper(),
                   '/login': (context) => const LoginPage(),
                   '/register': (context) => const RegisterPage(),
+                  '/forgot-password': (context) => const ForgotPasswordPage(),
+                  '/resend-confirmation': (context) => const ResendConfirmationPage(),
                   '/home': (context) => const ProductCatalogPage(),
                 },
               );

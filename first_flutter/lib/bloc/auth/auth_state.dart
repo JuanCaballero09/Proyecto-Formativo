@@ -36,3 +36,30 @@ class AuthError extends AuthState {
   @override
   List<Object?> get props => [message, errorCode];
 }
+
+class RegistrationSuccess extends AuthState {
+  final String message;
+
+  RegistrationSuccess(this.message);
+
+  @override
+  List<Object?> get props => [message];
+}
+
+class PasswordResetEmailSent extends AuthState {
+  final String message;
+
+  PasswordResetEmailSent(this.message);
+
+  @override
+  List<Object?> get props => [message];
+}
+
+class ConfirmationEmailSent extends AuthState {
+  final String message;
+
+  ConfirmationEmailSent(this.message);
+
+  @override
+  List<Object?> get props => [message];
+}
