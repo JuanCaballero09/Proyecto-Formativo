@@ -196,6 +196,29 @@ _buildMenuTile(
   arrowColor: arrowColor,
 ),
 
+_buildMenuTile(
+  context,
+  icon: Icons.info_outline,
+  label: "Acerca de",
+  onTap: () {
+    showAboutDialog(
+      context: context,
+      applicationName: "Bitevia",
+      applicationVersion: "4.3.3",
+      applicationIcon: Image.asset("assets/loogo.jpg", width: 60, height: 60),
+      children: [
+        const Text("Sistema de pedidos y delivery para restaurantes."),
+        const SizedBox(height: 10),
+        const Text("© 2025 Bitevia. Todos los derechos reservados."),
+      ],
+    );
+  },
+  cardColor: cardColor,
+  textColor: textColor,
+  iconColor: iconColor,
+  arrowColor: arrowColor,
+),
+
 
 
 
@@ -275,94 +298,208 @@ _buildMenuTile(
         //        VISTA SIN SESIÓN
         // ==================================
         return Scaffold(
-          backgroundColor: theme.scaffoldBackgroundColor,
-          body: Center(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Image.asset("assets/loogo.jpg", width: 120, height: 120),
-                  const SizedBox(height: 20),
-                  Text(
-                    "Bienvenido a Bitevia",
-                    style: theme.textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    "Inicia sesión o regístrate para continuar",
-                    textAlign: TextAlign.center,
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color:
-                          theme.textTheme.bodyMedium?.color?.withOpacity(0.7),
-
-                    ),
-                  ),
-                  const SizedBox(height: 30),
-
-                  // Botón Iniciar Sesión
-                  SizedBox(
-                    width: 220,
-                    height: 50,
-                    child: ElevatedButton(
-                      onPressed: () => Navigator.pushNamed(context, "/login"),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color.fromRGBO(237, 88, 33, 1),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
+          backgroundColor: bgColor,
+          appBar: AppBar(
+            backgroundColor: cardColor,
+            elevation: 1,
+            title: Text(
+              "Mi Perfil",
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+                color: textColor,
+              ),
+            ),
+          ),
+          body: ListView(
+            padding: const EdgeInsets.all(16),
+            children: [
+              // ===========================
+              //      PERFIL INVITADO
+              // ===========================
+              Container(
+                decoration: BoxDecoration(
+                  color: cardColor,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    if (!isDark)
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.08),
+                        blurRadius: 10,
+                        offset: const Offset(0, 2),
                       ),
-                      child: Text(
-                        AppLocalizations.of(context)?.login ??
-                            'Iniciar Sesión',
-                        style: const TextStyle(
-                            fontSize: 18, color: Colors.white),
+                  ],
+                ),
+                padding: const EdgeInsets.symmetric(vertical: 30),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // Avatar invitado
+                    Container(
+                      padding: const EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.grey.withOpacity(0.3),
+                      ),
+                      child: const CircleAvatar(
+                        radius: 48,
+                        backgroundColor: Colors.grey,
+                        child: Icon(Icons.person_outline, size: 55, color: Colors.white),
                       ),
                     ),
-                  ),
-
-
-                  const SizedBox(height: 12),
-
-                  SizedBox(
-                    width: 220,
-                    height: 50,
-                    child: OutlinedButton(
-                      onPressed: () =>
-                          Navigator.pushNamed(context, "/register"),
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: theme.textTheme.bodyLarge?.color,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-
-                        ),
+                    const SizedBox(height: 16),
+                    // Título
+                    Text(
+                      "Invitado",
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: textColor,
                       ),
-
-                      child: const Text('Registrarse',
-                          style: TextStyle(fontSize: 18)),
-
                     ),
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, "/forgot-password");
-                    },
-                    child: Text(
-                      AppLocalizations.of(context)?.forgotPassword ??
-                          '¿Olvidaste tu contraseña?',
-                      style: const TextStyle(color: Colors.blueAccent),
+                    const SizedBox(height: 6),
+                    Text(
+                      "Inicia sesión para guardar tus preferencias",
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: subtitleColor,
+                      ),
+                      textAlign: TextAlign.center,
                     ),
-                  ),
                   ],
                 ),
               ),
-            ),
-          );
+
+              const SizedBox(height: 20),
+
+              // Botones de Login y Register
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: SizedBox(
+                  width: double.infinity,
+                  height: 50,
+                  child: ElevatedButton(
+                    onPressed: () => Navigator.pushNamed(context, "/login"),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color.fromRGBO(237, 88, 33, 1),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    child: Text(
+                      AppLocalizations.of(context)?.login ?? 'Iniciar Sesión',
+                      style: const TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 12),
+
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: SizedBox(
+                  width: double.infinity,
+                  height: 50,
+                  child: OutlinedButton(
+                    onPressed: () => Navigator.pushNamed(context, "/register"),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: const Color.fromRGBO(237, 88, 33, 1),
+                      side: const BorderSide(color: Color.fromRGBO(237, 88, 33, 1)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    child: const Text('Registrarse', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 20),
+
+              // ===========================
+              //     CONFIGURACIÓN
+              // ===========================
+              Text(
+                "Configuración",
+                style: TextStyle(
+                  color: textColor,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 10),
+              _buildOption(
+                icon: Icons.settings,
+                label: "Ajustes",
+                widget: Icon(Icons.chevron_right, color: arrowColor),
+                cardColor: cardColor,
+                textColor: textColor,
+                iconColor: iconColor,
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const SettingsPage()),
+                  );
+                },
+              ),
+
+              const SizedBox(height: 20),
+
+              // ===========================
+              //         CUENTA
+              // ===========================
+              Text(
+                "Información",
+                style: TextStyle(
+                  color: textColor,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 10),
+              _buildMenuTile(
+                context,
+                icon: Icons.privacy_tip,
+                label: "Política de Privacidad",
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const PrivacyPolicyPage()),
+                  );
+                },
+                cardColor: cardColor,
+                textColor: textColor,
+                iconColor: iconColor,
+                arrowColor: arrowColor,
+              ),
+              _buildMenuTile(
+                context,
+                icon: Icons.info_outline,
+                label: "Acerca de",
+                onTap: () {
+                  showAboutDialog(
+                    context: context,
+                    applicationName: "Bitevia",
+                    applicationVersion: "4.3.3",
+                    applicationIcon: Image.asset("assets/loogo.jpg", width: 60, height: 60),
+                    children: [
+                      const Text("Sistema de pedidos y delivery para restaurantes."),
+                      const SizedBox(height: 10),
+                      const Text("© 2025 Bitevia. Todos los derechos reservados."),
+                    ],
+                  );
+                },
+                cardColor: cardColor,
+                textColor: textColor,
+                iconColor: iconColor,
+                arrowColor: arrowColor,
+              ),
+
+              const SizedBox(height: 20),
+            ],
+          ),
+        );
         }
     );
   }

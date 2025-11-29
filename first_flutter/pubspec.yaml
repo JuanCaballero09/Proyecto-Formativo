@@ -44,7 +44,7 @@ flutter:
   uses-material-design: true
   generate: true
   assets:
-    - assets/carro_vacio.jpeg
+    - assets/carro_vacio.png
     - assets/Confirmado.png
     - assets/instagram.png
     - assets/logobitevia.png

@@ -33,6 +33,22 @@ class _ProductCatalogPageState extends State<ProductCatalogPage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    
+    // Colores adaptativos
+    final navBarColor = isDark 
+        ? const Color(0xFF1E1E1E)  // Gris oscuro en modo oscuro
+        : const Color.fromRGBO(237, 88, 33, 1);  // Naranja en modo claro
+    
+    final homeButtonColor = isDark
+        ? const Color.fromRGBO(237, 88, 33, 1)  // Naranja en modo oscuro
+        : Colors.white;  // Blanco en modo claro
+    
+    final homeIconColor = isDark
+        ? Colors.white  // Blanco en modo oscuro
+        : const Color.fromRGBO(237, 88, 33, 1);  // Naranja en modo claro
+    
     final pages = [
       HomePage(),
       MenuNavigator(),
@@ -44,7 +60,7 @@ class _ProductCatalogPageState extends State<ProductCatalogPage> {
     return Scaffold(
       body: pages[_selectedIndex],
       bottomNavigationBar: BottomAppBar(
-        color: const Color.fromRGBO(237, 88, 33, 1),
+        color: navBarColor,
         height: 75,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -72,7 +88,7 @@ class _ProductCatalogPageState extends State<ProductCatalogPage> {
                 );
               },
             ),
-            _buildCenterHomeButton(),
+            _buildCenterHomeButton(homeButtonColor, homeIconColor),
             _buildNavItem(
               icon: Icons.delivery_dining_rounded,
               label: AppLocalizations.of(context)!.delivery,
@@ -129,7 +145,7 @@ class _ProductCatalogPageState extends State<ProductCatalogPage> {
     );
   }
 
-  Widget _buildCenterHomeButton() {
+  Widget _buildCenterHomeButton(Color buttonColor, Color iconColor) {
     return InkWell(
       onTap: () => _onItemTapped(0),
       borderRadius: BorderRadius.circular(50),
@@ -142,7 +158,7 @@ class _ProductCatalogPageState extends State<ProductCatalogPage> {
             height: 48,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: Colors.white,
+              color: buttonColor,
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withValues(alpha: 0.2),
@@ -151,9 +167,9 @@ class _ProductCatalogPageState extends State<ProductCatalogPage> {
                 ),
               ],
             ),
-            child: const Icon(
+            child: Icon(
               Icons.home_rounded,
-              color: Color.fromRGBO(237, 88, 33, 1),
+              color: iconColor,
               size: 28,
             ),
           ),
