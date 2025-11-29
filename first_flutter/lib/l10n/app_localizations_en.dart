@@ -822,6 +822,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get statusCancelled => 'Cancelled';
 
   @override
+  String get statusFinished => 'Finished';
+
+  @override
   String get statusUnknown => 'Unknown';
 
   @override

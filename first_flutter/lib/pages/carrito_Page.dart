@@ -1,5 +1,8 @@
 import 'package:first_flutter/pages/product_catalog_page.dart';
+import 'package:first_flutter/pages/payment_method_selection_page.dart';
+import 'package:first_flutter/models/order.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import '../l10n/app_localizations.dart';
@@ -23,6 +26,44 @@ class CarritoPageState extends State<CarritoPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _telefonoController = TextEditingController();
   bool _isProcessing = false;
+  bool _isCheckingAuth = true;
+  bool _isAuthenticated = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkAuthentication();
+  }
+
+  Future<void> _checkAuthentication() async {
+    try {
+      // Verificar si hay token almacenado
+      final api = ApiService();
+      final token = await api.storage.read(key: 'token');
+      
+      // Verificar el estado del AuthBloc
+      final authState = context.read<AuthBloc>().state;
+      final isAuthenticatedByBloc = authState is Authenticated;
+      
+      // Considerar autenticado si hay token O si el AuthBloc indica autenticación
+      final hasValidSession = token != null || isAuthenticatedByBloc;
+      
+      if (mounted) {
+        setState(() {
+          _isAuthenticated = hasValidSession;
+          _isCheckingAuth = false;
+        });
+      }
+    } catch (e) {
+      // En caso de error, asumir no autenticado
+      if (mounted) {
+        setState(() {
+          _isAuthenticated = false;
+          _isCheckingAuth = false;
+        });
+      }
+    }
+  }
 
   @override
   void dispose() {
@@ -35,8 +76,8 @@ class CarritoPageState extends State<CarritoPage> {
   }
 
   Future<void> _showCheckoutDialog(BuildContext context) async {
-    final authState = context.read<AuthBloc>().state;
-    final isAuthenticated = authState is Authenticated;
+    // Usar la variable de estado en lugar de leer el BLoC de nuevo
+    final isAuthenticated = _isAuthenticated;
 
     _direccionController.clear();
     _nombreController.clear();
@@ -69,7 +110,7 @@ class CarritoPageState extends State<CarritoPage> {
                   const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
 
               title: Row(
-                children: const [
+                children: [
                   Icon(Icons.shopping_bag,
                       color: Color.fromRGBO(237, 88, 33, 1), size: 30),
                   SizedBox(width: 10),
@@ -273,8 +314,10 @@ class CarritoPageState extends State<CarritoPage> {
                                       const SizedBox(height: 14),
                                       TextField(
                                         controller: _emailController,
+                                        keyboardType: TextInputType.emailAddress,
                                         decoration: InputDecoration(
                                           labelText: "Email",
+                                          hintText: "ejemplo@correo.com",
                                           filled: true,
                                           fillColor: fill,
                                           prefixIcon:
@@ -307,8 +350,14 @@ class CarritoPageState extends State<CarritoPage> {
                                       const SizedBox(height: 14),
                                       TextField(
                                         controller: _telefonoController,
+                                        keyboardType: TextInputType.number,
+                                        inputFormatters: [
+                                          FilteringTextInputFormatter.digitsOnly,
+                                          LengthLimitingTextInputFormatter(10),
+                                        ],
                                         decoration: InputDecoration(
                                           labelText: "Teléfono",
+                                          hintText: "Ej: 3001234567",
                                           filled: true,
                                           fillColor: fill,
                                           prefixIcon:
@@ -407,6 +456,7 @@ class CarritoPageState extends State<CarritoPage> {
     );
   }
 
+  // ignore: unused_element
   Widget _buildInput({
     required TextEditingController controller,
     String? label,
@@ -457,7 +507,7 @@ class CarritoPageState extends State<CarritoPage> {
 
     // Validar dirección
     if (_direccionController.text.trim().length < 5) {
-      _showError(dialogContext, AppLocalizations.of(context)!.invalidAddress);
+      _showError(context, AppLocalizations.of(context)!.invalidAddress);
       return;
     }
 
@@ -468,15 +518,26 @@ class CarritoPageState extends State<CarritoPage> {
           _emailController.text.trim().isEmpty ||
           _telefonoController.text.trim().isEmpty) {
         _showError(
-            dialogContext, AppLocalizations.of(context)!.completeAllFields);
+            context, AppLocalizations.of(context)!.completeAllFields);
         return;
       }
 
-      // Validar formato de email
-      final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+      // Validar formato de email (debe tener @ y un dominio válido)
+      final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,}$');
       if (!emailRegex.hasMatch(_emailController.text.trim())) {
         _showError(
-            dialogContext, AppLocalizations.of(context)!.enterValidEmail);
+            context, 'Email inválido. Debe contener @ y un dominio válido (ej: .com, .co)');
+        return;
+      }
+
+      // Validar teléfono (10 dígitos que comience con 3)
+      final phone = _telefonoController.text.trim();
+      if (phone.length != 10) {
+        _showError(context, 'El teléfono debe tener exactamente 10 dígitos');
+        return;
+      }
+      if (!phone.startsWith('3')) {
+        _showError(context, 'El teléfono debe comenzar con 3 (números celulares)');
         return;
       }
     }
@@ -505,74 +566,94 @@ class CarritoPageState extends State<CarritoPage> {
       // Orden creada exitosamente
       if (!mounted) return;
 
-      // Vaciar el carrito
-      context.read<CartBloc>().add(ClearCart());
-
       // Cerrar diálogo
       Navigator.pop(dialogContext);
 
-      // Mostrar mensaje de éxito
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: Row(
-            children: [
-              Icon(Icons.check_circle,
-                  color: Theme.of(context).colorScheme.secondary, size: 32),
-              const SizedBox(width: 8),
-              Text(AppLocalizations.of(context)!.orderPlaced,
-                  style: Theme.of(context).textTheme.titleLarge),
-            ],
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                  '${AppLocalizations.of(context)!.orderNumber}: ${orderData['code']}'),
-              const SizedBox(height: 8),
-              Text(
-                  'Total: \$${NumberFormat('#,###', 'es_CO').format(orderData['total'])}'),
-              const SizedBox(height: 8),
-              Text(
-                AppLocalizations.of(context)!.thankYou,
-                style: Theme.of(context)
-                    .textTheme
-                    .bodySmall
-                    ?.copyWith(fontSize: 14),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text(AppLocalizations.of(context)!.ok),
-            ),
-          ],
+      // Crear objeto Order
+      final order = Order(
+        code: orderData['code'],
+        total: (orderData['total'] as num).toDouble(),
+        status: orderData['status'] ?? 'pending',
+        customerEmail: _emailController.text.trim(),
+        address: _direccionController.text.trim(),
+      );
+
+      // Vaciar el carrito
+      context.read<CartBloc>().add(ClearCart());
+
+      // Navegar a selección de método de pago
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => PaymentMethodSelectionPage(order: order),
         ),
       );
     } on DataException catch (e) {
-      _showError(dialogContext, e.message);
+      _showError(context, e.message);
     } on NetworkException catch (e) {
-      _showError(dialogContext, e.message);
+      _showError(context, e.message);
     } catch (e) {
       _showError(
-          dialogContext, '${AppLocalizations.of(context)!.unknownError}: $e');
+          context, '${AppLocalizations.of(context)!.unknownError}: $e');
     }
   }
 
   void _showError(BuildContext context, String message) {
+    // Usar ScaffoldMessenger es más seguro y no causa conflictos con el overlay
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(message),
-        backgroundColor: Colors.red,
-        duration: const Duration(seconds: 4),
+        content: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.3),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.error_outline_rounded,
+                color: Colors.white,
+                size: 20,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                message,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
+        ),
+        backgroundColor: const Color(0xFFE53935),
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.all(16),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        duration: const Duration(seconds: 3),
+        elevation: 6,
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    // Mostrar loading mientras verifica autenticación
+    if (_isCheckingAuth) {
+      return const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(
+            color: Color.fromRGBO(237, 88, 33, 1),
+          ),
+        ),
+      );
+    }
+
     return Scaffold(
       body: BlocBuilder<CartBloc, CartState>(
         builder: (context, state) {

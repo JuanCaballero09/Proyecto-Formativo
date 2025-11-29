@@ -799,6 +799,57 @@ class ApiService {
     }
   }
 
+  /// Actualiza la dirección de entrega de una orden
+  /// Solo funciona si la orden está en estado pendiente o pagado
+  Future<Map<String, dynamic>> updateOrderAddress({
+    required String orderCode,
+    required String newAddress,
+    String? guestEmail,
+  }) async {
+    try {
+      final token = await _getAuthToken();
+      final headers = await _getAuthHeaders();
+      headers['Content-Type'] = 'application/json';
+
+      final url = Uri.parse('$baseUrl/orders/$orderCode/update_address');
+
+      // Si es invitado, agregar email en header
+      if (token == null && guestEmail != null) {
+        headers['X-Guest-Email'] = guestEmail;
+      }
+
+      debugPrint("📝 Updating address for order: $orderCode");
+
+      final response = await http
+          .patch(
+            url,
+            headers: headers,
+            body: jsonEncode({'direccion': newAddress}),
+          )
+          .timeout(ApiConfig.connectionTimeout);
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        debugPrint("✅ Address updated for order: $orderCode");
+        return data;
+      } else if (response.statusCode == 422 || response.statusCode == 400) {
+        final errorData = jsonDecode(response.body);
+        final errorMsg = errorData['error'] ?? 'Cannot update address';
+        throw DataException(message: errorMsg);
+      } else if (response.statusCode == 404) {
+        throw DataException(message: 'Order not found');
+      } else {
+        throw NetworkException(message: 'Error updating address');
+      }
+    } on TimeoutException {
+      throw NetworkException(message: 'Request timed out');
+    } catch (e) {
+      if (e is NetworkException || e is DataException) rethrow;
+      debugPrint("❌ Error updating address: $e");
+      throw NetworkException(message: 'Connection error while updating address');
+    }
+  }
+
   // ========================
   // 🎨 BANNERS
   // ========================
@@ -869,6 +920,118 @@ class ApiService {
       throw NetworkException(
         message: 'Failed to load combos: ${e.toString()}',
         code: 'COMBO_FETCH_ERROR',
+      );
+    }
+  }
+
+  // ========================
+  // 💳 PAYMENTS
+  // ========================
+
+  /// Crea un pago para una orden
+  Future<Map<String, dynamic>> createPayment({
+    required String orderCode,
+    required Map<String, dynamic> paymentData,
+  }) async {
+    try {
+      final url = Uri.parse('$baseUrl/orders/$orderCode/payments');
+      debugPrint("💳 Creating payment for order: $orderCode");
+      debugPrint("Payment data: $paymentData");
+
+      final headers = await _getAuthHeaders();
+      headers['Content-Type'] = 'application/json';
+
+      final response = await http
+          .post(
+            url,
+            headers: headers,
+            body: jsonEncode({'payment': paymentData}),
+          )
+          .timeout(ApiConfig.connectionTimeout);
+
+      _handleHttpResponse(response, 'createPayment');
+
+      final data = jsonDecode(response.body);
+      debugPrint("✅ Payment created successfully");
+      return data;
+    } on TimeoutException {
+      debugPrint("⏱️ Timeout creating payment");
+      throw NetworkException(
+        message: 'Connection timeout while creating payment',
+        code: 'TIMEOUT',
+      );
+    } catch (e) {
+      debugPrint("❌ Error creating payment: $e");
+      if (e is NetworkException || e is DataException) rethrow;
+      throw NetworkException(
+        message: 'Failed to create payment: ${e.toString()}',
+        code: 'PAYMENT_CREATE_ERROR',
+      );
+    }
+  }
+
+  /// Obtiene el estado de un pago
+  Future<Map<String, dynamic>> getPaymentStatus(String orderCode) async {
+    try {
+      final url = Uri.parse('$baseUrl/orders/$orderCode/payments/status');
+      debugPrint("💳 Checking payment status for order: $orderCode");
+
+      final headers = await _getAuthHeaders();
+
+      final response = await http
+          .get(url, headers: headers)
+          .timeout(ApiConfig.connectionTimeout);
+
+      _handleHttpResponse(response, 'getPaymentStatus');
+
+      final data = jsonDecode(response.body);
+      debugPrint("✅ Payment status retrieved: ${data['status']}");
+      return data;
+    } on TimeoutException {
+      debugPrint("⏱️ Timeout checking payment status");
+      throw NetworkException(
+        message: 'Connection timeout while checking payment status',
+        code: 'TIMEOUT',
+      );
+    } catch (e) {
+      debugPrint("❌ Error checking payment status: $e");
+      if (e is NetworkException || e is DataException) rethrow;
+      throw NetworkException(
+        message: 'Failed to check payment status: ${e.toString()}',
+        code: 'PAYMENT_STATUS_ERROR',
+      );
+    }
+  }
+
+  /// Cancela un pago pendiente
+  Future<Map<String, dynamic>> cancelPayment(String orderCode) async {
+    try {
+      final url = Uri.parse('$baseUrl/orders/$orderCode/payments/cancel');
+      debugPrint("💳 Cancelling payment for order: $orderCode");
+
+      final headers = await _getAuthHeaders();
+
+      final response = await http
+          .post(url, headers: headers)
+          .timeout(ApiConfig.connectionTimeout);
+
+      _handleHttpResponse(response, 'cancelPayment');
+
+      final data = jsonDecode(response.body);
+      debugPrint("✅ Payment cancelled successfully");
+      return data;
+    } on TimeoutException {
+      debugPrint("⏱️ Timeout cancelling payment");
+      throw NetworkException(
+        message: 'Connection timeout while cancelling payment',
+        code: 'TIMEOUT',
+      );
+    } catch (e) {
+      debugPrint("❌ Error cancelling payment: $e");
+      if (e is NetworkException || e is DataException) rethrow;
+      throw NetworkException(
+        message: 'Failed to cancel payment: ${e.toString()}',
+        code: 'PAYMENT_CANCEL_ERROR',
       );
     }
   }

@@ -269,6 +269,7 @@
   "statusSent": "Enviado",
   "statusDelivered": "Entregado",
   "statusCancelled": "Cancelado",
+  "statusFinished": "Finalizado",
   "statusUnknown": "Desconocido",
   "locationServicesDisabled": "Los servicios de ubicación están deshabilitados",
   "locationPermissionsDenied": "Permisos de ubicación denegados",

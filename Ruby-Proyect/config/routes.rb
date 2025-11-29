@@ -93,8 +93,19 @@ Rails.application.routes.draw do
       resources :orders, param: :code, only: [ :index, :show, :create ] do
         member do
           patch :cancel
+          patch :update_address
+        end
+        # Payment endpoints
+        resources :payments, only: [ :create ], param: :id do
+          collection do
+            get :status
+            post :cancel
+          end
         end
       end
+      
+      # Wompi webhook endpoint
+      post "webhooks/wompi", to: "payments#webhook"
     end
   end
 end

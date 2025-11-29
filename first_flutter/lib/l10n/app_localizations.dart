@@ -1712,6 +1712,12 @@ abstract class AppLocalizations {
   /// **'Cancelled'**
   String get statusCancelled;
 
+  /// No description provided for @statusFinished.
+  ///
+  /// In en, this message translates to:
+  /// **'Finished'**
+  String get statusFinished;
+
   /// No description provided for @statusUnknown.
   ///
   /// In en, this message translates to:
