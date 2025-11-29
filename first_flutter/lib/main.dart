@@ -3,6 +3,8 @@ import 'package:first_flutter/pages/carrito_Page.dart';
 import 'package:first_flutter/pages/login_page.dart';
 import 'package:first_flutter/pages/menu_page.dart';
 import 'package:first_flutter/pages/register_page.dart';
+import 'package:first_flutter/pages/forgot_password_page.dart';
+import 'package:first_flutter/pages/resend_confirmation_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -15,6 +17,8 @@ import 'bloc/language/language_event.dart';
 import 'bloc/language/language_state.dart';
 import 'bloc/categorias/categorias_bloc.dart';
 import 'bloc/search/search_bloc.dart';
+import 'bloc/banner/banner_bloc.dart';
+import 'bloc/combos/combos_cubit.dart';
 import 'repository/product_repository.dart';
 import 'repository/api_product_repository.dart';
 import 'pages/splash_page.dart';
@@ -52,6 +56,8 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (_) => CategoriasBloc(apiService)),
         BlocProvider(create: (_) => SearchBloc(apiService)),
         BlocProvider(create: (_) => ThemeBloc()),
+        BlocProvider(create: (_) => BannerCubit(apiService: apiService)..loadBanners()),
+        BlocProvider(create: (_) => CombosCubit(apiService: apiService)..loadCombos()),
       ],
       child: BlocBuilder<LanguageBloc, LanguageState>(
         builder: (context, languageState) {
@@ -84,6 +90,8 @@ class MyApp extends StatelessWidget {
                   "wrapper": (context) => const PerfilWrapper(),
                   '/login': (context) => const LoginPage(),
                   '/register': (context) => const RegisterPage(),
+                  '/forgot-password': (context) => const ForgotPasswordPage(),
+                  '/resend-confirmation': (context) => const ResendConfirmationPage(),
                   '/home': (context) => const ProductCatalogPage(),
                 },
               );

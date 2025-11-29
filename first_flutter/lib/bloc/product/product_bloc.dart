@@ -1,24 +1,36 @@
-
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter/foundation.dart';
 import '../../core/errors/exceptions.dart';
 import '../../repository/api_product_repository.dart';
 import '../base_state.dart';
 import 'product_event.dart';
 import '../../repository/product_repository.dart';
+import '../../models/product.dart';
 
 /// BLoC que maneja el estado de los productos
 /// Soporta tanto repositorios locales como de API
 class ProductBloc extends Bloc<ProductEvent, BaseState> {
   final ProductRepository repository;
-
+  final Map<String, List<Product>> _cache = {}; // Caché tipado correctamente
+  
   ProductBloc(this.repository) : super(const InitialState()) {
     
     // Manejo del evento para obtener todos los productos
     on<FetchProducts>((event, emit) async {
+      // Si ya hay datos en caché y no es refresh forzado, retornar caché
+      if (_cache.containsKey('all') && !event.forceRefresh) {
+        debugPrint('📦 ProductBloc: Usando caché para todos los productos (${_cache['all']!.length} items)');
+        emit(SuccessState<List<Product>>(_cache['all']!));
+        return;
+      }
+
+      debugPrint('🔄 ProductBloc: Cargando productos desde API...');
       emit(const LoadingState(message: 'Loading products...'));
       try {
         final products = await repository.getProducts();
-        emit(SuccessState(products));
+        _cache['all'] = products;
+        debugPrint('✅ ProductBloc: ${products.length} productos cargados y guardados en caché');
+        emit(SuccessState<List<Product>>(products));
       } on NetworkException catch (e) {
         emit(ErrorState(
           message: e.message,
@@ -41,6 +53,14 @@ class ProductBloc extends Bloc<ProductEvent, BaseState> {
 
     // Manejo del evento para cargar productos por categoría (nombre)
     on<LoadProductsByCategory>((event, emit) async {
+      final cacheKey = 'category_${event.categoryName}';
+      
+      // Si ya hay datos en caché y no es refresh forzado, retornar caché
+      if (_cache.containsKey(cacheKey) && !event.forceRefresh) {
+        emit(SuccessState<List<Product>>(_cache[cacheKey]!));
+        return;
+      }
+
       emit(LoadingState(
         message: 'Loading products for ${event.categoryName}...',
       ));
@@ -52,7 +72,8 @@ class ProductBloc extends Bloc<ProductEvent, BaseState> {
           ));
           return;
         }
-        emit(SuccessState(products));
+        _cache[cacheKey] = products;
+        emit(SuccessState<List<Product>>(products));
       } on NetworkException catch (e) {
         emit(ErrorState(
           message: e.message,
@@ -75,6 +96,14 @@ class ProductBloc extends Bloc<ProductEvent, BaseState> {
 
     // Manejo del evento para cargar productos por ID de categoría
     on<LoadProductsByCategoryId>((event, emit) async {
+      final cacheKey = 'category_id_${event.categoryId}';
+      
+      // Si ya hay datos en caché y no es refresh forzado, retornar caché
+      if (_cache.containsKey(cacheKey) && !event.forceRefresh) {
+        emit(SuccessState<List<Product>>(_cache[cacheKey]!));
+        return;
+      }
+
       emit(LoadingState(
         message: 'Loading products for category ${event.categoryId}...',
       ));
@@ -89,7 +118,8 @@ class ProductBloc extends Bloc<ProductEvent, BaseState> {
             ));
             return;
           }
-          emit(SuccessState(products));
+          _cache[cacheKey] = products;
+          emit(SuccessState<List<Product>>(products));
         } else {
           // Fallback: mapear ID a nombre de categoría para repositorios que no soportan ID directo
           final categoryName = _getCategoryNameFromId(event.categoryId);

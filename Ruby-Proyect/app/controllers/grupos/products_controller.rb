@@ -4,7 +4,7 @@ class Grupos::ProductsController < ApplicationController
 
   # GET /grupos/:grupo_id/products
   def index
-    @products = @grupo.products.where(disponible: true).order(id: :asc).page(params[:page]).per(20)
+    @products = @grupo.products.includes(imagen_attachment: :blob).where(disponible: true).order(id: :asc).page(params[:page]).per(20)
   end
 
   # GET /grupos/:grupo_id/products/:id

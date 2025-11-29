@@ -1,0 +1,134 @@
+#!/usr/bin/env ruby
+# encoding: UTF-8
+# Script para iniciar el servidor Rails - Bitevia Backend
+# Muestra la IP local para acceso en red
+
+require 'socket'
+
+def get_local_ip
+  # Obtener la IP local del sistema
+  ip = Socket.ip_address_list.detect do |addr|
+    addr.ipv4? && !addr.ipv4_loopback? && !addr.ipv4_multicast?
+  end
+  ip ? ip.ip_address : '127.0.0.1'
+end
+
+def check_database_password(env)
+  if env == 'production' && !ENV['RUBY_DATABASE_PASSWORD']
+    puts "\n⚠️  ERROR: Variable RUBY_DATABASE_PASSWORD no configurada"
+    puts "   Para producción, ejecuta primero:"
+    puts "   export RUBY_DATABASE_PASSWORD='tu_password'"
+    puts ""
+    exit 1
+  end
+end
+
+def print_banner(ip, port, env)
+  env_label = env == 'production' ? '🚀 PRODUCCIÓN' : '🔧 DESARROLLO'
+  env_color = env == 'production' ? "\e[31m" : "\e[33m"
+  reset_color = "\e[0m"
+  
+  puts "\n" + "="*70
+  puts "BITEVIA - Sistema de Pedidos en Línea".center(70)
+  puts "="*70
+  puts ""
+  puts "  #{env_color}[#{env_label}] Modo: #{env.upcase}#{reset_color}"
+  puts ""
+  puts "  [OK] Servidor iniciado correctamente"
+  puts ""
+  puts "  [LOCAL] Acceso Local (esta computadora):"
+  puts "     http://localhost:#{port}"
+  puts ""
+  puts "  [LAN] Acceso en Red Local (otros dispositivos):"
+  puts "     http://#{ip}:#{port}"
+  puts ""
+  
+  if env == 'production'
+    puts "  #{env_color}[PRODUCCIÓN]:"
+    puts "     ✓ Base de datos: PostgreSQL (bitevia_backend_production)"
+    puts "     ✓ Imágenes: Active Storage optimizado (WebP + VIPS)"
+    puts "     ✓ Assets precompilados"
+    puts "     ✓ Logs: log/production.log"
+    puts "     ✓ SECRET_KEY_BASE desde credentials.yml.enc"
+    puts "     ✓ RUBY_DATABASE_PASSWORD configurado#{reset_color}"
+  else
+    puts "  [DESARROLLO]:"
+    puts "     ✓ Base de datos: PostgreSQL (myapp_developmen)"
+    puts "     ✓ Hot reload activado"
+    puts "     ✓ Logs: log/development.log"
+  end
+  puts ""
+  
+  puts "  [FUNCIONALIDADES]:"
+  puts "     - Catálogo de Productos y Categorías"
+  puts "     - Carrito de compras en tiempo real"
+  puts "     - Gestión de pedidos"
+  puts "     - Pasarela de pagos Wompi"
+  puts "     - Panel administrativo: http://#{ip}:#{port}/dashboard"
+  puts "     - API REST: http://#{ip}:#{port}/api/v1"
+  puts ""
+  
+  puts "  [IMPORTANTE]:"
+  puts "     - Dispositivos deben estar en la misma red WiFi"
+  puts "     - Firewall debe permitir puerto #{port}"
+  if env == 'production'
+    puts "     #{env_color}- PRODUCCIÓN: config/master.key requerido#{reset_color}"
+  end
+  puts ""
+  puts "  [STOP] Presiona Ctrl+C para detener el servidor"
+  puts "="*70
+  puts ""
+end
+
+# Detectar modo (development por defecto, production si se especifica)
+rails_env = ENV['RAILS_ENV'] || 'development'
+
+# Verificar password de BD en producción
+check_database_password(rails_env)
+
+# Obtener puerto (3000 para desarrollo, 3000 para producción también)
+port = ENV.fetch('PORT', 3000).to_i
+
+# Obtener IP local
+local_ip = get_local_ip
+
+# Desactivar SSL - usar HTTP
+ENV['USE_SSL'] = 'false'
+
+# Configurar variables de entorno para acceso en red local
+ENV['MAILER_HOST'] = local_ip
+ENV['APP_URL'] = "http://#{local_ip}:#{port}"
+
+# Precompilar assets si es producción y no están precompilados
+if rails_env == 'production'
+  puts "\n🔍 Verificando assets en modo producción..."
+  
+  unless Dir.exist?('public/assets') && Dir['public/assets/**/*'].any?
+    puts "⚙️  Precompilando assets (esto puede tardar un momento)..."
+    system('RAILS_ENV=production bundle exec rails assets:precompile')
+    puts "✅ Assets precompilados correctamente\n"
+  else
+    puts "✅ Assets ya precompilados\n"
+  end
+  
+  # Verificar que exista master.key
+  unless File.exist?('config/master.key')
+    puts "\n⚠️  ADVERTENCIA: No se encontró config/master.key"
+    puts "   El servidor puede no iniciar correctamente sin las credenciales."
+    puts "   Asegúrate de tener el archivo master.key o configurar RAILS_MASTER_KEY\n"
+  end
+  
+  # Verificar imágenes optimizadas
+  puts "\n💡 TIP: Para optimizar imágenes, ejecuta:"
+  puts "   RAILS_ENV=production rails images:preload\n"
+end
+
+# Mostrar banner con información
+print_banner(local_ip, port, rails_env)
+
+# Iniciar servidor Rails
+if rails_env == 'production'
+  exec "RAILS_ENV=production bundle exec rails server -b 0.0.0.0 -p #{port}"
+else
+  exec "bundle exec rails server -b 0.0.0.0 -p #{port}"
+end

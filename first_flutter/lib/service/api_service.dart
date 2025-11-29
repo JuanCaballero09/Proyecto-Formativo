@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import '../models/product.dart';
+import '../models/banner.dart' as banner_model;
 import '../core/errors/exceptions.dart';
 import '../core/config/api_config.dart';
 
@@ -16,7 +17,78 @@ class ApiService {
 
   /// Constructor que permite configurar la URL base
   /// [baseUrl] - URL base de la API (opcional, usa configuración por defecto)
-  ApiService({String? baseUrl}) : baseUrl = baseUrl ?? ApiConfig.currentBaseUrl;
+  ApiService({String? baseUrl}) : baseUrl = baseUrl ?? ApiConfig.baseUrl;
+
+  /// Verifica la conectividad con el backend
+  /// Retorna true si el backend está disponible
+  Future<Map<String, dynamic>> checkHealth() async {
+    try {
+      final uri = Uri.parse('$baseUrl/health');
+      final response = await http.get(uri).timeout(
+        const Duration(seconds: 5),
+        onTimeout: () {
+          throw TimeoutException('Connection timeout');
+        },
+      );
+
+      if (response.statusCode == 200) {
+        return {
+          'success': true,
+          'statusCode': 200,
+          'data': jsonDecode(response.body),
+        };
+      } else {
+        return {
+          'success': false,
+          'statusCode': response.statusCode,
+          'message': _getErrorMessage(response.statusCode),
+        };
+      }
+    } on TimeoutException {
+      return {
+        'success': false,
+        'statusCode': 408,
+        'message': 'Timeout: El servidor no responde',
+      };
+    } catch (e) {
+      return {
+        'success': false,
+        'statusCode': 0,
+        'message': 'Error de conexión: ${e.toString()}',
+      };
+    }
+  }
+
+  /// Obtiene mensaje de error según código HTTP
+  String _getErrorMessage(int statusCode) {
+    switch (statusCode) {
+      case 400:
+        return 'Solicitud incorrecta';
+      case 401:
+        return 'No autorizado';
+      case 403:
+        return 'Acceso denegado';
+      case 404:
+        return 'Recurso no encontrado';
+      case 408:
+        return 'Tiempo de espera agotado';
+      case 500:
+        return 'Error interno del servidor';
+      case 502:
+        return 'Bad Gateway';
+      case 503:
+        return 'Servicio no disponible';
+      default:
+        if (statusCode >= 500) {
+          return 'Error del servidor ($statusCode)';
+        } else if (statusCode >= 400) {
+          return 'Error del cliente ($statusCode)';
+        } else if (statusCode >= 300) {
+          return 'Redirección ($statusCode)';
+        }
+        return 'Error desconocido ($statusCode)';
+    }
+  }
 
   /// Obtiene el token de autenticación almacenado
   Future<String?> _getAuthToken() async {
@@ -213,40 +285,214 @@ class ApiService {
     }
   }
 
-  Future<Map<String, dynamic>?> login(String email, String password) async {
-    final url = Uri.parse(ApiConfig.loginUrl);
+  Future<Map<String, dynamic>> login(String email, String password) async {
+    try {
+      final url = Uri.parse(ApiConfig.loginUrl);
 
-    final response = await http
-        .post(
-          url,
-          headers: ApiConfig.defaultHeaders,
-          body: jsonEncode({
-            'email': email, 
-            'password': password,
-          }),
-        )
-        .timeout(ApiConfig.connectionTimeout);
+      debugPrint("🔐 Attempting login for: $email");
 
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
+      final response = await http
+          .post(
+            url,
+            headers: ApiConfig.defaultHeaders,
+            body: jsonEncode({
+              'email': email, 
+              'password': password,
+            }),
+          )
+          .timeout(ApiConfig.connectionTimeout);
 
-      // Guardamos el token recibido en almacenamiento seguro
-      await storage.write(key: 'token', value: data['token']);
-      
-      // Guardamos también los datos del usuario
-      if (data['user'] != null) {
-        await storage.write(key: 'user_name', value: data['user']['nombre'] ?? '');
-        await storage.write(key: 'user_apellido', value: data['user']['apellido'] ?? '');
-        await storage.write(key: 'user_email', value: data['user']['email'] ?? '');
-        await storage.write(key: 'user_telefono', value: data['user']['telefono'] ?? '');
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+
+        // Guardamos el token recibido en almacenamiento seguro
+        await storage.write(key: 'token', value: data['token']);
+        
+        // Guardamos también los datos del usuario
+        if (data['user'] != null) {
+          await storage.write(key: 'user_name', value: data['user']['nombre'] ?? '');
+          await storage.write(key: 'user_apellido', value: data['user']['apellido'] ?? '');
+          await storage.write(key: 'user_email', value: data['user']['email'] ?? '');
+          await storage.write(key: 'user_telefono', value: data['user']['telefono'] ?? '');
+        }
+
+        debugPrint("✅ Login successful");
+        return {
+          'success': true,
+          'user': data['user'],
+          'token': data['token'],
+        };
+      } else {
+        final errorData = jsonDecode(response.body);
+        final errorMsg = errorData['error'] ?? 'Error al iniciar sesión';
+        debugPrint("❌ Login error: $errorMsg");
+        return {
+          'success': false,
+          'message': errorMsg,
+        };
       }
+    } on TimeoutException {
+      debugPrint("⏱️ Timeout during login");
+      return {
+        'success': false,
+        'message': 'Tiempo de espera agotado. Verifica tu conexión.',
+      };
+    } catch (e) {
+      debugPrint("❌ Error during login: $e");
+      return {
+        'success': false,
+        'message': 'Error de conexión al iniciar sesión',
+      };
+    }
+  }
 
-      debugPrint("✅ Login successful");
-      return data['user'];
-    } else {
+  Future<Map<String, dynamic>> register({
+    required String nombre,
+    required String apellido,
+    required String email,
+    required String telefono,
+    required String password,
+    required String passwordConfirmation,
+  }) async {
+    try {
+      final url = Uri.parse('$baseUrl/register');
 
-      debugPrint("❌ Login error: ${response.body}");
-      return null;
+      debugPrint("📝 Registering user: $email");
+
+      final response = await http
+          .post(
+            url,
+            headers: ApiConfig.defaultHeaders,
+            body: jsonEncode({
+              'user': {
+                'nombre': nombre,
+                'apellido': apellido,
+                'email': email,
+                'telefono': telefono,
+                'password': password,
+                'password_confirmation': passwordConfirmation,
+              }
+            }),
+          )
+          .timeout(ApiConfig.connectionTimeout);
+
+      if (response.statusCode == 201) {
+        final data = jsonDecode(response.body);
+        debugPrint("✅ Registration successful: ${data['message']}");
+        return {
+          'success': true,
+          'message': data['message'],
+          'user': data['user'],
+        };
+      } else {
+        final errorData = jsonDecode(response.body);
+        final errorMsg = errorData['errors']?.join(', ') ?? 
+                        errorData['error'] ?? 
+                        'Error al registrar usuario';
+        debugPrint("❌ Registration error: $errorMsg");
+        return {
+          'success': false,
+          'message': errorMsg,
+        };
+      }
+    } on TimeoutException {
+      debugPrint("⏱️ Timeout registering user");
+      return {
+        'success': false,
+        'message': 'Tiempo de espera agotado. Verifica tu conexión.',
+      };
+    } catch (e) {
+      debugPrint("❌ Error registering user: $e");
+      return {
+        'success': false,
+        'message': 'Error de conexión al registrar usuario',
+      };
+    }
+  }
+
+  Future<Map<String, dynamic>> forgotPassword(String email) async {
+    try {
+      final url = Uri.parse('$baseUrl/forgot_password');
+
+      debugPrint("📧 Sending password reset email to: $email");
+
+      final response = await http
+          .post(
+            url,
+            headers: ApiConfig.defaultHeaders,
+            body: jsonEncode({'email': email}),
+          )
+          .timeout(ApiConfig.connectionTimeout);
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        debugPrint("✅ Password reset email sent");
+        return {
+          'success': true,
+          'message': data['message'],
+        };
+      } else {
+        final errorData = jsonDecode(response.body);
+        final errorMsg = errorData['error'] ?? 'Error al enviar correo';
+        debugPrint("❌ Error sending reset email: $errorMsg");
+        return {
+          'success': false,
+          'message': errorMsg,
+        };
+      }
+    } on TimeoutException {
+      return {
+        'success': false,
+        'message': 'Tiempo de espera agotado',
+      };
+    } catch (e) {
+      return {
+        'success': false,
+        'message': 'Error de conexión',
+      };
+    }
+  }
+
+  Future<Map<String, dynamic>> resendConfirmation(String email) async {
+    try {
+      final url = Uri.parse('$baseUrl/resend_confirmation');
+
+      debugPrint("📧 Resending confirmation email to: $email");
+
+      final response = await http
+          .post(
+            url,
+            headers: ApiConfig.defaultHeaders,
+            body: jsonEncode({'email': email}),
+          )
+          .timeout(ApiConfig.connectionTimeout);
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        debugPrint("✅ Confirmation email resent");
+        return {
+          'success': true,
+          'message': data['message'],
+        };
+      } else {
+        final errorData = jsonDecode(response.body);
+        final errorMsg = errorData['error'] ?? 'Error al reenviar correo';
+        debugPrint("❌ Error resending confirmation: $errorMsg");
+        return {
+          'success': false,
+          'message': errorMsg,
+        };
+      }
+    } on TimeoutException {
+      return {
+        'success': false,
+        'message': 'Tiempo de espera agotado',
+      };
+    } catch (e) {
+      return {
+        'success': false,
+        'message': 'Error de conexión',
+      };
     }
   }
 
@@ -550,6 +796,80 @@ class ApiService {
     } catch (e) {
       if (e is NetworkException || e is DataException) rethrow;
       throw NetworkException(message: 'Connection error while cancelling order');
+    }
+  }
+
+  // ========================
+  // 🎨 BANNERS
+  // ========================
+
+  /// Obtiene todos los banners disponibles
+  Future<List<banner_model.Banner>> getBanners() async {
+    try {
+      final url = Uri.parse('$baseUrl/banners');
+      debugPrint("🎨 Fetching banners from: $url");
+
+      final response = await http
+          .get(url, headers: ApiConfig.defaultHeaders)
+          .timeout(ApiConfig.connectionTimeout);
+
+      _handleHttpResponse(response, 'getBanners');
+
+      final List<dynamic> data = jsonDecode(response.body);
+      final banners = data.map((json) => banner_model.Banner.fromJson(json)).toList();
+      
+      debugPrint("✅ ${banners.length} banners loaded successfully");
+      return banners;
+    } on TimeoutException {
+      debugPrint("⏱️ Timeout fetching banners");
+      throw NetworkException(
+        message: 'Connection timeout while loading banners',
+        code: 'TIMEOUT',
+      );
+    } catch (e) {
+      debugPrint("❌ Error fetching banners: $e");
+      if (e is NetworkException || e is DataException) rethrow;
+      throw NetworkException(
+        message: 'Failed to load banners: ${e.toString()}',
+        code: 'BANNER_FETCH_ERROR',
+      );
+    }
+  }
+
+  // ========================
+  // 🎁 COMBOS
+  // ========================
+
+  /// Obtiene todos los combos disponibles (productos con type="Combo")
+  Future<List<Product>> getCombos() async {
+    try {
+      final url = Uri.parse('$baseUrl/combos');
+      debugPrint("🎁 Fetching combos from: $url");
+
+      final response = await http
+          .get(url, headers: ApiConfig.defaultHeaders)
+          .timeout(ApiConfig.connectionTimeout);
+
+      _handleHttpResponse(response, 'getCombos');
+
+      final List<dynamic> data = jsonDecode(response.body);
+      final combos = data.map((json) => Product.fromJson(json)).toList();
+      
+      debugPrint("✅ ${combos.length} combos loaded successfully");
+      return combos;
+    } on TimeoutException {
+      debugPrint("⏱️ Timeout fetching combos");
+      throw NetworkException(
+        message: 'Connection timeout while loading combos',
+        code: 'TIMEOUT',
+      );
+    } catch (e) {
+      debugPrint("❌ Error fetching combos: $e");
+      if (e is NetworkException || e is DataException) rethrow;
+      throw NetworkException(
+        message: 'Failed to load combos: ${e.toString()}',
+        code: 'COMBO_FETCH_ERROR',
+      );
     }
   }
 }

@@ -33,6 +33,22 @@ class _ProductCatalogPageState extends State<ProductCatalogPage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    
+    // Colores adaptativos
+    final navBarColor = isDark 
+        ? const Color(0xFF1E1E1E)  // Gris oscuro en modo oscuro
+        : const Color.fromRGBO(237, 88, 33, 1);  // Naranja en modo claro
+    
+    final homeButtonColor = isDark
+        ? const Color.fromRGBO(237, 88, 33, 1)  // Naranja en modo oscuro
+        : Colors.white;  // Blanco en modo claro
+    
+    final homeIconColor = isDark
+        ? Colors.white  // Blanco en modo oscuro
+        : const Color.fromRGBO(237, 88, 33, 1);  // Naranja en modo claro
+    
     final pages = [
       HomePage(),
       MenuNavigator(),
@@ -44,95 +60,46 @@ class _ProductCatalogPageState extends State<ProductCatalogPage> {
     return Scaffold(
       body: pages[_selectedIndex],
       bottomNavigationBar: BottomAppBar(
-        color: const Color.fromRGBO(237, 88, 33, 1),
-        child: SizedBox(
-          height: 70, // altura mayor para que el botón quepa bien
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              _buildNavItem(
-                icon: Icons.restaurant_menu,
-                label: AppLocalizations.of(context)!.menu,
-                index: 1,
-              ),
-              BlocBuilder<CartBloc, CartState>(
-                builder: (context, state) {
-                  final cartCount = state.cart.items.fold<int>(
-                    0,
-                    (sum, item) => sum + item.quantity,
-                  );
+        color: navBarColor,
+        height: 75,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            _buildNavItem(
+              icon: Icons.restaurant_menu_rounded,
+              label: AppLocalizations.of(context)!.menu,
+              index: 1,
+            ),
+            BlocBuilder<CartBloc, CartState>(
+              builder: (context, state) {
+                final cartCount = state.cart.items.fold<int>(
+                  0,
+                  (sum, item) => sum + item.quantity,
+                );
 
-                  final isSelected = _selectedIndex == 2;
+                final isSelected = _selectedIndex == 2;
 
-                  return InkWell(
-                    onTap: () => _onItemTapped(2),
-                    child: SizedBox(
-                      width: 60,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Stack(
-                            clipBehavior: Clip.none,
-                            children: [
-                              Icon(
-                                Icons.shopping_cart,
-                                color: isSelected ? Colors.black : Colors.white,
-                                size: 24,
-                              ),
-                              if (cartCount > 0)
-                                Positioned(
-                                  right: -6,
-                                  top: -6,
-                                  child: Container(
-                                    padding: const EdgeInsets.all(3),
-                                    decoration: BoxDecoration(
-                                      color: Colors.red,
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    constraints: const BoxConstraints(
-                                      minWidth: 16,
-                                      minHeight: 16,
-                                    ),
-                                    child: Text(
-                                      '$cartCount',
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ),
-                                ),
-                            ],
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            AppLocalizations.of(context)!.cart,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 11,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
-              ),
-              _buildCenterHomeButton(),
-              _buildNavItem(
-                icon: Icons.delivery_dining,
-                label: AppLocalizations.of(context)!.delivery,
-                index: 4,
-              ),
-              _buildNavItem(
-                icon: Icons.person,
-                label: AppLocalizations.of(context)!.profile,
-                index: 3,
-              ),
-            ],
-          ),
+                return _buildNavItemWithBadge(
+                  icon: Icons.shopping_cart_rounded,
+                  label: AppLocalizations.of(context)!.cart,
+                  index: 2,
+                  badgeCount: cartCount,
+                  isSelected: isSelected,
+                );
+              },
+            ),
+            _buildCenterHomeButton(homeButtonColor, homeIconColor),
+            _buildNavItem(
+              icon: Icons.delivery_dining_rounded,
+              label: AppLocalizations.of(context)!.delivery,
+              index: 4,
+            ),
+            _buildNavItem(
+              icon: Icons.person_rounded,
+              label: AppLocalizations.of(context)!.profile,
+              index: 3,
+            ),
+          ],
         ),
       ),
     );
@@ -147,23 +114,30 @@ class _ProductCatalogPageState extends State<ProductCatalogPage> {
     final isSelected = _selectedIndex == index;
     return InkWell(
       onTap: () => _onItemTapped(index),
+      borderRadius: BorderRadius.circular(12),
       child: SizedBox(
-        width: 60,
+        width: 65,
+        height: 60,
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
               icon,
-              color: isSelected ? Colors.black : Colors.white,
+              color: isSelected ? Colors.white : Colors.white.withValues(alpha: 0.7),
               size: 24,
             ),
             const SizedBox(height: 2),
             Text(
               label,
               style: TextStyle(
-                color: isSelected ? Colors.black : Colors.white,
-                fontSize: 11,
+                color: isSelected ? Colors.white : Colors.white.withValues(alpha: 0.7),
+                fontSize: 10,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
               ),
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
           ],
         ),
@@ -171,42 +145,103 @@ class _ProductCatalogPageState extends State<ProductCatalogPage> {
     );
   }
 
-  // Y también aquí tu botón central personalizado
-  Widget _buildCenterHomeButton() {
-    final isSelected = _selectedIndex == 0;
-
+  Widget _buildCenterHomeButton(Color buttonColor, Color iconColor) {
     return InkWell(
       onTap: () => _onItemTapped(0),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 5),
-        decoration: BoxDecoration(
-          color: isSelected
-              ? Colors.white
-              : const Color.fromRGBO(237, 231, 220, 1),
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black,
-              blurRadius: 4,
-              offset: const Offset(0, 2),
+      borderRadius: BorderRadius.circular(50),
+      child: SizedBox(
+        width: 70,
+        height: 60,
+        child: Center(
+          child: Container(
+            width: 48,
+            height: 48,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: buttonColor,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.2),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
             ),
-          ],
+            child: Icon(
+              Icons.home_rounded,
+              color: iconColor,
+              size: 28,
+            ),
+          ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildNavItemWithBadge({
+    required IconData icon,
+    required String label,
+    required int index,
+    required int badgeCount,
+    required bool isSelected,
+  }) {
+    return InkWell(
+      onTap: () => _onItemTapped(index),
+      borderRadius: BorderRadius.circular(12),
+      child: SizedBox(
+        width: 65,
+        height: 60,
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.home,
-              size: 28,
-              color: Colors.black,
+            Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Icon(
+                  icon,
+                  color: isSelected ? Colors.white : Colors.white.withValues(alpha: 0.7),
+                  size: 24,
+                ),
+                if (badgeCount > 0)
+                  Positioned(
+                    right: -8,
+                    top: -4,
+                    child: Container(
+                      padding: const EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        color: Colors.red,
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.white, width: 1.5),
+                      ),
+                      constraints: const BoxConstraints(
+                        minWidth: 18,
+                        minHeight: 18,
+                      ),
+                      child: Text(
+                        '$badgeCount',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+              ],
             ),
+            const SizedBox(height: 2),
             Text(
-              AppLocalizations.of(context)!.home,
-              style: const TextStyle(
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
-                fontSize: 12,
+              label,
+              style: TextStyle(
+                color: isSelected ? Colors.white : Colors.white.withValues(alpha: 0.7),
+                fontSize: 10,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
               ),
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
           ],
         ),

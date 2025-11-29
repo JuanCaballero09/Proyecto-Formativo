@@ -6,6 +6,7 @@ import '../models/categoria.dart';
 import 'category_products_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import '../widgets/banner_skeleton.dart';
 
 class MenuPage extends StatefulWidget {
   const MenuPage({super.key});
@@ -28,8 +29,15 @@ class _MenuPageState extends State<MenuPage> {
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
-      body: SingleChildScrollView(
-        child: Column(
+      body: RefreshIndicator(
+        color: const Color.fromRGBO(237, 88, 33, 1),
+        onRefresh: () async {
+          context.read<CategoriasBloc>().add(LoadCategoriasEvent(forceRefresh: true));
+          await Future.delayed(const Duration(milliseconds: 800));
+        },
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 30),
@@ -178,6 +186,7 @@ class _MenuPageState extends State<MenuPage> {
           ],
         ),
       ),
+      ),
     );
   }
 
@@ -224,53 +233,78 @@ class _MenuPageState extends State<MenuPage> {
   }
 
   Widget _buildCategoryImage(Categoria categoria) {
-    String emoji = '🍽️';
-    if (categoria.nombre.isNotEmpty) {
-      final runes = categoria.nombre.runes.toList();
-      for (var rune in runes) {
-        if (rune > 127) {
-          emoji = String.fromCharCode(rune);
-          break;
-        }
-      }
+    final backgroundColor = _getSolidColor(categoria.nombre);
+    
+    // Si la categoría tiene imagen, mostrarla
+    if (categoria.imagenUrl != null && categoria.imagenUrl!.isNotEmpty) {
+      return Stack(
+        fit: StackFit.expand,
+        children: [
+          // Color de fondo sólido
+          Container(
+            color: backgroundColor,
+          ),
+          // Skeleton de fondo
+          const BannerSkeleton(
+            width: double.infinity,
+            height: double.infinity,
+          ),
+          // Imagen del backend
+          Image.network(
+            categoria.imagenUrl!,
+            fit: BoxFit.cover,
+            width: double.infinity,
+            loadingBuilder: (context, child, loadingProgress) {
+              if (loadingProgress == null) return child;
+              return const BannerSkeleton(
+                width: double.infinity,
+                height: double.infinity,
+              );
+            },
+            errorBuilder: (context, error, stackTrace) {
+              // Si falla la carga, mostrar imagen por defecto
+              return Image.asset(
+                'assets/LogoText.png',
+                fit: BoxFit.cover,
+                width: double.infinity,
+              );
+            },
+          ),
+        ],
+      );
     }
-
-    final gradientColors = _getGradientColors(categoria.nombre);
+    
+    // Si no tiene imagen, usar imagen por defecto
     return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: gradientColors,
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-      ),
-      child: Center(
-        child: Text(
-          emoji,
-          style: const TextStyle(fontSize: 100),
-        ),
+      color: backgroundColor,
+      child: Image.asset(
+        'assets/LogoText.png',
+        fit: BoxFit.cover,
+        width: double.infinity,
       ),
     );
   }
 
-  List<Color> _getGradientColors(String nombre) {
+  Color _getSolidColor(String nombre) {
     final nombreLower = nombre.toLowerCase();
     if (nombreLower.contains('hamburguesa') || nombreLower.contains('burger')) {
-      return [Colors.orange[300]!, Colors.orange[600]!];
+      return Colors.orange[400]!;
     } else if (nombreLower.contains('pizza')) {
-      return [Colors.red[300]!, Colors.red[600]!];
+      return Colors.red[400]!;
     } else if (nombreLower.contains('salchipapa') || nombreLower.contains('papas')) {
-      return [Colors.amber[400]!, Colors.amber[700]!];
+      return Colors.amber[500]!;
     } else if (nombreLower.contains('bebida') || nombreLower.contains('drink')) {
-      return [Colors.blue[300]!, Colors.blue[600]!];
+      return Colors.blue[400]!;
     } else if (nombreLower.contains('postre') || nombreLower.contains('dessert')) {
-      return [Colors.pink[300]!, Colors.pink[600]!];
+      return Colors.pink[400]!;
+    } else if (nombreLower.contains('combo')) {
+      return Colors.grey[600]!;
     } else if (nombreLower.contains('taco')) {
-      return [Colors.green[300]!, Colors.green[600]!];
+      return Colors.green[400]!;
     } else if (nombreLower.contains('ensalada') || nombreLower.contains('salad')) {
-      return [Colors.lightGreen[300]!, Colors.lightGreen[600]!];
+      return Colors.lightGreen[400]!;
     }
-    return [Colors.grey[400]!, Colors.grey[700]!];
+    return Colors.grey[600]!;
   }
 
   Widget _categoryCardLayout({
@@ -283,7 +317,7 @@ class _MenuPageState extends State<MenuPage> {
 
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
+        color: theme.cardColor,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.1),
@@ -292,36 +326,39 @@ class _MenuPageState extends State<MenuPage> {
           ),
         ],
       ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(16),
-        child: Column(
-          children: [
-            Expanded(
-              flex: 3,
+      child: Column(
+        children: [
+          Expanded(
+            flex: 3,
+            child: ClipRRect(
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(16),
+                topRight: Radius.circular(16),
+              ),
               child: imageWidget,
             ),
-            Expanded(
-              flex: 1,
-              child: Container(
-                width: double.infinity,
-                color: theme.cardColor,
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                child: Center(
-                  child: Text(
-                    title,
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: textColor,
-                    ),
-                    textAlign: TextAlign.center,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
+          ),
+          Expanded(
+            flex: 1,
+            child: Container(
+              width: double.infinity,
+              color: theme.cardColor,
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              child: Center(
+                child: Text(
+                  title,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: textColor,
                   ),
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

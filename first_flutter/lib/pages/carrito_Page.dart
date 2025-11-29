@@ -587,7 +587,7 @@ class CarritoPageState extends State<CarritoPage> {
                   children: [
                     // Imagen de carrito vacío
                     Image.asset(
-                      'assets/carro_vacio.jpeg',
+                      'assets/carro_vacio.png',
                       width: 180,
                       height: 180,
                     ),

@@ -140,8 +140,9 @@ es:
       detalles: "Detalles de la Compra"      
       informacion_orden: "Información de la orden"     
       tootal_paga: "Total de la cuenta"   
-      pagar: "Volver"    
+      pagar: "Pagar"    
       regresar: "Regresar"
+      volver: "Volver"
       codigo: "Código:"
       direccion_entrega: "Dirección de entrega"
       

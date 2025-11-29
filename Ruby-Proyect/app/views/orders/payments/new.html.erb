@@ -182,6 +182,8 @@
                   class: "field-input", 
                   placeholder: "1234 5678 9012 3456",
                   inputmode: "numeric",
+                  maxlength: 16,
+                  minlength: 15,
                   pattern: "[0-9\s]*",
                   autocomplete: "cc-number" %>
               <span id="error-card" class="error-msg"></span>
@@ -247,7 +249,8 @@
                   class: "field-input", 
                   placeholder: "3001234567",
                   inputmode: "numeric",
-                  pattern: "[0-9]*" %>
+                  pattern: "[0-9]*",
+                  id: "nequi-phone-input" %>
               <span id="error-phone" class="error-msg"></span>
               <small class="field-hint">Asegúrate de tener la app de Nequi instalada en tu celular</small>
             </div>
@@ -257,15 +260,15 @@
           <div class="form-field">
             <%= label_tag 'payment[email]', t("home.order-pago.correo-electronico"), class: "field-label" %>
             <%= email_field_tag 'payment[email]', @order.customer_email,
-                required: true, 
                 class: "field-input", 
-                placeholder: "tu@email.com" %>
+                placeholder: "tu@email.com",
+                id: "payment-email-input" %>
             <span id="error-email" class="error-msg"></span>
           </div>
 
           <div class="checkbox-section">
             <div class="checkbox-item">
-              <%= check_box_tag 'payment[accept_terms]', '1', false, required: true, class: "checkbox" %>
+              <%= check_box_tag 'payment[accept_terms]', '1', false, class: "checkbox" %>
               <%= label_tag 'payment_accept_terms', class: "checkbox-label" do %>
                 Acepto los 
                 <a href="https://wompi.com/assets/downloadble/reglamento-Usuarios-Colombia.pdf?_gl=1*126i4oi*_gcl_aw*R0NMLjE3NTYyMjY0MjQuQ2p3S0NBand0clhGQmhCaUVpd0FFK2VuMXpvMWtBb2dwUkpBWklvc3JjNkJuZ3NIRktrMVRfT3hzODRBWnFTQXdhNGd2Z3JLaVhBWGhSb0NJVnNRQXZEX0J3RQ..*_gcl_au*MjA5MDc4MDUwMy4xNzU1NzE1ODAz*_ga*MTMzNjc3NjQyNC4xNzU1NzE1ODA1*_ga_BQ9HE5B63X*czE3NTYyMjY0MzUkbzE0JGcxJHQxNzU2MjI2ODQ2JGo2MCRsMCRoMA.." target="_blank">términos y condiciones</a>
@@ -273,7 +276,7 @@
               <% end %>
             </div>
             <div class="checkbox-item">
-              <%= check_box_tag 'payment[accept_data]', '1', false, required: true, class: "checkbox" %>
+              <%= check_box_tag 'payment[accept_data]', '1', false, class: "checkbox" %>
               <%= label_tag 'payment_accept_data', class: "checkbox-label" do %>
                 Acepto la
                 <a target="_blank" href="https://wompi.com/assets/downloadble/autorizacion-tratamiento-datos-personales.pdf?_gl=1*jcrp79*_gcl_aw*R0NMLjE3NTYyMjY0MjQuQ2p3S0NBand0clhGQmhCaUVpd0FFK2VuMXpvMWtBb2dwUkpBWklvc3JjNkJuZ3NIRktrMVRfT3hzODRBWnFTQXdhNGd2Z3JLaVhBWGhSb0NJVnNRQXZEX0J3RQ..*_gcl_au*MjA5MDc4MDUwMy4xNzU1NzE1ODAz*_ga*MTMzNjc3NjQyNC4xNzU1NzE1ODA1*_ga_BQ9HE5B63X*czE3NTYyMjY0MzUkbzE0JGcxJHQxNzU2MjI2NTU3JGo0JGwwJGgw">autorización para la administración de datos personales</a>
@@ -442,233 +445,321 @@
   </style>
 
   <script>
-  (function() {
-    console.log('🚀 Script cargado');
+  function initializePaymentForm() {
+    console.log('🚀 Inicializando formulario de pago');
     
-    const paymentMethodSelector = document.getElementById('payment-method-selector');
-    const paymentMethodSelection = document.getElementById('payment-method-selection');
-    const cardTypeSelection = document.getElementById('card-type-selection');
-    const paymentFormSection = document.getElementById('payment-form-section');
-    const cardFields = document.getElementById('card-fields');
-    const nequiFields = document.getElementById('nequi-fields');
-    const installmentsField = document.getElementById('installments-field');
-    const cardTypeSelector = document.getElementById('card-type-selector');
-    const form = document.getElementById('payment-form');
-    const payBtn = document.getElementById('pay-btn');
-    const acceptTerms = document.querySelector('input[name*="accept_terms"]');
-    const acceptData = document.querySelector('input[name*="accept_data"]');
-    const emailInput = document.querySelector('input[name*="email"]');
+    // Variables globales
+    var paymentMethodSelector = document.getElementById('payment-method-selector');
+    var paymentMethodSelection = document.getElementById('payment-method-selection');
+    var cardTypeSelection = document.getElementById('card-type-selection');
+    var paymentFormSection = document.getElementById('payment-form-section');
+    var cardFields = document.getElementById('card-fields');
+    var nequiFields = document.getElementById('nequi-fields');
+    var installmentsField = document.getElementById('installments-field');
+    var cardTypeSelector = document.getElementById('card-type-selector');
+    var form = document.getElementById('payment-form');
+    var payBtn = document.getElementById('pay-btn');
+    var acceptTerms = document.querySelector('input[name*="accept_terms"]');
+    var acceptData = document.querySelector('input[name*="accept_data"]');
+    var emailInput = document.getElementById('payment-email-input');
     
     // Campos de tarjeta
-    const cardNumberInput = document.querySelector('input[name*="card_number"]');
-    const expMonthSelect = document.querySelector('select[name*="exp_month"]');
-    const expYearSelect = document.querySelector('select[name*="exp_year"]');
-    const cvcInput = document.querySelector('input[name*="cvc"]');
-    const cardHolderInput = document.querySelector('input[name*="card_holder"]');
-    const installmentsSelect = document.querySelector('select[name*="installments"]');
+    var cardNumberInput = document.querySelector('input[name*="card_number"]');
+    var expMonthSelect = document.querySelector('select[name*="exp_month"]');
+    var expYearSelect = document.querySelector('select[name*="exp_year"]');
+    var cvcInput = document.querySelector('input[name*="cvc"]');
+    var cardHolderInput = document.querySelector('input[name*="card_holder"]');
+    var installmentsSelect = document.querySelector('select[name*="installments"]');
     
     // Campo de Nequi
-    const phoneInput = document.querySelector('input[name*="phone_number"]');
+    var phoneInput = document.getElementById('nequi-phone-input');
 
-    function showStep(stepElement) {
-      [paymentMethodSelection, cardTypeSelection, paymentFormSection].forEach(el => {
-        if (el) el.style.display = 'none';
-      });
-      if (stepElement) stepElement.style.display = 'block';
-      validateAndEnableButton();
+    if (!paymentMethodSelector) {
+      console.error('❌ No se encontraron los elementos del formulario');
+      return;
     }
 
-    // Validación inteligente según método de pago
-    function validateAndEnableButton() {
-      const method = paymentMethodSelector.value;
-      const terms = acceptTerms && acceptTerms.checked;
-      const data = acceptData && acceptData.checked;
-      const email = emailInput && emailInput.value && emailInput.value.includes('@');
+    console.log('✅ Elementos encontrados');
+
+  function showStep(stepElement) {
+    if (paymentMethodSelection) paymentMethodSelection.style.display = 'none';
+    if (cardTypeSelection) cardTypeSelection.style.display = 'none';
+    if (paymentFormSection) paymentFormSection.style.display = 'none';
+    
+    if (stepElement) {
+      stepElement.style.display = 'block';
+    }
+    validateAndEnableButton();
+  }
+
+  function validateAndEnableButton() {
+    var method = paymentMethodSelector ? paymentMethodSelector.value : '';
+    
+    // Campos comunes a TODOS los métodos de pago
+    var terms = acceptTerms ? acceptTerms.checked : false;
+    var data = acceptData ? acceptData.checked : false;
+    var email = emailInput ? emailInput.value : '';
+    var hasEmail = email && email.includes('@');
+    
+    console.log('🔍 Validando método:', method, { terms: terms, data: data, email: hasEmail });
+
+    // Si no hay método seleccionado, deshabilitar
+    if (!method) {
+      console.log('❌ No hay método seleccionado');
+      disableButton();
+      return;
+    }
+
+    // Validar campos comunes (obligatorios siempre)
+    if (!terms || !data || !hasEmail) {
+      console.log('❌ Faltan campos comunes', { terms: terms, data: data, email: hasEmail });
+      disableButton();
+      return;
+    }
+
+    // Validación específica por método
+    var isValid = false;
+
+    if (method === 'cash') {
+      console.log('✅ Efectivo - válido');
+      isValid = true;
       
-      console.log('🔍 Validando...', { method, terms, data, email });
-
-      // SIEMPRE se requieren términos y condiciones
-      if (!terms || !data) {
-        console.log('❌ Faltan términos');
-        disableButton();
-        return;
-      }
-
-      // SIEMPRE se requiere email
-      if (!email) {
-        console.log('❌ Email inválido');
-        disableButton();
-        return;
-      }
-
-      // Validación específica por método
-      let isValid = false;
-
-      if (method === 'cash') {
-        // Efectivo: solo email y términos (ya validados arriba)
-        console.log('✅ Cash - válido');
-        isValid = true;
-        
-      } else if (method === 'nequi') {
-        // Nequi: email, términos y teléfono
-        const phone = phoneInput && phoneInput.value;
-        isValid = phone && phone.length === 10 && phone.startsWith('3');
-        console.log('💰 Nequi válido:', isValid, phone);
-        
-      } else if (method === 'card') {
-        // Tarjeta: todos los campos de tarjeta
-        const cardType = cardTypeSelector.value;
-        const cardNumber = cardNumberInput && cardNumberInput.value.replace(/\s/g, '');
-        const expMonth = expMonthSelect && expMonthSelect.value;
-        const expYear = expYearSelect && expYearSelect.value;
-        const cvc = cvcInput && cvcInput.value;
-        const cardHolder = cardHolderInput && cardHolderInput.value;
-        
-        isValid = cardType && 
-                  cardNumber && cardNumber.length >= 13 && cardNumber.length <= 19 &&
-                  expMonth && expYear && 
-                  cvc && cvc.length >= 3 && 
-                  cardHolder && cardHolder.trim().length > 0;
-        
-        console.log('💳 Card válido:', isValid, { cardType, cardNumber: cardNumber?.length, expMonth, expYear, cvc: cvc?.length, cardHolder: !!cardHolder });
-      }
-
-      if (isValid) {
-        enableButton();
-      } else {
-        disableButton();
-      }
+    } else if (method === 'nequi') {
+      var phone = phoneInput ? phoneInput.value : '';
+      isValid = phone && phone.length === 10 && phone.startsWith('3');
+      console.log('💰 Nequi:', isValid ? '✅ válido' : '❌ inválido', 'phone:', phone);
+      
+    } else if (method === 'card') {
+      var cardType = cardTypeSelector ? cardTypeSelector.value : '';
+      var cardNumber = cardNumberInput ? cardNumberInput.value.replace(/\s/g, '') : '';
+      var expMonth = expMonthSelect ? expMonthSelect.value : '';
+      var expYear = expYearSelect ? expYearSelect.value : '';
+      var cvc = cvcInput ? cvcInput.value : '';
+      var cardHolder = cardHolderInput ? cardHolderInput.value.trim() : '';
+      
+      isValid = cardType && 
+                cardNumber && cardNumber.length >= 13 && cardNumber.length <= 19 &&
+                expMonth && expYear && 
+                cvc && cvc.length >= 3 && 
+                cardHolder.length > 0;
+      
+      console.log('💳 Tarjeta:', isValid ? '✅ válida' : '❌ inválida');
     }
 
-    function enableButton() {
-      if (payBtn) {
-        payBtn.disabled = false;
-        payBtn.style.opacity = '1';
-        payBtn.style.cursor = 'pointer';
-        console.log('✅ Botón habilitado');
-      }
+    if (isValid) {
+      enableButton();
+    } else {
+      disableButton();
     }
+  }
 
-    function disableButton() {
-      if (payBtn) {
-        payBtn.disabled = true;
-        payBtn.style.opacity = '0.5';
-        payBtn.style.cursor = 'not-allowed';
-        console.log('🚫 Botón deshabilitado');
-      }
+  function enableButton() {
+    if (payBtn) {
+      payBtn.disabled = false;
+      payBtn.style.opacity = '1';
+      payBtn.style.cursor = 'pointer';
+      console.log('✅ Botón habilitado');
     }
+  }
 
-    function handlePaymentMethodClick(e) {
-      const card = e.currentTarget;
-      const method = card.dataset.method;
-      console.log('💳 Método seleccionado:', method);
+  function disableButton() {
+    if (payBtn) {
+      payBtn.disabled = true;
+      payBtn.style.opacity = '0.5';
+      payBtn.style.cursor = 'not-allowed';
+      console.log('🚫 Botón deshabilitado');
+    }
+  }
+
+  function handlePaymentMethodClick(e) {
+    var card = e.currentTarget;
+    var method = card.getAttribute('data-method');
+    console.log('💳 Método seleccionado:', method);
+    
+    if (paymentMethodSelector) {
       paymentMethodSelector.value = method;
-      
-      if (method === 'card') {
-        showStep(cardTypeSelection);
-      } else {
-        cardFields.style.display = 'none';
-        nequiFields.style.display = method === 'nequi' ? 'block' : 'none';
-        showStep(paymentFormSection);
-      }
     }
-
-    function handleCardTypeClick(e) {
-      const card = e.currentTarget;
-      const cardType = card.dataset.cardType;
-      console.log('🎴 Tipo de tarjeta:', cardType);
-      cardTypeSelector.value = cardType;
-      
-      // Débito = 1 cuota automática, Crédito = mostrar selector
-      if (cardType === 'debit') {
-        installmentsField.style.display = 'none';
-        if (installmentsSelect) installmentsSelect.value = '1';
-      } else {
-        installmentsField.style.display = 'block';
-      }
-      
-      cardFields.style.display = 'block';
-      nequiFields.style.display = 'none';
+    
+    if (method === 'card') {
+      showStep(cardTypeSelection);
+    } else {
+      if (cardFields) cardFields.style.display = 'none';
+      if (nequiFields) nequiFields.style.display = method === 'nequi' ? 'block' : 'none';
       showStep(paymentFormSection);
     }
+  }
 
-    function handleBackButtonClick(e) {
-      const btn = e.currentTarget;
-      const targetId = btn.dataset.backTo;
-      showStep(document.getElementById(targetId));
+  function handleCardTypeClick(e) {
+    var card = e.currentTarget;
+    var cardType = card.getAttribute('data-card-type');
+    console.log('🎴 Tipo de tarjeta:', cardType);
+    
+    if (cardTypeSelector) {
+      cardTypeSelector.value = cardType;
+    }
+    
+    if (cardType === 'debit') {
+      if (installmentsField) installmentsField.style.display = 'none';
+      if (installmentsSelect) installmentsSelect.value = '1';
+    } else {
+      if (installmentsField) installmentsField.style.display = 'block';
+    }
+    
+    if (cardFields) cardFields.style.display = 'block';
+    if (nequiFields) nequiFields.style.display = 'none';
+    showStep(paymentFormSection);
+  }
+
+  function handleBackButtonClick(e) {
+    var btn = e.currentTarget;
+    var targetId = btn.getAttribute('data-back-to');
+    var targetElement = document.getElementById(targetId);
+    showStep(targetElement);
+  }
+
+  function handleBackFromForm() {
+    var method = paymentMethodSelector ? paymentMethodSelector.value : '';
+    if (method === 'card') {
+      showStep(cardTypeSelection);
+    } else {
+      showStep(paymentMethodSelection);
+    }
+  }
+
+  function handleFormSubmit(e) {
+    console.log('📝 Formulario enviado');
+    
+    var method = paymentMethodSelector ? paymentMethodSelector.value : '';
+    var email = emailInput ? emailInput.value : '';
+    var terms = acceptTerms ? acceptTerms.checked : false;
+    var data = acceptData ? acceptData.checked : false;
+
+    console.log('Método:', method);
+    console.log('Email:', email);
+    console.log('Terms:', terms);
+    console.log('Data:', data);
+
+    if (!method) {
+      console.log('❌ Falta método de pago');
+      e.preventDefault();
+      alert('Por favor selecciona un método de pago');
+      return false;
     }
 
-    function handleBackFromForm() {
-      showStep(paymentMethodSelector.value === 'card' ? cardTypeSelection : paymentMethodSelection);
+    if (!email || !email.includes('@')) {
+      console.log('❌ Email inválido');
+      e.preventDefault();
+      alert('Por favor ingresa un email válido');
+      return false;
     }
 
-    function handleFormSubmit(e) {
-      console.log('📝 Formulario enviado');
+    if (!terms || !data) {
+      console.log('❌ Faltan términos y condiciones');
+      e.preventDefault();
+      alert('Debes aceptar los términos y condiciones');
+      return false;
+    }
+
+    if (method === 'nequi') {
+      var phone = phoneInput ? phoneInput.value : '';
+      console.log('Teléfono Nequi:', phone);
       
-      const method = paymentMethodSelector.value;
-      const email = emailInput ? emailInput.value : '';
-      const terms = acceptTerms ? acceptTerms.checked : false;
-      const data = acceptData ? acceptData.checked : false;
-
-      if (!method) {
-        console.log('❌ Falta método de pago');
+      if (!phone || phone.length !== 10 || !phone.startsWith('3')) {
+        console.log('❌ Teléfono Nequi inválido');
         e.preventDefault();
-        alert('Por favor selecciona un método de pago');
+        alert('Por favor ingresa un número de celular válido (debe empezar con 3 y tener 10 dígitos)');
         return false;
       }
+    }
 
-      if (!email.includes('@')) {
-        console.log('❌ Email inválido');
+    if (method === 'card') {
+      var cardType = cardTypeSelector ? cardTypeSelector.value : '';
+      var cardNumber = cardNumberInput ? cardNumberInput.value.replace(/\s/g, '') : '';
+      var expMonth = expMonthSelect ? expMonthSelect.value : '';
+      var expYear = expYearSelect ? expYearSelect.value : '';
+      var cvc = cvcInput ? cvcInput.value : '';
+      var cardHolder = cardHolderInput ? cardHolderInput.value : '';
+
+      if (!cardType || !cardNumber || !expMonth || !expYear || !cvc || !cardHolder) {
+        console.log('❌ Faltan campos de tarjeta');
         e.preventDefault();
-        alert('Por favor ingresa un email válido');
+        alert('Por favor completa todos los campos de la tarjeta');
         return false;
       }
-
-      if (!terms || !data) {
-        console.log('❌ Faltan términos y condiciones');
-        e.preventDefault();
-        alert('Debes aceptar los términos y condiciones');
-        return false;
-      }
-
-      console.log('✅ Validación pasada, enviando formulario...');
     }
 
-    // Selección de método de pago
-    document.querySelectorAll('.payment-method-card[data-method]').forEach(card => {
-      card.addEventListener('click', handlePaymentMethodClick);
-    });
-
-    // Selección de tipo de tarjeta
-    document.querySelectorAll('.payment-method-card[data-card-type]').forEach(card => {
-      card.addEventListener('click', handleCardTypeClick);
-    });
-
-    // Botones de volver
-    document.querySelectorAll('.back-button[data-back-to]').forEach(btn => {
-      btn.addEventListener('click', handleBackButtonClick);
-    });
-
-    const backFromFormBtn = document.getElementById('back-from-form');
-    if (backFromFormBtn) {
-      backFromFormBtn.addEventListener('click', handleBackFromForm);
+    console.log('✅ Validación pasada, enviando formulario...');
+    if (payBtn) {
+      payBtn.disabled = true;
+      payBtn.value = 'Procesando...';
     }
+    return true;
+  }
 
-    // Listeners para validación en tiempo real
-    [acceptTerms, acceptData, emailInput, phoneInput, cardNumberInput, 
-     expMonthSelect, expYearSelect, cvcInput, cardHolderInput].forEach(el => {
-      if (el) {
-        el.addEventListener('change', validateAndEnableButton);
-        el.addEventListener('input', validateAndEnableButton);
-      }
-    });
+  // Inicializar eventos - Métodos de pago
+  var paymentCards = document.querySelectorAll('.payment-method-card[data-method]');
+  for (var i = 0; i < paymentCards.length; i++) {
+    paymentCards[i].addEventListener('click', handlePaymentMethodClick);
+  }
 
-    // Validación final en submit
-    if (form) {
-      form.addEventListener('submit', handleFormSubmit);
+  // Inicializar eventos - Tipos de tarjeta
+  var cardTypeCards = document.querySelectorAll('.payment-method-card[data-card-type]');
+  for (var j = 0; j < cardTypeCards.length; j++) {
+    cardTypeCards[j].addEventListener('click', handleCardTypeClick);
+  }
+
+  // Inicializar eventos - Botones de volver
+  var backButtons = document.querySelectorAll('.back-button[data-back-to]');
+  for (var k = 0; k < backButtons.length; k++) {
+    backButtons[k].addEventListener('click', handleBackButtonClick);
+  }
+
+  var backFromFormBtn = document.getElementById('back-from-form');
+  if (backFromFormBtn) {
+    backFromFormBtn.addEventListener('click', handleBackFromForm);
+  }
+
+  // Listeners para validación en tiempo real
+  var elementsToValidate = [
+    acceptTerms, 
+    acceptData, 
+    emailInput, 
+    phoneInput, 
+    cardNumberInput,
+    expMonthSelect, 
+    expYearSelect, 
+    cvcInput, 
+    cardHolderInput
+  ];
+
+  for (var m = 0; m < elementsToValidate.length; m++) {
+    var element = elementsToValidate[m];
+    if (element) {
+      element.addEventListener('change', validateAndEnableButton);
+      element.addEventListener('input', validateAndEnableButton);
     }
+  }
 
-    showStep(paymentMethodSelection);
-    disableButton(); // Inicialmente deshabilitado
-  })();
+  // Validación final en submit
+  if (form) {
+    form.addEventListener('submit', handleFormSubmit);
+  }
+
+  // Inicializar vista
+  showStep(paymentMethodSelection);
+  disableButton();
+  
+  console.log('✅ Formulario completamente inicializado');
+}
+
+// Inicializar cuando la página cargue
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initializePaymentForm);
+} else {
+  initializePaymentForm();
+}
+
+// Reinicializar cuando Turbo cargue una nueva página
+document.addEventListener('turbo:load', initializePaymentForm);
+document.addEventListener('turbo:render', initializePaymentForm);
   </script>

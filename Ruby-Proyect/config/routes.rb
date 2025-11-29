@@ -73,9 +73,20 @@ Rails.application.routes.draw do
   # API routes (outside locale scope)
   namespace :api do
     namespace :v1 do
+      get "health", to: "health#check"
+      
+      # Authentication endpoints
       post "login",  to: "auth#login"
       post "logout", to: "auth#logout"
+      post "register", to: "auth#register"
+      post "forgot_password", to: "auth#forgot_password"
+      post "reset_password", to: "auth#reset_password"
+      post "resend_confirmation", to: "auth#resend_confirmation"
+      get "confirm_email", to: "auth#confirm_email"
+      
       get "buscar", to: "busqueda#index"
+      get "combos", to: "productos#combos"
+      resources :banners, only: [ :index ]
       resources :grupos, path: "categorias", only: [ :index, :show ] do
         resources :products, path: "productos", only: [ :index, :show ], module: :grupos
       end

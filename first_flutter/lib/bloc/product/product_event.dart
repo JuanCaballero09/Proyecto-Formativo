@@ -9,26 +9,35 @@ abstract class ProductEvent extends Equatable {
 }
 
 /// Evento para obtener todos los productos
-class FetchProducts extends ProductEvent {}
+class FetchProducts extends ProductEvent {
+  final bool forceRefresh;
+
+  const FetchProducts({this.forceRefresh = false});
+
+  @override
+  List<Object> get props => [forceRefresh];
+}
 
 /// Evento para cargar productos por categoría usando nombre de categoría
 class LoadProductsByCategory extends ProductEvent {
   final String categoryName;
+  final bool forceRefresh;
 
-  const LoadProductsByCategory(this.categoryName);
+  const LoadProductsByCategory(this.categoryName, {this.forceRefresh = false});
 
   @override
-  List<Object> get props => [categoryName];
+  List<Object> get props => [categoryName, forceRefresh];
 }
 
 /// Evento para cargar productos por ID de categoría (API específica)
 class LoadProductsByCategoryId extends ProductEvent {
   final int categoryId;
+  final bool forceRefresh;
 
-  const LoadProductsByCategoryId(this.categoryId);
+  const LoadProductsByCategoryId(this.categoryId, {this.forceRefresh = false});
 
   @override
-  List<Object> get props => [categoryId];
+  List<Object> get props => [categoryId, forceRefresh];
 }
 
 /// Evento para obtener un producto específico por categoría e ID

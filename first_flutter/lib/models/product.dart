@@ -9,7 +9,10 @@ class Product extends Equatable {
   final double price;
   final String description;
   final String image;
-  final List<String> ingredients; 
+  final List<String> ingredients;
+  final int salesCount; // Cantidad de veces vendido
+  final String type; // Tipo de producto: "Combo", null o vacío
+  final bool disponible; // Si el producto está disponible para venta
 
   const Product({
     required this.id,
@@ -19,6 +22,9 @@ class Product extends Equatable {
     required this.description,
     required this.image,
     this.ingredients = const [],
+    this.salesCount = 0,
+    this.type = '',
+    this.disponible = true,
   });
 
   factory Product.fromJson(Map<String, dynamic> json) {
@@ -102,6 +108,15 @@ class Product extends Equatable {
       imageUrl = '$baseUrlWithoutApi$imageUrl';
     }
     
+    // Handle sales count
+    int salesCount = 0;
+    final salesField = json['sales_count'] ?? json['cantidad_vendida'] ?? json['ventas'] ?? 0;
+    if (salesField is String) {
+      salesCount = int.tryParse(salesField) ?? 0;
+    } else if (salesField is num) {
+      salesCount = salesField.toInt();
+    }
+    
     final producto = Product(
       id: productId,
       name: json['name'] ?? json['nombre'] ?? '',
@@ -110,6 +125,9 @@ class Product extends Equatable {
       description: json['description'] ?? json['descripcion'] ?? '',
       image: imageUrl,
       ingredients: ingredientsList,
+      salesCount: salesCount,
+      type: json['type'] ?? '',
+      disponible: json['disponible'] ?? true,
     );
     
     debugPrint('Producto creado: ID=${producto.id}, Nombre=${producto.name}, Categoría=${producto.category}');
@@ -120,5 +138,5 @@ class Product extends Equatable {
   }
 
   @override
-  List<Object?> get props => [id, name, category, price, description, image, ingredients];
+  List<Object?> get props => [id, name, category, price, description, image, ingredients, salesCount, type, disponible];
 }

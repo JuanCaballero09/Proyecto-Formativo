@@ -9,9 +9,15 @@ part 'categorias_state.dart';
 
 class CategoriasBloc extends Bloc<CategoriasEvent, CategoriasState> {
   final ApiService apiService;
+  bool _isLoaded = false;
 
   CategoriasBloc(this.apiService) : super(CategoriasInitial()) {
     on<LoadCategoriasEvent>((event, emit) async {
+      // Si ya está cargado y no es refresh forzado, no hacer nada
+      if (_isLoaded && !event.forceRefresh) {
+        return;
+      }
+
       emit(CategoriasLoadingState());
       try {
         final categoriasData = await apiService.getCategorias();
@@ -22,6 +28,7 @@ class CategoriasBloc extends Bloc<CategoriasEvent, CategoriasState> {
               .toList();
           
           emit(CategoriasLoadedState(categorias));
+          _isLoaded = true;
         } else {
           emit(CategoriasErrorState('Failed to load categories'));
         }

@@ -1,6 +1,6 @@
 class ProductsController < ApplicationController
   def index
-    @products = Product.includes(:grupo).where(disponible: true).order(:grupo_id, :id)
+    @products = Product.includes(:grupo, imagen_attachment: :blob).where(disponible: true).order(:grupo_id, :id)
   end
 
   def combos
