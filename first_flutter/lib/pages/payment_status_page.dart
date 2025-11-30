@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
+import '../l10n/app_localizations.dart';
 import '../service/api_service.dart';
 import '../pages/product_catalog_page.dart';
 
@@ -94,7 +95,7 @@ class _PaymentStatusPageState extends State<PaymentStatusPage> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Estado del Pago'),
+          title: Text(AppLocalizations.of(context)!.paymentStatusLabel),
           backgroundColor: const Color.fromRGBO(237, 88, 33, 1),
           foregroundColor: Colors.white,
           automaticallyImplyLeading: false,

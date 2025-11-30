@@ -7,7 +7,7 @@ class ApiConfig {
   
   /// URL base de la API
   /// 🔧 CAMBIA ESTA URL según tu plataforma (ver comentario arriba)
-  static const String baseUrl = "https://whole-tahr-stunning.ngrok-free.app/api/v1";
+  static const String baseUrl = "http://10.0.2.2:3000/api/v1";
 
   /// Configuración de timeouts para las peticiones HTTP
   static const Duration connectionTimeout = Duration(seconds: 10);

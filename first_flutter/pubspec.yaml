@@ -53,6 +53,7 @@ flutter:
     - assets/LogoText.png
     - assets/loogo.jpg
     - assets/whatsapp.png
+    - assets/NequiLogo.png
 
 flutter_launcher_icons:
   android: true

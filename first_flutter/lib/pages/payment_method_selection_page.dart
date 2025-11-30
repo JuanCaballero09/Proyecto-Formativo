@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/order.dart';
 import 'payment_form_page.dart';
+import '../l10n/app_localizations.dart';
 
 class PaymentMethodSelectionPage extends StatelessWidget {
   final Order order;
@@ -12,11 +13,16 @@ class PaymentMethodSelectionPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    
     return Scaffold(
+      backgroundColor: isDark ? const Color(0xFF121212) : Colors.grey[50],
       appBar: AppBar(
-        title: const Text('Método de Pago'),
+        title: Text(AppLocalizations.of(context)!.paymentMethodLabel),
         backgroundColor: const Color.fromRGBO(237, 88, 33, 1),
         foregroundColor: Colors.white,
+        elevation: 0,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
@@ -24,19 +30,20 @@ class PaymentMethodSelectionPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Header
-            const Text(
-              'Selecciona tu método de pago',
+            Text(
+              AppLocalizations.of(context)!.selectPaymentMethodTitle,
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
+                color: isDark ? Colors.white : Colors.black87,
               ),
             ),
             const SizedBox(height: 8),
             Text(
-              'Orden: ${order.code}',
+              '${AppLocalizations.of(context)!.orderLabel} ${order.code}',
               style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey[600],
+                fontSize: 15,
+                color: isDark ? Colors.grey[400] : Colors.grey[600],
               ),
             ),
             const SizedBox(height: 30),
@@ -44,9 +51,10 @@ class PaymentMethodSelectionPage extends StatelessWidget {
             // Payment Methods Grid
             _PaymentMethodCard(
               icon: Icons.credit_card,
-              title: 'Tarjeta de Crédito/Débito',
-              description: 'Paga con tu tarjeta de forma segura',
+              title: AppLocalizations.of(context)!.creditDebitCardTitle,
+              description: AppLocalizations.of(context)!.creditDebitCardDesc,
               color: const Color.fromRGBO(237, 88, 33, 1),
+              isDark: isDark,
               onTap: () {
                 Navigator.push(
                   context,
@@ -62,10 +70,12 @@ class PaymentMethodSelectionPage extends StatelessWidget {
             const SizedBox(height: 16),
 
             _PaymentMethodCard(
-              icon: Icons.phone_android,
-              title: 'Nequi',
-              description: 'Pago rápido desde tu app Nequi',
+              title: AppLocalizations.of(context)!.nequiTitle,
+              description: AppLocalizations.of(context)!.nequiDesc,
               color: const Color(0xFF8B34D9),
+              isDark: isDark,
+              useImage: true,
+              imagePath: 'assets/NequiLogo.png',
               onTap: () {
                 Navigator.push(
                   context,
@@ -82,9 +92,10 @@ class PaymentMethodSelectionPage extends StatelessWidget {
 
             _PaymentMethodCard(
               icon: Icons.attach_money,
-              title: 'Efectivo',
-              description: 'Paga en efectivo al recibir tu pedido',
+              title: AppLocalizations.of(context)!.cashTitle,
+              description: AppLocalizations.of(context)!.cashDesc,
               color: const Color(0xFF4CAF50),
+              isDark: isDark,
               onTap: () {
                 Navigator.push(
                   context,
@@ -105,18 +116,24 @@ class PaymentMethodSelectionPage extends StatelessWidget {
 }
 
 class _PaymentMethodCard extends StatelessWidget {
-  final IconData icon;
+  final IconData? icon;
   final String title;
   final String description;
   final Color color;
   final VoidCallback onTap;
+  final bool isDark;
+  final bool useImage;
+  final String? imagePath;
 
   const _PaymentMethodCard({
-    required this.icon,
+    this.icon,
     required this.title,
     required this.description,
     required this.color,
     required this.onTap,
+    required this.isDark,
+    this.useImage = false,
+    this.imagePath,
   });
 
   @override
@@ -127,15 +144,15 @@ class _PaymentMethodCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: Colors.grey[300]!,
-            width: 2,
+            color: isDark ? Colors.grey[800]! : Colors.grey[300]!,
+            width: 1.5,
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withOpacity(isDark ? 0.3 : 0.05),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -147,14 +164,24 @@ class _PaymentMethodCard extends StatelessWidget {
               width: 60,
               height: 60,
               decoration: BoxDecoration(
-                color: color.withOpacity(0.1),
+                color: useImage ? Colors.white : color.withOpacity(0.1),
                 shape: BoxShape.circle,
               ),
-              child: Icon(
-                icon,
-                color: color,
-                size: 30,
-              ),
+              child: useImage && imagePath != null
+                  ? ClipOval(
+                      child: Padding(
+                        padding: const EdgeInsets.all(12),
+                        child: Image.asset(
+                          imagePath!,
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                    )
+                  : Icon(
+                      icon,
+                      color: color,
+                      size: 30,
+                    ),
             ),
             const SizedBox(width: 16),
             Expanded(
@@ -163,9 +190,10 @@ class _PaymentMethodCard extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
+                      color: isDark ? Colors.white : Colors.black87,
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -173,7 +201,7 @@ class _PaymentMethodCard extends StatelessWidget {
                     description,
                     style: TextStyle(
                       fontSize: 14,
-                      color: Colors.grey[600],
+                      color: isDark ? Colors.grey[400] : Colors.grey[600],
                     ),
                   ),
                 ],
@@ -181,7 +209,7 @@ class _PaymentMethodCard extends StatelessWidget {
             ),
             Icon(
               Icons.arrow_forward_ios,
-              color: Colors.grey[400],
+              color: isDark ? Colors.grey[600] : Colors.grey[400],
               size: 20,
             ),
           ],

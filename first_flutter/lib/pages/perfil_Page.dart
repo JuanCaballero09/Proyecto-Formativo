@@ -43,9 +43,7 @@ class PerfilPage extends StatelessWidget {
               backgroundColor: cardColor,
               elevation: 1,
               title: Text(
-
-                "Mi Perfil",
-
+                AppLocalizations.of(context)!.myProfileLabel,
                 style: TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
@@ -124,9 +122,9 @@ class PerfilPage extends StatelessWidget {
 
                       const SizedBox(height: 6),
 
-                      const Text(
-                        "Cuenta Activa ✓",
-                        style: TextStyle(
+                      Text(
+                        AppLocalizations.of(context)!.activeAccount,
+                        style: const TextStyle(
                           fontSize: 12,
                           color: Colors.green,
                           fontWeight: FontWeight.w600,
@@ -142,7 +140,7 @@ class PerfilPage extends StatelessWidget {
                 //         CUENTA
                 // ===========================
                 Text(
-                  "Configuración",
+                  AppLocalizations.of(context)!.configurationLabel,
                   style: TextStyle(
                     color: textColor,
                     fontSize: 18,
@@ -153,7 +151,7 @@ class PerfilPage extends StatelessWidget {
                 const SizedBox(height: 10),
               _buildOption(
                   icon: Icons.settings,
-                  label: "Ajustes",
+                  label: AppLocalizations.of(context)!.adjustmentsLabel,
                   widget: Icon(Icons.chevron_right, color: arrowColor),
                   cardColor: cardColor,
                   textColor: textColor,
@@ -172,7 +170,7 @@ class PerfilPage extends StatelessWidget {
                 //         CUENTA
                 // ===========================
                 Text(
-                  "Cuenta",
+                  AppLocalizations.of(context)!.accountLabel,
                   style: TextStyle(
                     color: textColor,
                     fontSize: 18,
@@ -183,7 +181,7 @@ class PerfilPage extends StatelessWidget {
 _buildMenuTile(
   context,
   icon: Icons.privacy_tip,
-  label: "Política de Privacidad",
+  label: AppLocalizations.of(context)!.privacyPolicyMenuLabel,
   onTap: () {
     Navigator.push(
       context,
@@ -199,7 +197,7 @@ _buildMenuTile(
 _buildMenuTile(
   context,
   icon: Icons.info_outline,
-  label: "Acerca de",
+  label: AppLocalizations.of(context)!.aboutLabel,
   onTap: () {
     showAboutDialog(
       context: context,
@@ -207,9 +205,9 @@ _buildMenuTile(
       applicationVersion: "4.3.3",
       applicationIcon: Image.asset("assets/logobitevia.png", width: 60, height: 60),
       children: [
-        const Text("Sistema de pedidos y delivery para restaurantes."),
+        Text(AppLocalizations.of(context)!.systemDescriptionLabel),
         const SizedBox(height: 10),
-        const Text("© 2025 Bitevia. Todos los derechos reservados."),
+        Text(AppLocalizations.of(context)!.allRightsReserved),
       ],
     );
   },
@@ -236,24 +234,110 @@ _buildMenuTile(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   child: InkWell(
                     onTap: () async {
+                      final theme = Theme.of(context);
+                      final isDark = theme.brightness == Brightness.dark;
+                      
                       final confirmed = await showDialog<bool>(
                         context: context,
-                        builder: (context) => AlertDialog(
-                          title: const Text('Cerrar sesión'),
-                          content: const Text(
-                              '¿Estás seguro de que deseas cerrar sesión?'),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.pop(context, false),
-                              child: const Text('Cancelar'),
+                        builder: (context) => Dialog(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(24),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                // Ícono
+                                Container(
+                                  padding: const EdgeInsets.all(16),
+                                  decoration: BoxDecoration(
+                                    color: Colors.red.withOpacity(0.1),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: const Icon(
+                                    Icons.logout_rounded,
+                                    color: Colors.red,
+                                    size: 32,
+                                  ),
+                                ),
+                                const SizedBox(height: 20),
+                                
+                                // Título
+                                Text(
+                                  AppLocalizations.of(context)!.logoutDialogTitle,
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: isDark ? Colors.white : Colors.black87,
+                                  ),
+                                ),
+                                const SizedBox(height: 12),
+                                
+                                // Mensaje
+                                Text(
+                                  AppLocalizations.of(context)!.logoutDialogMessage,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    color: isDark ? Colors.grey[400] : Colors.grey[600],
+                                    height: 1.4,
+                                  ),
+                                ),
+                                const SizedBox(height: 24),
+                                
+                                // Botones
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: OutlinedButton(
+                                        onPressed: () => Navigator.pop(context, false),
+                                        style: OutlinedButton.styleFrom(
+                                          padding: const EdgeInsets.symmetric(vertical: 14),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(12),
+                                          ),
+                                          side: BorderSide(
+                                            color: isDark ? Colors.grey[700]! : Colors.grey[300]!,
+                                          ),
+                                        ),
+                                        child: Text(
+                                          AppLocalizations.of(context)!.cancelLabel,
+                                          style: TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w600,
+                                            color: isDark ? Colors.grey[300] : Colors.grey[700],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 12),
+                                    Expanded(
+                                      child: ElevatedButton(
+                                        onPressed: () => Navigator.pop(context, true),
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.red,
+                                          foregroundColor: Colors.white,
+                                          padding: const EdgeInsets.symmetric(vertical: 14),
+                                          elevation: 0,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(12),
+                                          ),
+                                        ),
+                                        child: Text(
+                                          AppLocalizations.of(context)!.logoutLabel,
+                                          style: const TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ),
-                            TextButton(
-                              onPressed: () => Navigator.pop(context, true),
-                              child: const Text('Cerrar sesión',
-                                  style: TextStyle(color: Colors.red)),
-
-                            ),
-                          ],
+                          ),
                         ),
                       );
 
@@ -269,12 +353,12 @@ _buildMenuTile(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 16, vertical: 16),
                       child: Row(
-                        children: const [
-                          Icon(Icons.logout, color: Colors.red, size: 22),
-                          SizedBox(width: 16),
+                        children: [
+                          const Icon(Icons.logout, color: Colors.red, size: 22),
+                          const SizedBox(width: 16),
                           Text(
-                            'Cerrar Sesión',
-                            style: TextStyle(
+                            AppLocalizations.of(context)!.logoutLabel,
+                            style: const TextStyle(
                               color: Colors.red,
                               fontSize: 16,
                               fontWeight: FontWeight.w500,
@@ -303,7 +387,7 @@ _buildMenuTile(
             backgroundColor: cardColor,
             elevation: 1,
             title: Text(
-              "Mi Perfil",
+              AppLocalizations.of(context)!.myProfileLabel,
               style: TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
@@ -350,7 +434,7 @@ _buildMenuTile(
                     const SizedBox(height: 16),
                     // Título
                     Text(
-                      "Invitado",
+                      AppLocalizations.of(context)!.guestLabel,
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -359,7 +443,7 @@ _buildMenuTile(
                     ),
                     const SizedBox(height: 6),
                     Text(
-                      "Inicia sesión para guardar tus preferencias",
+                      AppLocalizations.of(context)!.guestMessage,
                       style: TextStyle(
                         fontSize: 14,
                         color: subtitleColor,
@@ -410,7 +494,7 @@ _buildMenuTile(
                         borderRadius: BorderRadius.circular(10),
                       ),
                     ),
-                    child: const Text('Registrarse', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                    child: Text(AppLocalizations.of(context)!.registerLabel, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                   ),
                 ),
               ),
@@ -421,7 +505,7 @@ _buildMenuTile(
               //     CONFIGURACIÓN
               // ===========================
               Text(
-                "Configuración",
+                AppLocalizations.of(context)!.configurationLabel,
                 style: TextStyle(
                   color: textColor,
                   fontSize: 18,
@@ -431,7 +515,7 @@ _buildMenuTile(
               const SizedBox(height: 10),
               _buildOption(
                 icon: Icons.settings,
-                label: "Ajustes",
+                label: AppLocalizations.of(context)!.adjustmentsLabel,
                 widget: Icon(Icons.chevron_right, color: arrowColor),
                 cardColor: cardColor,
                 textColor: textColor,
@@ -450,7 +534,7 @@ _buildMenuTile(
               //         CUENTA
               // ===========================
               Text(
-                "Información",
+                AppLocalizations.of(context)!.informationLabel,
                 style: TextStyle(
                   color: textColor,
                   fontSize: 18,
@@ -461,7 +545,7 @@ _buildMenuTile(
               _buildMenuTile(
                 context,
                 icon: Icons.privacy_tip,
-                label: "Política de Privacidad",
+                label: AppLocalizations.of(context)!.privacyPolicyMenuLabel,
                 onTap: () {
                   Navigator.push(
                     context,
@@ -476,7 +560,7 @@ _buildMenuTile(
               _buildMenuTile(
                 context,
                 icon: Icons.info_outline,
-                label: "Acerca de",
+                label: AppLocalizations.of(context)!.aboutLabel,
                 onTap: () {
                   showAboutDialog(
                     context: context,
@@ -484,7 +568,7 @@ _buildMenuTile(
                     applicationVersion: "4.3.3",
                     applicationIcon: Image.asset("assets/logobitevia.png", width: 60, height: 60),
                     children: [
-                      const Text("Sistema de pedidos y delivery para restaurantes."),
+                      Text(AppLocalizations.of(context)!.systemDescriptionLabel),
                       const SizedBox(height: 10),
                       const Text("© 2025 Bitevia. Todos los derechos reservados."),
                     ],

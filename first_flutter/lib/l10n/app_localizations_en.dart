@@ -735,7 +735,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get subscriptionUpdated => 'Subscription preferences updated';
 
   @override
-  String get welcomeTitle => 'Welcome to BiteVia';
+  String get welcomeTitle => 'Welcome!';
 
   @override
   String get welcomeSubtitle => 'Delicious food delivered to your door';
@@ -896,4 +896,498 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get english => 'English';
+
+  @override
+  String get paymentMethodLabel => 'Payment Method';
+
+  @override
+  String get settingsLabel => 'Settings';
+
+  @override
+  String get backLabel => 'Back';
+
+  @override
+  String get loginSessionLabel => 'Login to your account';
+
+  @override
+  String get enterLabel => 'Enter';
+
+  @override
+  String get signupHereLabel => 'Sign up here';
+
+  @override
+  String get systemDescriptionLabel =>
+      'Restaurant ordering and delivery system.';
+
+  @override
+  String get unknownStateLabel => 'Unknown state';
+
+  @override
+  String get reloadLabel => 'Reload';
+
+  @override
+  String get paymentStatusLabel => 'Payment Status';
+
+  @override
+  String get exampleAddressHint => 'E.g: Street 123 #45-67, Bogotá';
+
+  @override
+  String get nameLabel => 'Name';
+
+  @override
+  String get lastNameLabel => 'Last Name';
+
+  @override
+  String get exampleEmailHint => 'example@email.com';
+
+  @override
+  String get phoneLabel => 'Phone';
+
+  @override
+  String get phoneExampleHint => 'E.g: 3001234567';
+
+  @override
+  String get createAccountLabel => 'Create Account';
+
+  @override
+  String get passwordMinCharsLabel => 'Password (minimum 6 characters)';
+
+  @override
+  String get confirmPasswordLabel => 'Confirm Password';
+
+  @override
+  String get privacyPolicyLabel => 'Privacy Policy';
+
+  @override
+  String get cardNumberLabel => 'Card Number';
+
+  @override
+  String get cardHolderNameLabel => 'Cardholder Name';
+
+  @override
+  String get cardHolderExample => 'JOHN DOE';
+
+  @override
+  String get monthLabel => 'Month';
+
+  @override
+  String get yearLabel => 'Year';
+
+  @override
+  String get cvcLabel => 'CVC';
+
+  @override
+  String get installmentsLabel => 'Number of Installments';
+
+  @override
+  String get installmentSingular => 'installment';
+
+  @override
+  String get installmentPlural => 'installments';
+
+  @override
+  String get cellphoneNumberLabel => 'Cell Phone Number';
+
+  @override
+  String get nequiAppRequirement =>
+      'Make sure you have the Nequi app installed';
+
+  @override
+  String get emailAddressLabel => 'Email Address';
+
+  @override
+  String get yourEmailPlaceholder => 'your@email.com';
+
+  @override
+  String get acceptTermsStart => 'I accept the ';
+
+  @override
+  String get termsAndConditionsLink => 'terms and conditions';
+
+  @override
+  String get acceptTermsEnd => ' of Wompi';
+
+  @override
+  String get authorizeDataStart => 'I authorize the ';
+
+  @override
+  String get personalDataTreatmentLink => 'personal data processing';
+
+  @override
+  String get newAddressLabel => 'New address';
+
+  @override
+  String get newAddressExample => 'E.g: Street 123 #45-67, Apt 101';
+
+  @override
+  String get resendConfirmationLabel => 'Resend confirmation';
+
+  @override
+  String get registerLabel => 'Register';
+
+  @override
+  String get enterNequiNumberLabel => 'Enter your Nequi cell phone number';
+
+  @override
+  String get nequiNotificationMessage =>
+      'You will receive a notification in your Nequi app to approve the payment';
+
+  @override
+  String get cashPaymentLabel => 'Cash Payment';
+
+  @override
+  String get paymentInstructionsLabel => 'Payment instructions';
+
+  @override
+  String get prepareExactAmount => 'Prepare the exact amount:';
+
+  @override
+  String get deliverMoneyToDriver =>
+      'Deliver the money to the delivery person when you receive your order';
+
+  @override
+  String get requestReceipt => 'Request your payment receipt';
+
+  @override
+  String get orderSummaryLabel => 'Order Summary';
+
+  @override
+  String get orderCodeLabel => 'Code:';
+
+  @override
+  String get totalToPayLabel => 'Total to Pay:';
+
+  @override
+  String get selectCardTypeLabel => 'Select card type';
+
+  @override
+  String get creditCardLabel => 'Credit';
+
+  @override
+  String get debitCardLabel => 'Debit';
+
+  @override
+  String get upTo36Installments => 'Up to 36 installments';
+
+  @override
+  String get cashPaymentSingle => 'Single payment';
+
+  @override
+  String get deliveryAddressLabel => 'Delivery Address';
+
+  @override
+  String get personalInfoLabel => 'Personal Information';
+
+  @override
+  String get finalizeOrderLabel => 'Finalize Order';
+
+  @override
+  String get productSingular => 'product';
+
+  @override
+  String get productPlural => 'products';
+
+  @override
+  String get confirmOrderLabel => 'Confirm Order';
+
+  @override
+  String get nequiPaymentLabel => 'Nequi Payment';
+
+  @override
+  String get cashEffectiveLabel => 'Cash Payment';
+
+  @override
+  String get myProfileLabel => 'My Profile';
+
+  @override
+  String get configurationLabel => 'Settings';
+
+  @override
+  String get informationLabel => 'Information';
+
+  @override
+  String get adjustmentsLabel => 'Settings';
+
+  @override
+  String get privacyPolicyMenuLabel => 'Privacy Policy';
+
+  @override
+  String get aboutLabel => 'About';
+
+  @override
+  String get logoutLabel => 'Logout';
+
+  @override
+  String get logoutDialogTitle => 'Logout';
+
+  @override
+  String get logoutDialogMessage => 'Are you sure you want to logout?';
+
+  @override
+  String get cancelLabel => 'Cancel';
+
+  @override
+  String get guestLabel => 'Guest';
+
+  @override
+  String get guestMessage => 'Login to save your preferences';
+
+  @override
+  String get accountLabel => 'Account';
+
+  @override
+  String get allRightsReserved => '© 2025 Bitevia. All rights reserved.';
+
+  @override
+  String get privacyPolicyTitle => 'Privacy Policy';
+
+  @override
+  String get privacyPolicyIntro =>
+      'Your privacy is important to us. This policy explains how we collect, use, and protect your information within our fast food application.';
+
+  @override
+  String get privacySection1Title => '1. Information we collect';
+
+  @override
+  String get privacySection1Item1 =>
+      'Personal data such as name, email and phone number.';
+
+  @override
+  String get privacySection1Item2 => 'Delivery addresses.';
+
+  @override
+  String get privacySection1Item3 =>
+      'Device information to improve the experience.';
+
+  @override
+  String get privacySection1Item4 => 'Order history.';
+
+  @override
+  String get privacySection2Title => '2. Use of information';
+
+  @override
+  String get privacySection2Item1 => 'Process orders and deliveries.';
+
+  @override
+  String get privacySection2Item2 => 'Improve user experience.';
+
+  @override
+  String get privacySection2Item3 =>
+      'Send notifications related to your orders.';
+
+  @override
+  String get privacySection2Item4 => 'Offer promotions and discounts.';
+
+  @override
+  String get privacySection3Title => '3. Data protection';
+
+  @override
+  String get privacySection3Text =>
+      'We use modern security standards to protect your data, including encryption and secure protocols. We do not sell your information.';
+
+  @override
+  String get privacySection4Title => '4. Third parties';
+
+  @override
+  String get privacySection4Text =>
+      'We may share your information only with services necessary to operate the app, such as payment processors or delivery services.';
+
+  @override
+  String get privacySection5Title => '5. User rights';
+
+  @override
+  String get privacySection5Item1 => 'Request account deletion.';
+
+  @override
+  String get privacySection5Item2 => 'Update your personal data.';
+
+  @override
+  String get privacySection5Item3 => 'Access the information we store.';
+
+  @override
+  String get privacySection6Title => '6. Policy changes';
+
+  @override
+  String get privacySection6Text =>
+      'We may update this policy at any time. We will notify you if important changes are made.';
+
+  @override
+  String get privacyLastUpdate => 'Last updated: 2025';
+
+  @override
+  String get finalizeOrderDialogTitle => 'Finalize Order';
+
+  @override
+  String get productCountSingular => 'product';
+
+  @override
+  String get productCountPlural => 'products';
+
+  @override
+  String get totalToPayTitle => 'Total to pay';
+
+  @override
+  String get itemSingular => 'item';
+
+  @override
+  String get itemPlural => 'items';
+
+  @override
+  String get proceedToPayment => 'Proceed to Payment';
+
+  @override
+  String get selectPaymentMethodTitle => 'Select your payment method';
+
+  @override
+  String get orderLabel => 'Order:';
+
+  @override
+  String get creditDebitCardTitle => 'Credit/Debit Card';
+
+  @override
+  String get creditDebitCardDesc => 'Pay securely with your card';
+
+  @override
+  String get nequiTitle => 'Nequi';
+
+  @override
+  String get nequiDesc => 'Quick payment from your Nequi app';
+
+  @override
+  String get cashTitle => 'Cash';
+
+  @override
+  String get cashDesc => 'Pay cash when you receive your order';
+
+  @override
+  String get goToPayButton => 'Go to Pay';
+
+  @override
+  String get loginSubtitle => 'Sign in to your account';
+
+  @override
+  String get emailAddressField => 'Email address';
+
+  @override
+  String get passwordField => 'Password';
+
+  @override
+  String get resendConfirmationLink => 'Resend confirmation';
+
+  @override
+  String get forgotPasswordLink => 'Forgot your password?';
+
+  @override
+  String get loginButton => 'Sign In';
+
+  @override
+  String get dontHaveAccountText => 'Don\'t have an account?';
+
+  @override
+  String get registerHereLink => 'Register here';
+
+  @override
+  String get loginSuccessTitle => 'Login successful!';
+
+  @override
+  String get welcomeBackMessage => 'Welcome back';
+
+  @override
+  String get pleaseEnterCredentials => 'Please enter username and password';
+
+  @override
+  String get pleaseEnterValidEmail => 'Please enter a valid email address';
+
+  @override
+  String get createAccountTitle => 'Create Account';
+
+  @override
+  String get registerSubtitle => 'Register to get started';
+
+  @override
+  String get firstNameField => 'First Name';
+
+  @override
+  String get lastNameField => 'Last Name';
+
+  @override
+  String get phoneField => 'Phone';
+
+  @override
+  String get passwordMinChars => 'Password (minimum 6 characters)';
+
+  @override
+  String get confirmPasswordField => 'Confirm Password';
+
+  @override
+  String get termsAndConditionsText => 'Terms & Conditions';
+
+  @override
+  String get registerButtonText => 'Register';
+
+  @override
+  String get alreadyHaveAccountText => 'Already have an account?';
+
+  @override
+  String get resendConfirmationTitle => 'Resend Confirmation';
+
+  @override
+  String get resendConfirmationSubtitle =>
+      'Enter your email and we\'ll resend the confirmation link.';
+
+  @override
+  String get resendButton => 'Resend';
+
+  @override
+  String get backToLoginLink => 'Back to login';
+
+  @override
+  String get recoverPasswordTitle => 'Recover Password';
+
+  @override
+  String get recoverPasswordSubtitle =>
+      'Enter your email address and we will send you instructions to reset your password.';
+
+  @override
+  String get sendButton => 'Send';
+
+  @override
+  String get mustAcceptTermsAndConditions =>
+      'You must accept the terms and conditions';
+
+  @override
+  String get firstNameRequiredError => 'First name is required';
+
+  @override
+  String get lastNameRequiredError => 'Last name is required';
+
+  @override
+  String get phoneRequiredError => 'Phone number is required';
+
+  @override
+  String get phoneMustBe10DigitsError => 'Phone must be 10 digits';
+
+  @override
+  String get phoneMustStartWith3Error => 'Phone must start with 3';
+
+  @override
+  String get emailRequiredError => 'Email is required';
+
+  @override
+  String get enterValidEmailError => 'Enter a valid email';
+
+  @override
+  String get passwordWithMinimumHint => 'Password (minimum 6 characters)';
+
+  @override
+  String get passwordRequiredError => 'Password is required';
+
+  @override
+  String get minimumSixCharactersError => 'Minimum 6 characters';
+
+  @override
+  String get confirmYourPasswordError => 'Confirm your password';
+
+  @override
+  String get passwordsDoNotMatchError => 'Passwords do not match';
 }

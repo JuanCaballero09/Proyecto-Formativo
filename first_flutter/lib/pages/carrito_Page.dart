@@ -94,131 +94,157 @@ class CarritoPageState extends State<CarritoPage> {
             final theme = Theme.of(context);
             final bool isDark = theme.brightness == Brightness.dark;
             final Color bgColorLocal = theme.colorScheme.surface;
-            final Color fill = isDark ? const Color(0xFF1E1E1E) : Colors.white;
-            final Color shadowColor = isDark ? Colors.black45 : Colors.black12;
 
-            return AlertDialog(
-              backgroundColor: bgColorLocal,
-              insetPadding:
-                  const EdgeInsets.symmetric(horizontal: 10), // MÁS ANCHO
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
+            return Dialog(
+              backgroundColor: Colors.transparent,
+              insetPadding: EdgeInsets.symmetric(
+                horizontal: MediaQuery.of(context).size.width > 600 ? 40 : 16,
+                vertical: 24,
               ),
-
-              titlePadding: const EdgeInsets.all(20),
-              contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-
-              title: Row(
-                children: [
-                  Icon(Icons.shopping_bag,
-                      color: Color.fromRGBO(237, 88, 33, 1), size: 30),
-                  SizedBox(width: 10),
-                  Text(
-                    'Finalizar Pedido',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 22,
+              child: Container(
+                constraints: const BoxConstraints(maxWidth: 500),
+                decoration: BoxDecoration(
+                  color: bgColorLocal,
+                  borderRadius: BorderRadius.circular(24),
+                  boxShadow: [
+                    BoxShadow(
+                      color: isDark 
+                          ? Colors.black.withOpacity(0.5)
+                          : Colors.black.withOpacity(0.2),
+                      blurRadius: 20,
+                      offset: const Offset(0, 10),
                     ),
-                  ),
-                ],
-              ),
-
-              content: SingleChildScrollView(
+                  ],
+                ),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    BlocBuilder<CartBloc, CartState>(
-                      builder: (context, state) {
-                        return Container(
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: bgColorLocal,
-                            borderRadius: BorderRadius.circular(14),
-                            border: Border.all(
+                    // Header
+                    Padding(
+                      padding: const EdgeInsets.all(24),
+                      child: Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
                               color: const Color.fromRGBO(237, 88, 33, 1),
-                              width: 1.5,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: const Icon(
+                              Icons.shopping_bag_rounded,
+                              color: Colors.white,
+                              size: 28,
                             ),
                           ),
-                          child: Column(
+                          const SizedBox(width: 16),
+                          Text(
+                            AppLocalizations.of(context)!.finalizeOrderDialogTitle,
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 24,
+                              color: isDark ? Colors.white : Colors.black87,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    // Content
+                    Flexible(
+                      child: SingleChildScrollView(
+                        padding: const EdgeInsets.all(24),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            BlocBuilder<CartBloc, CartState>(
+                      builder: (context, state) {
+                        return Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
+                              // Header con contador de productos
                               Row(
                                 children: [
-                                  const Icon(Icons.shopping_cart,
-                                      size: 26,
-                                      color: Color.fromRGBO(237, 88, 33, 1)),
+                                  const Icon(
+                                    Icons.shopping_bag_rounded,
+                                    color: Color.fromRGBO(237, 88, 33, 1),
+                                    size: 24,
+                                  ),
                                   const SizedBox(width: 10),
                                   Text(
-                                    '${state.cart.items.length} productos',
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 17,
+                                    '${state.cart.items.length} ${state.cart.items.length == 1 ? AppLocalizations.of(context)!.productCountSingular : AppLocalizations.of(context)!.productCountPlural}',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 16,
+                                      color: isDark ? Colors.grey[400] : Colors.grey[600],
                                     ),
                                   ),
                                 ],
                               ),
 
-                              const SizedBox(height: 20),
+                              const SizedBox(height: 24),
 
-                              // ⭐ FORMULARIO ENSANCHADO Y CORRECTO
-                              Container(
-                                width: MediaQuery.of(context).size.width *
-                                    0.85, // ⭐ MÁS ANCHO
-                                padding: const EdgeInsets.all(20),
-                                decoration: BoxDecoration(
-                                  color: bgColorLocal,
-                                  borderRadius: BorderRadius.circular(20),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: shadowColor,
-                                      blurRadius: 10,
-                                    ),
-                                  ],
-                                ),
-                                child: Column(
+                              // Formulario
+                              Column(
                                   mainAxisSize: MainAxisSize.min,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     // Dirección
-                                    const Text(
-                                      '📍 Dirección de Entrega',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 18,
-                                      ),
+                                    Row(
+                                      children: [
+                                        const Icon(
+                                          Icons.location_on_rounded,
+                                          color: Color.fromRGBO(237, 88, 33, 1),
+                                          size: 22,
+                                        ),
+                                        const SizedBox(width: 8),
+                                        Text(
+                                          AppLocalizations.of(context)!.deliveryAddressLabel,
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 17,
+                                            color: isDark ? Colors.white : Colors.black87,
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                    const SizedBox(height: 10),
+                                    const SizedBox(height: 12),
 
                                     TextField(
                                       controller: _direccionController,
                                       maxLines: 2,
+                                      style: TextStyle(
+                                        fontSize: 15,
+                                        color: isDark ? Colors.white : Colors.black87,
+                                      ),
                                       decoration: InputDecoration(
-                                        hintText:
-                                            'Ej: Calle 123 #45-67, Bogotá',
+                                        hintText: AppLocalizations.of(context)!.exampleAddressHint,
+                                        hintStyle: TextStyle(
+                                          color: isDark ? Colors.grey[600] : Colors.grey[400],
+                                        ),
                                         filled: true,
-                                        fillColor: fill,
-                                        contentPadding:
-                                            const EdgeInsets.symmetric(
-                                          vertical: 18,
-                                          horizontal: 16,
+                                        fillColor: isDark
+                                            ? const Color(0xFF1E1E1E)
+                                            : Colors.white,
+                                        contentPadding: const EdgeInsets.all(16),
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(12),
+                                          borderSide: BorderSide(
+                                            color: isDark ? Colors.grey[800]! : Colors.grey[300]!,
+                                            width: 1,
+                                          ),
                                         ),
                                         enabledBorder: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(14),
-                                          borderSide: const BorderSide(
-                                            color:
-                                                Color.fromRGBO(237, 88, 33, 1),
-                                            width: 2,
+                                          borderRadius: BorderRadius.circular(12),
+                                          borderSide: BorderSide(
+                                            color: isDark ? Colors.grey[800]! : Colors.grey[300]!,
+                                            width: 1,
                                           ),
                                         ),
                                         focusedBorder: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(14),
+                                          borderRadius: BorderRadius.circular(12),
                                           borderSide: const BorderSide(
-                                            color:
-                                                Color.fromRGBO(237, 88, 33, 1),
-                                            width: 2.5,
+                                            color: Color.fromRGBO(237, 88, 33, 1),
+                                            width: 2,
                                           ),
                                         ),
                                       ),
@@ -228,46 +254,63 @@ class CarritoPageState extends State<CarritoPage> {
 
                                     // SOLO INVITADOS
                                     if (!isAuthenticated) ...[
-                                      const Text(
-                                        '👤 Información Personal',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 18,
-                                        ),
+                                      Row(
+                                        children: [
+                                          const Icon(
+                                            Icons.person_rounded,
+                                            color: Color.fromRGBO(237, 88, 33, 1),
+                                            size: 22,
+                                          ),
+                                          const SizedBox(width: 8),
+                                          Text(
+                                            AppLocalizations.of(context)!.personalInfoLabel,
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 17,
+                                              color: isDark ? Colors.white : Colors.black87,
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                      const SizedBox(height: 10),
+                                      const SizedBox(height: 12),
                                       Row(
                                         children: [
                                           Expanded(
                                             child: TextField(
                                               controller: _nombreController,
+                                              style: TextStyle(
+                                                fontSize: 15,
+                                                color: isDark ? Colors.white : Colors.black87,
+                                              ),
                                               decoration: InputDecoration(
-                                                labelText: "Nombre",
-                                                filled: true,
-                                                fillColor: fill,
-                                                contentPadding:
-                                                    const EdgeInsets.symmetric(
-                                                  vertical: 18,
-                                                  horizontal: 16,
+                                                labelText: AppLocalizations.of(context)!.nameLabel,
+                                                labelStyle: TextStyle(
+                                                  color: isDark ? Colors.grey[500] : Colors.grey[600],
                                                 ),
-                                                enabledBorder:
-                                                    OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(14),
-                                                  borderSide: const BorderSide(
-                                                    color: Color.fromRGBO(
-                                                        237, 88, 33, 1),
-                                                    width: 2,
+                                                filled: true,
+                                                fillColor: isDark
+                                                    ? const Color(0xFF1E1E1E)
+                                                    : Colors.white,
+                                                contentPadding: const EdgeInsets.all(16),
+                                                border: OutlineInputBorder(
+                                                  borderRadius: BorderRadius.circular(12),
+                                                  borderSide: BorderSide(
+                                                    color: isDark ? Colors.grey[800]! : Colors.grey[300]!,
+                                                    width: 1,
                                                   ),
                                                 ),
-                                                focusedBorder:
-                                                    OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(14),
+                                                enabledBorder: OutlineInputBorder(
+                                                  borderRadius: BorderRadius.circular(12),
+                                                  borderSide: BorderSide(
+                                                    color: isDark ? Colors.grey[800]! : Colors.grey[300]!,
+                                                    width: 1,
+                                                  ),
+                                                ),
+                                                focusedBorder: OutlineInputBorder(
+                                                  borderRadius: BorderRadius.circular(12),
                                                   borderSide: const BorderSide(
-                                                    color: Color.fromRGBO(
-                                                        237, 88, 33, 1),
-                                                    width: 2.5,
+                                                    color: Color.fromRGBO(237, 88, 33, 1),
+                                                    width: 2,
                                                   ),
                                                 ),
                                               ),
@@ -277,33 +320,39 @@ class CarritoPageState extends State<CarritoPage> {
                                           Expanded(
                                             child: TextField(
                                               controller: _apellidoController,
+                                              style: TextStyle(
+                                                fontSize: 15,
+                                                color: isDark ? Colors.white : Colors.black87,
+                                              ),
                                               decoration: InputDecoration(
-                                                labelText: "Apellido",
-                                                filled: true,
-                                                fillColor: fill,
-                                                contentPadding:
-                                                    const EdgeInsets.symmetric(
-                                                  vertical: 18,
-                                                  horizontal: 16,
+                                                labelText: AppLocalizations.of(context)!.lastNameLabel,
+                                                labelStyle: TextStyle(
+                                                  color: isDark ? Colors.grey[500] : Colors.grey[600],
                                                 ),
-                                                enabledBorder:
-                                                    OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(14),
-                                                  borderSide: const BorderSide(
-                                                    color: Color.fromRGBO(
-                                                        237, 88, 33, 1),
-                                                    width: 2,
+                                                filled: true,
+                                                fillColor: isDark
+                                                    ? const Color(0xFF1E1E1E)
+                                                    : Colors.white,
+                                                contentPadding: const EdgeInsets.all(16),
+                                                border: OutlineInputBorder(
+                                                  borderRadius: BorderRadius.circular(12),
+                                                  borderSide: BorderSide(
+                                                    color: isDark ? Colors.grey[800]! : Colors.grey[300]!,
+                                                    width: 1,
                                                   ),
                                                 ),
-                                                focusedBorder:
-                                                    OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(14),
+                                                enabledBorder: OutlineInputBorder(
+                                                  borderRadius: BorderRadius.circular(12),
+                                                  borderSide: BorderSide(
+                                                    color: isDark ? Colors.grey[800]! : Colors.grey[300]!,
+                                                    width: 1,
+                                                  ),
+                                                ),
+                                                focusedBorder: OutlineInputBorder(
+                                                  borderRadius: BorderRadius.circular(12),
                                                   borderSide: const BorderSide(
-                                                    color: Color.fromRGBO(
-                                                        237, 88, 33, 1),
-                                                    width: 2.5,
+                                                    color: Color.fromRGBO(237, 88, 33, 1),
+                                                    width: 2,
                                                   ),
                                                 ),
                                               ),
@@ -311,144 +360,210 @@ class CarritoPageState extends State<CarritoPage> {
                                           ),
                                         ],
                                       ),
-                                      const SizedBox(height: 14),
+                                      const SizedBox(height: 12),
                                       TextField(
                                         controller: _emailController,
                                         keyboardType: TextInputType.emailAddress,
+                                        style: TextStyle(
+                                          fontSize: 15,
+                                          color: isDark ? Colors.white : Colors.black87,
+                                        ),
                                         decoration: InputDecoration(
-                                          labelText: "Email",
-                                          hintText: "ejemplo@correo.com",
+                                          labelText: AppLocalizations.of(context)!.email,
+                                          hintText: AppLocalizations.of(context)!.exampleEmailHint,
+                                          labelStyle: TextStyle(
+                                            color: isDark ? Colors.grey[500] : Colors.grey[600],
+                                          ),
+                                          hintStyle: TextStyle(
+                                            color: isDark ? Colors.grey[600] : Colors.grey[400],
+                                          ),
                                           filled: true,
-                                          fillColor: fill,
-                                          prefixIcon:
-                                              const Icon(Icons.email, size: 22),
-                                          contentPadding:
-                                              const EdgeInsets.symmetric(
-                                            vertical: 18,
-                                            horizontal: 16,
+                                          fillColor: isDark
+                                              ? const Color(0xFF1E1E1E)
+                                              : Colors.white,
+                                          prefixIcon: Icon(
+                                            Icons.email_rounded,
+                                            color: isDark ? Colors.grey[500] : Colors.grey[600],
+                                            size: 20,
+                                          ),
+                                          contentPadding: const EdgeInsets.all(16),
+                                          border: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(12),
+                                            borderSide: BorderSide(
+                                              color: isDark ? Colors.grey[800]! : Colors.grey[300]!,
+                                              width: 1,
+                                            ),
                                           ),
                                           enabledBorder: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(14),
-                                            borderSide: const BorderSide(
-                                              color: Color.fromRGBO(
-                                                  237, 88, 33, 1),
-                                              width: 2,
+                                            borderRadius: BorderRadius.circular(12),
+                                            borderSide: BorderSide(
+                                              color: isDark ? Colors.grey[800]! : Colors.grey[300]!,
+                                              width: 1,
                                             ),
                                           ),
                                           focusedBorder: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(14),
+                                            borderRadius: BorderRadius.circular(12),
                                             borderSide: const BorderSide(
-                                              color: Color.fromRGBO(
-                                                  237, 88, 33, 1),
-                                              width: 2.5,
+                                              color: Color.fromRGBO(237, 88, 33, 1),
+                                              width: 2,
                                             ),
                                           ),
                                         ),
                                       ),
-                                      const SizedBox(height: 14),
+                                      const SizedBox(height: 12),
                                       TextField(
                                         controller: _telefonoController,
-                                        keyboardType: TextInputType.number,
+                                        keyboardType: TextInputType.phone,
                                         inputFormatters: [
                                           FilteringTextInputFormatter.digitsOnly,
                                           LengthLimitingTextInputFormatter(10),
                                         ],
+                                        style: TextStyle(
+                                          fontSize: 15,
+                                          color: isDark ? Colors.white : Colors.black87,
+                                        ),
                                         decoration: InputDecoration(
-                                          labelText: "Teléfono",
-                                          hintText: "Ej: 3001234567",
+                                          labelText: AppLocalizations.of(context)!.phoneLabel,
+                                          hintText: AppLocalizations.of(context)!.phoneExampleHint,
+                                          labelStyle: TextStyle(
+                                            color: isDark ? Colors.grey[500] : Colors.grey[600],
+                                          ),
+                                          hintStyle: TextStyle(
+                                            color: isDark ? Colors.grey[600] : Colors.grey[400],
+                                          ),
                                           filled: true,
-                                          fillColor: fill,
-                                          prefixIcon:
-                                              const Icon(Icons.phone, size: 22),
-                                          contentPadding:
-                                              const EdgeInsets.symmetric(
-                                            vertical: 18,
-                                            horizontal: 16,
+                                          fillColor: isDark
+                                              ? const Color(0xFF1E1E1E)
+                                              : Colors.white,
+                                          prefixIcon: Icon(
+                                            Icons.phone_rounded,
+                                            color: isDark ? Colors.grey[500] : Colors.grey[600],
+                                            size: 20,
+                                          ),
+                                          contentPadding: const EdgeInsets.all(16),
+                                          border: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(12),
+                                            borderSide: BorderSide(
+                                              color: isDark ? Colors.grey[800]! : Colors.grey[300]!,
+                                              width: 1,
+                                            ),
                                           ),
                                           enabledBorder: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(14),
-                                            borderSide: const BorderSide(
-                                              color: Color.fromRGBO(
-                                                  237, 88, 33, 1),
-                                              width: 2,
+                                            borderRadius: BorderRadius.circular(12),
+                                            borderSide: BorderSide(
+                                              color: isDark ? Colors.grey[800]! : Colors.grey[300]!,
+                                              width: 1,
                                             ),
                                           ),
                                           focusedBorder: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(14),
+                                            borderRadius: BorderRadius.circular(12),
                                             borderSide: const BorderSide(
-                                              color: Color.fromRGBO(
-                                                  237, 88, 33, 1),
-                                              width: 2.5,
+                                              color: Color.fromRGBO(237, 88, 33, 1),
+                                              width: 2,
                                             ),
                                           ),
                                         ),
                                       ),
-                                      const SizedBox(height: 18),
                                     ],
+                                ],
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              // Botones de acción
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: isDark 
+                      ? const Color(0xFF1E1E1E)
+                      : Colors.grey[50],
+                  borderRadius: const BorderRadius.only(
+                    bottomLeft: Radius.circular(24),
+                    bottomRight: Radius.circular(24),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: TextButton(
+                        onPressed: _isProcessing ? null : () => Navigator.pop(context),
+                        style: TextButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: Text(
+                          AppLocalizations.of(context)!.cancelLabel,
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: isDark ? Colors.grey[400] : Colors.grey[600],
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      flex: 2,
+                      child: ElevatedButton(
+                          onPressed: _isProcessing
+                              ? null
+                              : () async {
+                                  setState(() => _isProcessing = true);
+                                  await _processOrder(dialogContext);
+                                  setState(() => _isProcessing = false);
+                                },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color.fromRGBO(237, 88, 33, 1),
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            elevation: 0,
+                          ),
+                          child: _isProcessing
+                              ? const SizedBox(
+                                  width: 22,
+                                  height: 22,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2.5,
+                                    color: Colors.white,
+                                  ),
+                                )
+                              : Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      AppLocalizations.of(context)!.confirmOrderLabel,
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    SizedBox(width: 8),
+                                    Icon(
+                                      Icons.arrow_forward_rounded,
+                                      color: Colors.white,
+                                      size: 20,
+                                    ),
                                   ],
                                 ),
-                              )
-                            ],
-                          ),
-                        );
-                      },
+                      ),
                     ),
                   ],
                 ),
               ),
-              actionsPadding: const EdgeInsets.all(16),
-
-              actions: [
-                TextButton(
-                  onPressed:
-                      _isProcessing ? null : () => Navigator.pop(context),
-                  child: const Text(
-                    'Cancelar',
-                    style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.grey,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ),
-                ElevatedButton(
-                  onPressed: _isProcessing
-                      ? null
-                      : () async {
-                          setState(() => _isProcessing = true);
-                          await _processOrder(dialogContext);
-                          setState(() => _isProcessing = false);
-                        },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromRGBO(237, 88, 33, 1),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 26, vertical: 14),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  child: _isProcessing
-                      ? const SizedBox(
-                          width: 22,
-                          height: 22,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: Colors.white,
-                          ),
-                        )
-                      : const Text(
-                          'Confirmar Pedido',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 17,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                ),
-              ],
+            ],
+          ),
+        ),
             );
           },
         );
@@ -736,75 +851,197 @@ class CarritoPageState extends State<CarritoPage> {
             );
           }
 
-          return ListView.builder(
-            itemCount: cartItems.length,
-            itemBuilder: (context, index) {
-              final item = cartItems[index];
+          final isDark = Theme.of(context).brightness == Brightness.dark;
+          
+          return SafeArea(
+            child: ListView.builder(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              itemCount: cartItems.length,
+              itemBuilder: (context, index) {
+                final item = cartItems[index];
 
-              return Card(
-                margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              return Container(
+                margin: const EdgeInsets.only(bottom: 16),
+                decoration: BoxDecoration(
+                  color: isDark ? const Color(0xFF2C2C2C) : Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: isDark 
+                          ? Colors.black.withOpacity(0.3)
+                          : Colors.grey.withOpacity(0.15),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
                 child: Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.all(12.0),
                   child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Imagen
-                      if (item.image != null)
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
-                          child: Image.network(
-                            item.image!,
-                            width: 80,
-                            height: 80,
-                            fit: BoxFit.cover,
+                      // Imagen con badge de cantidad
+                      Stack(
+                        children: [
+                          if (item.image != null)
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: const Color.fromRGBO(237, 88, 33, 0.3),
+                                      blurRadius: 8,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: Image.network(
+                                  item.image!,
+                                  width: 90,
+                                  height: 90,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
+                          // Badge con cantidad
+                          Positioned(
+                            top: -4,
+                            right: -4,
+                            child: Container(
+                              padding: const EdgeInsets.all(6),
+                              decoration: BoxDecoration(
+                                color: const Color.fromRGBO(237, 88, 33, 1),
+                                shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: const Color.fromRGBO(237, 88, 33, 0.5),
+                                    blurRadius: 6,
+                                  ),
+                                ],
+                              ),
+                              child: Text(
+                                '${item.quantity}',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
                           ),
-                        ),
+                        ],
+                      ),
 
-                      const SizedBox(width: 12),
+                      const SizedBox(width: 14),
 
-                      // Info + botones
+                      // Info del producto
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
                               item.name,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontWeight: FontWeight.bold,
-                                fontSize: 16,
+                                fontSize: 17,
+                                color: isDark ? Colors.white : Colors.black87,
+                              ),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            if (item.description != null) ...[
+                              const SizedBox(height: 4),
+                              Text(
+                                item.description!,
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: isDark ? Colors.grey[400] : Colors.grey[600],
+                                ),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                            const SizedBox(height: 12),
+                            // Precio unitario
+                            Text(
+                              '\$${NumberFormat('#,###', 'es_CO').format(item.price)} c/u',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: isDark ? Colors.grey[400] : Colors.grey[600],
                               ),
                             ),
-                            if (item.description != null)
-                              Padding(
-                                padding: const EdgeInsets.only(top: 4.0),
-                                child: Text(
-                                  item.description!,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodySmall
-                                      ?.copyWith(fontSize: 13),
-                                ),
-                              ),
+                            const SizedBox(height: 8),
+                            // Controles de cantidad
                             Row(
                               children: [
-                                IconButton(
-                                  icon: const Icon(Icons.remove_circle),
-                                  onPressed: () {
-                                    context.read<CartBloc>().add(
-                                          UpdateCartItemQuantity(
-                                              item.id, item.quantity - 1),
-                                        );
-                                  },
+                                Container(
+                                  decoration: BoxDecoration(
+                                    color: isDark 
+                                        ? const Color(0xFF1E1E1E)
+                                        : Colors.grey[100],
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      IconButton(
+                                        icon: Icon(
+                                          Icons.remove_circle,
+                                          color: item.quantity > 1
+                                              ? const Color.fromRGBO(237, 88, 33, 1)
+                                              : Colors.grey,
+                                          size: 22,
+                                        ),
+                                        onPressed: item.quantity > 1
+                                            ? () {
+                                                context.read<CartBloc>().add(
+                                                      UpdateCartItemQuantity(
+                                                          item.id, item.quantity - 1),
+                                                    );
+                                              }
+                                            : null,
+                                        padding: const EdgeInsets.all(4),
+                                        constraints: const BoxConstraints(),
+                                      ),
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 12, vertical: 4),
+                                        child: Text(
+                                          '${item.quantity}',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 15,
+                                            color: isDark ? Colors.white : Colors.black87,
+                                          ),
+                                        ),
+                                      ),
+                                      IconButton(
+                                        icon: const Icon(
+                                          Icons.add_circle,
+                                          color: Color.fromRGBO(237, 88, 33, 1),
+                                          size: 22,
+                                        ),
+                                        onPressed: () {
+                                          context.read<CartBloc>().add(
+                                                UpdateCartItemQuantity(
+                                                    item.id, item.quantity + 1),
+                                              );
+                                        },
+                                        padding: const EdgeInsets.all(4),
+                                        constraints: const BoxConstraints(),
+                                      ),
+                                    ],
+                                  ),
                                 ),
+                                const Spacer(),
+                                // Precio total del item
                                 Text(
-                                    '${AppLocalizations.of(context)!.quantity}: ${item.quantity}'),
-                                IconButton(
-                                  icon: const Icon(Icons.add_circle),
-                                  onPressed: () {
-                                    context.read<CartBloc>().add(
-                                          UpdateCartItemQuantity(
-                                              item.id, item.quantity + 1),
-                                        );
-                                  },
+                                  '\$${NumberFormat('#,###', 'es_CO').format(item.price * item.quantity)}',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 17,
+                                    color: Color.fromRGBO(237, 88, 33, 1),
+                                  ),
                                 ),
                               ],
                             ),
@@ -812,64 +1049,15 @@ class CarritoPageState extends State<CarritoPage> {
                         ),
                       ),
 
-                      // Precio y eliminar
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          IconButton(
-                            icon: Icon(Icons.delete,
-                                color: Theme.of(context).colorScheme.error),
-                            onPressed: () {
-                              context
-                                  .read<CartBloc>()
-                                  .add(RemoveFromCart(item.id));
-                            },
-                          ),
-                          Text(
-                            '\$ ${NumberFormat('#,###', 'es_CO').format(item.price * item.quantity)} COP',
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            },
-          );
-        },
-      ),
-      bottomNavigationBar: BlocBuilder<CartBloc, CartState>(
-        builder: (context, state) {
-          final cartItems = state.cart.items;
-
-          if (cartItems.isEmpty) return const SizedBox.shrink();
-
-          return Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  '${AppLocalizations.of(context)!.total}: \$ ${NumberFormat('#,###', 'es_CO').format(state.cart.totalPrice)} COP',
-                  style: Theme.of(context)
-                      .textTheme
-                      .titleLarge
-                      ?.copyWith(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-
-                const SizedBox(height: 14),
-
-                // ⭐ BOTONES (Vaciar y Proceder)
-
-                Row(
-                  children: [
-                    // 🔴 BOTÓN MINI DE VACIAR
-                    SizedBox(
-                      height: 48,
-                      child: ElevatedButton(
+                      // Botón eliminar
+                      IconButton(
+                        icon: Icon(
+                          Icons.delete_outline,
+                          color: isDark ? Colors.red[300] : Colors.red[400],
+                          size: 24,
+                        ),
                         onPressed: () {
-                          context.read<CartBloc>().add(ClearCart());
+                          context.read<CartBloc>().add(RemoveFromCart(item.id));
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               behavior: SnackBarBehavior.floating,
@@ -879,31 +1067,30 @@ class CarritoPageState extends State<CarritoPage> {
                               content: Center(
                                 child: Container(
                                   padding: const EdgeInsets.symmetric(
-                                      horizontal: 20, vertical: 14),
+                                      horizontal: 20, vertical: 12),
                                   decoration: BoxDecoration(
-                                    color: Colors.redAccent,
-                                    borderRadius: BorderRadius.circular(14),
+                                    color: Colors.red[400],
+                                    borderRadius: BorderRadius.circular(12),
                                     boxShadow: [
                                       BoxShadow(
-                                        color:
-                                            Colors.redAccent.withOpacity(0.4),
-                                        blurRadius: 10,
-                                        offset: const Offset(0, 3),
+                                        color: Colors.red.withOpacity(0.3),
+                                        blurRadius: 8,
+                                        offset: const Offset(0, 2),
                                       ),
                                     ],
                                   ),
                                   child: Row(
                                     mainAxisSize: MainAxisSize.min,
-                                    children: const [
-                                      Icon(Icons.error_outline,
-                                          color: Colors.white, size: 22),
-                                      SizedBox(width: 10),
+                                    children: [
+                                      const Icon(Icons.check_circle,
+                                          color: Colors.white, size: 20),
+                                      const SizedBox(width: 8),
                                       Text(
-                                        'Carrito vacío',
-                                        style: TextStyle(
+                                        'Producto eliminado',
+                                        style: const TextStyle(
                                           color: Colors.white,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16,
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 14,
                                         ),
                                       ),
                                     ],
@@ -913,49 +1100,258 @@ class CarritoPageState extends State<CarritoPage> {
                             ),
                           );
                         },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          foregroundColor: Colors.redAccent,
-                          elevation: 2,
-                          padding: const EdgeInsets.symmetric(horizontal: 10),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            side: const BorderSide(
-                                color: Colors.redAccent, width: 1.5),
-                          ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+            ),
+          );
+        },
+      ),
+      bottomNavigationBar: BlocBuilder<CartBloc, CartState>(
+        builder: (context, state) {
+          final cartItems = state.cart.items;
+          final isDark = Theme.of(context).brightness == Brightness.dark;
+
+          if (cartItems.isEmpty) return const SizedBox.shrink();
+
+          return Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: isDark
+                    ? [
+                        const Color(0xFF1E1E1E).withOpacity(0.95),
+                        const Color(0xFF1E1E1E),
+                      ]
+                    : [
+                        Colors.white.withOpacity(0.95),
+                        Colors.white,
+                      ],
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: isDark
+                      ? Colors.black.withOpacity(0.3)
+                      : Colors.grey.withOpacity(0.2),
+                  blurRadius: 12,
+                  offset: const Offset(0, -4),
+                ),
+              ],
+            ),
+            child: SafeArea(
+              minimum: const EdgeInsets.only(bottom: 20),
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 4),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Resumen del total
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 16),
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [
+                            Color.fromRGBO(237, 88, 33, 0.1),
+                            Color.fromRGBO(237, 88, 33, 0.05),
+                          ],
                         ),
-                        child: const Icon(Icons.delete,
-                            size: 22, color: Colors.redAccent),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: const Color.fromRGBO(237, 88, 33, 0.3),
+                          width: 1.5,
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                AppLocalizations.of(context)!.totalToPayTitle,
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: isDark
+                                      ? Colors.grey[400]
+                                      : Colors.grey[600],
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                '\$${NumberFormat('#,###', 'es_CO').format(state.cart.totalPrice)}',
+                                style: const TextStyle(
+                                  fontSize: 26,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color.fromRGBO(237, 88, 33, 1),
+                                  letterSpacing: -0.5,
+                                ),
+                              ),
+                            ],
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: const Color.fromRGBO(237, 88, 33, 1),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Text(
+                              '${cartItems.length} ${cartItems.length == 1 ? AppLocalizations.of(context)!.itemSingular : AppLocalizations.of(context)!.itemPlural}',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 13,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
 
-                    const SizedBox(width: 12),
+                    const SizedBox(height: 16),
 
-                    // 🟠 BOTÓN PROCEDER AL PAGO (GRANDE)
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () => _showCheckoutDialog(context),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color.fromRGBO(237, 88, 33, 1),
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                    // Botones de acción
+                    Row(
+                      children: [
+                        // Botón Vaciar Carrito
+                        Container(
+                          height: 56,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(14),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.red.withOpacity(0.2),
+                                blurRadius: 8,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: ElevatedButton(
+                            onPressed: () {
+                              context.read<CartBloc>().add(ClearCart());
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  behavior: SnackBarBehavior.floating,
+                                  backgroundColor: Colors.transparent,
+                                  elevation: 0,
+                                  duration: const Duration(seconds: 2),
+                                  content: Center(
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 20, vertical: 14),
+                                      decoration: BoxDecoration(
+                                        color: Colors.red[400],
+                                        borderRadius: BorderRadius.circular(14),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.red.withOpacity(0.4),
+                                            blurRadius: 10,
+                                            offset: const Offset(0, 3),
+                                          ),
+                                        ],
+                                      ),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: const [
+                                          Icon(Icons.check_circle,
+                                              color: Colors.white, size: 22),
+                                          SizedBox(width: 10),
+                                          Text(
+                                            'Carrito vacío',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 15,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: isDark
+                                  ? const Color(0xFF2C2C2C)
+                                  : Colors.white,
+                              foregroundColor: Colors.red[400],
+                              elevation: 0,
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 16),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(14),
+                                side: BorderSide(
+                                    color: Colors.red[400]!, width: 2),
+                              ),
+                            ),
+                            child: Icon(Icons.delete_outline,
+                                size: 24, color: Colors.red[400]),
                           ),
                         ),
-                        child: Text(
-                          'Proceder al Pago',
-                          style:
-                              Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
+
+                        const SizedBox(width: 12),
+
+                        // Botón Proceder al Pago
+                        Expanded(
+                          child: Container(
+                            height: 56,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(14),
+                              gradient: const LinearGradient(
+                                colors: [
+                                  Color.fromRGBO(237, 88, 33, 1),
+                                  Color.fromRGBO(255, 110, 50, 1),
+                                ],
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: const Color.fromRGBO(237, 88, 33, 0.4),
+                                  blurRadius: 12,
+                                  offset: const Offset(0, 6),
+                                ),
+                              ],
+                            ),
+                            child: ElevatedButton(
+                              onPressed: () => _showCheckoutDialog(context),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.transparent,
+                                shadowColor: Colors.transparent,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(14),
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    AppLocalizations.of(context)!.proceedToPayment,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.bold,
+                                      letterSpacing: 0.5,
+                                    ),
                                   ),
+                                  SizedBox(width: 8),
+                                  Icon(Icons.arrow_forward_rounded,
+                                      color: Colors.white, size: 22),
+                                ],
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
-                    )
+                      ],
+                    ),
                   ],
-                )
-              ],
+                ),
+              ),
             ),
           );
         },

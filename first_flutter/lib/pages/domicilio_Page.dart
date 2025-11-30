@@ -123,52 +123,167 @@ class DomicilioPageState extends State<DomicilioPage> {
 
   void _showEmailDialog() {
     _emailController.clear();
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(AppLocalizations.of(context)!.searchOrdersTitle),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              AppLocalizations.of(context)!.searchOrdersPrompt,
-              style: const TextStyle(fontSize: 14),
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: _emailController,
-              keyboardType: TextInputType.emailAddress,
-              decoration: InputDecoration(
-                labelText: AppLocalizations.of(context)!.email,
-                hintText: AppLocalizations.of(context)!.emailHint,
-                border: const OutlineInputBorder(),
-                prefixIcon: const Icon(Icons.email),
-              ),
-            ),
-          ],
+      builder: (context) => Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(24),
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(AppLocalizations.of(context)!.cancel),
+        backgroundColor: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Icon
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: const Color.fromRGBO(237, 88, 33, 1).withOpacity(0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.search,
+                  color: Color.fromRGBO(237, 88, 33, 1),
+                  size: 32,
+                ),
+              ),
+              const SizedBox(height: 20),
+              
+              // Title
+              Text(
+                AppLocalizations.of(context)!.searchOrdersTitle,
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  color: isDark ? Colors.white : Colors.black87,
+                ),
+              ),
+              const SizedBox(height: 12),
+              
+              // Description
+              Text(
+                AppLocalizations.of(context)!.searchOrdersPrompt,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 15,
+                  color: isDark ? Colors.grey[400] : Colors.grey[600],
+                  height: 1.4,
+                ),
+              ),
+              const SizedBox(height: 24),
+              
+              // Email field
+              TextField(
+                controller: _emailController,
+                keyboardType: TextInputType.emailAddress,
+                style: TextStyle(
+                  color: isDark ? Colors.white : Colors.black87,
+                ),
+                decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context)!.email,
+                  hintText: AppLocalizations.of(context)!.emailHint,
+                  labelStyle: TextStyle(
+                    color: isDark ? Colors.grey[500] : Colors.grey[600],
+                  ),
+                  hintStyle: TextStyle(
+                    color: isDark ? Colors.grey[600] : Colors.grey[400],
+                  ),
+                  filled: true,
+                  fillColor: isDark
+                      ? const Color(0xFF2C2C2C)
+                      : Colors.grey[50],
+                  prefixIcon: Icon(
+                    Icons.email_rounded,
+                    color: isDark ? Colors.grey[500] : Colors.grey[600],
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(
+                      color: isDark ? Colors.grey[800]! : Colors.grey[300]!,
+                    ),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(
+                      color: isDark ? Colors.grey[800]! : Colors.grey[300]!,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(
+                      color: Color.fromRGBO(237, 88, 33, 1),
+                      width: 2,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 24),
+              
+              // Buttons
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: () => Navigator.pop(context),
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        side: BorderSide(
+                          color: isDark ? Colors.grey[700]! : Colors.grey[300]!,
+                        ),
+                      ),
+                      child: Text(
+                        AppLocalizations.of(context)!.cancel,
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                          color: isDark ? Colors.grey[300] : Colors.grey[700],
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    flex: 2,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        final email = _emailController.text.trim();
+                        if (email.isNotEmpty) {
+                          setState(() {
+                            _guestEmail = email;
+                          });
+                          Navigator.pop(context);
+                          _loadOrders(guestEmail: email);
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color.fromRGBO(237, 88, 33, 1),
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: Text(
+                        AppLocalizations.of(context)!.search,
+                        style: const TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
-          ElevatedButton(
-            onPressed: () {
-              final email = _emailController.text.trim();
-              if (email.isNotEmpty) {
-                setState(() {
-                  _guestEmail = email; // Guardar el email del invitado
-                });
-                Navigator.pop(context);
-                _loadOrders(guestEmail: email);
-              }
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color.fromRGBO(237, 88, 33, 1),
-            ),
-            child: Text(AppLocalizations.of(context)!.search, style: const TextStyle(color: Colors.white)),
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -259,7 +374,9 @@ class DomicilioPageState extends State<DomicilioPage> {
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Header con código e icono
               Row(
                 children: [
                   Container(
@@ -271,55 +388,67 @@ class DomicilioPageState extends State<DomicilioPage> {
                     child: Icon(
                       _getStatusIcon(status),
                       color: statusColor,
-                      size: 24,
+                      size: 20,
                     ),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              '#${order['code'] ?? 'N/A'}',
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                              ),
-                            ),
-                            Text(
-                              '\$${NumberFormat('#,###', 'es_CO').format(order['total'] ?? 0)}',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.green[700],
-                                fontSize: 14,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          statusText,
-                          style: TextStyle(
-                            color: statusColor,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 13,
-                          ),
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          '${order['items']?.length ?? 0} ${AppLocalizations.of(context)!.productsLabel}',
-                          style: TextStyle(
-                            color: Colors.grey[600],
-                            fontSize: 12,
-                          ),
-                        ),
-                      ],
+                    child: Text(
+                      '#${order['code'] ?? 'N/A'}',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
                     ),
                   ),
-                  Icon(Icons.chevron_right, color: Colors.grey[400]),
+                ],
+              ),
+              
+              const SizedBox(height: 12),
+              
+              // Estado y productos
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: statusColor.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      statusText,
+                      style: TextStyle(
+                        color: statusColor,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ),
+                  Text(
+                    '${order['items']?.length ?? 0} ${AppLocalizations.of(context)!.productsLabel}',
+                    style: TextStyle(
+                      color: Colors.grey[600],
+                      fontSize: 13,
+                    ),
+                  ),
+                ],
+              ),
+              
+              const SizedBox(height: 8),
+              
+              // Total
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Text(
+                    '\$${NumberFormat('#,###', 'es_CO').format(order['total'] ?? 0)} COP',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.green[700],
+                      fontSize: 15,
+                    ),
+                  ),
                 ],
               ),
               if (isPending) ...[
@@ -331,9 +460,9 @@ class DomicilioPageState extends State<DomicilioPage> {
                   child: ElevatedButton.icon(
                     onPressed: () => _navigateToPayment(order),
                     icon: const Icon(Icons.payment, color: Colors.white, size: 20),
-                    label: const Text(
-                      'Ir a Pagar',
-                      style: TextStyle(
+                    label: Text(
+                      AppLocalizations.of(context)!.goToPayButton,
+                      style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
                         fontSize: 15,
@@ -359,92 +488,378 @@ class DomicilioPageState extends State<DomicilioPage> {
 
   void _showOrderDetails(Map<String, dynamic> order) {
     final canEditAddress = order['status'] == 'pendiente' || order['status'] == 'pagado';
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final status = order['status'] ?? 'pendiente';
+    final statusText = _getStatusText(status);
+    final statusColor = _getStatusColor(status);
     
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text('${AppLocalizations.of(context)!.orderNumber} #${order['code']}'),
-        content: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildDetailRow(AppLocalizations.of(context)!.orderStatus, _getStatusText(order['status'] ?? 'pendiente')),
-              _buildDetailRow(AppLocalizations.of(context)!.totalPrice, '\$${NumberFormat('#,###', 'es_CO').format(order['total'] ?? 0)}'),
-              
-              // Dirección con botón de editar
-              Padding(
-                padding: const EdgeInsets.only(bottom: 8),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(
-                      width: 80,
-                      child: Text(
-                        '${AppLocalizations.of(context)!.deliveryAddress}:',
-                        style: const TextStyle(fontWeight: FontWeight.bold),
-                      ),
+      builder: (context) => Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(24),
+        ),
+        backgroundColor: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+        child: Container(
+          constraints: const BoxConstraints(maxWidth: 400),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Header con código de orden
+                Container(
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      colors: [Color.fromRGBO(237, 88, 33, 1), Color(0xFFFF6E40)],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
                     ),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(24),
+                      topRight: Radius.circular(24),
+                    ),
+                  ),
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
                         children: [
-                          Text(order['direccion'] ?? 'N/A'),
-                          if (canEditAddress) ...[
-                            const SizedBox(height: 4),
-                            InkWell(
-                              onTap: () {
-                                Navigator.pop(context);
-                                _showEditAddressDialog(order);
-                              },
-                              child: const Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(Icons.edit, size: 16, color: Color.fromRGBO(237, 88, 33, 1)),
-                                  SizedBox(width: 4),
-                                  Text(
-                                    'Editar dirección',
-                                    style: TextStyle(
-                                      color: Color.fromRGBO(237, 88, 33, 1),
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ],
-                              ),
+                          Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(8),
                             ),
-                          ],
+                            child: const Icon(
+                              Icons.receipt_long,
+                              color: Colors.white,
+                              size: 24,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  AppLocalizations.of(context)!.orderNumber,
+                                  style: const TextStyle(
+                                    color: Colors.white70,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                const SizedBox(height: 2),
+                                Text(
+                                  '#${order['code']}',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    letterSpacing: 0.5,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         ],
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              
-              const Divider(),
-              Text(AppLocalizations.of(context)!.productsLabel, style: const TextStyle(fontWeight: FontWeight.bold)),
-              const SizedBox(height: 8),
-              ...(order['items'] as List? ?? []).map((item) {
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 4),
-                  child: Text('• ${item['product_name']} x${item['quantity']}'),
-                );
-              }).toList(),
-            ],
+
+                Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Estado y Total
+                      Row(
+                        children: [
+                          Expanded(
+                            child: _buildInfoCard(
+                              icon: Icons.info_outline,
+                              label: AppLocalizations.of(context)!.orderStatus,
+                              value: statusText,
+                              valueColor: statusColor,
+                              isDark: isDark,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: _buildInfoCard(
+                              icon: Icons.attach_money,
+                              label: AppLocalizations.of(context)!.totalPrice,
+                              value: '\$${NumberFormat('#,###', 'es_CO').format(order['total'] ?? 0)}',
+                              valueColor: Colors.green[700]!,
+                              isDark: isDark,
+                            ),
+                          ),
+                        ],
+                      ),
+                      
+                      const SizedBox(height: 20),
+                      
+                      // Dirección de entrega
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: isDark ? Colors.white.withOpacity(0.05) : Colors.grey[50],
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: isDark ? Colors.white.withOpacity(0.1) : Colors.grey[200]!,
+                          ),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.location_on,
+                                  size: 20,
+                                  color: isDark ? Colors.white70 : Colors.grey[700],
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  AppLocalizations.of(context)!.deliveryAddress,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14,
+                                    color: isDark ? Colors.white : Colors.black87,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              order['direccion'] ?? 'N/A',
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: isDark ? Colors.white70 : Colors.grey[700],
+                                height: 1.4,
+                              ),
+                            ),
+                            if (canEditAddress) ...[
+                              const SizedBox(height: 12),
+                              InkWell(
+                                onTap: () {
+                                  Navigator.pop(context);
+                                  _showEditAddressDialog(order);
+                                },
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    const Icon(
+                                      Icons.edit,
+                                      size: 16,
+                                      color: Color.fromRGBO(237, 88, 33, 1),
+                                    ),
+                                    const SizedBox(width: 6),
+                                    Text(
+                                      AppLocalizations.of(context)!.editAddress,
+                                      style: const TextStyle(
+                                        color: Color.fromRGBO(237, 88, 33, 1),
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ],
+                        ),
+                      ),
+                      
+                      const SizedBox(height: 20),
+                      
+                      // Productos
+                      Text(
+                        AppLocalizations.of(context)!.productsLabel,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                          color: isDark ? Colors.white : Colors.black87,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: isDark ? Colors.white.withOpacity(0.05) : Colors.grey[50],
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: isDark ? Colors.white.withOpacity(0.1) : Colors.grey[200]!,
+                          ),
+                        ),
+                        child: Column(
+                          children: [
+                            ...(order['items'] as List? ?? []).asMap().entries.map((entry) {
+                              final index = entry.key;
+                              final item = entry.value;
+                              final isLast = index == (order['items'] as List).length - 1;
+                              
+                              return Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                decoration: BoxDecoration(
+                                  border: !isLast ? Border(
+                                    bottom: BorderSide(
+                                      color: isDark ? Colors.white.withOpacity(0.1) : Colors.grey[200]!,
+                                    ),
+                                  ) : null,
+                                ),
+                                child: Row(
+                                  children: [
+                                    Container(
+                                      width: 8,
+                                      height: 8,
+                                      decoration: const BoxDecoration(
+                                        color: Color.fromRGBO(237, 88, 33, 1),
+                                        shape: BoxShape.circle,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 12),
+                                    Expanded(
+                                      child: Text(
+                                        item['product_name'] ?? '',
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          color: isDark ? Colors.white : Colors.black87,
+                                        ),
+                                      ),
+                                    ),
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                      decoration: BoxDecoration(
+                                        color: const Color.fromRGBO(237, 88, 33, 1).withOpacity(0.1),
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      child: Text(
+                                        'x${item['quantity']}',
+                                        style: const TextStyle(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.bold,
+                                          color: Color.fromRGBO(237, 88, 33, 1),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }).toList(),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                // Botones de acción
+                Container(
+                  padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+                  child: Row(
+                    children: [
+                      if (order['status'] == 'pendiente' || order['status'] == 'pagado')
+                        Expanded(
+                          child: OutlinedButton(
+                            onPressed: () async {
+                              Navigator.pop(context);
+                              await _cancelOrder(order['code']);
+                            },
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: Colors.red,
+                              side: const BorderSide(color: Colors.red),
+                              padding: const EdgeInsets.symmetric(vertical: 14),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                            child: Text(
+                              AppLocalizations.of(context)!.cancel,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 15,
+                              ),
+                            ),
+                          ),
+                        ),
+                      if (order['status'] == 'pendiente' || order['status'] == 'pagado')
+                        const SizedBox(width: 12),
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: () => Navigator.pop(context),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color.fromRGBO(237, 88, 33, 1),
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            elevation: 0,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          child: Text(
+                            AppLocalizations.of(context)!.close,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
-        actions: [
-          if (order['status'] == 'pendiente' || order['status'] == 'pagado')
-            TextButton(
-              onPressed: () async {
-                Navigator.pop(context);
-                await _cancelOrder(order['code']);
-              },
-              child: Text(AppLocalizations.of(context)!.cancel, style: const TextStyle(color: Colors.red)),
+      ),
+    );
+  }
+
+  Widget _buildInfoCard({
+    required IconData icon,
+    required String label,
+    required String value,
+    required Color valueColor,
+    required bool isDark,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: isDark ? Colors.white.withOpacity(0.05) : Colors.grey[50],
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: isDark ? Colors.white.withOpacity(0.1) : Colors.grey[200]!,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(
+            icon,
+            size: 18,
+            color: isDark ? Colors.white70 : Colors.grey[600],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 11,
+              color: isDark ? Colors.white60 : Colors.grey[600],
+              fontWeight: FontWeight.w500,
             ),
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(AppLocalizations.of(context)!.close),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              color: valueColor,
+            ),
           ),
         ],
       ),
@@ -784,25 +1199,6 @@ class DomicilioPageState extends State<DomicilioPage> {
         isError: true,
       );
     }
-  }
-
-  Widget _buildDetailRow(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: 80,
-            child: Text(
-              '$label:',
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
-          ),
-          Expanded(child: Text(value)),
-        ],
-      ),
-    );
   }
 
   Color _getStatusColor(String status) {

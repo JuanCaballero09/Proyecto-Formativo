@@ -778,6 +778,9 @@ class ApiService {
           .patch(url, headers: headers)
           .timeout(ApiConfig.connectionTimeout);
 
+      debugPrint("📋 Cancel order response status: ${response.statusCode}");
+      debugPrint("📋 Cancel order response body: ${response.body}");
+
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         debugPrint("✅ Order cancelled: $code");
@@ -789,7 +792,14 @@ class ApiService {
       } else if (response.statusCode == 404) {
         throw DataException(message: 'Order not found');
       } else {
-        throw NetworkException(message: 'Error cancelling order');
+        // Intentar parsear el error del backend
+        try {
+          final errorData = jsonDecode(response.body);
+          final errorMsg = errorData['error'] ?? errorData['errors']?.join(', ') ?? 'Error cancelling order';
+          throw NetworkException(message: errorMsg);
+        } catch (_) {
+          throw NetworkException(message: 'Error cancelling order (${response.statusCode})');
+        }
       }
     } on TimeoutException {
       throw NetworkException(message: 'Request timed out');

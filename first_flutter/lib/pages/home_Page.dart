@@ -377,7 +377,7 @@ class _HomePageState extends State<HomePage>
                         context.read<BannerCubit>().loadBanners();
                       },
                       icon: const Icon(Icons.refresh),
-                      label: const Text('Reintentar'),
+                      label: Text(AppLocalizations.of(context)!.retry),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.red[400],
                       ),
@@ -722,139 +722,164 @@ void showSimpleAddedDialog(BuildContext context) {
           elevation: 4,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
-            mainAxisSize: MainAxisSize.min,
             children: [
-              // Imagen del producto con skeleton loading
+              // Imagen del producto con skeleton loading - Responsive con AspectRatio
               ClipRRect(
                 borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-                child: product.image.isNotEmpty
-                    ? Stack(
-                        children: [
-                          // Skeleton de fondo
-                          const BannerSkeleton(
-                            height: 120,
-                            width: double.infinity,
-                            borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
-                          ),
-                          // Imagen real
-                          Image.network(
-                            product.image,
-                            height: 120,
-                            width: double.infinity,
-                            fit: BoxFit.cover,
-                            loadingBuilder: (context, child, loadingProgress) {
-                              if (loadingProgress == null) return child;
-                              return const BannerSkeleton(
-                                height: 120,
+                child: AspectRatio(
+                  aspectRatio: 1.4, // Ratio 1.4:1 para mantener proporción consistente
+                  child: product.image.isNotEmpty
+                      ? Stack(
+                          children: [
+                            // Skeleton de fondo
+                            const Positioned.fill(
+                              child: BannerSkeleton(
+                                height: double.infinity,
                                 width: double.infinity,
                                 borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
-                              );
-                            },
-                            errorBuilder: (context, error, stackTrace) {
-                              return Container(
-                                height: 120,
-                                color: theme.disabledColor.withValues(alpha: 0.2),
-                                child: const Center(
-                                  child: Icon(Icons.fastfood, size: 60),
-                                ),
-                              );
-                            },
-                          ),
-                        ],
-                      )
-                    : Container(
-                        height: 120,
-                        color: theme.disabledColor.withValues(alpha: 0.2),
-                        child: const Center(child: Icon(Icons.fastfood, size: 60)),
-                      ),
-              ),
-              
-              // Nombre del producto
-              Padding(
-                padding: const EdgeInsets.fromLTRB(8, 8, 8, 2),
-                child: Text(
-                  product.name,
-                  style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.bold,
-                    color: theme.textTheme.bodyMedium?.color,
-                  ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              
-              // Precio prominente
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
-                child: Text(
-                  '\$${NumberFormat('#,###', 'es_CO').format(product.price)}',
-                  style: const TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
-                    color: Color.fromRGBO(237, 88, 33, 1),
-                  ),
-                ),
-              ),
-              
-              // Botón de compra que ocupa todo el ancho
-              Padding(
-                padding: const EdgeInsets.fromLTRB(8, 4, 8, 8),
-                child: Container(
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: const Color.fromRGBO(237, 88, 33, 1),
-                    borderRadius: BorderRadius.circular(10),
-                    boxShadow: [
-                      BoxShadow(
-                        color: const Color.fromRGBO(237, 88, 33, 0.3),
-                        blurRadius: 6,
-                        offset: const Offset(0, 3),
-                      ),
-                    ],
-                  ),
-                  child: Material(
-                    color: Colors.transparent,
-                    child: InkWell(
-                      borderRadius: BorderRadius.circular(10),
-                      onTap: () {
-                        context.read<CartBloc>().add(AddToCart(
-                          CartItem(
-                            id: product.id.toString(),
-                            name: product.name,
-                            price: product.price,
-                            quantity: 1,
-                            image: product.image,
-                            description: product.description,
-                          ),
-                        ));
-                        showSimpleAddedDialog(context);
-                      },
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(
-                            Icons.shopping_cart_outlined,
-                            color: Colors.white,
-                            size: 18,
-                          ),
-                          const SizedBox(width: 6),
-                          Flexible(
-                            child: Text(
-                              AppLocalizations.of(context)!.addToCart,
-                              style: const TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                                letterSpacing: 0.3,
                               ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
+                            ),
+                            // Imagen real
+                            Positioned.fill(
+                              child: Image.network(
+                                product.image,
+                                fit: BoxFit.cover,
+                                loadingBuilder: (context, child, loadingProgress) {
+                                  if (loadingProgress == null) return child;
+                                  return const BannerSkeleton(
+                                    height: double.infinity,
+                                    width: double.infinity,
+                                    borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+                                  );
+                                },
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Container(
+                                    color: theme.disabledColor.withValues(alpha: 0.2),
+                                    child: const Center(
+                                      child: Icon(Icons.fastfood, size: 60),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ],
+                        )
+                      : Container(
+                          color: theme.disabledColor.withValues(alpha: 0.2),
+                          child: const Center(child: Icon(Icons.fastfood, size: 60)),
+                        ),
+                ),
+              ),
+              
+              // Contenido flexible para evitar overflow
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // Nombre del producto
+                      Text(
+                        product.name,
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.bold,
+                          color: theme.textTheme.bodyMedium?.color,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      
+                      const SizedBox(height: 4),
+                      
+                      // Precio prominente con COP
+                      Text(
+                        '\$${NumberFormat('#,###', 'es_CO').format(product.price)} COP',
+                        style: const TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                          color: Color.fromRGBO(237, 88, 33, 1),
+                          letterSpacing: 0.3,
+                        ),
+                      ),
+                      
+                      const Spacer(),
+                      
+                      // Botón de agregar - Diseño simple y elegante
+                      SizedBox(
+                        width: double.infinity,
+                        height: 36,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              colors: [
+                                Color.fromRGBO(237, 88, 33, 1),
+                                Color.fromRGBO(250, 110, 60, 1),
+                              ],
+                              begin: Alignment.centerLeft,
+                              end: Alignment.centerRight,
+                            ),
+                            borderRadius: BorderRadius.circular(20),
+                            boxShadow: [
+                              BoxShadow(
+                                color: const Color.fromRGBO(237, 88, 33, 0.35),
+                                blurRadius: 8,
+                                offset: const Offset(0, 3),
+                              ),
+                            ],
+                          ),
+                          child: Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(20),
+                              onTap: () {
+                                context.read<CartBloc>().add(AddToCart(
+                                  CartItem(
+                                    id: product.id.toString(),
+                                    name: product.name,
+                                    price: product.price,
+                                    quantity: 1,
+                                    image: product.image,
+                                    description: product.description,
+                                  ),
+                                ));
+                                showSimpleAddedDialog(context);
+                              },
+                              child: const Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 12),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.shopping_cart,
+                                      color: Colors.white,
+                                      size: 18,
+                                    ),
+                                    Icon(
+                                      Icons.add,
+                                      color: Colors.white,
+                                      size: 18,
+                                    ),
+                                    SizedBox(width: 6),
+                                    Text(
+                                      'Añadir',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold,
+                                        letterSpacing: 0.5,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
                             ),
                           ),
-                        ],
+                        ),
                       ),
-                    ),
+                    ],
                   ),
                 ),
               ),
@@ -903,9 +928,10 @@ void showSimpleAddedDialog(BuildContext context) {
         }
         
         if (state is SuccessState<List<Product>>) {
-          final combos = state.data;
+          // Filtrar solo combos disponibles
+          final combos = state.data.where((p) => p.disponible).toList();
           
-          // Si no hay combos, no mostrar la sección
+          // Si no hay combos disponibles, no mostrar la sección
           if (combos.isEmpty) {
             return const SizedBox.shrink();
           }

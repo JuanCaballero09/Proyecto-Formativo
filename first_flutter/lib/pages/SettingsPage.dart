@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:first_flutter/widgets/language_selector.dart';
 import 'package:first_flutter/widgets/theme_selector.dart';
+import 'package:first_flutter/l10n/app_localizations.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -9,7 +10,7 @@ class SettingsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Ajustes"),
+        title: Text(AppLocalizations.of(context)!.settingsLabel),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -19,14 +20,14 @@ class SettingsPage extends StatelessWidget {
             _buildPreferenceRow(
               context: context,
               icon: Icons.language,
-              label: "Idioma",
+              label: AppLocalizations.of(context)!.language,
               widget: const LanguageSelector(),
             ),
             const SizedBox(height: 15),
             _buildPreferenceRow(
               context: context,
               icon: Icons.brightness_6,
-              label: "Tema",
+              label: AppLocalizations.of(context)!.theme,
               widget: const ThemeSelector(),
             ),
           ],

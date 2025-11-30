@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../l10n/app_localizations.dart';
 import '../bloc/auth/auth_bloc.dart';
 import '../bloc/auth/auth_event.dart';
 import '../bloc/auth/auth_state.dart';
@@ -69,7 +70,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                 const SizedBox(height: 8),
 
                 Text(
-                  'Recuperar Contraseña',
+                  AppLocalizations.of(context)!.recoverPasswordTitle,
                   style: GoogleFonts.poppins(
                     fontSize: 26,
                     fontWeight: FontWeight.w700,
@@ -79,7 +80,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                 const SizedBox(height: 16),
 
                 Text(
-                  'Ingresa tu correo electrónico y te enviaremos instrucciones para restablecer tu contraseña.',
+                  AppLocalizations.of(context)!.recoverPasswordSubtitle,
                   textAlign: TextAlign.center,
                   style: GoogleFonts.poppins(
                     fontSize: 14,
@@ -94,7 +95,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                   keyboardType: TextInputType.emailAddress,
                   style: TextStyle(color: Theme.of(context).textTheme.bodyLarge?.color),
                   decoration: InputDecoration(
-                    labelText: 'Correo Electrónico',
+                    labelText: AppLocalizations.of(context)!.emailAddressLabel,
                     labelStyle: TextStyle(
                       color: Theme.of(context).brightness == Brightness.dark 
                           ? Colors.white70 
@@ -158,7 +159,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                                 ),
                               )
                             : Text(
-                                'Enviar',
+                                AppLocalizations.of(context)!.sendButton,
                                 style: GoogleFonts.poppins(
                                   fontSize: 16,
                                   color: Colors.white,
@@ -174,7 +175,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                 TextButton(
                   onPressed: () => Navigator.pop(context),
                   child: Text(
-                    'Volver al inicio de sesión',
+                    AppLocalizations.of(context)!.backToLoginLink,
                     style: GoogleFonts.poppins(
                       color: kOrange,
                       fontWeight: FontWeight.w600,

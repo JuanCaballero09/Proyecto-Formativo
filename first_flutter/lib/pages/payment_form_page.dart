@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import '../models/order.dart';
 import '../service/api_service.dart';
 import 'payment_status_page.dart';
+import '../l10n/app_localizations.dart';
 
 class PaymentFormPage extends StatefulWidget {
   final Order order;
@@ -45,10 +46,27 @@ class _PaymentFormPageState extends State<PaymentFormPage> {
   void initState() {
     super.initState();
     _emailController.text = widget.order.customerEmail ?? '';
+    
+    // Agregar listeners para actualizar el estado del botón
+    _emailController.addListener(_updateButtonState);
+    _cardNumberController.addListener(_updateButtonState);
+    _cardHolderController.addListener(_updateButtonState);
+    _cvcController.addListener(_updateButtonState);
+    _phoneController.addListener(_updateButtonState);
+  }
+
+  void _updateButtonState() {
+    setState(() {});
   }
 
   @override
   void dispose() {
+    _emailController.removeListener(_updateButtonState);
+    _cardNumberController.removeListener(_updateButtonState);
+    _cardHolderController.removeListener(_updateButtonState);
+    _cvcController.removeListener(_updateButtonState);
+    _phoneController.removeListener(_updateButtonState);
+    
     _emailController.dispose();
     _cardNumberController.dispose();
     _cardHolderController.dispose();
@@ -57,28 +75,34 @@ class _PaymentFormPageState extends State<PaymentFormPage> {
     super.dispose();
   }
 
-  String get _pageTitle {
+  String _pageTitle(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     switch (widget.paymentMethod) {
       case 'card':
         return _cardType == null
-            ? 'Selecciona tipo de tarjeta'
-            : 'Datos de la tarjeta';
+            ? l10n.selectCardTypeLabel
+            : l10n.cardNumberLabel;
       case 'nequi':
-        return 'Pago con Nequi';
+        return l10n.nequiPaymentLabel;
       case 'cash':
-        return 'Pago en Efectivo';
+        return l10n.cashEffectiveLabel;
       default:
-        return 'Información de Pago';
+        return l10n.paymentMethodLabel;
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    
     return Scaffold(
+      backgroundColor: isDark ? const Color(0xFF121212) : Colors.grey[50],
       appBar: AppBar(
-        title: Text(_pageTitle),
+        title: Text(_pageTitle(context)),
         backgroundColor: const Color.fromRGBO(237, 88, 33, 1),
         foregroundColor: Colors.white,
+        elevation: 0,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
@@ -121,49 +145,75 @@ class _PaymentFormPageState extends State<PaymentFormPage> {
   }
 
   Widget _buildOrderSummary() {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.grey[100],
-        borderRadius: BorderRadius.circular(12),
+        color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: const Color.fromRGBO(237, 88, 33, 1),
-          width: 1.5,
+          color: isDark ? Colors.grey[800]! : Colors.grey[300]!,
+          width: 1,
         ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(isDark ? 0.3 : 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Resumen de la Orden',
+          Text(
+            AppLocalizations.of(context)!.orderSummaryLabel,
             style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: isDark ? Colors.grey[400] : Colors.grey[600],
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 16),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text('Código:', style: TextStyle(fontSize: 16)),
+              Text(
+                AppLocalizations.of(context)!.orderCodeLabel,
+                style: TextStyle(
+                  fontSize: 15,
+                  color: isDark ? Colors.grey[400] : Colors.grey[600],
+                ),
+              ),
               Text(
                 widget.order.code,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                  color: isDark ? Colors.grey[300] : Colors.grey[700],
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 12),
+          Divider(color: isDark ? Colors.grey[800] : Colors.grey[300]),
+          const SizedBox(height: 12),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text('Total a Pagar:', style: TextStyle(fontSize: 16)),
+              Text(
+                AppLocalizations.of(context)!.totalToPayLabel,
+                style: TextStyle(
+                  fontSize: 15,
+                  color: isDark ? Colors.grey[400] : Colors.grey[600],
+                ),
+              ),
               Text(
                 '\$ ${widget.order.total.toStringAsFixed(0)} COP',
                 style: const TextStyle(
-                  fontSize: 20,
+                  fontSize: 22,
                   fontWeight: FontWeight.bold,
                   color: Color.fromRGBO(237, 88, 33, 1),
                 ),
@@ -176,14 +226,18 @@ class _PaymentFormPageState extends State<PaymentFormPage> {
   }
 
   Widget _buildCardTypeSelection() {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Selecciona el tipo de tarjeta',
+        Text(
+          AppLocalizations.of(context)!.selectCardTypeLabel,
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
+            color: isDark ? Colors.white : Colors.black87,
           ),
         ),
         const SizedBox(height: 16),
@@ -192,9 +246,10 @@ class _PaymentFormPageState extends State<PaymentFormPage> {
             Expanded(
               child: _CardTypeButton(
                 icon: Icons.credit_card,
-                title: 'Crédito',
-                subtitle: 'Hasta 36 cuotas',
+                title: AppLocalizations.of(context)!.creditCardLabel,
+                subtitle: AppLocalizations.of(context)!.upTo36Installments,
                 isSelected: _cardType == 'credit',
+                isDark: isDark,
                 onTap: () {
                   setState(() {
                     _cardType = 'credit';
@@ -206,9 +261,10 @@ class _PaymentFormPageState extends State<PaymentFormPage> {
             Expanded(
               child: _CardTypeButton(
                 icon: Icons.credit_card,
-                title: 'Débito',
-                subtitle: 'Pago de contado',
+                title: AppLocalizations.of(context)!.debitCardLabel,
+                subtitle: AppLocalizations.of(context)!.cashPaymentSingle,
                 isSelected: _cardType == 'debit',
+                isDark: isDark,
                 onTap: () {
                   setState(() {
                     _cardType = 'debit';
@@ -230,8 +286,8 @@ class _PaymentFormPageState extends State<PaymentFormPage> {
         // Número de tarjeta
         TextFormField(
           controller: _cardNumberController,
-          decoration: const InputDecoration(
-            labelText: 'Número de Tarjeta',
+          decoration: InputDecoration(
+            labelText: AppLocalizations.of(context)!.cardNumberLabel,
             hintText: '1234 5678 9012 3456',
             prefixIcon: Icon(Icons.credit_card),
             border: OutlineInputBorder(),
@@ -258,9 +314,9 @@ class _PaymentFormPageState extends State<PaymentFormPage> {
         // Nombre del titular
         TextFormField(
           controller: _cardHolderController,
-          decoration: const InputDecoration(
-            labelText: 'Nombre del Titular',
-            hintText: 'JUAN PEREZ',
+          decoration: InputDecoration(
+            labelText: AppLocalizations.of(context)!.cardHolderNameLabel,
+            hintText: AppLocalizations.of(context)!.cardHolderExample,
             prefixIcon: Icon(Icons.person),
             border: OutlineInputBorder(),
           ),
@@ -279,9 +335,9 @@ class _PaymentFormPageState extends State<PaymentFormPage> {
           children: [
             Expanded(
               child: DropdownButtonFormField<String>(
-                decoration: const InputDecoration(
-                  labelText: 'Mes',
-                  border: OutlineInputBorder(),
+                decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context)!.monthLabel,
+                  border: const OutlineInputBorder(),
                 ),
                 value: _expMonth,
                 items: List.generate(12, (index) {
@@ -299,9 +355,9 @@ class _PaymentFormPageState extends State<PaymentFormPage> {
             const SizedBox(width: 16),
             Expanded(
               child: DropdownButtonFormField<String>(
-                decoration: const InputDecoration(
-                  labelText: 'Año',
-                  border: OutlineInputBorder(),
+                decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context)!.yearLabel,
+                  border: const OutlineInputBorder(),
                 ),
                 value: _expYear,
                 items: List.generate(10, (index) {
@@ -320,10 +376,10 @@ class _PaymentFormPageState extends State<PaymentFormPage> {
             Expanded(
               child: TextFormField(
                 controller: _cvcController,
-                decoration: const InputDecoration(
-                  labelText: 'CVC',
+                decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context)!.cvcLabel,
                   hintText: '123',
-                  border: OutlineInputBorder(),
+                  border: const OutlineInputBorder(),
                 ),
                 keyboardType: TextInputType.number,
                 inputFormatters: [
@@ -348,15 +404,16 @@ class _PaymentFormPageState extends State<PaymentFormPage> {
         // Cuotas (solo para crédito)
         if (_cardType == 'credit')
           DropdownButtonFormField<int>(
-            decoration: const InputDecoration(
-              labelText: 'Número de Cuotas',
-              border: OutlineInputBorder(),
+            decoration: InputDecoration(
+              labelText: AppLocalizations.of(context)!.installmentsLabel,
+              border: const OutlineInputBorder(),
             ),
             value: _installments,
             items: [1, 2, 3, 6, 9, 12, 18, 24, 36].map((int value) {
+              final l10n = AppLocalizations.of(context)!;
               return DropdownMenuItem<int>(
                 value: value,
-                child: Text('$value ${value == 1 ? 'cuota' : 'cuotas'}'),
+                child: Text('$value ${value == 1 ? l10n.installmentSingular : l10n.installmentPlural}'),
               );
             }).toList(),
             onChanged: (value) => setState(() => _installments = value ?? 1),
@@ -366,25 +423,35 @@ class _PaymentFormPageState extends State<PaymentFormPage> {
   }
 
   Widget _buildNequiForm() {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Ingresa tu número de celular Nequi',
+        Text(
+          AppLocalizations.of(context)!.enterNequiNumberLabel,
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
+            color: isDark ? Colors.white : Colors.black87,
           ),
         ),
         const SizedBox(height: 16),
         TextFormField(
           controller: _phoneController,
-          decoration: const InputDecoration(
-            labelText: 'Número de Celular',
+          style: TextStyle(
+            color: isDark ? Colors.white : Colors.black87,
+          ),
+          decoration: InputDecoration(
+            labelText: AppLocalizations.of(context)!.cellphoneNumberLabel,
             hintText: '3001234567',
-            prefixIcon: Icon(Icons.phone_android),
-            border: OutlineInputBorder(),
-            helperText: 'Asegúrate de tener la app de Nequi instalada',
+            prefixIcon: const Icon(Icons.phone_android),
+            border: const OutlineInputBorder(),
+            helperText: AppLocalizations.of(context)!.nequiAppRequirement,
+            helperStyle: TextStyle(
+              color: isDark ? Colors.grey[500] : Colors.grey[600],
+            ),
           ),
           keyboardType: TextInputType.phone,
           inputFormatters: [
@@ -408,17 +475,28 @@ class _PaymentFormPageState extends State<PaymentFormPage> {
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: const Color(0xFFf8e6ff),
+            color: isDark 
+                ? const Color(0xFF8B34D9).withOpacity(0.15)
+                : const Color(0xFFf8e6ff),
             borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: isDark 
+                  ? const Color(0xFF8B34D9).withOpacity(0.3)
+                  : Colors.transparent,
+              width: 1,
+            ),
           ),
-          child: const Row(
+          child: Row(
             children: [
-              Icon(Icons.info_outline, color: Color(0xFF8B34D9)),
-              SizedBox(width: 12),
+              const Icon(Icons.info_outline, color: Color(0xFF8B34D9)),
+              const SizedBox(width: 12),
               Expanded(
                 child: Text(
-                  'Recibirás una notificación en tu app Nequi para aprobar el pago',
-                  style: TextStyle(fontSize: 14),
+                  AppLocalizations.of(context)!.nequiNotificationMessage,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: isDark ? Colors.grey[300] : Colors.black87,
+                  ),
                 ),
               ),
             ],
@@ -429,36 +507,49 @@ class _PaymentFormPageState extends State<PaymentFormPage> {
   }
 
   Widget _buildCashForm() {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Pago en Efectivo',
+        Text(
+          AppLocalizations.of(context)!.cashPaymentLabel,
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
+            color: isDark ? Colors.white : Colors.black87,
           ),
         ),
         const SizedBox(height: 16),
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: const Color(0xFFe8f5e9),
+            color: isDark 
+                ? const Color(0xFF4CAF50).withOpacity(0.15)
+                : const Color(0xFFe8f5e9),
             borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: isDark 
+                  ? const Color(0xFF4CAF50).withOpacity(0.3)
+                  : Colors.transparent,
+              width: 1,
+            ),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Row(
+              Row(
                 children: [
-                  Icon(Icons.info_outline, color: Color(0xFF4CAF50)),
-                  SizedBox(width: 12),
+                  const Icon(Icons.info_outline, color: Color(0xFF4CAF50)),
+                  const SizedBox(width: 12),
                   Expanded(
                     child: Text(
-                      'Instrucciones de pago',
+                      AppLocalizations.of(context)!.paymentInstructionsLabel,
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
+                        color: isDark ? Colors.white : Colors.black87,
                       ),
                     ),
                   ),
@@ -466,18 +557,27 @@ class _PaymentFormPageState extends State<PaymentFormPage> {
               ),
               const SizedBox(height: 12),
               Text(
-                '• Prepara el monto exacto: \$ ${widget.order.total.toStringAsFixed(0)} COP',
-                style: const TextStyle(fontSize: 14),
+                '• ${AppLocalizations.of(context)!.prepareExactAmount} \$ ${widget.order.total.toStringAsFixed(0)} COP',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: isDark ? Colors.grey[300] : Colors.black87,
+                ),
               ),
               const SizedBox(height: 8),
-              const Text(
-                '• Entrega el dinero al domiciliario al recibir tu pedido',
-                style: TextStyle(fontSize: 14),
+              Text(
+                '• ${AppLocalizations.of(context)!.deliverMoneyToDriver}',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: isDark ? Colors.grey[300] : Colors.black87,
+                ),
               ),
               const SizedBox(height: 8),
-              const Text(
-                '• Pide tu comprobante de pago',
-                style: TextStyle(fontSize: 14),
+              Text(
+                '• ${AppLocalizations.of(context)!.requestReceipt}',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: isDark ? Colors.grey[300] : Colors.black87,
+                ),
               ),
             ],
           ),
@@ -489,9 +589,9 @@ class _PaymentFormPageState extends State<PaymentFormPage> {
   Widget _buildEmailField() {
     return TextFormField(
       controller: _emailController,
-      decoration: const InputDecoration(
-        labelText: 'Correo Electrónico',
-        hintText: 'tu@email.com',
+      decoration: InputDecoration(
+        labelText: AppLocalizations.of(context)!.emailAddressLabel,
+        hintText: AppLocalizations.of(context)!.yourEmailPlaceholder,
         prefixIcon: Icon(Icons.email),
         border: OutlineInputBorder(),
       ),
@@ -514,18 +614,18 @@ class _PaymentFormPageState extends State<PaymentFormPage> {
         CheckboxListTile(
           value: _acceptTerms,
           onChanged: (value) => setState(() => _acceptTerms = value ?? false),
-          title: const Text.rich(
+          title: Text.rich(
             TextSpan(
-              text: 'Acepto los ',
+              text: AppLocalizations.of(context)!.acceptTermsStart,
               children: [
                 TextSpan(
-                  text: 'términos y condiciones',
-                  style: TextStyle(
+                  text: AppLocalizations.of(context)!.termsAndConditionsLink,
+                  style: const TextStyle(
                     color: Color.fromRGBO(237, 88, 33, 1),
                     decoration: TextDecoration.underline,
                   ),
                 ),
-                TextSpan(text: ' de Wompi'),
+                TextSpan(text: AppLocalizations.of(context)!.acceptTermsEnd),
               ],
             ),
           ),
@@ -535,13 +635,13 @@ class _PaymentFormPageState extends State<PaymentFormPage> {
         CheckboxListTile(
           value: _acceptData,
           onChanged: (value) => setState(() => _acceptData = value ?? false),
-          title: const Text.rich(
+          title: Text.rich(
             TextSpan(
-              text: 'Autorizo el ',
+              text: AppLocalizations.of(context)!.authorizeDataStart,
               children: [
                 TextSpan(
-                  text: 'tratamiento de datos personales',
-                  style: TextStyle(
+                  text: AppLocalizations.of(context)!.personalDataTreatmentLink,
+                  style: const TextStyle(
                     color: Color.fromRGBO(237, 88, 33, 1),
                     decoration: TextDecoration.underline,
                   ),
@@ -557,6 +657,8 @@ class _PaymentFormPageState extends State<PaymentFormPage> {
   }
 
   Widget _buildPayButton() {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     final canProceed = _canProceedWithPayment();
 
     return SizedBox(
@@ -566,7 +668,12 @@ class _PaymentFormPageState extends State<PaymentFormPage> {
         onPressed: canProceed && !_isProcessing ? _processPayment : null,
         style: ElevatedButton.styleFrom(
           backgroundColor: const Color.fromRGBO(237, 88, 33, 1),
-          disabledBackgroundColor: Colors.grey[300],
+          disabledBackgroundColor: isDark 
+              ? Colors.grey[800]
+              : Colors.grey[300],
+          disabledForegroundColor: isDark
+              ? Colors.grey[600]
+              : Colors.grey[500],
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
@@ -598,7 +705,11 @@ class _PaymentFormPageState extends State<PaymentFormPage> {
 
     if (widget.paymentMethod == 'card') {
       if (_cardType == null) return false;
-      // No validamos los demás campos aquí porque el formulario se encarga
+      // Validar que todos los campos de la tarjeta estén llenos
+      if (_cardNumberController.text.isEmpty) return false;
+      if (_cardHolderController.text.isEmpty) return false;
+      if (_expMonth == null || _expYear == null) return false;
+      if (_cvcController.text.isEmpty) return false;
     } else if (widget.paymentMethod == 'nequi') {
       if (_phoneController.text.length != 10) return false;
     }
@@ -660,7 +771,7 @@ class _PaymentFormPageState extends State<PaymentFormPage> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Error: ${e.toString()}'),
+          content: Text('${AppLocalizations.of(context)!.error}: ${e.toString()}'),
           backgroundColor: Colors.red,
         ),
       );
@@ -674,6 +785,7 @@ class _CardTypeButton extends StatelessWidget {
   final String title;
   final String subtitle;
   final bool isSelected;
+  final bool isDark;
   final VoidCallback onTap;
 
   const _CardTypeButton({
@@ -681,6 +793,7 @@ class _CardTypeButton extends StatelessWidget {
     required this.title,
     required this.subtitle,
     required this.isSelected,
+    required this.isDark,
     required this.onTap,
   });
 
@@ -690,14 +803,16 @@ class _CardTypeButton extends StatelessWidget {
       onTap: onTap,
       borderRadius: BorderRadius.circular(12),
       child: Container(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
         decoration: BoxDecoration(
-          color: isSelected ? const Color.fromRGBO(237, 88, 33, 0.1) : Colors.white,
+          color: isSelected 
+              ? const Color.fromRGBO(237, 88, 33, 0.1) 
+              : (isDark ? const Color(0xFF1E1E1E) : Colors.white),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
             color: isSelected
                 ? const Color.fromRGBO(237, 88, 33, 1)
-                : Colors.grey[300]!,
+                : (isDark ? Colors.grey[800]! : Colors.grey[300]!),
             width: isSelected ? 2 : 1,
           ),
         ),
@@ -708,23 +823,25 @@ class _CardTypeButton extends StatelessWidget {
               size: 40,
               color: isSelected
                   ? const Color.fromRGBO(237, 88, 33, 1)
-                  : Colors.grey[600],
+                  : (isDark ? Colors.grey[500] : Colors.grey[600]),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 12),
             Text(
               title,
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color: isSelected ? const Color.fromRGBO(237, 88, 33, 1) : Colors.black,
+                color: isSelected 
+                    ? const Color.fromRGBO(237, 88, 33, 1) 
+                    : (isDark ? Colors.white : Colors.black87),
               ),
             ),
             const SizedBox(height: 4),
             Text(
               subtitle,
               style: TextStyle(
-                fontSize: 12,
-                color: Colors.grey[600],
+                fontSize: 13,
+                color: isDark ? Colors.grey[500] : Colors.grey[600],
               ),
               textAlign: TextAlign.center,
             ),
