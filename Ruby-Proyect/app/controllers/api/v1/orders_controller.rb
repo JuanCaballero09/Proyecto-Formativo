@@ -4,7 +4,7 @@
 
 class Api::V1::OrdersController < ApplicationController
   skip_before_action :verify_authenticity_token
-  before_action :authenticate_api_user!, except: [:create, :index, :update_address]
+  before_action :authenticate_api_user!, except: [:create, :index, :update_address, :cancel]
   before_action :set_order, only: [:show, :cancel, :update_address]
 
   # GET /api/v1/orders

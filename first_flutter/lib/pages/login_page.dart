@@ -3,6 +3,7 @@ import 'package:first_flutter/service/api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../l10n/app_localizations.dart';
 import '../bloc/auth/auth_bloc.dart';
 import '../bloc/auth/auth_event.dart';
 import 'product_catalog_page.dart';
@@ -59,7 +60,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     if (user.isEmpty || pass.isEmpty) {
       _showAuthNotification(
         context,
-        message: 'Por favor ingresa usuario y contraseña',
+        message: AppLocalizations.of(context)!.pleaseEnterCredentials,
         isSuccess: false,
       );
       return;
@@ -69,7 +70,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     if (!user.contains('@') || !user.contains('.')) {
       _showAuthNotification(
         context,
-        message: 'Por favor ingresa un correo electrónico válido',
+        message: AppLocalizations.of(context)!.pleaseEnterValidEmail,
         isSuccess: false,
       );
       return;
@@ -129,7 +130,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                   ),
                   const SizedBox(height: 24),
                   Text(
-                    "¡Inicio de sesión exitoso!",
+                    AppLocalizations.of(context)!.loginSuccessTitle,
                     textAlign: TextAlign.center,
                     style: GoogleFonts.poppins(
                       fontSize: 22,
@@ -139,7 +140,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    "Bienvenido de nuevo",
+                    AppLocalizations.of(context)!.welcomeBackMessage,
                     textAlign: TextAlign.center,
                     style: GoogleFonts.poppins(
                       fontSize: 14,
@@ -257,13 +258,13 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                         const SizedBox(height: 16),
 
                         // Títulos
-                        Text('¡Bienvenido!',
+                        Text(AppLocalizations.of(context)!.welcomeTitle,
                             style: GoogleFonts.poppins(
                               fontSize: 28,
                               fontWeight: FontWeight.w700,
                               color: Theme.of(context).textTheme.titleLarge?.color,
                             )),
-                        Text('Inicia sesión en tu cuenta',
+                        Text(AppLocalizations.of(context)!.loginSubtitle,
                             style: GoogleFonts.poppins(
                               fontSize: 15,
                               color: Theme.of(context).textTheme.bodyMedium?.color?.withValues(alpha: 0.7),
@@ -276,7 +277,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                           keyboardType: TextInputType.emailAddress,
                           style: TextStyle(color: Theme.of(context).textTheme.bodyLarge?.color),
                           decoration: InputDecoration(
-                            labelText: 'Correo electrónico',
+                            labelText: AppLocalizations.of(context)!.emailAddressField,
                             labelStyle: TextStyle(color: Theme.of(context).brightness == Brightness.dark ? Colors.white70 : Colors.black54),
                             prefixIcon:
                                 const Icon(Icons.email_outlined, color: kOrange),
@@ -297,7 +298,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                           obscureText: _obscurePassword,
                           style: TextStyle(color: Theme.of(context).textTheme.bodyLarge?.color),
                           decoration: InputDecoration(
-                            labelText: 'Contraseña',
+                            labelText: AppLocalizations.of(context)!.passwordField,
                             labelStyle: TextStyle(color: Theme.of(context).brightness == Brightness.dark ? Colors.white70 : Colors.black54),
                             prefixIcon:
                                 const Icon(Icons.lock_outline, color: kOrange),
@@ -328,7 +329,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                               onPressed: () {
                                 Navigator.pushNamed(context, '/resend-confirmation');
                               },
-                              child: Text('Reenviar confirmación',
+                              child: Text(AppLocalizations.of(context)!.resendConfirmationLink,
                                   style: GoogleFonts.poppins(
                                       fontSize: 13, 
                                       color: kOrange,
@@ -338,7 +339,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                               onPressed: () {
                                 Navigator.pushNamed(context, '/forgot-password');
                               },
-                              child: Text('¿Olvidaste tu contraseña?',
+                              child: Text(AppLocalizations.of(context)!.forgotPasswordLink,
                                   style: GoogleFonts.poppins(
                                       fontSize: 13, 
                                       color: kOrange,
@@ -363,8 +364,8 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                             child: isLoading
                                 ? const CircularProgressIndicator(
                                     color: Colors.white)
-                                : const Text('Ingresar',
-                                    style: TextStyle(
+                                : Text(AppLocalizations.of(context)!.loginButton,
+                                    style: const TextStyle(
                                         fontSize: 18,
                                         color: Colors.white,
                                         fontWeight: FontWeight.bold)),
@@ -375,7 +376,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text('¿No tienes una cuenta?',
+                            Text(AppLocalizations.of(context)!.dontHaveAccountText,
                                 style: GoogleFonts.poppins(fontSize: 14)),
                             TextButton(
                               onPressed: () {
@@ -383,10 +384,10 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                   context,
                                   MaterialPageRoute(
                                       builder: (_) => const RegisterPage()),
-                                );
+                                );  
                               },
-                              child: const Text('Regístrate aquí',
-                                  style: TextStyle(
+                              child: Text(AppLocalizations.of(context)!.registerHereLink,
+                                  style: const TextStyle(
                                       color: kOrange,
                                       fontWeight: FontWeight.bold)),
                             ),

@@ -152,7 +152,7 @@ class _RegisterPageState extends State<RegisterPage> {
       if (!agree) {
         _showAuthNotification(
           context,
-          message: 'Debes aceptar los términos y condiciones',
+          message: AppLocalizations.of(context)!.mustAcceptTermsAndConditions,
           isSuccess: false,
         );
         return;
@@ -207,7 +207,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
                 const SizedBox(height: 8),
 
-                Text('Crear Cuenta',
+                Text(AppLocalizations.of(context)!.createAccountTitle,
                     style: GoogleFonts.poppins(
                       fontSize: 28,
                       fontWeight: FontWeight.w700,
@@ -220,7 +220,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   controller: nombreCtrl,
                   style: TextStyle(color: Theme.of(context).textTheme.bodyLarge?.color),
                   decoration: InputDecoration(
-                    labelText: 'Nombre',
+                    labelText: AppLocalizations.of(context)!.firstNameField,
                     labelStyle: TextStyle(color: Theme.of(context).brightness == Brightness.dark ? Colors.white70 : Colors.black54),
                     prefixIcon: const Icon(Icons.person_outline, color: kOrange),
                     filled: true,
@@ -239,7 +239,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
-                      return 'El nombre es requerido';
+                      return AppLocalizations.of(context)!.firstNameRequiredError;
                     }
                     return null;
                   },
@@ -251,7 +251,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   controller: apellidoCtrl,
                   style: TextStyle(color: Theme.of(context).textTheme.bodyLarge?.color),
                   decoration: InputDecoration(
-                    labelText: 'Apellido',
+                    labelText: AppLocalizations.of(context)!.lastNameField,
                     labelStyle: TextStyle(color: Theme.of(context).brightness == Brightness.dark ? Colors.white70 : Colors.black54),
                     prefixIcon: const Icon(Icons.person_outline, color: kOrange),
                     filled: true,
@@ -270,7 +270,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
-                      return 'El apellido es requerido';
+                      return AppLocalizations.of(context)!.lastNameRequiredError;
                     }
                     return null;
                   },
@@ -287,7 +287,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   ],
                   style: TextStyle(color: Theme.of(context).textTheme.bodyLarge?.color),
                   decoration: InputDecoration(
-                    labelText: 'Teléfono',
+                    labelText: AppLocalizations.of(context)!.phoneField,
                     labelStyle: TextStyle(color: Theme.of(context).brightness == Brightness.dark ? Colors.white70 : Colors.black54),
                     prefixIcon: const Icon(Icons.phone_outlined, color: kOrange),
                     filled: true,
@@ -307,13 +307,13 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
-                      return 'El teléfono es requerido';
+                      return AppLocalizations.of(context)!.phoneRequiredError;
                     }
                     if (value.trim().length != 10) {
-                      return 'El teléfono debe tener 10 dígitos';
+                      return AppLocalizations.of(context)!.phoneMustBe10DigitsError;
                     }
                     if (!value.startsWith('3')) {
-                      return 'El teléfono debe comenzar con 3';
+                      return AppLocalizations.of(context)!.phoneMustStartWith3Error;
                     }
                     return null;
                   },
@@ -345,10 +345,10 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
-                      return 'El email es requerido';
+                      return AppLocalizations.of(context)!.emailRequiredError;
                     }
                     if (!value.contains('@') || !value.contains('.')) {
-                      return 'Ingresa un email válido';
+                      return AppLocalizations.of(context)!.enterValidEmailError;
                     }
                     return null;
                   },
@@ -361,7 +361,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   obscureText: obscure,
                   style: TextStyle(color: Theme.of(context).textTheme.bodyLarge?.color),
                   decoration: InputDecoration(
-                    labelText: 'Contraseña (mínimo 6 caracteres)',
+                    labelText: AppLocalizations.of(context)!.passwordWithMinimumHint,
                     labelStyle: TextStyle(color: Theme.of(context).brightness == Brightness.dark ? Colors.white70 : Colors.black54),
                     prefixIcon: const Icon(Icons.lock_outline, color: kOrange),
                     filled: true,
@@ -387,10 +387,10 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'La contraseña es requerida';
+                      return AppLocalizations.of(context)!.passwordRequiredError;
                     }
                     if (value.length < 6) {
-                      return 'Mínimo 6 caracteres';
+                      return AppLocalizations.of(context)!.minimumSixCharactersError;
                     }
                     return null;
                   },
@@ -403,7 +403,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   obscureText: obscureConfirm,
                   style: TextStyle(color: Theme.of(context).textTheme.bodyLarge?.color),
                   decoration: InputDecoration(
-                    labelText: 'Confirmar Contraseña',
+                    labelText: AppLocalizations.of(context)!.confirmPasswordField,
                     labelStyle: TextStyle(color: Theme.of(context).brightness == Brightness.dark ? Colors.white70 : Colors.black54),
                     prefixIcon: const Icon(Icons.lock_outline, color: kOrange),
                     filled: true,
@@ -429,10 +429,10 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Confirma tu contraseña';
+                      return AppLocalizations.of(context)!.confirmYourPasswordError;
                     }
                     if (value != passCtrl.text) {
-                      return 'Las contraseñas no coinciden';
+                      return AppLocalizations.of(context)!.passwordsDoNotMatchError;
                     }
                     return null;
                   },

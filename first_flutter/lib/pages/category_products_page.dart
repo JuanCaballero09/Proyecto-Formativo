@@ -28,9 +28,6 @@ class CategoryProductsPage extends StatefulWidget {
 }
 
 class _CategoryProductsPageState extends State<CategoryProductsPage> {
-  Timer? _retryTimer;
-  bool _autoRetryDone = false;
-
   @override
   void initState() {
     super.initState();
@@ -189,7 +186,7 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
                               onPressed: () {
                                 context.read<ProductBloc>().add(LoadProductsByCategory(widget.categoryName));
                               },
-                              child: const Text('Recargar'),
+                              child: Text(AppLocalizations.of(context)!.reloadLabel),
                             ),
                           ],
                         ),
@@ -205,35 +202,60 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
   }
 
   Widget _buildProductGrid(List<Product> products, ThemeData theme) {
-    if (products.isEmpty) {
-      // Schedule one automatic retry after 2 seconds (one-time)
-      if (!_autoRetryDone && _retryTimer == null) {
-        _retryTimer = Timer(const Duration(seconds: 2), () {
-          if (!mounted) return;
-          if (widget.categoryId != null) {
-            context.read<ProductBloc>().add(LoadProductsByCategoryId(widget.categoryId!));
-          } else {
-            context.read<ProductBloc>().add(LoadProductsByCategory(widget.categoryName));
-          }
-          _autoRetryDone = true;
-          _retryTimer = null;
-        });
-      }
-
+    // Filtrar solo productos disponibles
+    final availableProducts = products.where((p) => p.disponible).toList();
+    
+    if (availableProducts.isEmpty) {
       return SliverFillRemaining(
-        child: EmptyStateWidget(
-          message: AppLocalizations.of(context)!.noProductsConnection,
-          icon: Icons.restaurant_menu_outlined,
-          onRetry: () {
-            _retryTimer?.cancel();
-            _retryTimer = null;
-            _autoRetryDone = false;
-            if (widget.categoryId != null) {
-              context.read<ProductBloc>().add(LoadProductsByCategoryId(widget.categoryId!));
-            } else {
-              context.read<ProductBloc>().add(LoadProductsByCategory(widget.categoryName));
-            }
-          },
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.restaurant_menu_outlined,
+                size: 80,
+                color: theme.hintColor.withValues(alpha: 0.3),
+              ),
+              const SizedBox(height: 24),
+              Text(
+                'No hay productos disponibles',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: theme.textTheme.bodyLarge?.color,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Los productos de esta categoría\nno están disponibles actualmente',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 14,
+                  color: theme.hintColor,
+                ),
+              ),
+              const SizedBox(height: 32),
+              ElevatedButton.icon(
+                onPressed: () {
+                  if (widget.categoryId != null) {
+                    context.read<ProductBloc>().add(LoadProductsByCategoryId(widget.categoryId!, forceRefresh: true));
+                  } else {
+                    context.read<ProductBloc>().add(LoadProductsByCategory(widget.categoryName, forceRefresh: true));
+                  }
+                },
+                icon: const Icon(Icons.refresh),
+                label: const Text('Reintentar'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color.fromRGBO(237, 88, 33, 1),
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(25),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       );
     }
@@ -249,7 +271,7 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
         ),
         delegate: SliverChildBuilderDelegate(
           (context, index) {
-            final product = products[index];
+            final product = availableProducts[index];
             return Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(16),
@@ -373,7 +395,7 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
               ),
             );
           },
-          childCount: products.length,
+          childCount: availableProducts.length,
         ),
       ),
     );
@@ -381,7 +403,6 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
 
   @override
   void dispose() {
-    _retryTimer?.cancel();
     super.dispose();
   }
 }
